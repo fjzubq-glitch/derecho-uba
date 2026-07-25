@@ -76,7 +76,7 @@ export default function DashboardPage() {
         className="border-b"
         style={{ borderColor: "var(--color-line-soft)", background: "linear-gradient(180deg, var(--color-ink-2) 0%, var(--color-ink) 100%)" }}
       >
-        <div className="max-w-[1200px] mx-auto flex items-center justify-between px-8 sm:px-12 py-6">
+        <div className="max-w-[960px] mx-auto flex items-center justify-between px-6 sm:px-8 py-6">
           <div className="flex items-center gap-4">
             <div
               className="w-10 h-10 flex items-center justify-center rounded-full border"
@@ -121,7 +121,7 @@ export default function DashboardPage() {
 
       {/* ════════ HERO ════════ */}
       <section className="relative overflow-hidden border-b" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div className="max-w-[1200px] mx-auto px-8 sm:px-12 pt-20 sm:pt-28 pb-16 sm:pb-20 relative">
+        <div className="max-w-[960px] mx-auto px-6 sm:px-8 pt-20 sm:pt-28 pb-16 sm:pb-20 relative">
           {/* Watermark */}
           <svg
             className="absolute right-0 top-1/2 -translate-y-1/2 w-[360px] h-[360px] opacity-[0.025] pointer-events-none hidden sm:block"
@@ -218,7 +218,7 @@ export default function DashboardPage() {
 
       {/* ════════ MATERIAS ════════ */}
       <section className="flex-1">
-        <div className="max-w-[1200px] mx-auto px-8 sm:px-12 py-20">
+        <div className="max-w-[960px] mx-auto px-6 sm:px-8 py-20">
           <div className="flex items-baseline justify-between mb-12 flex-wrap gap-4">
             <h2 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 400, fontSize: "28px" }}>
               Mis materias
@@ -373,7 +373,7 @@ export default function DashboardPage() {
         style={{ borderColor: "var(--color-line-soft)" }}
       >
         <div
-          className="max-w-[1200px] mx-auto flex items-center justify-between px-8 sm:px-12 py-6"
+          className="max-w-[960px] mx-auto flex items-center justify-between px-6 sm:px-8 py-6"
           style={{
             fontFamily: "var(--font-ibm-plex-mono)",
             fontSize: "10px",
