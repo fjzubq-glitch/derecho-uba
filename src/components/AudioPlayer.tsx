@@ -1,16 +1,17 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { Play, Pause, Volume2, VolumeX } from "@/components/icons";
+import { Play, Pause, Volume2, VolumeX, X } from "@/components/icons";
 import { formatDuration } from "@/lib/utils";
 
 interface AudioPlayerProps {
   src: string;
   title: string;
   subtitle?: string;
+  onClose?: () => void;
 }
 
-export default function AudioPlayer({ src, title, subtitle }: AudioPlayerProps) {
+export default function AudioPlayer({ src, title, subtitle, onClose }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -122,6 +123,16 @@ export default function AudioPlayer({ src, title, subtitle }: AudioPlayerProps) 
             <Volume2 className="w-5 h-5" />
           )}
         </button>
+
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors flex-shrink-0"
+            style={{ marginLeft: "8px" }}
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
     </div>
   );

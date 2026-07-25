@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import AdminUpload from "@/components/AdminUpload";
 import AdminManage from "@/components/AdminManage";
-import GlassCard from "@/components/ui/GlassCard";
-import Button from "@/components/ui/Button";
-import { ArrowLeft, BarChart3, Headphones, FileText, Users, Lock, Loader2, Calendar, TrendingUp, Eye } from "@/components/icons";
+import { ArrowLeft, BarChart3, Headphones, FileText, Users, Lock, Loader2, Calendar, TrendingUp, Eye, Shield, Upload } from "@/components/icons";
 
 interface Materia {
   id: string;
@@ -128,7 +126,6 @@ export default function AdminPage() {
   async function loadAnalytics() {
     setAnalyticsLoading(true);
 
-    // Visitas únicas totales
     const { data: allActivity } = await supabase
       .from("actividad")
       .select("ip_hash")
@@ -138,7 +135,6 @@ export default function AdminPage() {
     setVisitantesUnicos(uniqueIps.size);
     setTotalVisitas(allActivity?.length || 0);
 
-    // Actividad reciente
     const { data: recentActivity } = await supabase
       .from("actividad")
       .select(`
@@ -167,7 +163,6 @@ export default function AdminPage() {
       setActividadReciente(mapped);
     }
 
-    // Contenido más popular
     const { data: popularData } = await supabase
       .from("archivos")
       .select(`
@@ -195,7 +190,6 @@ export default function AdminPage() {
       setContenidoPopular(mapped);
     }
 
-    // Visitas por día (últimos 7 días)
     const { data: dailyData } = await supabase
       .from("actividad")
       .select("created_at, ip_hash")
@@ -308,29 +302,54 @@ export default function AdminPage() {
     transcription_view: "Transcripción",
   };
 
-  const TIPO_COLORS: Record<string, string> = {
-    page_view: "text-blue-400 bg-blue-500/20",
-    play_start: "text-violet-400 bg-violet-500/20",
-    play_pause: "text-amber-400 bg-amber-500/20",
-    play_complete: "text-green-400 bg-green-500/20",
-    youtube_open: "text-red-400 bg-red-500/20",
-    transcription_view: "text-cyan-400 bg-cyan-500/20",
+  const TAB_LABELS: Record<string, string> = {
+    upload: "Subir Contenido",
+    manage: "Gestionar",
+    analytics: "Analytics",
   };
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/30 via-purple-900/20 to-slate-900/40"></div>
-        </div>
-
-        <GlassCard className="w-full max-w-md p-8 z-10">
+      <div
+        className="min-h-screen flex items-center justify-center pad-lateral"
+        style={{ background: "var(--color-ink)" }}
+      >
+        <div
+          style={{
+            width: "100%",
+            maxWidth: "420px",
+            padding: "48px 40px",
+            background: "var(--color-card)",
+            border: "1px solid var(--color-line-soft)",
+            borderRadius: 0,
+          }}
+        >
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-600/20 to-indigo-600/20 border border-white/[0.12] flex items-center justify-center mx-auto mb-4">
-              <Lock className="w-8 h-8 text-violet-400" />
+            <div
+              className="flex items-center justify-center mx-auto mb-6"
+              style={{
+                width: "56px",
+                height: "56px",
+                borderRadius: "50%",
+                border: "1px solid var(--color-gold-dim)",
+              }}
+            >
+              <Shield style={{ width: "24px", height: "24px", color: "var(--color-gold)" }} />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-1">Panel de Admin</h2>
-            <p className="text-sm text-gray-400">Ingresá la contraseña para continuar</p>
+            <h2
+              style={{
+                fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                fontWeight: 400,
+                fontSize: "24px",
+                color: "var(--color-text)",
+                marginBottom: "8px",
+              }}
+            >
+              Panel de administración
+            </h2>
+            <p style={{ fontSize: "13px", color: "var(--color-text-faint)" }}>
+              Ingresá la contraseña para continuar
+            </p>
           </div>
 
           <form onSubmit={handlePasswordSubmit}>
@@ -339,262 +358,689 @@ export default function AdminPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full bg-white/[0.03] border border-white/[0.1] rounded-xl px-4 py-3 text-white text-center text-lg tracking-widest placeholder-gray-600 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all mb-4"
               autoFocus
+              style={{
+                width: "100%",
+                background: "var(--color-ink)",
+                border: "1px solid var(--color-line)",
+                borderRadius: 0,
+                padding: "14px 16px",
+                color: "var(--color-text)",
+                textAlign: "center",
+                fontSize: "18px",
+                letterSpacing: "0.2em",
+                fontFamily: "var(--font-ibm-plex-mono)",
+                outline: "none",
+                marginBottom: "16px",
+              }}
             />
 
             {passwordError && (
-              <p className="text-sm text-red-400 mb-4 text-center">
+              <p
+                style={{
+                  fontSize: "13px",
+                  color: "#E05555",
+                  marginBottom: "16px",
+                  textAlign: "center",
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                }}
+              >
                 {passwordError}
               </p>
             )}
 
-            <Button
+            <button
               type="submit"
               disabled={passwordLoading || !password}
-              className="w-full py-3"
+              style={{
+                width: "100%",
+                padding: "14px",
+                background: "var(--color-gold)",
+                color: "var(--color-ink)",
+                border: "none",
+                borderRadius: 0,
+                fontSize: "14px",
+                fontWeight: 600,
+                cursor: passwordLoading || !password ? "not-allowed" : "pointer",
+                opacity: passwordLoading || !password ? 0.5 : 1,
+                transition: "opacity 0.2s ease",
+                fontFamily: "var(--font-inter)",
+              }}
             >
-              {passwordLoading ? (
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-              ) : (
-                <Lock className="w-5 h-5 mr-2" />
-              )}
-              Acceder
-            </Button>
+              {passwordLoading ? "Verificando..." : "Acceder"}
+            </button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="text-center mt-6">
             <button
               onClick={() => router.push("/dashboard")}
-              className="text-sm text-gray-500 hover:text-gray-300 transition-colors"
+              style={{
+                fontSize: "12px",
+                color: "var(--color-text-faint)",
+                fontFamily: "var(--font-ibm-plex-mono)",
+                letterSpacing: "0.04em",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                transition: "color 0.2s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-faint)")}
             >
               ← Volver al dashboard
             </button>
           </div>
-        </GlassCard>
+        </div>
       </div>
     );
   }
 
+  const maxVisitas = Math.max(...visitasPorDia.map((d) => d.total_visitas), 1);
+
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-white/[0.06] bg-[rgba(10,10,20,0.6)] backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-ink)" }}>
+      {/* ═══════════ HEADER ═══════════ */}
+      <header
+        className="border-b"
+        style={{
+          borderColor: "var(--color-line-soft)",
+          background: "linear-gradient(180deg, var(--color-ink-2) 0%, var(--color-ink) 100%)",
+        }}
+      >
+        <div className="flex items-center justify-between pad-lateral" style={{ padding: "22px 48px" }}>
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push("/dashboard")}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="flex items-center justify-center"
+              style={{
+                width: "34px",
+                height: "34px",
+                borderRadius: "50%",
+                border: "1px solid var(--color-line)",
+                color: "var(--color-gold)",
+                transition: "border-color 0.25s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-line)")}
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft style={{ width: "15px", height: "15px" }} />
             </button>
             <div>
-              <h1 className="text-xl font-bold text-white">Panel de Administración</h1>
-              <p className="text-xs text-gray-400">Gestionar contenido y analytics</p>
+              <h1
+                style={{
+                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                  fontWeight: 500,
+                  fontSize: "20px",
+                  lineHeight: 1.2,
+                  color: "var(--color-text)",
+                }}
+              >
+                Panel de administración
+              </h1>
+              <div
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "10px",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--color-text-faint)",
+                  marginTop: "3px",
+                }}
+              >
+                Gestión de contenido y analytics
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-white/[0.03] rounded-xl p-1 border border-white/[0.08]">
-            <button
-              onClick={() => setActiveTab("upload")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === "upload"
-                  ? "bg-violet-600 text-white"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              Subir Contenido
-            </button>
-            <button
-              onClick={() => setActiveTab("manage")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === "manage"
-                  ? "bg-violet-600 text-white"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              Gestionar
-            </button>
-            <button
-              onClick={() => setActiveTab("analytics")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === "analytics"
-                  ? "bg-violet-600 text-white"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              Analytics
-            </button>
+          {/* Tabs */}
+          <div
+            className="flex items-center"
+            style={{
+              border: "1px solid var(--color-line-soft)",
+              borderRadius: 0,
+            }}
+          >
+            {(["upload", "manage", "analytics"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                style={{
+                  padding: "10px 16px",
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  fontFamily: "var(--font-inter)",
+                  cursor: "pointer",
+                  border: "none",
+                  borderRight: tab !== "analytics" ? "1px solid var(--color-line-soft)" : "none",
+                  background: activeTab === tab ? "var(--color-gold)" : "transparent",
+                  color: activeTab === tab ? "var(--color-ink)" : "var(--color-text-muted)",
+                  transition: "color 0.2s ease, background 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  if (activeTab !== tab) e.currentTarget.style.color = "var(--color-text)";
+                }}
+                onMouseLeave={(e) => {
+                  if (activeTab !== tab) e.currentTarget.style.color = "var(--color-text-muted)";
+                }}
+              >
+                {TAB_LABELS[tab]}
+              </button>
+            ))}
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          {[
-            { label: "Clases", value: stats.totalClases, icon: <Headphones className="w-5 h-5" /> },
-            { label: "Archivos", value: stats.totalArchivos, icon: <FileText className="w-5 h-5" /> },
-            { label: "Reproducciones", value: stats.totalReproducciones, icon: <BarChart3 className="w-5 h-5" /> },
-          ].map((stat) => (
-            <GlassCard key={stat.label} className="p-5">
-              <div className="flex items-center gap-3">
-                <div className="text-violet-400">{stat.icon}</div>
-                <div>
-                  <p className="text-2xl font-bold text-white">{stat.value}</p>
-                  <p className="text-xs text-gray-400">{stat.label}</p>
-                </div>
-              </div>
-            </GlassCard>
-          ))}
-        </div>
-
-        {message && (
-          <GlassCard
-            className={`p-4 mb-6 ${
-              message.startsWith("Error")
-                ? "border-red-500/30"
-                : "border-green-500/30"
-            }`}
+      {/* ═══════════ MAIN ═══════════ */}
+      <main className="flex-1">
+        <div className="pad-lateral" style={{ padding: "48px 48px 80px" }}>
+          {/* Stats */}
+          <div
+            className="grid grid-cols-3 overflow-hidden mb-8"
+            style={{
+              background: "var(--color-line-soft)",
+              gap: "1px",
+              borderRadius: 0,
+            }}
           >
-            <p className={`text-sm ${message.startsWith("Error") ? "text-red-400" : "text-green-400"}`}>
-              {message}
-            </p>
-          </GlassCard>
-        )}
-
-        {activeTab === "upload" && (
-          <AdminUpload materias={materias} onSubmit={handleUpload} />
-        )}
-
-        {activeTab === "manage" && (
-          <AdminManage />
-        )}
-
-        {activeTab === "analytics" && (
-          <div className="space-y-6">
-            {analyticsLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-2 gap-4">
-                  <GlassCard className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                        <Users className="w-5 h-5 text-blue-400" />
-                      </div>
-                      <div>
-                        <p className="text-3xl font-bold text-white">{visitantesUnicos}</p>
-                        <p className="text-xs text-gray-400">Visitantes Únicos</p>
-                      </div>
-                    </div>
-                  </GlassCard>
-
-                  <GlassCard className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center">
-                        <Eye className="w-5 h-5 text-violet-400" />
-                      </div>
-                      <div>
-                        <p className="text-3xl font-bold text-white">{totalVisitas}</p>
-                        <p className="text-xs text-gray-400">Total Visitas</p>
-                      </div>
-                    </div>
-                  </GlassCard>
+            {[
+              { label: "Clases", value: stats.totalClases, icon: <Headphones style={{ width: "16px", height: "16px" }} /> },
+              { label: "Archivos", value: stats.totalArchivos, icon: <FileText style={{ width: "16px", height: "16px" }} /> },
+              { label: "Reproducciones", value: stats.totalReproducciones, icon: <BarChart3 style={{ width: "16px", height: "16px" }} /> },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                style={{
+                  background: "var(--color-card)",
+                  padding: "24px 28px",
+                }}
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div
+                    className="flex items-center justify-center"
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "50%",
+                      border: "1px solid var(--color-gold-dim)",
+                    }}
+                  >
+                    <span style={{ color: "var(--color-gold)" }}>{stat.icon}</span>
+                  </div>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "9px",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: "var(--color-text-faint)",
+                    }}
+                  >
+                    {stat.label}
+                  </span>
                 </div>
-
-                {visitasPorDia.length > 0 && (
-                  <GlassCard className="p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-violet-400" />
-                      Visitas por Día (Últimos 7 días)
-                    </h3>
-                    <div className="space-y-3">
-                      {visitasPorDia.map((dia) => (
-                        <div key={dia.fecha} className="flex items-center gap-4">
-                          <span className="text-sm text-gray-400 w-32">{dia.fecha}</span>
-                          <div className="flex-1 h-6 bg-white/[0.03] rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-violet-600 to-indigo-600 rounded-full transition-all"
-                              style={{ width: `${Math.min((dia.total_visitas / Math.max(...visitasPorDia.map((d) => d.total_visitas))) * 100, 100)}%` }}
-                            />
-                          </div>
-                          <span className="text-sm font-medium text-white w-16 text-right">{dia.total_visitas}</span>
-                          <span className="text-xs text-gray-500 w-20 text-right">{dia.visitantes_unicos} únicos</span>
-                        </div>
-                      ))}
-                    </div>
-                  </GlassCard>
-                )}
-
-                {contenidoPopular.length > 0 && (
-                  <GlassCard className="p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-violet-400" />
-                      Contenido Más Popular
-                    </h3>
-                    <div className="space-y-3">
-                      {contenidoPopular.map((item, i) => (
-                        <div key={item.archivo_id} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/[0.03] transition-colors">
-                          <span className="text-lg font-bold text-gray-600 w-8">{i + 1}</span>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white truncate">{item.nombre_display}</p>
-                            <p className="text-xs text-gray-500">
-                              {item.materia} - Clase {item.clase_numero.toString().padStart(2, "0")}
-                            </p>
-                          </div>
-                          <span className={`text-xs font-medium px-2 py-1 rounded-md ${TIPO_COLORS[item.tipo] || "text-gray-400 bg-gray-500/20"}`}>
-                            {item.tipo.replace("_", " ")}
-                          </span>
-                          <div className="text-right">
-                            <p className="text-sm font-bold text-white">{item.total_reproducciones}</p>
-                            <p className="text-xs text-gray-500">reproducciones</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </GlassCard>
-                )}
-
-                {actividadReciente.length > 0 && (
-                  <GlassCard className="p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                      <BarChart3 className="w-5 h-5 text-violet-400" />
-                      Actividad Reciente
-                    </h3>
-                    <div className="space-y-2">
-                      {actividadReciente.map((act, i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.03] transition-colors">
-                          <span className={`text-xs font-medium px-2 py-1 rounded-md ${TIPO_COLORS[act.tipo] || "text-gray-400 bg-gray-500/20"}`}>
-                            {TIPO_LABELS[act.tipo] || act.tipo}
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm text-white truncate">
-                              {act.archivo_nombre || act.pagina || act.tipo}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {act.materia && ` ${act.materia}`}
-                              {act.clase_numero && ` - Clase ${act.clase_numero.toString().padStart(2, "0")}`}
-                            </p>
-                          </div>
-                          <span className="text-xs text-gray-500">
-                            {new Date(act.created_at).toLocaleString("es-AR", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </GlassCard>
-                )}
-              </>
-            )}
+                <div
+                  style={{
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "32px",
+                    fontWeight: 500,
+                    lineHeight: 1,
+                    color: "var(--color-text)",
+                  }}
+                >
+                  {String(stat.value).padStart(2, "0")}
+                </div>
+              </div>
+            ))}
           </div>
-        )}
+
+          {/* Message */}
+          {message && (
+            <div
+              style={{
+                padding: "16px 20px",
+                marginBottom: "24px",
+                background: message.startsWith("Error") ? "rgba(224, 85, 85, 0.08)" : "rgba(185, 154, 98, 0.08)",
+                border: `1px solid ${message.startsWith("Error") ? "rgba(224, 85, 85, 0.3)" : "var(--color-gold-dim)"}`,
+                borderRadius: 0,
+              }}
+            >
+              <p
+                style={{
+                  fontSize: "13px",
+                  color: message.startsWith("Error") ? "#E05555" : "var(--color-gold)",
+                  fontFamily: "var(--font-inter)",
+                }}
+              >
+                {message}
+              </p>
+            </div>
+          )}
+
+          {/* Upload Tab */}
+          {activeTab === "upload" && (
+            <AdminUpload materias={materias} onSubmit={handleUpload} />
+          )}
+
+          {/* Manage Tab */}
+          {activeTab === "manage" && <AdminManage />}
+
+          {/* Analytics Tab */}
+          {activeTab === "analytics" && (
+            <div className="space-y-6">
+              {analyticsLoading ? (
+                <div
+                  className="flex items-center justify-center"
+                  style={{ padding: "80px 0" }}
+                >
+                  <div
+                    className="animate-spin"
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      border: "2px solid var(--color-line)",
+                      borderTopColor: "var(--color-gold)",
+                      borderRadius: "50%",
+                    }}
+                  />
+                </div>
+              ) : (
+                <>
+                  {/* Visitantes + Visitas */}
+                  <div
+                    className="grid grid-cols-2 overflow-hidden"
+                    style={{
+                      background: "var(--color-line-soft)",
+                      gap: "1px",
+                      borderRadius: 0,
+                    }}
+                  >
+                    <div style={{ background: "var(--color-card)", padding: "28px 30px" }}>
+                      <div className="flex items-center gap-3 mb-4">
+                        <div
+                          className="flex items-center justify-center"
+                          style={{
+                            width: "36px",
+                            height: "36px",
+                            borderRadius: "50%",
+                            border: "1px solid var(--color-gold-dim)",
+                          }}
+                        >
+                          <Users style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+                        </div>
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "9px",
+                            letterSpacing: "0.14em",
+                            textTransform: "uppercase",
+                            color: "var(--color-text-faint)",
+                          }}
+                        >
+                          Visitantes únicos
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "36px",
+                          fontWeight: 500,
+                          lineHeight: 1,
+                          color: "var(--color-gold)",
+                        }}
+                      >
+                        {String(visitantesUnicos).padStart(2, "0")}
+                      </div>
+                    </div>
+
+                    <div style={{ background: "var(--color-card)", padding: "28px 30px" }}>
+                      <div className="flex items-center gap-3 mb-4">
+                        <div
+                          className="flex items-center justify-center"
+                          style={{
+                            width: "36px",
+                            height: "36px",
+                            borderRadius: "50%",
+                            border: "1px solid var(--color-gold-dim)",
+                          }}
+                        >
+                          <Eye style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+                        </div>
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "9px",
+                            letterSpacing: "0.14em",
+                            textTransform: "uppercase",
+                            color: "var(--color-text-faint)",
+                          }}
+                        >
+                          Total visitas
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "36px",
+                          fontWeight: 500,
+                          lineHeight: 1,
+                          color: "var(--color-text)",
+                        }}
+                      >
+                        {String(totalVisitas).padStart(2, "0")}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Visitas por día */}
+                  {visitasPorDia.length > 0 && (
+                    <article
+                      style={{
+                        background: "var(--color-card)",
+                        border: "1px solid var(--color-line-soft)",
+                        padding: "28px 30px",
+                        borderRadius: 0,
+                      }}
+                    >
+                      <h3
+                        style={{
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontWeight: 400,
+                          fontSize: "20px",
+                          color: "var(--color-text)",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        Visitas por día
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "10px",
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                            color: "var(--color-text-faint)",
+                            marginLeft: "12px",
+                          }}
+                        >
+                          Últimos 7 días
+                        </span>
+                      </h3>
+                      <div className="space-y-3">
+                        {visitasPorDia.map((dia) => (
+                          <div key={dia.fecha} className="flex items-center gap-4">
+                            <span
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "12px",
+                                color: "var(--color-text-muted)",
+                                width: "120px",
+                              }}
+                            >
+                              {dia.fecha}
+                            </span>
+                            <div
+                              style={{
+                                flex: 1,
+                                height: "24px",
+                                background: "var(--color-ink)",
+                                borderRadius: 0,
+                                overflow: "hidden",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  height: "100%",
+                                  background: "var(--color-gold)",
+                                  width: `${(dia.total_visitas / maxVisitas) * 100}%`,
+                                  transition: "width 0.3s ease",
+                                }}
+                              />
+                            </div>
+                            <span
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "13px",
+                                fontWeight: 500,
+                                color: "var(--color-text)",
+                                width: "40px",
+                                textAlign: "right",
+                              }}
+                            >
+                              {dia.total_visitas}
+                            </span>
+                            <span
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "11px",
+                                color: "var(--color-text-faint)",
+                                width: "80px",
+                                textAlign: "right",
+                              }}
+                            >
+                              {dia.visitantes_unicos} únicos
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </article>
+                  )}
+
+                  {/* Contenido más popular */}
+                  {contenidoPopular.length > 0 && (
+                    <article
+                      style={{
+                        background: "var(--color-card)",
+                        border: "1px solid var(--color-line-soft)",
+                        padding: "28px 30px",
+                        borderRadius: 0,
+                      }}
+                    >
+                      <h3
+                        style={{
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontWeight: 400,
+                          fontSize: "20px",
+                          color: "var(--color-text)",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        Contenido más popular
+                      </h3>
+                      <div className="space-y-3">
+                        {contenidoPopular.map((item, i) => (
+                          <div
+                            key={item.archivo_id}
+                            className="flex items-center gap-4"
+                            style={{
+                              padding: "12px 0",
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "16px",
+                                fontWeight: 500,
+                                color: "var(--color-text-faint)",
+                                width: "32px",
+                              }}
+                            >
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <p
+                                style={{
+                                  fontSize: "13px",
+                                  fontWeight: 500,
+                                  color: "var(--color-text)",
+                                  marginBottom: "2px",
+                                }}
+                              >
+                                {item.nombre_display}
+                              </p>
+                              <p
+                                style={{
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "11px",
+                                  color: "var(--color-text-faint)",
+                                }}
+                              >
+                                {item.materia} — Clase {item.clase_numero.toString().padStart(2, "0")}
+                              </p>
+                            </div>
+                            <div
+                              style={{
+                                padding: "3px 8px",
+                                border: "1px solid var(--color-gold-dim)",
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "9px",
+                                letterSpacing: "0.1em",
+                                textTransform: "uppercase",
+                                color: "var(--color-gold)",
+                              }}
+                            >
+                              {item.tipo.replace("_", " ")}
+                            </div>
+                            <div style={{ textAlign: "right", width: "100px" }}>
+                              <p
+                                style={{
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "16px",
+                                  fontWeight: 500,
+                                  color: "var(--color-text)",
+                                }}
+                              >
+                                {item.total_reproducciones}
+                              </p>
+                              <p
+                                style={{
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "9px",
+                                  letterSpacing: "0.08em",
+                                  textTransform: "uppercase",
+                                  color: "var(--color-text-faint)",
+                                }}
+                              >
+                                Reproducciones
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </article>
+                  )}
+
+                  {/* Actividad reciente */}
+                  {actividadReciente.length > 0 && (
+                    <article
+                      style={{
+                        background: "var(--color-card)",
+                        border: "1px solid var(--color-line-soft)",
+                        padding: "28px 30px",
+                        borderRadius: 0,
+                      }}
+                    >
+                      <h3
+                        style={{
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontWeight: 400,
+                          fontSize: "20px",
+                          color: "var(--color-text)",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        Actividad reciente
+                      </h3>
+                      <div className="space-y-2">
+                        {actividadReciente.map((act, i) => (
+                          <div
+                            key={i}
+                            className="flex items-center gap-4"
+                            style={{
+                              padding: "8px 0",
+                              borderBottom: i < actividadReciente.length - 1 ? "1px solid var(--color-line-soft)" : "none",
+                              transition: "background 0.2s ease",
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}
+                            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                          >
+                            <div
+                              style={{
+                                padding: "2px 8px",
+                                border: "1px solid var(--color-line)",
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "9px",
+                                letterSpacing: "0.08em",
+                                textTransform: "uppercase",
+                                color: "var(--color-text-muted)",
+                              }}
+                            >
+                              {TIPO_LABELS[act.tipo] || act.tipo}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p
+                                style={{
+                                  fontSize: "13px",
+                                  color: "var(--color-text)",
+                                  marginBottom: "1px",
+                                }}
+                              >
+                                {act.archivo_nombre || act.pagina || act.tipo}
+                              </p>
+                              {act.materia && (
+                                <p
+                                  style={{
+                                    fontFamily: "var(--font-ibm-plex-mono)",
+                                    fontSize: "10px",
+                                    color: "var(--color-text-faint)",
+                                  }}
+                                >
+                                  {act.materia}
+                                  {act.clase_numero ? ` — Clase ${act.clase_numero.toString().padStart(2, "0")}` : ""}
+                                </p>
+                              )}
+                            </div>
+                            <span
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "10px",
+                                color: "var(--color-text-faint)",
+                              }}
+                            >
+                              {new Date(act.created_at).toLocaleString("es-AR", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </article>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </main>
+
+      {/* ═══════════ FOOTER ═══════════ */}
+      <footer className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
+        <div
+          className="flex items-center justify-between pad-lateral"
+          style={{
+            padding: "28px 48px",
+            fontFamily: "var(--font-ibm-plex-mono)",
+            fontSize: "10px",
+            letterSpacing: "0.08em",
+            color: "var(--color-text-faint)",
+            textTransform: "uppercase",
+          }}
+        >
+          <span>Derecho UBA — Sistema de gestión de clases</span>
+          <span>v0.2 — Prototipo</span>
+        </div>
+      </footer>
     </div>
   );
 }
