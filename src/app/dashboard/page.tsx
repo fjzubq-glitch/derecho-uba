@@ -4,9 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { trackActivity } from "@/lib/tracking";
-import GlassCard from "@/components/ui/GlassCard";
-import { Shield, ArrowRight } from "@/components/icons";
-import { cn } from "@/lib/utils";
+import { Scale, Shield, ArrowRight } from "@/components/icons";
 
 interface Materia {
   id: string;
@@ -56,23 +54,16 @@ export default function DashboardPage() {
             const { count } = await supabase
               .from("archivos")
               .select("*", { count: "exact", head: true })
-              .in("clase_id", claseIds)
-              .in("tipo", ["audio_clase", "podcast"]);
-            totalAudios = count || 0;
-
-            const { data: archivosIds } = await supabase
-              .from("archivos")
-              .select("id")
               .in("clase_id", claseIds);
 
-            const archIds = archivosIds?.map((a) => a.id) || [];
-            if (archIds.length > 0) {
-              const { count } = await supabase
-                .from("reproducciones")
-                .select("*", { count: "exact", head: true })
-                .in("archivo_id", archIds);
-              totalRep = count || 0;
-            }
+            totalAudios = count || 0;
+
+            const { data: archivos } = await supabase
+              .from("archivos")
+              .select("play_count")
+              .in("clase_id", claseIds);
+
+            totalRep = archivos?.reduce((sum, a) => sum + (a.play_count || 0), 0) || 0;
           }
 
           return {
@@ -83,137 +74,362 @@ export default function DashboardPage() {
           };
         })
       );
+
       setMaterias(materiasConStats);
+
       setStats({
-        clases: materiasConStats.reduce((acc, m) => acc + (m.total_clases || 0), 0),
-        audios: materiasConStats.reduce((acc, m) => acc + (m.total_audios || 0), 0),
-        reproducciones: materiasConStats.reduce((acc, m) => acc + (m.total_reproducciones || 0), 0),
+        clases: materiasConStats.reduce((sum, m) => sum + m.total_clases, 0),
+        audios: materiasConStats.reduce((sum, m) => sum + m.total_audios, 0),
+        reproducciones: materiasConStats.reduce((sum, m) => sum + m.total_reproducciones, 0),
       });
     }
     setLoading(false);
   }
 
-  return (
-    <div className="min-h-screen relative">
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-violet-600/10 blur-[120px] animate-pulse"></div>
-        <div className="absolute top-[40%] -right-[10%] w-[40%] h-[40%] rounded-full bg-indigo-600/10 blur-[100px] animate-pulse" style={{ animationDelay: "2s" }}></div>
-        <div className="absolute bottom-[20%] left-[20%] w-[35%] h-[35%] rounded-full bg-fuchsia-600/10 blur-[90px] animate-pulse" style={{ animationDelay: "4s" }}></div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgNDBMNDAgMFY0MEgwWiIgZmlsbD0idHJhbnNwYXJlbnQiLz48Y2lyY2xlIGN4PSIyIiBjeT0iMiIgcj0iMSIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4wMyIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] bg-[length:40px_40px] opacity-30"></div>
-      </div>
+  const getMateriaName = (nombre: string) => {
+    const parts = nombre.split(",");
+    return {
+      title: parts[0]?.trim() || nombre,
+      meta: parts.slice(1).map((p) => p.trim()).join(", ") || null,
+    };
+  };
 
-      <header className="relative z-30 border-b border-white/[0.06] bg-[rgba(10,10,20,0.7)] backdrop-blur-md sticky top-0">
-        <div className="max-w-7xl mx-auto px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
-                  <Shield className="w-6 h-6 text-white" />
-                </div>
-                <h1 className="text-2xl font-bold text-white tracking-tight">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-300">Derecho</span>
-                  <span className="text-white ml-1">UBA</span>
-                </h1>
-              </div>
-              <p className="text-xs text-gray-400 mt-1 font-light">
-                {new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-              </p>
+  return (
+    <div className="min-h-screen flex flex-col">
+      {/* Top Bar */}
+      <header
+        className="flex items-center justify-between px-6 sm:px-12 py-5 border-b"
+        style={{
+          borderColor: "var(--color-line-soft)",
+          background: "linear-gradient(180deg, var(--color-ink-2), var(--color-ink))",
+        }}
+      >
+        <div className="flex items-center gap-3.5">
+          <div
+            className="w-[34px] h-[34px] flex items-center justify-center rounded-full border shrink-0"
+            style={{ borderColor: "var(--color-gold-dim)" }}
+          >
+            <Scale className="w-4 h-4" style={{ color: "var(--color-gold)" }} />
+          </div>
+          <div className="leading-tight">
+            <div style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "18px", letterSpacing: "0.01em" }}>
+              Derecho <span style={{ color: "var(--color-gold)", fontWeight: 400 }}>UBA</span>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="hidden lg:flex items-center gap-6 px-6 py-2.5 bg-white/[0.03] rounded-full border border-white/[0.08] shadow-sm backdrop-blur-sm">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-white">{stats.clases}</p>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Clases</p>
-                </div>
-                <div className="w-px h-8 bg-white/[0.1]"></div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-white">{stats.audios}</p>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Audios</p>
-                </div>
-                <div className="w-px h-8 bg-white/[0.1]"></div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-violet-400">{stats.reproducciones}</p>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Reproduc.</p>
-                </div>
-              </div>
-              <button
-                onClick={() => router.push("/admin")}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-400 hover:text-white transition-colors hover:bg-white/[0.05] rounded-lg border border-transparent hover:border-white/[0.1]"
-              >
-                <Shield className="w-4 h-4" />
-                <span className="hidden sm:inline">Admin</span>
-              </button>
+            <div
+              className="mt-0.5"
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "10px",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--color-text-faint)",
+              }}
+            >
+              Gestión académica
             </div>
           </div>
+        </div>
+        <div
+          className="text-right hidden sm:block"
+          style={{
+            fontFamily: "var(--font-ibm-plex-mono)",
+            fontSize: "11px",
+            color: "var(--color-text-faint)",
+            letterSpacing: "0.05em",
+          }}
+        >
+          {new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+          <br />
+          Sesión — Admin
         </div>
       </header>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-8 pt-10 pb-12">
-        <div className="mb-8">
-          <h2 className="text-4xl font-bold text-white mb-3 tracking-tight">
-            Mis <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-300">Materias</span>
-          </h2>
-          <p className="text-gray-400 font-light max-w-xl">Seleccioná una materia para gestionar clases, audios y transcripciones</p>
+      {/* Hero */}
+      <section
+        className="relative px-6 sm:px-12 py-14 sm:py-20 overflow-hidden border-b"
+        style={{ borderColor: "var(--color-line-soft)" }}
+      >
+        <svg
+          className="absolute right-[-40px] top-[-60px] w-[420px] h-[420px] opacity-[0.035] pointer-events-none"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="var(--color-gold)"
+          strokeWidth="0.4"
+        >
+          <path d="M12 2 L12 22 M6 6 L18 6 M4 6 L4 12 A4 4 0 0 0 8 6 M20 6 L20 12 A4 4 0 0 1 16 6 M7 20 L17 20" />
+        </svg>
+
+        <div
+          className="flex items-center gap-2.5 mb-4"
+          style={{
+            fontFamily: "var(--font-ibm-plex-mono)",
+            fontSize: "11px",
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "var(--color-gold)",
+          }}
+        >
+          <span className="w-[22px] h-px inline-block" style={{ background: "var(--color-gold-dim)" }} />
+          Panel de materias
+        </div>
+
+        <h1
+          style={{
+            fontFamily: "var(--font-fraunces)",
+            fontWeight: 400,
+            fontSize: "clamp(40px, 5vw, 58px)",
+            lineHeight: 1.05,
+            letterSpacing: "-0.01em",
+            maxWidth: "720px",
+          }}
+        >
+          Tus clases, ordenadas con{" "}
+          <span style={{ fontStyle: "italic", color: "var(--color-gold)", fontWeight: 300 }}>criterio</span>{" "}
+          de estudio.
+        </h1>
+
+        <p
+          className="mt-5"
+          style={{
+            maxWidth: "480px",
+            color: "var(--color-text-muted)",
+            fontSize: "15px",
+            lineHeight: 1.6,
+          }}
+        >
+          Seleccioná una materia para gestionar clases, audios y transcripciones.
+        </p>
+
+        <div
+          className="flex gap-14 mt-13 pt-8 border-t"
+          style={{
+            borderColor: "var(--color-line-soft)",
+            maxWidth: "560px",
+          }}
+        >
+          <div>
+            <div
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "30px",
+                fontWeight: 500,
+                color: "var(--color-gold)",
+                lineHeight: 1,
+              }}
+            >
+              {String(stats.clases).padStart(2, "0")}
+            </div>
+            <div
+              className="mt-2"
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "10px",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--color-text-faint)",
+              }}
+            >
+              Clases cargadas
+            </div>
+          </div>
+          <div>
+            <div
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "30px",
+                fontWeight: 500,
+                lineHeight: 1,
+              }}
+            >
+              {String(stats.audios).padStart(2, "0")}
+            </div>
+            <div
+              className="mt-2"
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "10px",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--color-text-faint)",
+              }}
+            >
+              Audios
+            </div>
+          </div>
+          <div>
+            <div
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "30px",
+                fontWeight: 500,
+                lineHeight: 1,
+              }}
+            >
+              {String(stats.reproducciones).padStart(2, "0")}
+            </div>
+            <div
+              className="mt-2"
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "10px",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--color-text-faint)",
+              }}
+            >
+              Reproducciones
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Materias Grid */}
+      <section className="px-6 sm:px-12 py-16 flex-1">
+        <div className="flex items-baseline justify-between mb-9 flex-wrap gap-3">
+          <div style={{ fontFamily: "var(--font-fraunces)", fontWeight: 400, fontSize: "26px" }}>
+            Mis materias
+          </div>
+          <div
+            style={{
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "11px",
+              color: "var(--color-text-faint)",
+              letterSpacing: "0.08em",
+            }}
+          >
+            {materias.length} materias activas
+          </div>
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px" style={{ background: "var(--color-line-soft)", border: "1px solid var(--color-line-soft)" }}>
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-72 rounded-3xl bg-white/[0.03] animate-pulse border border-white/[0.05]" />
+              <div key={i} className="h-72" style={{ background: "var(--color-card)" }} />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {materias.map((m) => (
-              <div
-                key={m.id}
-                onClick={() => router.push(`/dashboard/${m.slug}`)}
-                className="group cursor-pointer"
-              >
-                <div className="relative h-full">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-500/20 to-indigo-500/20 rounded-3xl blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                  <GlassCard className="p-8 h-full relative z-10 hover:scale-[1.02] transition-transform duration-300">
-                    <div className="flex items-start justify-between mb-6">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-600/20 to-indigo-600/20 border border-white/[0.08] flex items-center justify-center shadow-inner">
-                        <Shield className="w-6 h-6 text-violet-400" />
+          <div
+            className="grid grid-cols-1 md:grid-cols-3 gap-px"
+            style={{ background: "var(--color-line-soft)", border: "1px solid var(--color-line-soft)" }}
+          >
+            {materias.map((m) => {
+              const { title, meta } = getMateriaName(m.nombre);
+              const isEmpty = m.total_clases === 0;
+
+              return (
+                <article
+                  key={m.id}
+                  onClick={() => router.push(`/dashboard/${m.slug}`)}
+                  className="flex flex-col cursor-pointer transition-colors duration-200"
+                  style={{
+                    background: "var(--color-card)",
+                    padding: "32px 30px",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
+                >
+                  <div className="flex items-start justify-between mb-6">
+                    <div
+                      className="w-[38px] h-[38px] rounded-full flex items-center justify-center border transition-colors duration-200"
+                      style={{ borderColor: isEmpty ? "var(--color-line)" : "var(--color-line)" }}
+                    >
+                      <Shield
+                        className="w-4 h-4"
+                        style={{ color: "var(--color-gold)", opacity: isEmpty ? 0.4 : 0.85 }}
+                      />
+                    </div>
+                    <div className="text-right">
+                      <div
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "22px",
+                          fontWeight: 500,
+                        }}
+                      >
+                        {m.total_clases}
                       </div>
-                      <div className="flex flex-col items-end">
-                        <p className="text-3xl font-bold text-white">{m.total_clases}</p>
-                        <p className="text-xs text-gray-500 uppercase tracking-wider">Clases</p>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "9px",
+                          letterSpacing: "0.12em",
+                          textTransform: "uppercase",
+                          color: "var(--color-text-faint)",
+                          marginTop: "2px",
+                        }}
+                      >
+                        Clases
                       </div>
                     </div>
+                  </div>
 
-                    <h3 className="text-xl font-semibold text-white mb-1">{m.nombre.split(",")[0]}</h3>
-                    <p className="text-sm text-gray-400 mb-4">{m.nombre.split(",")[1]?.trim()}</p>
+                  <h3
+                    style={{
+                      fontFamily: "var(--font-fraunces)",
+                      fontWeight: 500,
+                      fontSize: "20px",
+                      marginBottom: "6px",
+                      color: isEmpty ? "var(--color-text-muted)" : "inherit",
+                    }}
+                  >
+                    {title}
+                  </h3>
 
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-400 flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-violet-500"></span>
-                          Archivos
-                        </span>
-                        <span className="text-white font-medium">{m.total_audios}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-400 flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
-                          Reproducciones
-                        </span>
-                        <span className="text-white font-medium">{m.total_reproducciones}</span>
-                      </div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "11px",
+                      color: "var(--color-text-faint)",
+                      letterSpacing: "0.02em",
+                      marginBottom: "24px",
+                    }}
+                  >
+                    {meta || "Sin comisión asignada"}
+                  </div>
+
+                  <div
+                    className="flex flex-col gap-2.5 mb-7 pt-5 border-t"
+                    style={{ borderColor: "var(--color-line-soft)" }}
+                  >
+                    <div className="flex items-center justify-between" style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>
+                      <span>Archivos</span>
+                      <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px" }}>{m.total_audios}</span>
                     </div>
-
-                    <div className="mt-8 flex items-center gap-2 text-violet-400 text-sm font-medium group-hover:gap-3 transition-all">
-                      <span className="border-b border-violet-500/30 pb-0.5 group-hover:border-violet-500">Ver contenido</span>
-                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    <div className="flex items-center justify-between" style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>
+                      <span>Reproducciones</span>
+                      <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px" }}>{m.total_reproducciones}</span>
                     </div>
-                  </GlassCard>
-                </div>
-              </div>
-            ))}
+                  </div>
+
+                  <div
+                    className="mt-auto inline-flex items-center gap-2 w-fit"
+                    style={{ fontSize: "13px", color: "var(--color-gold)", fontWeight: 500 }}
+                  >
+                    Ver contenido
+                    <ArrowRight className="w-[13px] h-[13px] transition-transform duration-200 group-hover:translate-x-0.5" />
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
-      </main>
+      </section>
+
+      {/* Footer */}
+      <footer
+        className="flex items-center justify-between px-6 sm:px-12 py-7 border-t"
+        style={{
+          borderColor: "var(--color-line-soft)",
+          fontFamily: "var(--font-ibm-plex-mono)",
+          fontSize: "10px",
+          letterSpacing: "0.08em",
+          color: "var(--color-text-faint)",
+          textTransform: "uppercase",
+        }}
+      >
+        <span>Derecho UBA — Sistema de gestión de clases</span>
+        <span>v0.1</span>
+      </footer>
     </div>
   );
 }

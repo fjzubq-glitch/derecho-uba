@@ -1,38 +1,29 @@
 @import "tailwindcss";
 
-:root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+@theme inline {
+  --color-ink: #0A0D16;
+  --color-ink-2: #10141F;
+  --color-card: #12172A;
+  --color-card-hover: #161C33;
+  --color-line: #232A42;
+  --color-line-soft: #1A2036;
+  --color-gold: #B99A62;
+  --color-gold-dim: #7C6A47;
+  --color-text-main: #ECE9E1;
+  --color-text-muted: #8992A8;
+  --color-text-faint: #5A6178;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.mesh-gradient {
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(99, 50, 251, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-    linear-gradient(180deg, #0a0a14 0%, #0d0d1a 50%, #0a0a14 100%);
-}
-
-.glass {
-  background: rgba(17, 25, 40, 0.55);
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+  background: var(--color-ink);
+  color: var(--color-text-main);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
 input[type="range"] {
@@ -40,7 +31,7 @@ input[type="range"] {
   appearance: none;
   height: 4px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--color-line);
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -49,23 +40,18 @@ input[type="range"]::-webkit-slider-thumb {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #8b5cf6;
+  background: var(--color-gold);
   cursor: pointer;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-gold-dim); }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235A6178' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  appearance: none;
 }
