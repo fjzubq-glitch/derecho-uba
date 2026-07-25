@@ -202,7 +202,23 @@ export function LogOut(props: React.SVGProps<SVGSVGElement>) {
 export function Shield(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24" {...props}>
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      {/* Columna central */}
+      <line x1="12" y1="4" x2="12" y2="20" />
+      {/* Base */}
+      <line x1="8" y1="20" x2="16" y2="20" />
+      <line x1="9" y1="22" x2="15" y2="22" />
+      {/* Viga superior */}
+      <line x1="4" y1="7" x2="20" y2="7" />
+      {/* Círculo decorativo */}
+      <circle cx="12" cy="5" r="1.5" />
+      {/* Cuerda izquierda + plato */}
+      <line x1="4" y1="7" x2="3" y2="13" />
+      <line x1="4" y1="7" x2="5" y2="13" />
+      <path d="M1 13 Q3 15.5 5 13" />
+      {/* Cuerda derecha + plato */}
+      <line x1="20" y1="7" x2="19" y2="13" />
+      <line x1="20" y1="7" x2="21" y2="13" />
+      <path d="M19 13 Q20 15.5 21 13" />
     </svg>
   );
 }
