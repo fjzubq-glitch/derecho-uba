@@ -32,7 +32,7 @@ export async function uploadToR2(
       Authorization: auth,
       "Content-Type": contentType,
     },
-    body: file,
+    body: new Uint8Array(file),
   });
 
   if (!res.ok) {
