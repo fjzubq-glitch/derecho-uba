@@ -38,7 +38,7 @@ export default function MateriaCard({
       <div
         className={`w-14 h-14 rounded-xl bg-gradient-to-br ${COLORS[slug] || COLORS["contratos-i"]} flex items-center justify-center text-violet-400 mb-4`}
       >
-        {ICONS[slug] || <BookOpen className="w-8 h-8" />}
+        {ICONS[slug] || <Scale className="w-8 h-8" />}
       </div>
 
       <h3 className="text-lg font-semibold text-white mb-1">{nombre}</h3>
