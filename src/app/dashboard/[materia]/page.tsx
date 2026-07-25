@@ -4,8 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { trackActivity } from "@/lib/tracking";
-import GlassCard from "@/components/ui/GlassCard";
-import { ArrowLeft, Calendar, Headphones, FileText, Play, ExternalLink } from "@/components/icons";
+import { ArrowLeft, Calendar, Headphones, FileText, Play, ExternalLink, Shield } from "@/components/icons";
 import { formatDuration, getYouTubeThumbnail } from "@/lib/utils";
 
 interface Archivo {
@@ -34,13 +33,6 @@ const TIPO_ICONS: Record<string, React.ReactNode> = {
   youtube: <ExternalLink className="w-4 h-4" />,
 };
 
-const TIPO_COLORS: Record<string, string> = {
-  audio_clase: "text-violet-400 bg-violet-500/20",
-  podcast: "text-cyan-400 bg-cyan-500/20",
-  transcripcion: "text-amber-400 bg-amber-500/20",
-  youtube: "text-red-400 bg-red-500/20",
-};
-
 export default function MateriaPage() {
   const params = useParams();
   const router = useRouter();
@@ -49,7 +41,6 @@ export default function MateriaPage() {
   const [materia, setMateria] = useState<{ id: string; nombre: string } | null>(null);
   const [clases, setClases] = useState<Clase[]>([]);
   const [loading, setLoading] = useState(true);
-  const [playingAudio, setPlayingAudio] = useState<{ src: string; title: string } | null>(null);
 
   useEffect(() => {
     loadData();
@@ -90,175 +81,306 @@ export default function MateriaPage() {
     setLoading(false);
   }
 
-  async function playAudio(archivo: Archivo) {
-    if (archivo.youtube_url) {
-      window.open(archivo.youtube_url, "_blank");
-      trackActivity({ tipo: "youtube_open", pagina: "materia", materia_slug: slug, archivo_id: archivo.id });
-      return;
-    }
+  const splitName = (n: string) => {
+    const p = n.split(",");
+    return { title: p[0]?.trim() || n, meta: p.slice(1).map((s) => s.trim()).join(", ") || null };
+  };
 
-    const res = await fetch(`/api/stream/${archivo.id}`);
-    const data = await res.json();
-
-    if (data.url) {
-      setPlayingAudio({ src: data.url, title: archivo.nombre_display });
-
-      await supabase.rpc("increment_play_count", { file_id: archivo.id });
-      trackActivity({ tipo: "play_start", pagina: "materia", materia_slug: slug, archivo_id: archivo.id });
-    }
-  }
+  const { title: materiaTitle, meta: materiaMeta } = materia ? splitName(materia.nombre) : { title: "", meta: null };
 
   return (
-    <div className="min-h-screen pb-32">
-      <header className="border-b border-white/[0.08] bg-[rgba(10,10,20,0.8)] backdrop-blur-lg sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-4">
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--color-ink)" }}>
+      {/* ═══════════ HEADER ═══════════ */}
+      <header
+        className="border-b"
+        style={{
+          borderColor: "var(--color-line-soft)",
+          background: "linear-gradient(180deg, var(--color-ink-2) 0%, var(--color-ink) 100%)",
+        }}
+      >
+        <div className="flex items-center gap-4 pad-lateral" style={{ padding: "22px 48px" }}>
           <button
             onClick={() => router.push("/dashboard")}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="flex items-center justify-center"
+            style={{
+              width: "34px",
+              height: "34px",
+              borderRadius: "50%",
+              border: "1px solid var(--color-line)",
+              color: "var(--color-gold)",
+              transition: "border-color 0.25s ease",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-line)")}
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft style={{ width: "15px", height: "15px" }} />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-white">
-              {materia?.nombre || "Cargando..."}
+            <h1
+              style={{
+                fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                fontWeight: 500,
+                fontSize: "20px",
+                lineHeight: 1.2,
+                color: "var(--color-text)",
+              }}
+            >
+              {materiaTitle}
             </h1>
+            {materiaMeta && (
+              <div
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "10px",
+                  letterSpacing: "0.08em",
+                  color: "var(--color-text-faint)",
+                  marginTop: "3px",
+                }}
+              >
+                {materiaMeta}
+              </div>
+            )}
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-8">
-        {loading ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 rounded-2xl bg-white/[0.03] animate-pulse" />
-            ))}
-          </div>
-        ) : clases.length === 0 ? (
-          <GlassCard className="p-8 text-center">
-            <p className="text-gray-400">No hay clases cargadas todavía</p>
-          </GlassCard>
-        ) : (
-          <div className="space-y-4">
-            {clases.map((clase) => (
-              <GlassCard key={clase.id} className="p-5">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <span className="text-xs text-violet-400 font-medium">
-                      CLASE {clase.numero.toString().padStart(2, "0")}
-                    </span>
-                    <h3 className="text-lg font-semibold text-white mt-1">
-                      {clase.titulo}
-                    </h3>
-                  </div>
-                  {clase.fecha && (
-                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {new Date(clase.fecha).toLocaleDateString("es-AR", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
+      {/* ═══════════ MAIN ═══════════ */}
+      <main className="flex-1">
+        <div className="pad-lateral" style={{ padding: "60px 48px" }}>
+          {loading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    height: "180px",
+                    background: "var(--color-card)",
+                    borderRadius: 0,
+                  }}
+                />
+              ))}
+            </div>
+          ) : clases.length === 0 ? (
+            <div
+              style={{
+                padding: "80px 48px",
+                textAlign: "center",
+                background: "var(--color-card)",
+                border: "1px solid var(--color-line-soft)",
+                borderRadius: 0,
+              }}
+            >
+              <p style={{ color: "var(--color-text-muted)", fontSize: "15px" }}>
+                No hay clases cargadas todavía
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {clases.map((clase) => (
+                <article
+                  key={clase.id}
+                  style={{
+                    background: "var(--color-card)",
+                    border: "1px solid var(--color-line-soft)",
+                    padding: "32px 30px",
+                    borderRadius: 0,
+                    transition: "background 0.25s ease",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
+                >
+                  {/* Header de la clase */}
+                  <div className="flex items-start justify-between mb-6 pb-6 border-b" style={{ borderColor: "var(--color-line-soft)" }}>
+                    <div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "10px",
+                          letterSpacing: "0.14em",
+                          textTransform: "uppercase",
+                          color: "var(--color-gold)",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        Clase {clase.numero.toString().padStart(2, "0")}
+                      </div>
+                      <h3
+                        style={{
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontWeight: 500,
+                          fontSize: "22px",
+                          lineHeight: 1.2,
+                          color: "var(--color-text)",
+                        }}
+                      >
+                        {clase.titulo}
+                      </h3>
                     </div>
-                  )}
-                </div>
+                    {clase.fecha && (
+                      <div
+                        className="flex items-center gap-2"
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "11px",
+                          color: "var(--color-text-faint)",
+                        }}
+                      >
+                        <Calendar style={{ width: "14px", height: "14px" }} />
+                        {new Date(clase.fecha).toLocaleDateString("es-AR", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </div>
+                    )}
+                  </div>
 
-                <div className="space-y-2">
-                  {clase.archivos.map((archivo) => {
-                    const isYouTube = archivo.tipo === "youtube" || archivo.youtube_url;
-                    const thumbnail = isYouTube
-                      ? getYouTubeThumbnail(archivo.youtube_url || "")
-                      : null;
+                  {/* Archivos */}
+                  <div className="space-y-3">
+                    {clase.archivos.map((archivo) => {
+                      const isYouTube = archivo.tipo === "youtube" || archivo.youtube_url;
 
-                    return (
-                      <div key={archivo.id}>
-                        {isYouTube && thumbnail && (
-                          <a
-                            href={archivo.youtube_url || "#"}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block mb-3 group"
-                          >
-                            <div className="relative overflow-hidden rounded-xl border border-white/[0.12] max-w-md">
-                              <img
-                                src={thumbnail}
-                                alt={archivo.nombre_display}
-                                className="w-full aspect-video object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                              />
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-14 h-14 rounded-full bg-red-600/90 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                                  <Play className="w-7 h-7 text-white ml-0.5" fill="white" />
+                      return (
+                        <div key={archivo.id}>
+                          {isYouTube && archivo.youtube_url && (
+                            <a
+                              href={archivo.youtube_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block mb-4 group"
+                              onClick={() => trackActivity({ tipo: "youtube_open", pagina: "materia", materia_slug: slug, archivo_id: archivo.id })}
+                            >
+                              <div
+                                className="relative overflow-hidden border max-w-md"
+                                style={{
+                                  borderColor: "var(--color-line)",
+                                  borderRadius: 0,
+                                }}
+                              >
+                                <img
+                                  src={getYouTubeThumbnail(archivo.youtube_url) || "/placeholder-youtube.png"}
+                                  alt={archivo.nombre_display}
+                                  className="w-full aspect-video object-cover"
+                                  style={{ opacity: 0.8, transition: "opacity 0.25s ease" }}
+                                  onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+                                  onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div
+                                    className="flex items-center justify-center"
+                                    style={{
+                                      width: "56px",
+                                      height: "56px",
+                                      borderRadius: "50%",
+                                      background: "rgba(185, 154, 98, 0.9)",
+                                      transition: "transform 0.2s ease",
+                                    }}
+                                  >
+                                    <Play style={{ width: "24px", height: "24px", color: "var(--color-ink)", marginLeft: "2px" }} fill="var(--color-ink)" />
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </a>
-                        )}
-
-                        <button
-                          onClick={() => playAudio(archivo)}
-                          className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.05] transition-colors text-left group"
-                        >
-                          <div
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center ${TIPO_COLORS[archivo.tipo]}`}
-                          >
-                            {TIPO_ICONS[archivo.tipo]}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white truncate group-hover:text-violet-300 transition-colors">
-                              {archivo.nombre_display}
-                            </p>
-                            <div className="flex items-center gap-3 mt-0.5">
-                              {archivo.duration_seconds && (
-                                <span className="text-xs text-gray-500">
-                                  {formatDuration(archivo.duration_seconds)}
-                                </span>
-                              )}
-                              <span className="text-xs text-gray-600">
-                                {archivo.play_count} reproducciones
-                              </span>
-                            </div>
-                          </div>
-                          {isYouTube ? (
-                            <ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-red-400 transition-colors" />
-                          ) : (
-                            <Play className="w-4 h-4 text-gray-500 group-hover:text-violet-400 transition-colors" />
+                            </a>
                           )}
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </GlassCard>
-            ))}
-          </div>
-        )}
+
+                          <button
+                            onClick={() => {
+                              if (archivo.youtube_url) {
+                                window.open(archivo.youtube_url, "_blank");
+                                trackActivity({ tipo: "youtube_open", pagina: "materia", materia_slug: slug, archivo_id: archivo.id });
+                              } else {
+                                router.push(`/dashboard/${slug}/${clase.id}`);
+                              }
+                            }}
+                            className="w-full flex items-center gap-4 p-4 border-t"
+                            style={{
+                              borderColor: "var(--color-line-soft)",
+                              borderRadius: 0,
+                              transition: "background 0.2s ease",
+                              textAlign: "left",
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}
+                            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                          >
+                            <div
+                              className="flex items-center justify-center"
+                              style={{
+                                width: "40px",
+                                height: "40px",
+                                borderRadius: "50%",
+                                border: "1px solid var(--color-line)",
+                              }}
+                            >
+                              {TIPO_ICONS[archivo.tipo] || <Headphones style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p
+                                style={{
+                                  fontSize: "14px",
+                                  fontWeight: 500,
+                                  color: "var(--color-text)",
+                                  marginBottom: "4px",
+                                }}
+                              >
+                                {archivo.nombre_display}
+                              </p>
+                              <div className="flex items-center gap-4">
+                                {archivo.duration_seconds && (
+                                  <span
+                                    style={{
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "11px",
+                                      color: "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {formatDuration(archivo.duration_seconds)}
+                                  </span>
+                                )}
+                                <span
+                                  style={{
+                                    fontFamily: "var(--font-ibm-plex-mono)",
+                                    fontSize: "11px",
+                                    color: "var(--color-text-faint)",
+                                  }}
+                                >
+                                  {archivo.play_count} reproducciones
+                                </span>
+                              </div>
+                            </div>
+                            {isYouTube ? (
+                              <ExternalLink style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+                            ) : (
+                              <ArrowLeft style={{ width: "16px", height: "16px", color: "var(--color-gold)", transform: "rotate(180deg)" }} />
+                            )}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
       </main>
 
-      {playingAudio && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-[rgba(10,10,20,0.9)] backdrop-blur-xl border-t border-white/[0.08]">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => {
-                  const audio = document.querySelector("audio") as HTMLAudioElement;
-                  if (audio) audio.paused ? audio.play() : audio.pause();
-                }}
-                className="w-10 h-10 rounded-full bg-violet-600 hover:bg-violet-500 flex items-center justify-center"
-              >
-                <Play className="w-4 h-4 text-white" fill="white" />
-              </button>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-white truncate">{playingAudio.title}</p>
-              </div>
-              <button
-                onClick={() => setPlayingAudio(null)}
-                className="text-gray-400 hover:text-white text-sm"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
+      {/* ═══════════ FOOTER ═══════════ */}
+      <footer className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
+        <div
+          className="flex items-center justify-between pad-lateral"
+          style={{
+            padding: "28px 48px",
+            fontFamily: "var(--font-ibm-plex-mono)",
+            fontSize: "10px",
+            letterSpacing: "0.08em",
+            color: "var(--color-text-faint)",
+            textTransform: "uppercase",
+          }}
+        >
+          <span>Derecho UBA — Sistema de gestión de clases</span>
+          <span>v0.2 — Prototipo</span>
         </div>
-      )}
+      </footer>
     </div>
   );
 }
