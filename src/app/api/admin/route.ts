@@ -1,0 +1,142 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getSupabaseAdmin } from "@/lib/supabase";
+import { uploadToR2, deleteFromR2 } from "@/lib/r2";
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { tipo, id, data } = body;
+
+    if (!tipo || !id) {
+      return NextResponse.json({ error: "tipo and id required" }, { status: 400 });
+    }
+
+    if (tipo === "clase") {
+      const { error } = await getSupabaseAdmin()
+        .from("clases")
+        .update({ titulo: data.titulo, fecha: data.fecha, numero: data.numero })
+        .eq("id", id);
+
+      if (error) throw error;
+    }
+
+    if (tipo === "archivo") {
+      const { error } = await getSupabaseAdmin()
+        .from("archivos")
+        .update({ nombre_display: data.nombre_display })
+        .eq("id", id);
+
+      if (error) throw error;
+    }
+
+    if (tipo === "archivo_link") {
+      const updateData: Record<string, string> = { nombre_display: data.nombre_display };
+      if (data.youtube_url !== undefined) updateData.youtube_url = data.youtube_url;
+
+      const { error } = await getSupabaseAdmin()
+        .from("archivos")
+        .update(updateData)
+        .eq("id", id);
+
+      if (error) throw error;
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("Edit error:", error);
+    return NextResponse.json({ error: String(error) }, { status: 500 });
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const formData = await request.formData();
+    const archivoId = formData.get("archivoId") as string;
+    const file = formData.get("file") as File;
+
+    if (!archivoId || !file) {
+      return NextResponse.json({ error: "archivoId and file required" }, { status: 400 });
+    }
+
+    const { data: archivo } = await getSupabaseAdmin()
+      .from("archivos")
+      .select("storage_key")
+      .eq("id", archivoId)
+      .single();
+
+    if (archivo?.storage_key) {
+      await deleteFromR2(archivo.storage_key);
+    }
+
+    const newKey = `uploads/${Date.now()}-${file.name}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    await uploadToR2(newKey, buffer, file.type);
+
+    const { error } = await getSupabaseAdmin()
+      .from("archivos")
+      .update({
+        storage_key: newKey,
+        nombre_display: file.name.replace(/\.[^/.]+$/, ""),
+        file_size: file.size,
+      })
+      .eq("id", archivoId);
+
+    if (error) throw error;
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("Replace error:", error);
+    return NextResponse.json({ error: String(error) }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const tipo = searchParams.get("tipo");
+    const id = searchParams.get("id");
+
+    if (!tipo || !id) {
+      return NextResponse.json({ error: "tipo and id required" }, { status: 400 });
+    }
+
+    if (tipo === "clase") {
+      const { data: archivos } = await getSupabaseAdmin()
+        .from("archivos")
+        .select("storage_key")
+        .eq("clase_id", id);
+
+      if (archivos) {
+        for (const arch of archivos) {
+          if (arch.storage_key) {
+            await deleteFromR2(arch.storage_key);
+          }
+        }
+      }
+
+      await getSupabaseAdmin().from("archivos").delete().eq("clase_id", id);
+      const { error } = await getSupabaseAdmin().from("clases").delete().eq("id", id);
+      if (error) throw error;
+    }
+
+    if (tipo === "archivo") {
+      const { data: archivo } = await getSupabaseAdmin()
+        .from("archivos")
+        .select("storage_key")
+        .eq("id", id)
+        .single();
+
+      if (archivo?.storage_key) {
+        await deleteFromR2(archivo.storage_key);
+      }
+
+      const { error } = await getSupabaseAdmin().from("archivos").delete().eq("id", id);
+      if (error) throw error;
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("Delete error:", error);
+    return NextResponse.json({ error: String(error) }, { status: 500 });
+  }
+}
