@@ -114,19 +114,37 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-          <div
-            className="text-right hidden sm:block"
-            style={{
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "11px",
-              color: "var(--color-text-faint)",
-              letterSpacing: "0.04em",
-              lineHeight: 1.7,
-            }}
-          >
-            {new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-            <br />
-            Sesión — Admin
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => router.push("/admin")}
+              className="flex items-center justify-center"
+              style={{
+                width: "34px",
+                height: "34px",
+                borderRadius: "50%",
+                border: "1px solid var(--color-line)",
+                color: "var(--color-gold)",
+                transition: "border-color 0.25s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-line)")}
+            >
+              <Shield style={{ width: "15px", height: "15px" }} />
+            </button>
+            <div
+              className="text-right hidden sm:block"
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "11px",
+                color: "var(--color-text-faint)",
+                letterSpacing: "0.04em",
+                lineHeight: 1.7,
+              }}
+            >
+              {new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+              <br />
+              Sesión — Admin
+            </div>
           </div>
         </div>
       </header>

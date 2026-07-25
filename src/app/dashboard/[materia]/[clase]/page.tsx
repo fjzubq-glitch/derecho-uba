@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { trackActivity } from "@/lib/tracking";
-import AudioPlayer from "@/components/AudioPlayer";
-import { ArrowLeft, Calendar, Play, ExternalLink, Headphones, FileText } from "@/components/icons";
-import { formatDuration, getYouTubeThumbnail } from "@/lib/utils";
+import { ArrowLeft, Calendar, Play, FileText, Headphones, Pause, ExternalLink } from "@/components/icons";
+import { formatDuration } from "@/lib/utils";
 
 interface Archivo {
   id: string;
@@ -18,6 +17,13 @@ interface Archivo {
   duration_seconds: number | null;
   play_count: number;
 }
+
+const TIPO_LABELS: Record<string, string> = {
+  audio_clase: "Audio de clase",
+  podcast: "Podcast",
+  transcripcion: "Transcripción",
+  youtube: "YouTube",
+};
 
 export default function ClaseDetailPage() {
   const params = useParams();
@@ -34,7 +40,18 @@ export default function ClaseDetailPage() {
   } | null>(null);
 
   const [loading, setLoading] = useState(true);
-  const [playingAudio, setPlayingAudio] = useState<{ src: string; title: string; archivoId: string } | null>(null);
+
+  // Audio player state
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playingId, setPlayingId] = useState<string | null>(null);
+  const [playingSrc, setPlayingSrc] = useState<string>("");
+  const [playingTitle, setPlayingTitle] = useState<string>("");
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // Transcription expand
+  const [openTranscription, setOpenTranscription] = useState<string | null>(null);
 
   useEffect(() => {
     if (claseId) {
@@ -43,38 +60,48 @@ export default function ClaseDetailPage() {
     }
   }, [claseId]);
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const onDurationChange = () => setDuration(audio.duration);
+    const onEnded = () => { setIsPlaying(false); setCurrentTime(0); };
+
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    audio.addEventListener("durationchange", onDurationChange);
+    audio.addEventListener("ended", onEnded);
+
+    return () => {
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+      audio.removeEventListener("durationchange", onDurationChange);
+      audio.removeEventListener("ended", onEnded);
+    };
+  }, [playingId]);
+
   async function loadClase() {
     const { data: claseData } = await supabase
       .from("clases")
       .select(`
-        id, 
-        numero, 
-        titulo, 
-        fecha,
-        archivos (
-          id,
-          tipo,
-          nombre_display,
-          storage_key,
-          youtube_url,
-          contenido_texto,
-          duration_seconds,
-          play_count
-        )
+        id, numero, titulo, fecha,
+        archivos (id, tipo, nombre_display, storage_key, youtube_url, contenido_texto, duration_seconds, play_count)
       `)
       .eq("id", claseId)
       .single();
 
-    if (claseData) {
-      setClase(claseData);
-    }
+    if (claseData) setClase(claseData);
     setLoading(false);
   }
 
-  async function playAudio(archivo: Archivo) {
+  async function handlePlay(archivo: Archivo) {
     if (archivo.youtube_url) {
       window.open(archivo.youtube_url, "_blank");
       trackActivity({ tipo: "youtube_open", pagina: "clase", materia_slug: materiaSlug, clase_id: claseId, archivo_id: archivo.id });
+      return;
+    }
+
+    if (playingId === archivo.id) {
+      togglePlay();
       return;
     }
 
@@ -82,11 +109,40 @@ export default function ClaseDetailPage() {
     const data = await res.json();
 
     if (data.url) {
-      setPlayingAudio({ src: data.url, title: archivo.nombre_display, archivoId: archivo.id });
+      setPlayingId(archivo.id);
+      setPlayingSrc(data.url);
+      setPlayingTitle(archivo.nombre_display);
+      setCurrentTime(0);
+      setDuration(archivo.duration_seconds || 0);
+      setIsPlaying(true);
 
       await supabase.rpc("increment_play_count", { file_id: archivo.id });
       trackActivity({ tipo: "play_start", pagina: "clase", materia_slug: materiaSlug, clase_id: claseId, archivo_id: archivo.id });
+
+      setTimeout(() => {
+        audioRef.current?.play();
+      }, 100);
     }
+  }
+
+  function togglePlay() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      audio.play();
+      setIsPlaying(true);
+    }
+  }
+
+  function handleSeek(e: React.ChangeEvent<HTMLInputElement>) {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const time = Number(e.target.value);
+    audio.currentTime = time;
+    setCurrentTime(time);
   }
 
   if (loading) {
@@ -106,8 +162,13 @@ export default function ClaseDetailPage() {
     );
   }
 
+  const archivos = clase?.archivos || [];
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-ink)" }}>
+      {/* Hidden audio element */}
+      <audio ref={audioRef} src={playingSrc} preload="metadata" />
+
       {/* ═══════════ HEADER ═══════════ */}
       <header
         className="border-b"
@@ -116,70 +177,77 @@ export default function ClaseDetailPage() {
           background: "linear-gradient(180deg, var(--color-ink-2) 0%, var(--color-ink) 100%)",
         }}
       >
-        <div className="flex items-center gap-4 pad-lateral" style={{ padding: "22px 48px" }}>
-          <button
-            onClick={() => router.push(`/dashboard/${materiaSlug}`)}
-            className="flex items-center justify-center"
-            style={{
-              width: "34px",
-              height: "34px",
-              borderRadius: "50%",
-              border: "1px solid var(--color-line)",
-              color: "var(--color-gold)",
-              transition: "border-color 0.25s ease",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-line)")}
-          >
-            <ArrowLeft style={{ width: "15px", height: "15px" }} />
-          </button>
-          <div>
+        <div className="flex items-center justify-between pad-lateral" style={{ padding: "22px 48px" }}>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => router.push(`/dashboard/${materiaSlug}`)}
+              className="flex items-center justify-center"
+              style={{
+                width: "34px",
+                height: "34px",
+                borderRadius: "50%",
+                border: "1px solid var(--color-line)",
+                color: "var(--color-gold)",
+                transition: "border-color 0.25s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-line)")}
+            >
+              <ArrowLeft style={{ width: "15px", height: "15px" }} />
+            </button>
+            <div>
+              <div
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "10px",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--color-gold)",
+                  marginBottom: "4px",
+                }}
+              >
+                Clase {clase?.numero.toString().padStart(2, "0")}
+              </div>
+              <h1
+                style={{
+                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                  fontWeight: 500,
+                  fontSize: "20px",
+                  lineHeight: 1.2,
+                  color: "var(--color-text)",
+                }}
+              >
+                {clase?.titulo}
+              </h1>
+            </div>
+          </div>
+          {clase?.fecha && (
             <div
+              className="hidden sm:flex items-center gap-2"
               style={{
                 fontFamily: "var(--font-ibm-plex-mono)",
-                fontSize: "10px",
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "var(--color-gold)",
-                marginBottom: "4px",
+                fontSize: "11px",
+                color: "var(--color-text-faint)",
               }}
             >
-              Clase {clase?.numero.toString().padStart(2, "0")}
+              <Calendar style={{ width: "14px", height: "14px" }} />
+              {new Date(clase.fecha).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })}
             </div>
-            <h1
-              style={{
-                fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                fontWeight: 500,
-                fontSize: "20px",
-                lineHeight: 1.2,
-                color: "var(--color-text)",
-              }}
-            >
-              {clase?.titulo}
-            </h1>
-          </div>
+          )}
         </div>
       </header>
 
       {/* ═══════════ MAIN ═══════════ */}
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "60px 48px 120px" }}>
-          {/* Info de la clase */}
-          <div
-            style={{
-              padding: "32px 30px",
-              background: "var(--color-card)",
-              border: "1px solid var(--color-line-soft)",
-              borderRadius: 0,
-              marginBottom: "40px",
-            }}
-          >
+          {/* Clase info */}
+          <div style={{ marginBottom: "40px" }}>
             <h2
               style={{
                 fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                 fontWeight: 400,
-                fontSize: "28px",
-                lineHeight: 1.2,
+                fontSize: "clamp(28px, 4vw, 40px)",
+                lineHeight: 1.1,
                 color: "var(--color-text)",
                 marginBottom: "12px",
               }}
@@ -196,226 +264,283 @@ export default function ClaseDetailPage() {
                 }}
               >
                 <Calendar style={{ width: "14px", height: "14px" }} />
-                {new Date(clase.fecha).toLocaleDateString("es-AR", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
+                {new Date(clase.fecha).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })}
+                <span style={{ color: "var(--color-line)", margin: "0 4px" }}>·</span>
+                {archivos.length} archivos
               </div>
             )}
           </div>
 
-          {/* Archivos */}
-          <div className="space-y-4">
-            {clase?.archivos.map((archivo) => {
-              const isYouTube = archivo.tipo === "youtube" || archivo.youtube_url;
-              const isTranscription = archivo.tipo === "transcripcion";
+          {/* Bloques de contenido */}
+          {archivos.length === 0 ? (
+            <div
+              style={{
+                padding: "80px 48px",
+                textAlign: "center",
+                background: "var(--color-card)",
+                border: "1px solid var(--color-line-soft)",
+              }}
+            >
+              <p style={{ color: "var(--color-text-faint)", fontSize: "14px" }}>
+                No hay archivos cargados para esta clase
+              </p>
+            </div>
+          ) : (
+            <div
+              style={{
+                background: "var(--color-line-soft)",
+                gap: "1px",
+              }}
+            >
+              {archivos.map((archivo) => {
+                const isAudio = archivo.tipo === "audio_clase" || archivo.tipo === "podcast";
+                const isTranscription = archivo.tipo === "transcripcion";
+                const isYouTube = archivo.tipo === "youtube" || archivo.youtube_url;
+                const isThisPlaying = playingId === archivo.id && isPlaying;
+                const isOpen = openTranscription === archivo.id;
 
-              return (
-                <article
-                  key={archivo.id}
-                  style={{
-                    background: "var(--color-card)",
-                    border: "1px solid var(--color-line-soft)",
-                    padding: "28px 26px",
-                    borderRadius: 0,
-                    transition: "background 0.25s ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
-                >
-                  {/* Header del archivo */}
-                  <div className="flex items-center justify-between mb-4">
+                const IconComponent = isTranscription ? FileText : isYouTube ? ExternalLink : archivo.tipo === "podcast" ? Headphones : Headphones;
+
+                return (
+                  <article
+                    key={archivo.id}
+                    style={{
+                      background: "var(--color-card)",
+                      padding: "32px 30px",
+                    }}
+                  >
+                    {/* Label */}
                     <div
                       style={{
                         fontFamily: "var(--font-ibm-plex-mono)",
                         fontSize: "9px",
-                        letterSpacing: "0.12em",
+                        letterSpacing: "0.14em",
                         textTransform: "uppercase",
                         color: "var(--color-gold)",
-                        padding: "4px 8px",
-                        border: "1px solid var(--color-gold-dim)",
-                        borderRadius: 0,
+                        marginBottom: "20px",
                       }}
                     >
-                      {archivo.tipo.replace("_", " ")}
+                      {TIPO_LABELS[archivo.tipo] || archivo.tipo}
                     </div>
-                    <span
-                      style={{
-                        fontFamily: "var(--font-ibm-plex-mono)",
-                        fontSize: "11px",
-                        color: "var(--color-text-faint)",
-                      }}
-                    >
-                      {archivo.play_count} reproducciones
-                    </span>
-                  </div>
 
-                  {/* Thumbnail YouTube */}
-                  {isYouTube && archivo.youtube_url && (
-                    <a
-                      href={archivo.youtube_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block mb-5 group"
-                      onClick={() => trackActivity({ tipo: "youtube_open", pagina: "clase", materia_slug: materiaSlug, clase_id: claseId, archivo_id: archivo.id })}
-                    >
+                    {/* Header del bloque */}
+                    <div className="flex items-center gap-4 mb-6">
+                      {/* Ícono circular hairline */}
                       <div
-                        className="relative overflow-hidden border max-w-xl"
+                        className="flex items-center justify-center flex-shrink-0"
                         style={{
-                          borderColor: "var(--color-line)",
-                          borderRadius: 0,
+                          width: "40px",
+                          height: "40px",
+                          borderRadius: "50%",
+                          border: "1px solid var(--color-gold-dim)",
                         }}
                       >
-                        <img
-                          src={getYouTubeThumbnail(archivo.youtube_url) || "/placeholder-youtube.png"}
-                          alt={archivo.nombre_display}
-                          className="w-full aspect-video object-cover"
-                          style={{ opacity: 0.8, transition: "opacity 0.25s ease" }}
-                          onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-                          onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div
-                            style={{
-                              width: "64px",
-                              height: "64px",
-                              borderRadius: "50%",
-                              background: "rgba(185, 154, 98, 0.9)",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              transition: "transform 0.2s ease",
-                            }}
-                            className="group-hover:scale-110"
-                          >
-                            <Play style={{ width: "28px", height: "28px", color: "var(--color-ink)", marginLeft: "3px" }} fill="var(--color-ink)" />
-                          </div>
-                        </div>
+                        <IconComponent style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
                       </div>
-                    </a>
-                  )}
 
-                  {/* Botón de reproducción */}
-                  <button
-                    onClick={() => playAudio(archivo)}
-                    className="w-full flex items-center gap-4 p-4 border-t"
-                    style={{
-                      borderColor: "var(--color-line-soft)",
-                      borderRadius: 0,
-                      transition: "background 0.2s ease",
-                      textAlign: "left",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                  >
-                    <div
-                      className="flex items-center justify-center"
-                      style={{
-                        width: "44px",
-                        height: "44px",
-                        borderRadius: "50%",
-                        border: "1px solid var(--color-gold-dim)",
-                      }}
-                    >
-                      {isYouTube ? (
-                        <ExternalLink style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
-                      ) : isTranscription ? (
-                        <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
-                      ) : (
-                        <Headphones style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p
-                        style={{
-                          fontSize: "15px",
-                          fontWeight: 500,
-                          color: "var(--color-text)",
-                          marginBottom: "4px",
-                        }}
-                      >
-                        {archivo.nombre_display}
-                      </p>
-                      {archivo.duration_seconds && (
-                        <p
+                      {/* Título + metadata */}
+                      <div className="flex-1 min-w-0">
+                        <h3
+                          style={{
+                            fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                            fontWeight: 500,
+                            fontSize: "18px",
+                            lineHeight: 1.2,
+                            color: "var(--color-text)",
+                            marginBottom: "4px",
+                          }}
+                        >
+                          {archivo.nombre_display}
+                        </h3>
+                        <div
+                          className="flex items-center gap-3"
                           style={{
                             fontFamily: "var(--font-ibm-plex-mono)",
                             fontSize: "11px",
                             color: "var(--color-text-faint)",
                           }}
                         >
-                          {formatDuration(archivo.duration_seconds)}
-                        </p>
-                      )}
+                          {archivo.duration_seconds && (
+                            <span>{formatDuration(archivo.duration_seconds)}</span>
+                          )}
+                          {archivo.contenido_texto && (
+                            <span>{archivo.contenido_texto.split(/\s+/).length} palabras</span>
+                          )}
+                          <span>{archivo.play_count} reproducciones</span>
+                        </div>
+                      </div>
                     </div>
-                    <Play style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
-                  </button>
 
-                  {/* Transcripción */}
-                  {isTranscription && !isYouTube && archivo.contenido_texto && (
-                    <div className="mt-4 border-t" style={{ borderColor: "var(--color-line-soft)", paddingTop: "16px" }}>
-                      <details
-                        className="group"
-                        onToggle={(e) => {
-                          if ((e.target as HTMLDetailsElement).open) {
-                            trackActivity({ tipo: "transcription_view", pagina: "clase", materia_slug: materiaSlug, clase_id: claseId, archivo_id: archivo.id });
-                          }
+                    {/* Contenido del bloque */}
+                    {isTranscription ? (
+                      archivo.contenido_texto ? (
+                        <div>
+                          <button
+                            onClick={() => {
+                              if (isOpen) {
+                                setOpenTranscription(null);
+                              } else {
+                                setOpenTranscription(archivo.id);
+                                trackActivity({ tipo: "transcription_view", pagina: "clase", materia_slug: materiaSlug, clase_id: claseId, archivo_id: archivo.id });
+                              }
+                            }}
+                            className="card-link"
+                            style={{
+                              fontSize: "13px",
+                              fontWeight: 500,
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                              background: "none",
+                              border: "none",
+                              cursor: "pointer",
+                              padding: 0,
+                            }}
+                          >
+                            {isOpen ? "Cerrar texto" : "Ver texto"}
+                            <ArrowLeft style={{ width: "14px", height: "14px", transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s ease" }} />
+                          </button>
+                          {isOpen && (
+                            <div
+                              style={{
+                                marginTop: "16px",
+                                padding: "20px",
+                                background: "rgba(0,0,0,0.2)",
+                                border: "1px solid var(--color-line-soft)",
+                                fontSize: "14px",
+                                color: "var(--color-text-muted)",
+                                lineHeight: 1.8,
+                                whiteSpace: "pre-wrap",
+                                maxHeight: "400px",
+                                overflow: "auto",
+                              }}
+                            >
+                              {archivo.contenido_texto}
+                            </div>
+                          )}
+                        </div>
+                      ) : archivo.youtube_url ? (
+                        <button
+                          onClick={() => handlePlay(archivo)}
+                          className="card-link"
+                          style={{
+                            fontSize: "13px",
+                            fontWeight: 500,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            padding: 0,
+                          }}
+                        >
+                          Abrir transcripción
+                          <ExternalLink style={{ width: "14px", height: "14px" }} />
+                        </button>
+                      ) : null
+                    ) : isAudio ? (
+                      /* Reproductor de audio integrado */
+                      <div>
+                        {/* Barra de progreso */}
+                        {playingId === archivo.id && (
+                          <div className="flex items-center gap-3 mb-4">
+                            <button
+                              onClick={togglePlay}
+                              className="flex items-center justify-center flex-shrink-0"
+                              style={{
+                                width: "34px",
+                                height: "34px",
+                                borderRadius: "50%",
+                                border: "1px solid var(--color-gold-dim)",
+                                background: "transparent",
+                                cursor: "pointer",
+                              }}
+                            >
+                              {isThisPlaying ? (
+                                <Pause style={{ width: "12px", height: "12px", color: "var(--color-gold)" }} fill="var(--color-gold)" />
+                              ) : (
+                                <Play style={{ width: "12px", height: "12px", color: "var(--color-gold)", marginLeft: "1px" }} fill="var(--color-gold)" />
+                              )}
+                            </button>
+                            <input
+                              type="range"
+                              min={0}
+                              max={duration || 0}
+                              value={currentTime}
+                              onChange={handleSeek}
+                              style={{ flex: 1 }}
+                            />
+                            <span
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "11px",
+                                color: "var(--color-text-faint)",
+                                minWidth: "80px",
+                                textAlign: "right",
+                              }}
+                            >
+                              {formatDuration(currentTime)} / {formatDuration(duration)}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Botón play principal */}
+                        {playingId !== archivo.id && (
+                          <button
+                            onClick={() => handlePlay(archivo)}
+                            className="flex items-center gap-3"
+                            style={{
+                              fontSize: "13px",
+                              fontWeight: 500,
+                              background: "none",
+                              border: "none",
+                              cursor: "pointer",
+                              padding: 0,
+                            }}
+                          >
+                            <div
+                              className="flex items-center justify-center"
+                              style={{
+                                width: "34px",
+                                height: "34px",
+                                borderRadius: "50%",
+                                border: "1px solid var(--color-gold-dim)",
+                              }}
+                            >
+                              <Play style={{ width: "12px", height: "12px", color: "var(--color-gold)", marginLeft: "1px" }} fill="var(--color-gold)" />
+                            </div>
+                            <span className="card-link">Reproducir</span>
+                          </button>
+                        )}
+                      </div>
+                    ) : isYouTube ? (
+                      <button
+                        onClick={() => handlePlay(archivo)}
+                        className="card-link"
+                        style={{
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          padding: 0,
                         }}
                       >
-                        <summary
-                          className="flex items-center cursor-pointer"
-                          style={{
-                            fontSize: "13px",
-                            color: "var(--color-text-muted)",
-                            listStyle: "none",
-                          }}
-                        >
-                          <FileText style={{ width: "14px", height: "14px", marginRight: "8px" }} />
-                          Ver transcripción completa
-                        </summary>
-                        <div
-                          style={{
-                            marginTop: "12px",
-                            padding: "16px",
-                            background: "rgba(0,0,0,0.2)",
-                            fontSize: "13px",
-                            color: "var(--color-text-muted)",
-                            lineHeight: 1.7,
-                            whiteSpace: "pre-wrap",
-                            borderRadius: 0,
-                          }}
-                        >
-                          {archivo.contenido_texto}
-                        </div>
-                      </details>
-                    </div>
-                  )}
-                </article>
-              );
-            })}
-          </div>
+                        Abrir en YouTube
+                        <ExternalLink style={{ width: "14px", height: "14px" }} />
+                      </button>
+                    ) : null}
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </div>
       </main>
-
-      {/* ═══════════ AUDIO PLAYER ═══════════ */}
-      {playingAudio && (
-        <div
-          className="fixed bottom-0 left-0 right-0 z-50 border-t pad-lateral"
-          style={{
-            padding: "20px 48px",
-            background: "rgba(10, 13, 22, 0.95)",
-            backdropFilter: "blur(12px)",
-            borderColor: "var(--color-line-soft)",
-          }}
-        >
-          <AudioPlayer
-            src={playingAudio.src}
-            title={playingAudio.title}
-            onClose={() => setPlayingAudio(null)}
-          />
-        </div>
-      )}
 
       {/* ═══════════ FOOTER ═══════════ */}
       <footer className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
