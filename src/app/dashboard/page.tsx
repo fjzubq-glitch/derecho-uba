@@ -206,10 +206,9 @@ export default function DashboardPage() {
 
           {/* Description */}
           <p
-            className="mt-8"
+            className="mt-8 hero-sub"
             style={{
               maxWidth: "500px",
-              color: "#8992A8",
               fontSize: "15px",
               lineHeight: 1.7,
             }}
@@ -417,8 +416,8 @@ export default function DashboardPage() {
 
                     {/* CTA */}
                     <div
-                      className="flex items-center gap-2 mt-8 pt-5 border-t"
-                      style={{ borderColor: "var(--color-line-soft)", fontSize: "13px", color: "#B99A62", fontWeight: 500 }}
+                      className="flex items-center gap-2 mt-8 pt-5 border-t card-link"
+                      style={{ borderColor: "var(--color-line-soft)", fontSize: "13px", fontWeight: 500 }}
                     >
                       Ver contenido
                       <ArrowRight

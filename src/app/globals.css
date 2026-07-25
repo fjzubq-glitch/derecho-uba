@@ -36,6 +36,16 @@ article {
   border-radius: 0 !important;
 }
 
+/* ── Colores forzados ── */
+.hero-sub {
+  color: #8992A8 !important;
+}
+
+.card-link, .card-link svg {
+  color: #B99A62 !important;
+  stroke: #B99A62 !important;
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
