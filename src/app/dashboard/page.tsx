@@ -209,7 +209,7 @@ export default function DashboardPage() {
             className="mt-8"
             style={{
               maxWidth: "500px",
-              color: "var(--color-text-muted)",
+              color: "#8992A8",
               fontSize: "15px",
               lineHeight: 1.7,
             }}
@@ -263,7 +263,7 @@ export default function DashboardPage() {
 
       {/* ═══════════ MATERIAS ═══════════ */}
       <section className="flex-1">
-        <div className="pad-lateral" style={{ padding: "80px 48px" }}>
+        <div className="pad-lateral" style={{ padding: "48px 48px 80px" }}>
           <div className="flex items-baseline justify-between mb-12 flex-wrap gap-4">
             <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "28px" }}>
               Mis materias
@@ -272,8 +272,7 @@ export default function DashboardPage() {
               style={{
                 fontFamily: "var(--font-ibm-plex-mono)",
                 fontSize: "11px",
-                color: "var(--color-text-faint)",
-                letterSpacing: "0.08em",
+                color: "#5A6178",
               }}
             >
               {materias.length} materias activas
@@ -419,7 +418,7 @@ export default function DashboardPage() {
                     {/* CTA */}
                     <div
                       className="flex items-center gap-2 mt-8 pt-5 border-t"
-                      style={{ borderColor: "var(--color-line-soft)", fontSize: "13px", color: "var(--color-gold)", fontWeight: 500 }}
+                      style={{ borderColor: "var(--color-line-soft)", fontSize: "13px", color: "#B99A62", fontWeight: 500 }}
                     >
                       Ver contenido
                       <ArrowRight
