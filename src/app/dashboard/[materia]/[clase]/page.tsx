@@ -101,24 +101,19 @@ export default function ClaseDetailPage() {
       return;
     }
 
-    const res = await fetch(`/api/stream/${archivo.id}`);
-    const data = await res.json();
+    setPlayingId(archivo.id);
+    setPlayingSrc(`/api/stream/${archivo.id}`);
+    setPlayingTitle(archivo.nombre_display);
+    setCurrentTime(0);
+    setDuration(archivo.duration_seconds || 0);
+    setIsPlaying(true);
 
-    if (data.url) {
-      setPlayingId(archivo.id);
-      setPlayingSrc(data.url);
-      setPlayingTitle(archivo.nombre_display);
-      setCurrentTime(0);
-      setDuration(archivo.duration_seconds || 0);
-      setIsPlaying(true);
+    fetch("/api/analytics", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ archivo_id: archivo.id }) }).catch(() => {});
+    trackActivity({ tipo: "play_start", pagina: "clase", materia_slug: materiaSlug, clase_id: claseId, archivo_id: archivo.id });
 
-      fetch("/api/analytics", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ archivo_id: archivo.id }) }).catch(() => {});
-      trackActivity({ tipo: "play_start", pagina: "clase", materia_slug: materiaSlug, clase_id: claseId, archivo_id: archivo.id });
-
-      setTimeout(() => {
-        audioRef.current?.play();
-      }, 100);
-    }
+    setTimeout(() => {
+      audioRef.current?.play();
+    }, 100);
   }
 
   function togglePlay() {

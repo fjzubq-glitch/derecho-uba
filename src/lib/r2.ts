@@ -133,3 +133,26 @@ export async function getObjectBuffer(key: string): Promise<Buffer> {
   const ab = await res.arrayBuffer();
   return Buffer.from(ab);
 }
+
+export async function getObjectStream(key: string, range?: string): Promise<Response> {
+  const extraHeaders: Record<string, string> = {};
+  if (range) extraHeaders["range"] = range;
+
+  const path = "/" + encodePath(R2_BUCKET) + "/" + encodePath(key);
+  const amzDate = nowAmzDate();
+  const payloadHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+
+  const auth = signV4("GET", path, "", extraHeaders, payloadHash, amzDate);
+
+  const fetchHeaders: Record<string, string> = {
+    "x-amz-content-sha256": payloadHash,
+    "x-amz-date": amzDate,
+    Authorization: auth,
+  };
+  if (range) fetchHeaders["Range"] = range;
+
+  const url = `https://${host()}${path}`;
+  const res = await fetch(url, { method: "GET", headers: fetchHeaders });
+  if (!res.ok) throw new Error(`R2 get failed: ${res.status} ${await res.text()}`);
+  return res;
+}
