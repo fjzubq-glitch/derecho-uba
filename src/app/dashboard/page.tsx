@@ -86,36 +86,46 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-          <div
-            className="text-right hidden sm:block"
-            style={{
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "11px",
-              color: "var(--color-text-faint)",
-              letterSpacing: "0.04em",
-              lineHeight: 1.7,
-            }}
-          >
-            {new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-            <br />
-            Sesión —{" "}
+          <div className="flex items-center gap-6">
+            <div
+              className="hidden sm:block text-right"
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "11px",
+                color: "var(--color-text-faint)",
+                letterSpacing: "0.04em",
+                lineHeight: 1.7,
+              }}
+            >
+              {new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+              <br />
+              Sesión — Admin
+            </div>
             <button
               onClick={() => router.push("/admin")}
+              className="flex items-center gap-2"
               style={{
                 background: "none",
-                border: "none",
+                border: "1px solid var(--color-line)",
+                padding: "10px 18px",
                 cursor: "pointer",
-                fontFamily: "inherit",
-                fontSize: "inherit",
-                color: "var(--color-text-faint)",
-                transition: "color 0.2s ease",
-                padding: 0,
+                fontFamily: "var(--font-inter)",
+                fontSize: "13px",
+                color: "var(--color-text-muted)",
+                transition: "border-color 0.25s ease, color 0.25s ease",
+                lineHeight: 1,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-faint)")}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-gold)";
+                e.currentTarget.style.color = "var(--color-gold)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-line)";
+                e.currentTarget.style.color = "var(--color-text-muted)";
+              }}
             >
-              <Shield style={{ width: "11px", height: "11px", verticalAlign: "middle", marginRight: "4px" }} />
-              Admin
+              <Shield style={{ width: "14px", height: "14px", flexShrink: 0 }} />
+              Panel de administración
             </button>
           </div>
         </div>
