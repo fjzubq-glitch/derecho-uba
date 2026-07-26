@@ -233,7 +233,7 @@ export default function ClaseNumeroPage() {
           >
             {config.icon}
           </div>
-            <div>
+            <div className="flex-1 min-w-0">
               <div
                 style={{
                   fontFamily: "var(--font-ibm-plex-mono)",
@@ -268,11 +268,10 @@ export default function ClaseNumeroPage() {
                 {exists ? config.subtitle(archivo) : config.emptySubtitle}
               </div>
             </div>
+            {exists && (
+              <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0, marginTop: "14px" }} />
+            )}
           </div>
-          {exists && (
-            <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0, marginTop: "14px" }} />
-          )}
-        </div>
 
         {/* Audio player inline */}
         {isAudioTipo && isThisPlaying && exists && (
