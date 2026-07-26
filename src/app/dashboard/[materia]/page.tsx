@@ -107,16 +107,16 @@ export default function MateriaPage() {
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "60px 48px" }}>
           {loading ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  style={{
-                    height: "180px",
-                    background: "var(--color-card)",
-                    borderRadius: 0,
-                  }}
-                />
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
+              style={{
+                background: "var(--color-line-soft)",
+                gap: "1px",
+                borderRadius: 0,
+              }}
+            >
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="h-52" style={{ background: "var(--color-card)", borderRadius: 0 }} />
               ))}
             </div>
           ) : clases.length === 0 ? (
@@ -134,79 +134,86 @@ export default function MateriaPage() {
               </p>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
+              style={{
+                background: "var(--color-line-soft)",
+                gap: "1px",
+                borderRadius: 0,
+              }}
+            >
               {clases.map((clase) => (
                 <article
                   key={clase.id}
+                  onClick={() => {
+                    trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
+                    router.push(`/dashboard/${slug}/clase/${clase.numero}`);
+                  }}
+                  className="group flex flex-col cursor-pointer"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
+                      router.push(`/dashboard/${slug}/clase/${clase.numero}`);
+                    }
+                  }}
                   style={{
                     background: "var(--color-card)",
-                    border: "1px solid var(--color-line-soft)",
-                    padding: "32px 30px",
+                    padding: "28px 24px",
                     borderRadius: 0,
                     transition: "background 0.25s ease",
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
                 >
-                  <button
-                    onClick={() => {
-                      trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
-                      router.push(`/dashboard/${slug}/clase/${clase.numero}`);
-                    }}
-                    className="w-full flex items-center justify-between"
+                  <div
                     style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      textAlign: "left",
-                      padding: 0,
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "10px",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: "var(--color-gold)",
+                      marginBottom: "8px",
                     }}
                   >
-                    <div>
+                    Clase {clase.numero.toString().padStart(2, "0")}
+                  </div>
+                  <div className="flex-1">
+                    <h3
+                      style={{
+                        fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                        fontWeight: 500,
+                        fontSize: "20px",
+                        lineHeight: 1.2,
+                        color: "var(--color-text)",
+                        marginBottom: "12px",
+                      }}
+                    >
+                      {clase.titulo}
+                    </h3>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    {clase.fecha ? (
                       <div
+                        className="flex items-center gap-2"
                         style={{
                           fontFamily: "var(--font-ibm-plex-mono)",
-                          fontSize: "10px",
-                          letterSpacing: "0.14em",
-                          textTransform: "uppercase",
-                          color: "var(--color-gold)",
-                          marginBottom: "6px",
+                          fontSize: "11px",
+                          color: "var(--color-text-faint)",
                         }}
                       >
-                        Clase {clase.numero.toString().padStart(2, "0")}
+                        <Calendar style={{ width: "14px", height: "14px" }} />
+                        {new Date(clase.fecha).toLocaleDateString("es-AR", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
                       </div>
-                      <h3
-                        style={{
-                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                          fontWeight: 500,
-                          fontSize: "22px",
-                          lineHeight: 1.2,
-                          color: "var(--color-text)",
-                          marginBottom: "4px",
-                        }}
-                      >
-                        {clase.titulo}
-                      </h3>
-                      {clase.fecha && (
-                        <div
-                          className="flex items-center gap-2"
-                          style={{
-                            fontFamily: "var(--font-ibm-plex-mono)",
-                            fontSize: "11px",
-                            color: "var(--color-text-faint)",
-                          }}
-                        >
-                          <Calendar style={{ width: "14px", height: "14px" }} />
-                          {new Date(clase.fecha).toLocaleDateString("es-AR", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </div>
-                      )}
-                    </div>
-                    <ArrowRight style={{ width: "18px", height: "18px", color: "var(--color-gold)", flexShrink: 0 }} />
-                  </button>
+                    ) : (
+                      <div />
+                    )}
+                    <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} />
+                  </div>
                 </article>
               ))}
             </div>
