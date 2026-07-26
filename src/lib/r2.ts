@@ -10,7 +10,7 @@ const REGION = "auto";
 const SERVICE = "s3";
 const ALGORITHM = "AWS4-HMAC-SHA256";
 
-function sha256(msg: string): string {
+function sha256(msg: string | Buffer): string {
   return createHash("sha256").update(msg).digest("hex");
 }
 
@@ -84,7 +84,7 @@ async function r2Request(
   const qs = options?.queryString || "";
   const amzDate = nowAmzDate();
   const payloadHash = options?.body
-    ? sha256(options.body.toString("binary"))
+    ? sha256(options.body)
     : "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
   const extraHeaders: Record<string, string> = {};
