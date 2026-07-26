@@ -383,25 +383,35 @@ export default function ClaseNumeroPage() {
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "60px 48px 120px" }}>
           {/* Breadcrumb */}
-          <button
-            onClick={() => router.push(`/dashboard/${materiaSlug}`)}
-            className="flex items-center gap-2"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "10px",
-              letterSpacing: "0.08em",
-              color: "var(--color-text-faint)",
-              marginBottom: "32px",
-              padding: 0,
-              textTransform: "uppercase",
-            }}
-          >
-            <ArrowLeft style={{ width: "12px", height: "12px" }} />
-            {materiaTitle}
-          </button>
+          <div className="flex items-center gap-3" style={{ marginBottom: "32px" }}>
+            <button
+              onClick={() => router.push(`/dashboard/${materiaSlug}`)}
+              className="flex items-center justify-center"
+              style={{
+                width: "34px",
+                height: "34px",
+                borderRadius: "50%",
+                border: "1px solid var(--color-gold)",
+                color: "var(--color-gold)",
+                transition: "border-color 0.25s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-gold)")}
+            >
+              <ArrowLeft style={{ width: "15px", height: "15px" }} />
+            </button>
+            <span
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "10px",
+                letterSpacing: "0.08em",
+                color: "var(--color-text-faint)",
+                textTransform: "uppercase",
+              }}
+            >
+              {materiaTitle}
+            </span>
+          </div>
 
           {/* Page title */}
           <div style={{ marginBottom: "40px" }}>

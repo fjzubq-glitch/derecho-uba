@@ -336,23 +336,22 @@ export default function AdminPage() {
             </button>
           </form>
 
-          <div className="text-center mt-6">
+          <div className="flex justify-center mt-6">
             <button
               onClick={() => router.push("/dashboard")}
+              className="flex items-center justify-center"
               style={{
-                fontSize: "12px",
-                color: "var(--color-text-faint)",
-                fontFamily: "var(--font-ibm-plex-mono)",
-                letterSpacing: "0.04em",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                transition: "color 0.2s ease",
+                width: "34px",
+                height: "34px",
+                borderRadius: "50%",
+                border: "1px solid var(--color-gold)",
+                color: "var(--color-gold)",
+                transition: "border-color 0.25s ease",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-faint)")}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-gold)")}
             >
-              ← Volver al dashboard
+              <ArrowLeft style={{ width: "15px", height: "15px" }} />
             </button>
           </div>
         </div>
