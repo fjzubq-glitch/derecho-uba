@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Upload, FileText, X, Check, Loader2, Headphones, ExternalLink, Shield } from "@/components/icons";
 
 interface UploadItem {
@@ -81,8 +81,22 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
   const [podcastDropHover, setPodcastDropHover] = useState(false);
   const [resultMsg, setResultMsg] = useState<{ text: string; isError: boolean } | null>(null);
 
+  useEffect(() => {
+    if (materias.length > 0 && !materiaId) {
+      setMateriaId(materias[0].id);
+    }
+  }, [materias]);
+
   const handleSubmit = async () => {
-    if (!materiaId || !claseTitulo) return;
+    setResultMsg(null);
+    if (!materiaId) {
+      setResultMsg({ text: "Seleccioná una materia", isError: true });
+      return;
+    }
+    if (!claseTitulo) {
+      setResultMsg({ text: "Completá el título de la clase", isError: true });
+      return;
+    }
     setUploading(true);
 
     const items: UploadItem[] = [];
