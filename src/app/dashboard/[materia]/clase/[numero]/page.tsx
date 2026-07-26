@@ -184,12 +184,19 @@ export default function ClaseNumeroPage() {
     setCurrentTime(time);
   }
 
-  function handleTranscriptionToggle() {
+  function handleTranscriptionClick() {
     const archivo = getArchivo("transcripcion");
     if (!archivo) return;
-    setOpenTranscripcion((prev) => !prev);
-    if (!openTranscripcion) {
-      trackActivity({ tipo: "transcription_view", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+    if (archivo.youtube_url) {
+      window.open(archivo.youtube_url, "_blank");
+      trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+      return;
+    }
+    if (archivo.contenido_texto) {
+      setOpenTranscripcion((prev) => !prev);
+      if (!openTranscripcion) {
+        trackActivity({ tipo: "transcription_view", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+      }
     }
   }
 
@@ -215,7 +222,7 @@ export default function ClaseNumeroPage() {
         onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; }}
         onClick={() => {
           if (isTranscription && exists) {
-            handleTranscriptionToggle();
+            handleTranscriptionClick();
           } else if (isAudioTipo && exists) {
             handleAudioAction(tipo);
           }
