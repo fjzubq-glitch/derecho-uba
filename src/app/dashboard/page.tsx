@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import { trackActivity } from "@/lib/tracking";
 import { Shield, ArrowRight } from "@/components/icons";
 
@@ -27,39 +26,15 @@ export default function DashboardPage() {
   }, []);
 
   async function loadMaterias() {
-    const { data: materiasData } = await supabase.from("materias").select("*").order("nombre");
-
-    if (materiasData) {
-      const materiasConStats = await Promise.all(
-        materiasData.map(async (m) => {
-          const { count: totalClases } = await supabase
-            .from("clases").select("*", { count: "exact", head: true }).eq("materia_id", m.id);
-
-          const { data: clasesIds } = await supabase
-            .from("clases").select("id").eq("materia_id", m.id);
-
-          const claseIds = clasesIds?.map((c) => c.id) || [];
-          let totalAudios = 0;
-          let totalRep = 0;
-
-          if (claseIds.length > 0) {
-            const { count } = await supabase
-              .from("archivos").select("*", { count: "exact", head: true }).in("clase_id", claseIds);
-            totalAudios = count || 0;
-            const { data: archivos } = await supabase
-              .from("archivos").select("play_count").in("clase_id", claseIds);
-            totalRep = archivos?.reduce((sum, a) => sum + (a.play_count || 0), 0) || 0;
-          }
-
-          return { ...m, total_clases: totalClases || 0, total_audios: totalAudios, total_reproducciones: totalRep };
-        })
-      );
-      setMaterias(materiasConStats);
-      setStats({
-        clases: materiasConStats.reduce((s, m) => s + m.total_clases, 0),
-        audios: materiasConStats.reduce((s, m) => s + m.total_audios, 0),
-        reproducciones: materiasConStats.reduce((s, m) => s + m.total_reproducciones, 0),
-      });
+    try {
+      const res = await fetch("/api/materias");
+      const data = await res.json();
+      if (data.materias) {
+        setMaterias(data.materias);
+        setStats(data.stats);
+      }
+    } catch (e) {
+      console.error("Error loading materias:", e);
     }
     setLoading(false);
   }
