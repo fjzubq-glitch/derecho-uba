@@ -16,7 +16,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [materias, setMaterias] = useState<Materia[]>([]);
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ clases: 0, audios: 0 });
+
 
   useEffect(() => {
     loadMaterias();
@@ -29,7 +29,6 @@ export default function DashboardPage() {
       const data = await res.json();
       if (data.materias) {
         setMaterias(data.materias);
-        setStats(data.stats);
       }
     } catch (e) {
       console.error("Error loading materias:", e);
@@ -208,66 +207,7 @@ export default function DashboardPage() {
             Seleccioná una materia para gestionar clases, audios y transcripciones.
           </p>
 
-          {/* Stats — gap: 56px */}
-          <div
-            className="flex mt-16 pt-8 border-t"
-            style={{
-              borderColor: "var(--color-line-soft)",
-              maxWidth: "480px",
-              gap: "56px",
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "40px",
-                  fontWeight: 500,
-                  lineHeight: 1,
-                  color: "var(--color-gold)",
-                }}
-              >
-                {String(stats.clases).padStart(2, "0")}
-              </div>
-              <div
-                className="mt-3"
-                style={{
-                  fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "10px",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: "var(--color-text-faint)",
-                }}
-              >
-                Clases cargadas
-              </div>
-            </div>
-            <div>
-              <div
-                style={{
-                  fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "30px",
-                  fontWeight: 500,
-                  lineHeight: 1,
-                  color: "var(--color-text)",
-                }}
-              >
-                {String(stats.audios).padStart(2, "0")}
-              </div>
-              <div
-                className="mt-3"
-                style={{
-                  fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "10px",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: "var(--color-text-faint)",
-                }}
-              >
-                Audios
-              </div>
-            </div>
-          </div>
+
         </div>
       </section>
 
