@@ -186,9 +186,10 @@ export default function DashboardPage() {
               maxWidth: "500px",
               fontSize: "15px",
               lineHeight: 1.7,
+              color: "var(--color-text-muted)",
             }}
           >
-            Seleccioná una materia para gestionar clases, audios y transcripciones. Cada sesión genera ficha, cuestionario y banco de casos.
+            Seleccioná una materia para gestionar clases, audios y transcripciones.
           </p>
 
           {/* Stats — gap: 56px */}
@@ -196,41 +197,60 @@ export default function DashboardPage() {
             className="flex mt-16 pt-8 border-t"
             style={{
               borderColor: "var(--color-line-soft)",
-              maxWidth: "580px",
+              maxWidth: "480px",
               gap: "56px",
             }}
           >
-            {[
-              { value: stats.clases, label: "Clases cargadas", accent: true },
-              { value: stats.audios, label: "Audios" },
-              { value: stats.reproducciones, label: "Reproducciones" },
-            ].map((s) => (
-              <div key={s.label}>
-                <div
-                  style={{
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "36px",
-                    fontWeight: 500,
-                    lineHeight: 1,
-                    color: s.accent ? "var(--color-gold)" : "var(--color-text)",
-                  }}
-                >
-                  {String(s.value).padStart(2, "0")}
-                </div>
-                <div
-                  className="mt-3"
-                  style={{
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "10px",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "var(--color-text-faint)",
-                  }}
-                >
-                  {s.label}
-                </div>
+            <div>
+              <div
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "40px",
+                  fontWeight: 500,
+                  lineHeight: 1,
+                  color: "var(--color-gold)",
+                }}
+              >
+                {String(stats.clases).padStart(2, "0")}
               </div>
-            ))}
+              <div
+                className="mt-3"
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "10px",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--color-text-faint)",
+                }}
+              >
+                Clases cargadas
+              </div>
+            </div>
+            <div>
+              <div
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "30px",
+                  fontWeight: 500,
+                  lineHeight: 1,
+                  color: "var(--color-text)",
+                }}
+              >
+                {String(stats.audios).padStart(2, "0")}
+              </div>
+              <div
+                className="mt-3"
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "10px",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--color-text-faint)",
+                }}
+              >
+                Audios
+              </div>
+            </div>
           </div>
         </div>
       </section>
