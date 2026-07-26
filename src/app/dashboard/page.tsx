@@ -123,7 +123,7 @@ export default function DashboardPage() {
 
       {/* ═══════════ HERO ═══════════ */}
       <section className="relative overflow-hidden border-b" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div className="relative z-10 pad-lateral" style={{ padding: "88px 48px 64px" }}>
+        <div className="relative z-10 pad-lateral" style={{ padding: "88px 48px 48px" }}>
 
           {/* Watermark — 420px, opacity 0.035, stroke-width 1.1 — Balanza de la justicia */}
           <svg
