@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, Calendar, Headphones, FileText, Play, ExternalLink, Shield } from "@/components/icons";
-import { formatDuration, getYouTubeThumbnail } from "@/lib/utils";
+import { formatDuration } from "@/lib/utils";
 
 interface Archivo {
   id: string;
@@ -241,101 +241,54 @@ export default function MateriaPage() {
                       const isYouTube = archivo.tipo === "youtube" || archivo.youtube_url;
 
                       return (
-                        <div key={archivo.id}>
-                          {isYouTube && archivo.youtube_url && (
-                            <a
-                              href={archivo.youtube_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block mb-4 group"
-                              onClick={() => trackActivity({ tipo: "youtube_open", pagina: "materia", materia_slug: slug, archivo_id: archivo.id })}
-                            >
-                              <div
-                                className="relative overflow-hidden border max-w-md"
-                                style={{
-                                  borderColor: "var(--color-line)",
-                                  borderRadius: 0,
-                                }}
-                              >
-                                <img
-                                  src={getYouTubeThumbnail(archivo.youtube_url) || "/placeholder-youtube.png"}
-                                  alt={archivo.nombre_display}
-                                  className="w-full aspect-video object-cover"
-                                  style={{ opacity: 0.8, transition: "opacity 0.25s ease" }}
-                                  onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-                                  onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}
-                                />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                  <div
-                                    className="flex items-center justify-center"
-                                    style={{
-                                      width: "56px",
-                                      height: "56px",
-                                      borderRadius: "50%",
-                                      background: "rgba(185, 154, 98, 0.9)",
-                                      transition: "transform 0.2s ease",
-                                    }}
-                                  >
-                                    <Play style={{ width: "24px", height: "24px", color: "var(--color-ink)", marginLeft: "2px" }} fill="var(--color-ink)" />
-                                  </div>
-                                </div>
-                              </div>
-                            </a>
-                          )}
-
-                          <button
-                            onClick={() => {
-                              if (archivo.youtube_url) {
-                                window.open(archivo.youtube_url, "_blank");
-                                trackActivity({ tipo: "youtube_open", pagina: "materia", materia_slug: slug, archivo_id: archivo.id });
-                              } else {
-                                router.push(`/dashboard/${slug}/${clase.id}`);
-                              }
-                            }}
-                            className="w-full flex items-center gap-4 p-4 border-t"
+                        <button
+                          key={archivo.id}
+                          onClick={() => {
+                            if (isYouTube && archivo.youtube_url) {
+                              window.open(archivo.youtube_url, "_blank");
+                              trackActivity({ tipo: "youtube_open", pagina: "materia", materia_slug: slug, archivo_id: archivo.id });
+                            } else {
+                              router.push(`/dashboard/${slug}/${clase.id}`);
+                            }
+                          }}
+                          className="w-full flex items-center gap-4 p-4 border-t"
+                          style={{
+                            borderColor: "var(--color-line-soft)",
+                            borderRadius: 0,
+                            transition: "background 0.2s ease",
+                            textAlign: "left",
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                        >
+                          <div
+                            className="flex items-center justify-center flex-shrink-0"
                             style={{
-                              borderColor: "var(--color-line-soft)",
-                              borderRadius: 0,
-                              transition: "background 0.2s ease",
-                              textAlign: "left",
+                              width: "40px",
+                              height: "40px",
+                              borderRadius: "50%",
+                              border: "1px solid var(--color-line)",
                             }}
-                            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}
-                            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                           >
-                            <div
-                              className="flex items-center justify-center"
+                            {isYouTube ? (
+                              <ExternalLink style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+                            ) : (
+                              TIPO_ICONS[archivo.tipo] || <Headphones style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p
                               style={{
-                                width: "40px",
-                                height: "40px",
-                                borderRadius: "50%",
-                                border: "1px solid var(--color-line)",
+                                fontSize: "14px",
+                                fontWeight: 500,
+                                color: "var(--color-text)",
+                                marginBottom: "4px",
                               }}
                             >
-                              {TIPO_ICONS[archivo.tipo] || <Headphones style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p
-                                style={{
-                                  fontSize: "14px",
-                                  fontWeight: 500,
-                                  color: "var(--color-text)",
-                                  marginBottom: "4px",
-                                }}
-                              >
-                                {archivo.nombre_display}
-                              </p>
-                              <div className="flex items-center gap-4">
-                                {archivo.duration_seconds && (
-                                  <span
-                                    style={{
-                                      fontFamily: "var(--font-ibm-plex-mono)",
-                                      fontSize: "11px",
-                                      color: "var(--color-text-faint)",
-                                    }}
-                                  >
-                                    {formatDuration(archivo.duration_seconds)}
-                                  </span>
-                                )}
+                              {archivo.nombre_display}
+                            </p>
+                            <div className="flex items-center gap-4">
+                              {archivo.duration_seconds && (
                                 <span
                                   style={{
                                     fontFamily: "var(--font-ibm-plex-mono)",
@@ -343,17 +296,26 @@ export default function MateriaPage() {
                                     color: "var(--color-text-faint)",
                                   }}
                                 >
-                                  {archivo.play_count} reproducciones
+                                  {formatDuration(archivo.duration_seconds)}
                                 </span>
-                              </div>
+                              )}
+                              <span
+                                style={{
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "11px",
+                                  color: "var(--color-text-faint)",
+                                }}
+                              >
+                                {archivo.play_count} reproducciones
+                              </span>
                             </div>
-                            {isYouTube ? (
-                              <ExternalLink style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
-                            ) : (
-                              <ArrowLeft style={{ width: "16px", height: "16px", color: "var(--color-gold)", transform: "rotate(180deg)" }} />
-                            )}
-                          </button>
-                        </div>
+                          </div>
+                          {isYouTube ? (
+                            <ExternalLink style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+                          ) : (
+                            <ArrowLeft style={{ width: "16px", height: "16px", color: "var(--color-gold)", transform: "rotate(180deg)" }} />
+                          )}
+                        </button>
                       );
                     })}
                   </div>
