@@ -1,5 +1,4 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 
 export const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL!.trim();
 const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID!.trim();
@@ -14,9 +13,6 @@ const client = new S3Client({
     accessKeyId: R2_ACCESS_KEY_ID,
     secretAccessKey: R2_SECRET_ACCESS_KEY,
   },
-  requestHandler: {
-    requestTimeout: 30000,
-  },
 });
 
 export function getAudioPublicUrl(key: string): string {
@@ -25,19 +21,6 @@ export function getAudioPublicUrl(key: string): string {
 
 export async function getSignedAudioUrl(key: string): Promise<string> {
   return getAudioPublicUrl(key);
-}
-
-export async function getPresignedUploadUrl(
-  key: string,
-  contentType: string,
-  expiresIn = 600
-): Promise<string> {
-  const command = new PutObjectCommand({
-    Bucket: R2_BUCKET,
-    Key: key,
-    ContentType: contentType,
-  });
-  return getSignedUrl(client, command, { expiresIn });
 }
 
 export async function uploadToR2(
