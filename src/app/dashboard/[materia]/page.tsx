@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, Calendar, Headphones, FileText, Play, ExternalLink, Shield } from "@/components/icons";
 import { formatDuration } from "@/lib/utils";
@@ -48,35 +47,13 @@ export default function MateriaPage() {
   }, [slug]);
 
   async function loadData() {
-    const { data: materiaData } = await supabase
-      .from("materias")
-      .select("id, nombre")
-      .eq("slug", slug)
-      .single();
-
-    if (materiaData) {
-      setMateria(materiaData);
-
-      const { data: clasesData } = await supabase
-        .from("clases")
-        .select("id, numero, titulo, fecha")
-        .eq("materia_id", materiaData.id)
-        .order("numero");
-
-      if (clasesData) {
-        const clasesWithFiles = await Promise.all(
-          clasesData.map(async (c) => {
-            const { data: archivos } = await supabase
-              .from("archivos")
-              .select("*")
-              .eq("clase_id", c.id)
-              .order("created_at");
-
-            return { ...c, archivos: archivos || [] };
-          })
-        );
-        setClases(clasesWithFiles);
-      }
+    try {
+      const res = await fetch(`/api/materias/${slug}`);
+      const data = await res.json();
+      if (data.materia) setMateria(data.materia);
+      if (data.clases) setClases(data.clases);
+    } catch (e) {
+      console.error("Error loading materia:", e);
     }
     setLoading(false);
   }

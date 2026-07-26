@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import AdminUpload from "@/components/AdminUpload";
 import AdminManage from "@/components/AdminManage";
 import { ArrowLeft, BarChart3, Headphones, FileText, Users, Lock, Loader2, Calendar, TrendingUp, Eye, Shield, Upload } from "@/components/icons";
@@ -87,130 +86,25 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (authenticated) {
-      loadData();
-      loadAnalytics();
+      loadAdminData();
     }
   }, [authenticated]);
 
-  async function loadData() {
-    const { data: materiasData } = await supabase
-      .from("materias")
-      .select("*")
-      .order("nombre");
-
-    setMaterias(materiasData || []);
-
-    const { count: clasesCount } = await supabase
-      .from("clases")
-      .select("*", { count: "exact", head: true });
-
-    const { count: archivosCount } = await supabase
-      .from("archivos")
-      .select("*", { count: "exact", head: true });
-
-    const { count: repCount } = await supabase
-      .from("reproducciones")
-      .select("*", { count: "exact", head: true });
-
-    setStats({
-      totalClases: clasesCount || 0,
-      totalArchivos: archivosCount || 0,
-      totalReproducciones: repCount || 0,
-    });
-
+  async function loadAdminData() {
+    try {
+      const res = await fetch("/api/admin/dashboard");
+      const data = await res.json();
+      if (data.materias) setMaterias(data.materias);
+      if (data.stats) setStats(data.stats);
+      setVisitantesUnicos(data.visitantesUnicos || 0);
+      setTotalVisitas(data.totalVisitas || 0);
+      if (data.actividadReciente) setActividadReciente(data.actividadReciente);
+      if (data.contenidoPopular) setContenidoPopular(data.contenidoPopular);
+      if (data.visitasPorDia) setVisitasPorDia(data.visitasPorDia);
+    } catch (e) {
+      console.error("Error loading admin data:", e);
+    }
     setLoading(false);
-  }
-
-  async function loadAnalytics() {
-    setAnalyticsLoading(true);
-
-    const { data: allActivity } = await supabase
-      .from("actividad")
-      .select("ip_hash")
-      .eq("tipo", "page_view");
-
-    const uniqueIps = new Set(allActivity?.map((a) => a.ip_hash) || []);
-    setVisitantesUnicos(uniqueIps.size);
-    setTotalVisitas(allActivity?.length || 0);
-
-    const { data: recentActivity } = await supabase
-      .from("actividad")
-      .select(`
-        tipo,
-        pagina,
-        materia_slug,
-        created_at,
-        ip_hash,
-        archivos!inner(nombre_display),
-        clases!inner(numero, titulo, materias!inner(nombre))
-      `)
-      .order("created_at", { ascending: false })
-      .limit(20);
-
-    if (recentActivity) {
-      const mapped: ActividadReciente[] = recentActivity.map((a: any) => ({
-        tipo: a.tipo,
-        pagina: a.pagina,
-        materia_slug: a.materia_slug,
-        archivo_nombre: a.archivos?.nombre_display || null,
-        materia: a.clases?.materias?.nombre || null,
-        clase_numero: a.clases?.numero || null,
-        created_at: a.created_at,
-        ip_hash: a.ip_hash,
-      }));
-      setActividadReciente(mapped);
-    }
-
-    const { data: popularData } = await supabase
-      .from("archivos")
-      .select(`
-        id,
-        nombre_display,
-        tipo,
-        play_count,
-        clases!inner(numero, titulo, materias!inner(nombre))
-      `)
-      .gt("play_count", 0)
-      .order("play_count", { ascending: false })
-      .limit(10);
-
-    if (popularData) {
-      const mapped: ContenidoPopular[] = popularData.map((p: any) => ({
-        archivo_id: p.id,
-        nombre_display: p.nombre_display,
-        tipo: p.tipo,
-        materia: p.clases?.materias?.nombre || "",
-        clase_numero: p.clases?.numero || 0,
-        clase_titulo: p.clases?.titulo || "",
-        total_reproducciones: p.play_count,
-        usuarios_unicos: 0,
-      }));
-      setContenidoPopular(mapped);
-    }
-
-    const { data: dailyData } = await supabase
-      .from("actividad")
-      .select("created_at, ip_hash")
-      .eq("tipo", "page_view")
-      .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
-
-    if (dailyData) {
-      const dayMap: Record<string, Set<string>> = {};
-      dailyData.forEach((d) => {
-        const day = new Date(d.created_at).toLocaleDateString("es-AR");
-        if (!dayMap[day]) dayMap[day] = new Set();
-        dayMap[day].add(d.ip_hash);
-      });
-      const days: VisitaDia[] = Object.entries(dayMap)
-        .map(([fecha, ips]) => ({
-          fecha,
-          visitantes_unicos: ips.size,
-          total_visitas: dailyData.filter((d) => new Date(d.created_at).toLocaleDateString("es-AR") === fecha).length,
-        }))
-        .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
-      setVisitasPorDia(days);
-    }
-
     setAnalyticsLoading(false);
   }
 

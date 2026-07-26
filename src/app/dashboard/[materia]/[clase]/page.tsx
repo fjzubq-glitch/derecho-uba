@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, Calendar, Play, FileText, Headphones, Pause, ExternalLink } from "@/components/icons";
 import { formatDuration } from "@/lib/utils";
@@ -80,16 +79,13 @@ export default function ClaseDetailPage() {
   }, [playingId]);
 
   async function loadClase() {
-    const { data: claseData } = await supabase
-      .from("clases")
-      .select(`
-        id, numero, titulo, fecha,
-        archivos (id, tipo, nombre_display, storage_key, youtube_url, contenido_texto, duration_seconds, play_count)
-      `)
-      .eq("id", claseId)
-      .single();
-
-    if (claseData) setClase(claseData);
+    try {
+      const res = await fetch(`/api/clases/${claseId}`);
+      const data = await res.json();
+      if (data.clase) setClase(data.clase);
+    } catch (e) {
+      console.error("Error loading clase:", e);
+    }
     setLoading(false);
   }
 
@@ -116,7 +112,7 @@ export default function ClaseDetailPage() {
       setDuration(archivo.duration_seconds || 0);
       setIsPlaying(true);
 
-      await supabase.rpc("increment_play_count", { file_id: archivo.id });
+      fetch("/api/analytics", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ archivo_id: archivo.id }) }).catch(() => {});
       trackActivity({ tipo: "play_start", pagina: "clase", materia_slug: materiaSlug, clase_id: claseId, archivo_id: archivo.id });
 
       setTimeout(() => {
