@@ -13,7 +13,7 @@ interface UploadItem {
 
 interface AdminUploadProps {
   materias: { id: string; nombre: string; slug: string }[];
-  onSubmit: (materiaId: string, claseNumero: number, claseTitulo: string, claseFecha: string, items: UploadItem[]) => Promise<void>;
+  onSubmit: (materiaId: string, claseNumero: number, claseTitulo: string, claseFecha: string, items: UploadItem[]) => Promise<{ ok: boolean; error?: string }>;
 }
 
 const inputStyle: React.CSSProperties = {
@@ -79,6 +79,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
 
   const [audioDropHover, setAudioDropHover] = useState(false);
   const [podcastDropHover, setPodcastDropHover] = useState(false);
+  const [resultMsg, setResultMsg] = useState<{ text: string; isError: boolean } | null>(null);
 
   const handleSubmit = async () => {
     if (!materiaId || !claseTitulo) return;
@@ -103,10 +104,15 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
     }
 
     try {
-      await onSubmit(materiaId, claseNumero, claseTitulo, claseFecha, items);
-      resetForm();
+      const result = await onSubmit(materiaId, claseNumero, claseTitulo, claseFecha, items);
+      if (result.ok) {
+        setResultMsg({ text: "Clase subida correctamente", isError: false });
+        resetForm();
+      } else {
+        setResultMsg({ text: result.error || "Error desconocido", isError: true });
+      }
     } catch (err) {
-      console.error(err);
+      setResultMsg({ text: "Error al subir: " + String(err), isError: true });
     } finally {
       setUploading(false);
     }
@@ -405,8 +411,31 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
         </div>
       </div>
 
+      {/* Resultado */}
+      {resultMsg && (
+        <div
+          style={{
+            padding: "14px 18px",
+            marginBottom: "16px",
+            background: resultMsg.isError ? "rgba(224, 85, 85, 0.08)" : "rgba(185, 154, 98, 0.08)",
+            border: `1px solid ${resultMsg.isError ? "rgba(224, 85, 85, 0.3)" : "var(--color-gold-dim)"}`,
+            borderRadius: 0,
+          }}
+        >
+          <p
+            style={{
+              fontSize: "13px",
+              color: resultMsg.isError ? "#E05555" : "var(--color-gold)",
+              fontFamily: "var(--font-inter)",
+            }}
+          >
+            {resultMsg.text}
+          </p>
+        </div>
+      )}
+
       {/* Botón Subir */}
-      <div className="flex justify-end" style={{ marginTop: "24px" }}>
+      <div className="flex justify-end" style={{ marginTop: resultMsg ? "8px" : "24px" }}>
         <button
           onClick={handleSubmit}
           disabled={uploading || !claseTitulo}

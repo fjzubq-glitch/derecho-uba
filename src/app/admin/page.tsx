@@ -61,8 +61,6 @@ export default function AdminPage() {
     totalReproducciones: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
-  const [message, setMessage] = useState("");
 
   const [activeTab, setActiveTab] = useState<"upload" | "manage" | "analytics">("upload");
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
@@ -228,10 +226,7 @@ export default function AdminPage() {
       driveLink?: string;
       textoContenido?: string;
     }>
-  ) {
-    setUploading(true);
-    setMessage("");
-
+  ): Promise<{ ok: boolean; error?: string }> {
     try {
       const formData = new FormData();
       formData.append("materiaId", materiaId);
@@ -281,15 +276,12 @@ export default function AdminPage() {
       const data = await res.json();
 
       if (data.ok) {
-        setMessage("Clase subida correctamente");
-        loadData();
+        return { ok: true };
       } else {
-        setMessage("Error: " + (data.error || "Unknown error"));
+        return { ok: false, error: data.error || "Error desconocido" };
       }
     } catch (err) {
-      setMessage("Error al subir: " + String(err));
-    } finally {
-      setUploading(false);
+      return { ok: false, error: "Error al subir: " + String(err) };
     }
   }
 
@@ -592,29 +584,6 @@ export default function AdminPage() {
               </div>
             ))}
           </div>
-
-          {/* Message */}
-          {message && (
-            <div
-              style={{
-                padding: "16px 20px",
-                marginBottom: "24px",
-                background: message.startsWith("Error") ? "rgba(224, 85, 85, 0.08)" : "rgba(185, 154, 98, 0.08)",
-                border: `1px solid ${message.startsWith("Error") ? "rgba(224, 85, 85, 0.3)" : "var(--color-gold-dim)"}`,
-                borderRadius: 0,
-              }}
-            >
-              <p
-                style={{
-                  fontSize: "13px",
-                  color: message.startsWith("Error") ? "#E05555" : "var(--color-gold)",
-                  fontFamily: "var(--font-inter)",
-                }}
-              >
-                {message}
-              </p>
-            </div>
-          )}
 
           {/* Upload Tab */}
           {activeTab === "upload" && (
