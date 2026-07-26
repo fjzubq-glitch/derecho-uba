@@ -138,49 +138,26 @@ export default function AdminPage() {
             youtubeUrl: item.driveLink,
           });
         } else if (item.archivo) {
-          const CHUNK_SIZE = 3 * 1024 * 1024;
-          const sessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-          const totalParts = Math.ceil(item.archivo.size / CHUNK_SIZE);
-
-          for (let i = 0; i < totalParts; i++) {
-            const start = i * CHUNK_SIZE;
-            const end = Math.min(start + CHUNK_SIZE, item.archivo.size);
-            const chunk = item.archivo.slice(start, end);
-
-            const partForm = new FormData();
-            partForm.append("sessionId", sessionId);
-            partForm.append("partNumber", (i + 1).toString());
-            partForm.append("chunk", chunk, `part-${i + 1}`);
-
-            const partRes = await fetch("/api/upload-chunk", {
-              method: "POST",
-              body: partForm,
-            });
-            if (!partRes.ok) {
-              throw new Error(`Part ${i + 1}/${totalParts} failed`);
-            }
-          }
-
-          const finalKey = `uploads/${Date.now()}-${item.archivo.name}`;
-          const assemRes = await fetch("/api/upload-assemble", {
+          const presignRes = await fetch("/api/presign", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              sessionId,
-              totalParts,
-              finalKey,
-              contentType: item.archivo.type || "audio/mpeg",
-              fileSize: item.archivo.size,
-            }),
+            body: JSON.stringify({ filename: item.archivo.name, contentType: item.archivo.type || "audio/mpeg" }),
           });
-          if (!assemRes.ok) {
-            throw new Error("Assembly failed");
+          const presignData = await presignRes.json();
+          if (!presignData.uploadUrl) {
+            return { ok: false, error: presignData.error || "Failed to get upload URL" };
           }
-
+          const uploadRes = await fetch(presignData.uploadUrl, {
+            method: "PUT",
+            body: item.archivo,
+          });
+          if (!uploadRes.ok) {
+            return { ok: false, error: `Upload to storage failed (${uploadRes.status})` };
+          }
           processedItems.push({
             tipo: item.tipo,
             nombre: item.nombre,
-            storageKey: finalKey,
+            storageKey: presignData.storageKey,
             fileSize: item.archivo.size,
           });
         } else if (item.driveLink) {
