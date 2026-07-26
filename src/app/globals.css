@@ -46,6 +46,46 @@ article {
   stroke: #B99A62 !important;
 }
 
+/* ── Footer responsive ── */
+@media (max-width: 639px) {
+  .footer-inner {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 6px !important;
+    text-align: center !important;
+  }
+}
+
+/* ── Admin button icon-only on mobile ── */
+@media (max-width: 639px) {
+  .admin-btn-full { display: none !important; }
+  .admin-btn-icon { display: flex !important; }
+}
+@media (min-width: 640px) {
+  .admin-btn-full { display: flex !important; }
+  .admin-btn-icon { display: none !important; }
+}
+
+/* ── Touch target padding ── */
+.touch-target {
+  min-height: 44px;
+}
+
+/* ── Large safe tap area for radio labels ── */
+.radio-tap {
+  padding: 10px 0;
+}
+.radio-tap > * {
+  pointer-events: none;
+}
+
+/* ── Mobile input font-size ── */
+@media (max-width: 639px) {
+  .input-mobile {
+    font-size: 16px !important;
+  }
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

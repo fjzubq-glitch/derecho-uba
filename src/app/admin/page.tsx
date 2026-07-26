@@ -459,7 +459,7 @@ export default function AdminPage() {
         <div className="pad-lateral" style={{ padding: "48px 48px 80px" }}>
           {/* Stats */}
           <div
-            className="grid grid-cols-3 overflow-hidden mb-8"
+            className="grid grid-cols-1 md:grid-cols-3 overflow-hidden mb-8"
             style={{
               background: "var(--color-line-soft)",
               gap: "1px",
@@ -928,7 +928,7 @@ export default function AdminPage() {
       {/* ═══════════ FOOTER ═══════════ */}
       <footer className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
         <div
-          className="flex items-center justify-between pad-lateral"
+          className="footer-inner flex items-center justify-between pad-lateral"
           style={{
             padding: "28px 48px",
             fontFamily: "var(--font-ibm-plex-mono)",

@@ -458,7 +458,7 @@ export default function ClaseNumeroPage() {
       {/* ═══════════ FOOTER ═══════════ */}
       <footer className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
         <div
-          className="flex items-center justify-between pad-lateral"
+          className="footer-inner flex items-center justify-between pad-lateral"
           style={{
             padding: "28px 48px",
             fontFamily: "var(--font-ibm-plex-mono)",

@@ -103,7 +103,7 @@ export default function DashboardPage() {
             </div>
             <button
               onClick={() => router.push("/admin")}
-              className="flex items-center gap-2"
+              className="admin-btn-full flex items-center gap-2"
               style={{
                 background: "none",
                 border: "1px solid var(--color-line)",
@@ -126,6 +126,31 @@ export default function DashboardPage() {
             >
               <Shield style={{ width: "14px", height: "14px", flexShrink: 0 }} />
               Panel de administración
+            </button>
+            <button
+              onClick={() => router.push("/admin")}
+              className="admin-btn-icon flex items-center justify-center"
+              style={{
+                background: "none",
+                border: "1px solid var(--color-line)",
+                width: "34px",
+                height: "34px",
+                borderRadius: "50%",
+                cursor: "pointer",
+                color: "var(--color-text-muted)",
+                transition: "border-color 0.25s ease, color 0.25s ease",
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-gold)";
+                e.currentTarget.style.color = "var(--color-gold)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-line)";
+                e.currentTarget.style.color = "var(--color-text-muted)";
+              }}
+            >
+              <Shield style={{ width: "14px", height: "14px" }} />
             </button>
           </div>
         </div>
@@ -382,7 +407,7 @@ export default function DashboardPage() {
       {/* ═══════════ FOOTER ═══════════ */}
       <footer className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
         <div
-          className="flex items-center justify-between pad-lateral"
+          className="footer-inner flex items-center justify-between pad-lateral"
           style={{
             padding: "28px 48px",
             fontFamily: "var(--font-ibm-plex-mono)",

@@ -22,7 +22,7 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid var(--color-line-soft)",
   borderRadius: 0,
   padding: "12px 14px",
-  fontSize: "14px",
+  fontSize: "16px",
   color: "var(--color-text)",
   outline: "none",
   fontFamily: "var(--font-inter)",
@@ -149,7 +149,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
 
   function Radio({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
     return (
-      <label className="flex items-center gap-2" style={{ cursor: "pointer", userSelect: "none" }}>
+      <label className="flex items-center gap-2 radio-tap" style={{ cursor: "pointer", userSelect: "none" }}>
         <div
           className="flex items-center justify-center"
           onClick={(e) => { e.preventDefault(); onChange(); }}
@@ -458,8 +458,8 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
             color: "var(--color-ink)",
             border: "none",
             borderRadius: 0,
-            padding: "12px 28px",
-            fontSize: "13px",
+            padding: "14px 28px",
+            fontSize: "14px",
             fontWeight: 600,
             fontFamily: "var(--font-inter)",
             cursor: uploading || !claseTitulo ? "not-allowed" : "pointer",
