@@ -165,9 +165,10 @@ export async function initiateMultipartUpload(
   contentType: string
 ): Promise<string> {
   const path = "/" + R2_BUCKET + "/" + key;
+  const emptyHash = sha256("");
   const res = await r2FetchCustom("POST", path, "uploads=", {
     contentType,
-    payloadHash: "UNSIGNED-PAYLOAD",
+    payloadHash: emptyHash,
   });
   if (!res.ok) {
     throw new Error(`Init MPU failed: ${res.status} ${await res.text()}`);

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { initiateMultipartUpload } from "@/lib/r2";
 
+export const runtime = "nodejs";
+
 export async function POST(request: NextRequest) {
   try {
     const { filename, contentType } = await request.json();

@@ -139,66 +139,50 @@ export default function AdminPage() {
           });
         } else if (item.archivo) {
           const CHUNK_SIZE = 3 * 1024 * 1024;
-          const initRes = await fetch("/api/upload-init", {
+          const sessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+          const totalParts = Math.ceil(item.archivo.size / CHUNK_SIZE);
+
+          for (let i = 0; i < totalParts; i++) {
+            const start = i * CHUNK_SIZE;
+            const end = Math.min(start + CHUNK_SIZE, item.archivo.size);
+            const chunk = item.archivo.slice(start, end);
+
+            const partForm = new FormData();
+            partForm.append("sessionId", sessionId);
+            partForm.append("partNumber", (i + 1).toString());
+            partForm.append("chunk", chunk, `part-${i + 1}`);
+
+            const partRes = await fetch("/api/upload-chunk", {
+              method: "POST",
+              body: partForm,
+            });
+            if (!partRes.ok) {
+              throw new Error(`Part ${i + 1}/${totalParts} failed`);
+            }
+          }
+
+          const finalKey = `uploads/${Date.now()}-${item.archivo.name}`;
+          const assemRes = await fetch("/api/upload-assemble", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ filename: item.archivo.name, contentType: item.archivo.type || "audio/mpeg" }),
-          });
-          const initData = await initRes.json();
-          if (!initData.uploadId) {
-            return { ok: false, error: "Failed to initiate upload" };
-          }
-          const { uploadId, key } = initData;
-
-          try {
-            const totalParts = Math.ceil(item.archivo.size / CHUNK_SIZE);
-            const parts: { PartNumber: number; ETag: string }[] = [];
-
-            for (let i = 0; i < totalParts; i++) {
-              const start = i * CHUNK_SIZE;
-              const end = Math.min(start + CHUNK_SIZE, item.archivo.size);
-              const chunk = item.archivo.slice(start, end);
-
-              const partForm = new FormData();
-              partForm.append("key", key);
-              partForm.append("uploadId", uploadId);
-              partForm.append("partNumber", (i + 1).toString());
-              partForm.append("chunk", chunk, `part-${i + 1}`);
-
-              const partRes = await fetch("/api/upload-part", {
-                method: "POST",
-                body: partForm,
-              });
-              if (!partRes.ok) {
-                throw new Error(`Part ${i + 1}/${totalParts} failed (${partRes.status})`);
-              }
-              const partData = await partRes.json();
-              parts.push({ PartNumber: i + 1, ETag: partData.etag });
-            }
-
-            const compRes = await fetch("/api/upload-complete", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ key, uploadId, parts }),
-            });
-            if (!compRes.ok) {
-              throw new Error("Complete upload failed");
-            }
-
-            processedItems.push({
-              tipo: item.tipo,
-              nombre: item.nombre,
-              storageKey: key,
+            body: JSON.stringify({
+              sessionId,
+              totalParts,
+              finalKey,
+              contentType: item.archivo.type || "audio/mpeg",
               fileSize: item.archivo.size,
-            });
-          } catch {
-            await fetch("/api/upload-abort", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ key, uploadId }),
-            }).catch(() => {});
-            throw new Error("Upload cancelled");
+            }),
+          });
+          if (!assemRes.ok) {
+            throw new Error("Assembly failed");
           }
+
+          processedItems.push({
+            tipo: item.tipo,
+            nombre: item.nombre,
+            storageKey: finalKey,
+            fileSize: item.archivo.size,
+          });
         } else if (item.driveLink) {
           processedItems.push({
             tipo: item.tipo,
