@@ -357,7 +357,6 @@ export default function ClaseDetailPage() {
                           {archivo.contenido_texto && (
                             <span>{archivo.contenido_texto.split(/\s+/).length} palabras</span>
                           )}
-                          <span>{archivo.play_count} reproducciones</span>
                         </div>
                       </div>
                     </div>

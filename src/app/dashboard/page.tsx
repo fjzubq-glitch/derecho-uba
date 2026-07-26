@@ -11,14 +11,13 @@ interface Materia {
   slug: string;
   total_clases: number;
   total_audios: number;
-  total_reproducciones: number;
 }
 
 export default function DashboardPage() {
   const router = useRouter();
   const [materias, setMaterias] = useState<Materia[]>([]);
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ clases: 0, audios: 0, reproducciones: 0 });
+  const [stats, setStats] = useState({ clases: 0, audios: 0 });
 
   useEffect(() => {
     loadMaterias();
@@ -101,7 +100,25 @@ export default function DashboardPage() {
           >
             {new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
             <br />
-            Sesión — Admin
+            Sesión —{" "}
+            <button
+              onClick={() => router.push("/admin")}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: "inherit",
+                fontSize: "inherit",
+                color: "var(--color-text-faint)",
+                transition: "color 0.2s ease",
+                padding: 0,
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-faint)")}
+            >
+              <Shield style={{ width: "11px", height: "11px", verticalAlign: "middle", marginRight: "4px" }} />
+              Admin
+            </button>
           </div>
         </div>
       </header>
@@ -392,19 +409,13 @@ export default function DashboardPage() {
 
                     {/* Stats */}
                     <div
-                      className="flex flex-col gap-3 mb-auto pt-6 border-t"
+                      className="mb-auto pt-6 border-t"
                       style={{ borderColor: "var(--color-line-soft)" }}
                     >
                       <div className="flex items-center justify-between" style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>
                         <span>Archivos</span>
                         <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "13px", color: "var(--color-text)" }}>
                           {m.total_audios}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between" style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>
-                        <span>Reproducciones</span>
-                        <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "13px", color: "var(--color-text)" }}>
-                          {m.total_reproducciones}
                         </span>
                       </div>
                     </div>

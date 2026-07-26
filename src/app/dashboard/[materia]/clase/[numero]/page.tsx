@@ -41,7 +41,7 @@ const CARD_CONFIG: Record<CardTipo, {
   audio_clase: {
     icon: <Headphones style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "AUDIO DE CLASE",
-    subtitle: (a) => `${a.play_count} reproducciones`,
+    subtitle: () => "Disponible",
     emptySubtitle: "No disponible",
   },
   transcripcion: {
@@ -53,7 +53,7 @@ const CARD_CONFIG: Record<CardTipo, {
   podcast: {
     icon: <Volume2 style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "PODCAST",
-    subtitle: (a) => `${a.play_count} reproducciones`,
+    subtitle: () => "Disponible",
     emptySubtitle: "No disponible",
   },
 };

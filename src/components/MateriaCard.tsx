@@ -47,8 +47,6 @@ export default function MateriaCard({
         <span>{totalClases} clases</span>
         <span className="w-1 h-1 rounded-full bg-gray-600" />
         <span>{totalAudios} audios</span>
-        <span className="w-1 h-1 rounded-full bg-gray-600" />
-        <span>{totalReproducciones} reproducciones</span>
       </div>
     </GlassCard>
   );
