@@ -38,7 +38,7 @@ article {
 
 /* ── Colores forzados ── */
 .hero-sub {
-  color: #8992A8 !important;
+  color: var(--color-text-muted) !important;
 }
 
 .card-link, .card-link svg {

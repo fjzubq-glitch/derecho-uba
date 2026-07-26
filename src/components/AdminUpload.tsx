@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Upload, FileText, X, Check, Loader2, Headphones, ExternalLink, Shield } from "@/components/icons";
+import { Upload, FileText, X, Check, Loader2, Headphones, Volume2, Shield } from "@/components/icons";
 
 interface UploadItem {
   tipo: "audio_clase" | "podcast" | "transcripcion";
@@ -353,7 +353,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
         {/* Podcast */}
         <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
           <h3 style={sectionHeaderStyle}>
-            <ExternalLink style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+            <Volume2 style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
             LexPodcast
           </h3>
           <div className="space-y-3">
