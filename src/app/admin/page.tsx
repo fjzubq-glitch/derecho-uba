@@ -138,28 +138,67 @@ export default function AdminPage() {
             youtubeUrl: item.driveLink,
           });
         } else if (item.archivo) {
-          const presignRes = await fetch("/api/presign", {
+          const CHUNK_SIZE = 3 * 1024 * 1024;
+          const initRes = await fetch("/api/upload-init", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ filename: item.archivo.name, contentType: item.archivo.type || "audio/mpeg" }),
           });
-          const presignData = await presignRes.json();
-          if (!presignData.uploadUrl) {
-            return { ok: false, error: "Failed to get upload URL" };
+          const initData = await initRes.json();
+          if (!initData.uploadId) {
+            return { ok: false, error: "Failed to initiate upload" };
           }
-          const uploadRes = await fetch(presignData.uploadUrl, {
-            method: "PUT",
-            body: item.archivo,
-          });
-          if (!uploadRes.ok) {
-            return { ok: false, error: `Upload to storage failed (${uploadRes.status})` };
+          const { uploadId, key } = initData;
+
+          try {
+            const totalParts = Math.ceil(item.archivo.size / CHUNK_SIZE);
+            const parts: { PartNumber: number; ETag: string }[] = [];
+
+            for (let i = 0; i < totalParts; i++) {
+              const start = i * CHUNK_SIZE;
+              const end = Math.min(start + CHUNK_SIZE, item.archivo.size);
+              const chunk = item.archivo.slice(start, end);
+
+              const partForm = new FormData();
+              partForm.append("key", key);
+              partForm.append("uploadId", uploadId);
+              partForm.append("partNumber", (i + 1).toString());
+              partForm.append("chunk", chunk, `part-${i + 1}`);
+
+              const partRes = await fetch("/api/upload-part", {
+                method: "POST",
+                body: partForm,
+              });
+              if (!partRes.ok) {
+                throw new Error(`Part ${i + 1}/${totalParts} failed (${partRes.status})`);
+              }
+              const partData = await partRes.json();
+              parts.push({ PartNumber: i + 1, ETag: partData.etag });
+            }
+
+            const compRes = await fetch("/api/upload-complete", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ key, uploadId, parts }),
+            });
+            if (!compRes.ok) {
+              throw new Error("Complete upload failed");
+            }
+
+            processedItems.push({
+              tipo: item.tipo,
+              nombre: item.nombre,
+              storageKey: key,
+              fileSize: item.archivo.size,
+            });
+          } catch {
+            await fetch("/api/upload-abort", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ key, uploadId }),
+            }).catch(() => {});
+            throw new Error("Upload cancelled");
           }
-          processedItems.push({
-            tipo: item.tipo,
-            nombre: item.nombre,
-            storageKey: presignData.storageKey,
-            fileSize: item.archivo.size,
-          });
         } else if (item.driveLink) {
           processedItems.push({
             tipo: item.tipo,

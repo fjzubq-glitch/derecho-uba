@@ -101,6 +101,142 @@ export async function getSignedAudioUrl(key: string): Promise<string> {
   return getAudioPublicUrl(key);
 }
 
+// --- Multipart upload support ---
+
+async function r2FetchCustom(
+  method: string,
+  path: string,
+  queryString: string,
+  options?: { body?: Buffer; contentType?: string; payloadHash?: string }
+): Promise<Response> {
+  const now = new Date();
+  const amzDate = now.toISOString().replace(/[:-]/g, "").replace(/\.\d{3}/, "");
+  const dateStr = amzDate.slice(0, 8);
+  const host = `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+
+  const payloadHash = options?.payloadHash || (options?.body ? sha256(options.body.toString("binary")) : "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+
+  const allHeaders: Record<string, string> = { host };
+  if (options?.contentType) allHeaders["content-type"] = options.contentType;
+  allHeaders["x-amz-content-sha256"] = payloadHash;
+  allHeaders["x-amz-date"] = amzDate;
+
+  const headerNames = Object.keys(allHeaders).sort();
+  const canonicalHeaders = headerNames.map((n) => n + ":" + allHeaders[n].trim() + "\n").join("");
+  const signedHeaders = headerNames.join(";");
+
+  const canonicalRequest =
+    method + "\n" +
+    path + "\n" +
+    queryString + "\n" +
+    canonicalHeaders + "\n" +
+    signedHeaders + "\n" +
+    payloadHash;
+
+  const credentialScope = dateStr + "/" + REGION + "/" + SERVICE + "/aws4_request";
+  const stringToSign =
+    ALGORITHM + "\n" +
+    amzDate + "\n" +
+    credentialScope + "\n" +
+    sha256(canonicalRequest);
+
+  const signingKey = deriveSigningKey(dateStr);
+  const signature = hmacSha256(signingKey, stringToSign).toString("hex");
+
+  const authHeader = `${ALGORITHM} Credential=${R2_ACCESS_KEY_ID}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+  const fetchHeaders: Record<string, string> = {
+    "x-amz-content-sha256": payloadHash,
+    "x-amz-date": amzDate,
+    Authorization: authHeader,
+  };
+  if (options?.contentType) fetchHeaders["Content-Type"] = options.contentType;
+
+  const url = `https://${host}${path}${queryString ? "?" + queryString : ""}`;
+  return fetch(url, {
+    method,
+    headers: fetchHeaders,
+    body: options?.body ? new Uint8Array(options.body) : undefined,
+  });
+}
+
+export async function initiateMultipartUpload(
+  key: string,
+  contentType: string
+): Promise<string> {
+  const path = "/" + R2_BUCKET + "/" + key;
+  const res = await r2FetchCustom("POST", path, "uploads=", {
+    contentType,
+    payloadHash: "UNSIGNED-PAYLOAD",
+  });
+  if (!res.ok) {
+    throw new Error(`Init MPU failed: ${res.status} ${await res.text()}`);
+  }
+  const xml = await res.text();
+  const match = xml.match(/<UploadId>([^<]+)<\/UploadId>/);
+  if (!match) throw new Error("No UploadId in response");
+  return match[1];
+}
+
+export async function uploadPart(
+  key: string,
+  uploadId: string,
+  partNumber: number,
+  body: Buffer
+): Promise<string> {
+  const path = "/" + R2_BUCKET + "/" + key;
+  const qs = `partNumber=${partNumber}&uploadId=${uploadId}`;
+  const res = await r2FetchCustom(
+    "PUT",
+    path,
+    qs,
+    { body, payloadHash: "UNSIGNED-PAYLOAD" }
+  );
+  if (!res.ok) {
+    throw new Error(`Upload part ${partNumber} failed: ${res.status} ${await res.text()}`);
+  }
+  const etag = res.headers.get("ETag");
+  if (!etag) throw new Error("No ETag in response");
+  return etag.replace(/"/g, "");
+}
+
+export async function completeMultipartUpload(
+  key: string,
+  uploadId: string,
+  parts: { PartNumber: number; ETag: string }[]
+): Promise<void> {
+  const path = "/" + R2_BUCKET + "/" + key;
+  const qs = `uploadId=${uploadId}`;
+
+  const bodyXml =
+    "<CompleteMultipartUpload>" +
+    parts.map((p) => `<Part><PartNumber>${p.PartNumber}</PartNumber><ETag>"${p.ETag}"</ETag></Part>`).join("") +
+    "</CompleteMultipartUpload>";
+
+  const bodyBuf = Buffer.from(bodyXml, "utf-8");
+  const res = await r2FetchCustom(
+    "POST",
+    path,
+    qs,
+    { body: bodyBuf, contentType: "application/xml" }
+  );
+  if (!res.ok) {
+    throw new Error(`Complete MPU failed: ${res.status} ${await res.text()}`);
+  }
+}
+
+export async function abortMultipartUpload(
+  key: string,
+  uploadId: string
+): Promise<void> {
+  const path = "/" + R2_BUCKET + "/" + key;
+  const qs = `uploadId=${uploadId}`;
+  const res = await r2FetchCustom("DELETE", path, qs);
+  if (!res.ok && res.status !== 404) {
+    throw new Error(`Abort MPU failed: ${res.status} ${await res.text()}`);
+  }
+}
+
 export async function deleteFromR2(key: string): Promise<void> {
   const res = await r2Fetch("DELETE", key);
   if (!res.ok && res.status !== 404) {
