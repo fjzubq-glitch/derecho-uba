@@ -10,7 +10,6 @@ interface Materia {
   nombre: string;
   slug: string;
   total_clases: number;
-  total_audios: number;
 }
 
 export default function DashboardPage() {
@@ -405,19 +404,6 @@ export default function DashboardPage() {
                       }}
                     >
                       {meta || "Sin comisión asignada"}
-                    </div>
-
-                    {/* Stats */}
-                    <div
-                      className="mb-auto pt-6 border-t"
-                      style={{ borderColor: "var(--color-line-soft)" }}
-                    >
-                      <div className="flex items-center justify-between" style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>
-                        <span>Archivos</span>
-                        <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "13px", color: "var(--color-text)" }}>
-                          {m.total_audios}
-                        </span>
-                      </div>
                     </div>
 
                     {/* CTA */}
