@@ -39,19 +39,19 @@ const CARD_CONFIG: Record<CardTipo, {
   emptySubtitle: string;
 }> = {
   audio_clase: {
-    icon: <Headphones style={{ width: "24px", height: "24px", color: "var(--color-gold)" }} />,
+    icon: <Headphones style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "AUDIO DE CLASE",
     subtitle: (a) => `${a.play_count} reproducciones`,
     emptySubtitle: "No disponible",
   },
   transcripcion: {
-    icon: <FileText style={{ width: "24px", height: "24px", color: "var(--color-gold)" }} />,
+    icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "TRANSCRIPCIÓN",
     subtitle: () => "Ver documento completo",
     emptySubtitle: "No disponible",
   },
   podcast: {
-    icon: <Volume2 style={{ width: "24px", height: "24px", color: "var(--color-gold)" }} />,
+    icon: <Volume2 style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "PODCAST",
     subtitle: (a) => `${a.play_count} reproducciones`,
     emptySubtitle: "No disponible",
@@ -206,8 +206,7 @@ export default function ClaseNumeroPage() {
         key={tipo}
         style={{
           background: "var(--color-card)",
-          border: "1px solid var(--color-line-soft)",
-          padding: "36px 32px",
+          padding: "28px 24px",
           opacity: exists ? 1 : 0.4,
           cursor: exists ? "pointer" : "default",
           transition: "background 0.25s ease",
@@ -222,19 +221,18 @@ export default function ClaseNumeroPage() {
           }
         }}
       >
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-5">
-            <div
-              className="flex items-center justify-center flex-shrink-0"
-              style={{
-                width: "52px",
-                height: "52px",
-                borderRadius: "50%",
-                border: "1px solid var(--color-gold-dim)",
-              }}
-            >
-              {config.icon}
-            </div>
+        <div className="flex items-start justify-between gap-3">
+          <div
+            className="flex items-center justify-center flex-shrink-0"
+            style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              border: "1px solid var(--color-gold-dim)",
+            }}
+          >
+            {config.icon}
+          </div>
             <div>
               <div
                 style={{
@@ -272,13 +270,13 @@ export default function ClaseNumeroPage() {
             </div>
           </div>
           {exists && (
-            <ArrowRight style={{ width: "20px", height: "20px", color: "var(--color-gold)", flexShrink: 0, marginTop: "16px" }} />
+            <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0, marginTop: "14px" }} />
           )}
         </div>
 
         {/* Audio player inline */}
         {isAudioTipo && isThisPlaying && exists && (
-          <div className="flex items-center gap-3 mt-6 pt-6 border-t" style={{ borderColor: "var(--color-line-soft)" }}>
+          <div className="flex items-center gap-3 mt-4 pt-4 border-t" style={{ borderColor: "var(--color-line-soft)" }}>
             <button
               onClick={(e) => { e.stopPropagation(); togglePlay(); }}
               className="flex items-center justify-center flex-shrink-0"
@@ -323,8 +321,8 @@ export default function ClaseNumeroPage() {
         {isTranscription && openTranscripcion && exists && archivo.contenido_texto && (
           <div
             style={{
-              marginTop: "20px",
-              padding: "20px",
+              marginTop: "16px",
+              padding: "16px",
               background: "rgba(0,0,0,0.2)",
               border: "1px solid var(--color-line-soft)",
               fontSize: "14px",
@@ -495,8 +493,15 @@ export default function ClaseNumeroPage() {
             )}
           </div>
 
-          {/* 3 cards */}
-          <div className="space-y-4">
+          {/* 3 cards en grid */}
+          <div
+            className="grid grid-cols-1 md:grid-cols-3 overflow-hidden"
+            style={{
+              background: "var(--color-line-soft)",
+              gap: "1px",
+              borderRadius: 0,
+            }}
+          >
             {tipos.map(renderCard)}
           </div>
         </div>
