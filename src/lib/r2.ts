@@ -1,4 +1,4 @@
-import { createHmac } from "crypto";
+import { createHash, createHmac } from "crypto";
 
 export const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL!;
 const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID!;
@@ -6,8 +6,83 @@ const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID!;
 const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY!;
 const R2_BUCKET = process.env.R2_BUCKET_NAME!;
 
+const REGION = "auto";
+const SERVICE = "s3";
+const ALGORITHM = "AWS4-HMAC-SHA256";
+
+function sha256(msg: string): string {
+  return createHash("sha256").update(msg).digest("hex");
+}
+
+function hmacSha256(key: Buffer | string, msg: string): Buffer {
+  return createHmac("sha256", key).update(msg).digest();
+}
+
+function deriveSigningKey(dateStr: string): Buffer {
+  const kDate = hmacSha256("AWS4" + R2_SECRET_ACCESS_KEY, dateStr);
+  const kRegion = hmacSha256(kDate, REGION);
+  const kService = hmacSha256(kRegion, SERVICE);
+  return hmacSha256(kService, "aws4_request");
+}
+
 export function getAudioPublicUrl(key: string): string {
   return `${R2_PUBLIC_URL}/${key}`;
+}
+
+async function r2Fetch(
+  method: string,
+  key: string,
+  options?: { body?: Buffer; contentType?: string }
+): Promise<Response> {
+  const now = new Date();
+  const amzDate = now.toISOString().replace(/[:-]/g, "").replace(/\.\d{3}/, "");
+  const dateStr = amzDate.slice(0, 8);
+  const host = `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+  const canonicalUri = "/" + R2_BUCKET + "/" + key;
+
+  // Build canonical headers (sorted alphabetically)
+  const allHeaders: Record<string, string> = { host };
+  if (options?.contentType) allHeaders["content-type"] = options.contentType;
+  allHeaders["x-amz-content-sha256"] = "UNSIGNED-PAYLOAD";
+  allHeaders["x-amz-date"] = amzDate;
+
+  const headerNames = Object.keys(allHeaders).sort();
+  const canonicalHeaders = headerNames.map((n) => n + ":" + allHeaders[n].trim() + "\n").join("");
+  const signedHeaders = headerNames.join(";");
+
+  const canonicalRequest =
+    method + "\n" +
+    canonicalUri + "\n" +
+    "\n" + // empty query string
+    canonicalHeaders + "\n" +
+    signedHeaders + "\n" +
+    "UNSIGNED-PAYLOAD";
+
+  const credentialScope = dateStr + "/" + REGION + "/" + SERVICE + "/aws4_request";
+  const stringToSign =
+    ALGORITHM + "\n" +
+    amzDate + "\n" +
+    credentialScope + "\n" +
+    sha256(canonicalRequest);
+
+  const signingKey = deriveSigningKey(dateStr);
+  const signature = hmacSha256(signingKey, stringToSign).toString("hex");
+
+  const authHeader = `${ALGORITHM} Credential=${R2_ACCESS_KEY_ID}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+  const fetchHeaders: Record<string, string> = {
+    "x-amz-content-sha256": "UNSIGNED-PAYLOAD",
+    "x-amz-date": amzDate,
+    Authorization: authHeader,
+  };
+  if (options?.contentType) fetchHeaders["Content-Type"] = options.contentType;
+
+  const url = `https://${host}${canonicalUri}`;
+  return fetch(url, {
+    method,
+    headers: fetchHeaders,
+    body: options?.body ? new Uint8Array(options.body) : undefined,
+  });
 }
 
 export async function uploadToR2(
@@ -15,30 +90,10 @@ export async function uploadToR2(
   file: Buffer,
   contentType: string
 ): Promise<string> {
-  const url = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${R2_BUCKET}/${key}`;
-  const date = new Date().toUTCString();
-
-  const stringToSign = `PUT\n\n${contentType}\n${date}\n/${R2_BUCKET}/${key}`;
-  const signature = createHmac("sha1", R2_SECRET_ACCESS_KEY)
-    .update(stringToSign)
-    .digest("base64");
-
-  const auth = `AWS ${R2_ACCESS_KEY_ID}:${signature}`;
-
-  const res = await fetch(url, {
-    method: "PUT",
-    headers: {
-      Date: date,
-      Authorization: auth,
-      "Content-Type": contentType,
-    },
-    body: new Uint8Array(file),
-  });
-
+  const res = await r2Fetch("PUT", key, { body: file, contentType });
   if (!res.ok) {
-    throw new Error(`R2 upload failed: ${res.status}`);
+    throw new Error(`R2 upload failed: ${res.status} ${await res.text()}`);
   }
-
   return getAudioPublicUrl(key);
 }
 
@@ -46,42 +101,58 @@ export async function getSignedAudioUrl(key: string): Promise<string> {
   return getAudioPublicUrl(key);
 }
 
+export async function deleteFromR2(key: string): Promise<void> {
+  const res = await r2Fetch("DELETE", key);
+  if (!res.ok && res.status !== 404) {
+    throw new Error(`R2 delete failed: ${res.status} ${await res.text()}`);
+  }
+}
+
 export function getPresignedUploadUrl(
   key: string,
   contentType: string,
   expiresSeconds = 300
 ): string {
-  const expires = Math.floor(Date.now() / 1000) + expiresSeconds;
-  const stringToSign = `PUT\n\n${contentType}\n${expires}\n/${R2_BUCKET}/${key}`;
-  const signature = createHmac("sha1", R2_SECRET_ACCESS_KEY)
-    .update(stringToSign)
-    .digest("base64");
+  const now = new Date();
+  const amzDate = now.toISOString().replace(/[:-]/g, "").replace(/\.\d{3}/, "");
+  const dateStr = amzDate.slice(0, 8);
+  const host = `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+  const canonicalUri = "/" + R2_BUCKET + "/" + key;
+  const credential = `${R2_ACCESS_KEY_ID}/${dateStr}/${REGION}/${SERVICE}/aws4_request`;
 
-  const encodedSig = encodeURIComponent(signature);
-  const url = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${R2_BUCKET}/${key}?AWSAccessKeyId=${R2_ACCESS_KEY_ID}&Expires=${expires}&Signature=${encodedSig}`;
-  return url;
-}
+  const qsParams: Record<string, string> = {
+    "X-Amz-Algorithm": ALGORITHM,
+    "X-Amz-Credential": credential,
+    "X-Amz-Date": amzDate,
+    "X-Amz-Expires": String(expiresSeconds),
+    "X-Amz-SignedHeaders": "host",
+  };
 
-export async function deleteFromR2(key: string): Promise<void> {
-  const url = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${R2_BUCKET}/${key}`;
-  const date = new Date().toUTCString();
+  const canonicalQueryString = Object.entries(qsParams)
+    .map(([n, v]) => encodeURIComponent(n) + "=" + encodeURIComponent(v))
+    .join("&");
 
-  const stringToSign = `DELETE\n\n\n${date}\n/${R2_BUCKET}/${key}`;
-  const signature = createHmac("sha1", R2_SECRET_ACCESS_KEY)
-    .update(stringToSign)
-    .digest("base64");
+  // For presigned URLs, only host is signed
+  const canonicalHeaders = "host:" + host + "\n";
+  const signedHeaders = "host";
 
-  const auth = `AWS ${R2_ACCESS_KEY_ID}:${signature}`;
+  const canonicalRequest =
+    "PUT\n" +
+    canonicalUri + "\n" +
+    canonicalQueryString + "\n" +
+    canonicalHeaders + "\n" +
+    signedHeaders + "\n" +
+    "UNSIGNED-PAYLOAD";
 
-  const res = await fetch(url, {
-    method: "DELETE",
-    headers: {
-      Date: date,
-      Authorization: auth,
-    },
-  });
+  const credentialScope = dateStr + "/" + REGION + "/" + SERVICE + "/aws4_request";
+  const stringToSign =
+    ALGORITHM + "\n" +
+    amzDate + "\n" +
+    credentialScope + "\n" +
+    sha256(canonicalRequest);
 
-  if (!res.ok && res.status !== 404) {
-    throw new Error(`R2 delete failed: ${res.status}`);
-  }
+  const signingKey = deriveSigningKey(dateStr);
+  const signature = hmacSha256(signingKey, stringToSign).toString("hex");
+
+  return `https://${host}${canonicalUri}?${canonicalQueryString}&X-Amz-Signature=${signature}`;
 }
