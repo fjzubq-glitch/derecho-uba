@@ -59,11 +59,28 @@ export async function POST(request: NextRequest) {
     }>;
 
     for (const item of items) {
+      let storageKey = item.storageKey || null;
+
+      if (storageKey) {
+        const fileKey = `file_${item.tipo}`;
+        const file = formData.get(fileKey) as File | null;
+
+        if (file) {
+          const buffer = Buffer.from(await file.arrayBuffer());
+          const contentType = file.type || "audio/mpeg";
+          try {
+            await uploadToR2(storageKey, buffer, contentType);
+          } catch (r2Err) {
+            console.error(`R2 upload failed for ${storageKey}:`, r2Err);
+          }
+        }
+      }
+
       const { error: insertError } = await getSupabaseAdmin().from("archivos").insert({
         clase_id: claseId,
         tipo: item.tipo,
         nombre_display: item.nombre,
-        storage_key: item.storageKey || null,
+        storage_key: storageKey,
         youtube_url: item.youtubeUrl || null,
         contenido_texto: item.contenidoTexto || null,
         file_size: item.fileSize || null,
