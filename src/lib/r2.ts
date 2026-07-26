@@ -46,6 +46,22 @@ export async function getSignedAudioUrl(key: string): Promise<string> {
   return getAudioPublicUrl(key);
 }
 
+export function getPresignedUploadUrl(
+  key: string,
+  contentType: string,
+  expiresSeconds = 300
+): string {
+  const expires = Math.floor(Date.now() / 1000) + expiresSeconds;
+  const stringToSign = `PUT\n\n${contentType}\n${expires}\n/${R2_BUCKET}/${key}`;
+  const signature = createHmac("sha1", R2_SECRET_ACCESS_KEY)
+    .update(stringToSign)
+    .digest("base64");
+
+  const encodedSig = encodeURIComponent(signature);
+  const url = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${R2_BUCKET}/${key}?AWSAccessKeyId=${R2_ACCESS_KEY_ID}&Expires=${expires}&Signature=${encodedSig}`;
+  return url;
+}
+
 export async function deleteFromR2(key: string): Promise<void> {
   const url = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${R2_BUCKET}/${key}`;
   const date = new Date().toUTCString();

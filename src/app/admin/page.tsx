@@ -122,12 +122,6 @@ export default function AdminPage() {
     }>
   ): Promise<{ ok: boolean; error?: string }> {
     try {
-      const formData = new FormData();
-      formData.append("materiaId", materiaId);
-      formData.append("claseNumero", claseNumero.toString());
-      formData.append("claseTitulo", claseTitulo);
-      formData.append("claseFecha", claseFecha);
-
       const processedItems = [];
 
       for (const item of items) {
@@ -144,13 +138,28 @@ export default function AdminPage() {
             youtubeUrl: item.driveLink,
           });
         } else if (item.archivo) {
+          const presignRes = await fetch("/api/presign", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ filename: item.archivo.name, contentType: item.archivo.type || "audio/mpeg" }),
+          });
+          const presignData = await presignRes.json();
+          if (!presignData.uploadUrl) {
+            return { ok: false, error: "Failed to get upload URL" };
+          }
+          const uploadRes = await fetch(presignData.uploadUrl, {
+            method: "PUT",
+            body: item.archivo,
+          });
+          if (!uploadRes.ok) {
+            return { ok: false, error: `Upload to storage failed (${uploadRes.status})` };
+          }
           processedItems.push({
             tipo: item.tipo,
             nombre: item.nombre,
-            storageKey: `uploads/${Date.now()}-${item.archivo.name}`,
+            storageKey: presignData.storageKey,
             fileSize: item.archivo.size,
           });
-          formData.append(`file_${item.tipo}`, item.archivo);
         } else if (item.driveLink) {
           processedItems.push({
             tipo: item.tipo,
@@ -160,11 +169,16 @@ export default function AdminPage() {
         }
       }
 
-      formData.append("items", JSON.stringify(processedItems));
-
       const res = await fetch("/api/upload", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          materiaId,
+          claseNumero,
+          claseTitulo,
+          claseFecha,
+          items: processedItems,
+        }),
       });
 
       const data = await res.json();

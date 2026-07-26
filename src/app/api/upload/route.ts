@@ -1,38 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
-import { uploadToR2 } from "@/lib/r2";
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
+    const body = await request.json();
+    const { materiaId, claseNumero, claseTitulo, claseFecha, items } = body;
 
-    const debug: Record<string, any> = {};
-    const keys: string[] = [];
-    formData.forEach((_, key) => keys.push(key));
-    debug.keys = keys;
-
-    const materiaId = formData.get("materiaId") as string;
-    const claseNumero = Number(formData.get("claseNumero"));
-    const claseTitulo = formData.get("claseTitulo") as string;
-    const claseFecha = formData.get("claseFecha") as string;
-    const itemsJson = formData.get("items") as string;
-
-    debug.materiaId = materiaId;
-    debug.claseNumero = claseNumero;
-    debug.claseTitulo = claseTitulo;
-    debug.claseFecha = claseFecha;
-    debug.itemsJson = itemsJson;
-
-    if (!materiaId || !claseTitulo) {
-      return NextResponse.json({ ok: false, error: "Missing required fields", debug });
-    }
-
-    let items: any[];
-    try {
-      items = JSON.parse(itemsJson);
-      debug.items = items;
-    } catch {
-      return NextResponse.json({ ok: false, error: "Invalid items JSON", debug });
+    if (!materiaId || !claseTitulo || !items) {
+      return NextResponse.json({ ok: false, error: "Missing required fields" });
     }
 
     const { data: existingClase } = await getSupabaseAdmin()
@@ -51,7 +26,7 @@ export async function POST(request: NextRequest) {
         .update({ titulo: claseTitulo, fecha: claseFecha || null })
         .eq("id", claseId);
       if (updErr) {
-        return NextResponse.json({ ok: false, error: "Failed to update class: " + updErr.message, debug });
+        return NextResponse.json({ ok: false, error: "Failed to update class: " + updErr.message });
       }
     } else {
       const { data: newClase, error: claseError } = await getSupabaseAdmin()
@@ -66,40 +41,19 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (claseError || !newClase) {
-        return NextResponse.json({ ok: false, error: "Failed to create class: " + (claseError?.message || "no data"), debug });
+        return NextResponse.json({ ok: false, error: "Failed to create class: " + (claseError?.message || "no data") });
       }
       claseId = newClase.id;
     }
 
-    debug.claseId = claseId;
     const insertErrors: string[] = [];
 
     for (const item of items) {
-      let storageKey = item.storageKey || null;
-
-      if (storageKey) {
-        const fileKey = `file_${item.tipo}`;
-        const file = formData.get(fileKey);
-        debug[`file_${item.tipo}`] = file ? `File: ${(file as File).name} (${(file as File).size} bytes, ${(file as File).type})` : "null";
-
-        if (file) {
-          const buffer = Buffer.from(await (file as File).arrayBuffer());
-          const contentType = (file as File).type || "audio/mpeg";
-          try {
-            await uploadToR2(storageKey, buffer, contentType);
-          } catch (r2Err: any) {
-            const msg = `R2 upload failed for ${storageKey}: ${r2Err?.message || r2Err}`;
-            console.error(msg);
-            insertErrors.push(msg);
-          }
-        }
-      }
-
       const { error: insertError } = await getSupabaseAdmin().from("archivos").insert({
         clase_id: claseId,
         tipo: item.tipo,
         nombre_display: item.nombre,
-        storage_key: storageKey,
+        storage_key: item.storageKey || null,
         youtube_url: item.youtubeUrl || null,
         contenido_texto: item.contenidoTexto || null,
         file_size: item.fileSize || null,
@@ -114,10 +68,10 @@ export async function POST(request: NextRequest) {
     }
 
     if (insertErrors.length > 0) {
-      return NextResponse.json({ ok: false, error: insertErrors.join("; "), debug });
+      return NextResponse.json({ ok: false, error: insertErrors.join("; ") });
     }
 
-    return NextResponse.json({ ok: true, claseId, debug });
+    return NextResponse.json({ ok: true, claseId });
   } catch (error: any) {
     console.error("Upload error:", error);
     return NextResponse.json({ ok: false, error: "Server error: " + (error?.message || String(error)) });
