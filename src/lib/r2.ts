@@ -75,12 +75,16 @@ export async function getSignedAudioUrl(key: string): Promise<string> {
 
 const host = () => `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
 
+function encodePath(p: string): string {
+  return p.split("/").map(seg => encodeURIComponent(seg)).join("/");
+}
+
 async function r2Request(
   method: string,
   key: string,
   options?: { body?: Buffer; contentType?: string; queryString?: string }
 ): Promise<Response> {
-  const path = "/" + R2_BUCKET + "/" + key;
+  const path = "/" + encodePath(R2_BUCKET) + "/" + encodePath(key);
   const qs = options?.queryString || "";
   const amzDate = nowAmzDate();
   const payloadHash = options?.body
