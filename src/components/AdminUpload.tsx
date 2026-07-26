@@ -251,14 +251,15 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
             type="date"
             value={claseFecha}
             onChange={(e) => setClaseFecha(e.target.value)}
-            style={{ ...inputStyle, colorScheme: "dark" as any }}
+            style={inputStyle}
           />
         </div>
       </div>
 
       {/* Título */}
       <div className="mb-6">
-        <label style={labelStyle}>Título de la clase</label>
+            <label style={labelStyle}>Título de la clase</label>
+
         <input
           type="text"
           value={claseTitulo}

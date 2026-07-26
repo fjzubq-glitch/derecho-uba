@@ -103,3 +103,12 @@ select {
   background-position: right 12px center;
   appearance: none;
 }
+
+/* ── Date input dark calendar icon ── */
+input[type="date"] {
+  color-scheme: dark;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
