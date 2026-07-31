@@ -1196,7 +1196,7 @@ export default function AdminPage() {
           }}
         >
           <span>Derecho UBA — Sistema de gestión de clases</span>
-          <span>© 2026 — Designed & developed by Franklin</span>
+          <span>© 2026 — Designed & developed by <span style={{ color: "var(--color-gold)" }}>Franklin</span></span>
         </div>
       </footer>
     </div>
