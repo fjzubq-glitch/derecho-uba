@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, Calendar, Play, FileText, Headphones, Pause, ExternalLink } from "@/components/icons";
-import { formatDuration } from "@/lib/utils";
+import { formatDuration, formatFechaLocal } from "@/lib/utils";
 
 interface Archivo {
   id: string;
@@ -222,7 +222,7 @@ export default function ClaseDetailPage() {
               }}
             >
               <Calendar style={{ width: "14px", height: "14px" }} />
-              {new Date(clase.fecha).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })}
+              {formatFechaLocal(clase.fecha, { month: "long" })}
             </div>
           )}
         </div>
@@ -255,7 +255,7 @@ export default function ClaseDetailPage() {
                 }}
               >
                 <Calendar style={{ width: "14px", height: "14px" }} />
-                {new Date(clase.fecha).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })}
+                {formatFechaLocal(clase.fecha, { month: "long" })}
                 <span style={{ color: "var(--color-line)", margin: "0 4px" }}>·</span>
                 {archivos.length} archivos
               </div>

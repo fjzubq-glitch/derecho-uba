@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Volume2 } from "@/components/icons";
-import { formatDuration } from "@/lib/utils";
+import { formatDuration, formatFechaLocal } from "@/lib/utils";
 
 interface Archivo {
   id: string;
@@ -436,7 +436,7 @@ export default function ClaseNumeroPage() {
                 }}
               >
                 <Calendar style={{ width: "14px", height: "14px" }} />
-                {new Date(clase.fecha).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })}
+                {formatFechaLocal(clase.fecha, { month: "long" })}
               </div>
             )}
           </div>

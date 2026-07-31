@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
+import { formatFechaLocal } from "@/lib/utils";
 import { ArrowLeft, Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical } from "@/components/icons";
 
 interface Archivo {
@@ -493,11 +494,7 @@ export default function AdminManage() {
                     <div className="flex items-center gap-1.5 mt-2">
                       <Calendar style={{ width: "13px", height: "13px", color: "var(--color-text-faint)" }} />
                       <span style={{ fontSize: "12px", color: "var(--color-text-faint)" }}>
-                        {new Date(clase.fecha).toLocaleDateString("es-AR", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {formatFechaLocal(clase.fecha, { day: "numeric", month: "short", year: "numeric" })}
                       </span>
                     </div>
                   )}

@@ -24,3 +24,20 @@ export function getYouTubeThumbnail(url: string): string | null {
   if (!id) return null;
   return `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
 }
+
+// Convierte "YYYY-MM-DD" (date de Supabase, sin zona) en una fecha local,
+// evitando que new Date("2026-03-12") se parse como medianoche UTC y
+// muestre el día anterior en zonas como America/Buenos_Aires (UTC-3).
+export function parseFechaLocal(fecha: string): Date {
+  const [y, m, d] = fecha.split("-").map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+}
+
+export function formatFechaLocal(fecha: string, opts: Intl.DateTimeFormatOptions = {}): string {
+  return parseFechaLocal(fecha).toLocaleDateString("es-AR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    ...opts,
+  });
+}

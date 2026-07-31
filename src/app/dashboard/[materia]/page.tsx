@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { trackActivity } from "@/lib/tracking";
+import { formatFechaLocal } from "@/lib/utils";
 import { ArrowLeft, ArrowRight, Calendar } from "@/components/icons";
 
 interface Clase {
@@ -203,11 +204,7 @@ export default function MateriaPage() {
                         }}
                       >
                         <Calendar style={{ width: "14px", height: "14px" }} />
-                        {new Date(clase.fecha).toLocaleDateString("es-AR", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {formatFechaLocal(clase.fecha)}
                       </div>
                     ) : (
                       <div />
