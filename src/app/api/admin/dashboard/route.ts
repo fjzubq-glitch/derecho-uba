@@ -34,12 +34,23 @@ export async function GET() {
       .limit(20);
 
     // Popular content
-    const { data: popularData } = await supabase
+    const { data: popularRows } = await supabase
       .from("archivos")
-      .select("id, nombre_display, tipo, play_count")
+      .select("id, nombre_display, tipo, play_count, clase_id, clases!inner(numero, titulo, materias!inner(nombre))")
       .gt("play_count", 0)
       .order("play_count", { ascending: false })
       .limit(10);
+
+    const contenidoPopular = (popularRows || []).map((a: any) => ({
+      archivo_id: a.id,
+      nombre_display: a.nombre_display,
+      tipo: a.tipo,
+      materia: a.clases?.materias?.nombre || "",
+      clase_numero: a.clases?.numero || 0,
+      clase_titulo: a.clases?.titulo || "",
+      total_reproducciones: a.play_count || 0,
+      usuarios_unicos: 0,
+    }));
 
     // Daily visits (last 7 days)
     const { data: dailyData } = await supabase
@@ -72,7 +83,7 @@ export async function GET() {
       visitantesUnicos,
       totalVisitas,
       actividadReciente: recentActivity || [],
-      contenidoPopular: popularData || [],
+      contenidoPopular,
       visitasPorDia,
     });
   } catch (e: any) {
