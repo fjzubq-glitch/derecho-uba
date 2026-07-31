@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -476,7 +476,7 @@ export default function DashboardPage() {
           }}
         >
           <span>Derecho UBA — Sistema de gestión de clases</span>
-          <span>v0.2 — Prototipo</span>
+          <span>© 2026 — Designed & developed by Franklin</span>
         </div>
       </footer>
     </div>
