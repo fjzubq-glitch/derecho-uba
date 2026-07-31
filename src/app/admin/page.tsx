@@ -324,7 +324,7 @@ export default function AdminPage() {
         <div style={{ width: "100%", maxWidth: "420px" }}>
           <div
             style={{
-              padding: "48px 40px",
+              padding: "clamp(28px, 6vw, 48px) clamp(24px, 5vw, 40px)",
               background: "var(--color-card)",
               border: "1px solid var(--color-line-soft)",
               borderRadius: 0,
@@ -469,11 +469,11 @@ export default function AdminPage() {
           background: "linear-gradient(180deg, var(--color-ink-2) 0%, var(--color-ink) 100%)",
         }}
       >
-        <div className="flex items-center justify-between pad-lateral" style={{ padding: "22px 48px" }}>
-          <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 pad-lateral" style={{ padding: "22px 48px" }}>
+          <div className="flex items-center gap-4 min-w-0">
             <button
               onClick={() => router.push("/dashboard")}
-              className="flex items-center justify-center"
+              className="flex items-center justify-center flex-shrink-0"
               style={{
                 width: "34px",
                 height: "34px",
@@ -487,7 +487,7 @@ export default function AdminPage() {
             >
               <ArrowLeft style={{ width: "15px", height: "15px" }} />
             </button>
-            <div>
+            <div className="min-w-0">
               <h1
                 style={{
                   fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
@@ -495,6 +495,9 @@ export default function AdminPage() {
                   fontSize: "20px",
                   lineHeight: 1.2,
                   color: "var(--color-text)",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
                 }}
               >
                 Panel de administración
@@ -507,6 +510,9 @@ export default function AdminPage() {
                   textTransform: "uppercase",
                   color: "var(--color-text-faint)",
                   marginTop: "3px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
                 }}
               >
                 Gestión de contenido y analytics
@@ -516,7 +522,7 @@ export default function AdminPage() {
 
           {/* Tabs */}
           <div
-            className="flex items-center"
+            className="flex w-full sm:w-auto"
             style={{
               border: "1px solid var(--color-line-soft)",
               borderRadius: 0,
@@ -527,6 +533,7 @@ export default function AdminPage() {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 style={{
+                  flex: 1,
                   padding: "10px 16px",
                   fontSize: "12px",
                   fontWeight: 500,
@@ -537,6 +544,7 @@ export default function AdminPage() {
                   background: activeTab === tab ? "var(--color-gold)" : "transparent",
                   color: activeTab === tab ? "var(--color-ink)" : "var(--color-text-muted)",
                   transition: "color 0.2s ease, background 0.2s ease",
+                  whiteSpace: "nowrap",
                 }}
                 onMouseEnter={(e) => {
                   if (activeTab !== tab) e.currentTarget.style.color = "var(--color-text)";

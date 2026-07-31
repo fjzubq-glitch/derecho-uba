@@ -58,9 +58,9 @@ export default function DashboardPage() {
           className="flex items-center justify-between pad-lateral"
           style={{ padding: "22px 48px" }}
         >
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 min-w-0">
             <div
-              className="flex items-center justify-center"
+              className="flex items-center justify-center flex-shrink-0"
               style={{
                 width: "34px",
                 height: "34px",
@@ -70,8 +70,8 @@ export default function DashboardPage() {
             >
               <Shield style={{ width: "15px", height: "15px", color: "var(--color-gold)" }} />
             </div>
-            <div>
-              <div style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 500, fontSize: "20px", lineHeight: 1.2 }}>
+            <div className="min-w-0">
+              <div style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 500, fontSize: "20px", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 Derecho <span style={{ color: "var(--color-gold)" }}>UBA</span>
               </div>
               <div
@@ -82,13 +82,16 @@ export default function DashboardPage() {
                   textTransform: "uppercase",
                   color: "var(--color-text-faint)",
                   marginTop: "3px",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
                 }}
               >
                 Gestión académica
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 flex-shrink-0">
             <div
               className="hidden sm:block text-right"
               style={{

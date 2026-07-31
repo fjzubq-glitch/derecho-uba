@@ -61,7 +61,7 @@ export default function MateriaPage() {
         <div className="flex items-center gap-4 pad-lateral" style={{ padding: "22px 48px" }}>
           <button
             onClick={() => router.push("/dashboard")}
-            className="flex items-center justify-center"
+            className="flex items-center justify-center flex-shrink-0"
             style={{
               width: "34px",
               height: "34px",
@@ -75,7 +75,7 @@ export default function MateriaPage() {
           >
             <ArrowLeft style={{ width: "15px", height: "15px" }} />
           </button>
-          <div>
+          <div className="min-w-0">
             <h1
               style={{
                 fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
@@ -83,6 +83,9 @@ export default function MateriaPage() {
                 fontSize: "20px",
                 lineHeight: 1.2,
                 color: "var(--color-text)",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}
             >
               {materiaTitle}
@@ -95,6 +98,9 @@ export default function MateriaPage() {
                   letterSpacing: "0.08em",
                   color: "var(--color-text-faint)",
                   marginTop: "3px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {materiaMeta}

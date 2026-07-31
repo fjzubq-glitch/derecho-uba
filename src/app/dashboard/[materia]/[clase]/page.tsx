@@ -168,11 +168,11 @@ export default function ClaseDetailPage() {
           background: "linear-gradient(180deg, var(--color-ink-2) 0%, var(--color-ink) 100%)",
         }}
       >
-        <div className="flex items-center justify-between pad-lateral" style={{ padding: "22px 48px" }}>
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between gap-4 pad-lateral" style={{ padding: "22px 48px" }}>
+          <div className="flex items-center gap-4 min-w-0">
             <button
               onClick={() => router.push(`/dashboard/${materiaSlug}`)}
-              className="flex items-center justify-center"
+              className="flex items-center justify-center flex-shrink-0"
               style={{
                 width: "34px",
                 height: "34px",
@@ -186,7 +186,7 @@ export default function ClaseDetailPage() {
             >
               <ArrowLeft style={{ width: "15px", height: "15px" }} />
             </button>
-            <div>
+            <div className="min-w-0">
               <div
                 style={{
                   fontFamily: "var(--font-ibm-plex-mono)",
@@ -195,6 +195,7 @@ export default function ClaseDetailPage() {
                   textTransform: "uppercase",
                   color: "var(--color-gold)",
                   marginBottom: "4px",
+                  whiteSpace: "nowrap",
                 }}
               >
                 Clase {clase?.numero.toString().padStart(2, "0")}
@@ -206,6 +207,9 @@ export default function ClaseDetailPage() {
                   fontSize: "20px",
                   lineHeight: 1.2,
                   color: "var(--color-text)",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {clase?.titulo}
@@ -535,7 +539,7 @@ export default function ClaseDetailPage() {
       {/* ═══════════ FOOTER ═══════════ */}
       <footer className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
         <div
-          className="flex items-center justify-between pad-lateral"
+          className="footer-inner flex items-center justify-between pad-lateral"
           style={{
             padding: "28px 48px",
             fontFamily: "var(--font-ibm-plex-mono)",
