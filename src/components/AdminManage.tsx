@@ -71,7 +71,9 @@ export default function AdminManage() {
   }, []);
 
   useEffect(() => {
-    function handleClickOutside() {
+    function handleClickOutside(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-kebab]")) return;
       setOpenMenu(null);
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -289,7 +291,7 @@ export default function AdminManage() {
   }) {
     const isOpen = openMenu === menuKey;
     return (
-      <div className="relative">
+      <div className="relative" data-kebab>
         <button
           onClick={(e) => {
             e.stopPropagation();
