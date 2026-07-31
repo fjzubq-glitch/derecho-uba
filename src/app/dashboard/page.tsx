@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { trackActivity } from "@/lib/tracking";
-import { Shield, ArrowRight } from "@/components/icons";
+import { Shield, ArrowRight, BookOpen } from "@/components/icons";
+
+const PLANIFICADOR_URL = "https://fjzubq-glitch.github.io/Recomendacion-Materias-UBA/index.html";
 
 interface Materia {
   id: string;
@@ -127,6 +129,35 @@ export default function DashboardPage() {
               <Shield style={{ width: "14px", height: "14px", flexShrink: 0 }} />
               Panel de administración
             </button>
+            <a
+              href={PLANIFICADOR_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="admin-btn-full flex items-center gap-2"
+              style={{
+                background: "none",
+                border: "1px solid var(--color-line)",
+                padding: "10px 18px",
+                cursor: "pointer",
+                fontFamily: "var(--font-inter)",
+                fontSize: "13px",
+                color: "var(--color-text-muted)",
+                transition: "border-color 0.25s ease, color 0.25s ease",
+                lineHeight: 1,
+                textDecoration: "none",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-gold)";
+                e.currentTarget.style.color = "var(--color-gold)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-line)";
+                e.currentTarget.style.color = "var(--color-text-muted)";
+              }}
+            >
+              <BookOpen style={{ width: "14px", height: "14px", flexShrink: 0 }} />
+              Planificador de materias
+            </a>
             <button
               onClick={() => router.push("/admin")}
               className="admin-btn-icon flex items-center justify-center"
@@ -152,6 +183,33 @@ export default function DashboardPage() {
             >
               <Shield style={{ width: "14px", height: "14px" }} />
             </button>
+            <a
+              href={PLANIFICADOR_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="admin-btn-icon flex items-center justify-center"
+              style={{
+                background: "none",
+                border: "1px solid var(--color-line)",
+                width: "34px",
+                height: "34px",
+                borderRadius: "50%",
+                cursor: "pointer",
+                color: "var(--color-text-muted)",
+                transition: "border-color 0.25s ease, color 0.25s ease",
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-gold)";
+                e.currentTarget.style.color = "var(--color-gold)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-line)";
+                e.currentTarget.style.color = "var(--color-text-muted)";
+              }}
+            >
+              <BookOpen style={{ width: "14px", height: "14px" }} />
+            </a>
           </div>
         </div>
       </header>
