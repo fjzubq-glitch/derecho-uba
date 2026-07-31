@@ -21,8 +21,32 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Derecho UBA",
-  description: "Plataforma de estudio para Derecho UBA",
+  metadataBase: new URL("https://derecho-uba-orpin.vercel.app"),
+  title: "Derecho UBA — Gestión Académica",
+  description:
+    "Plataforma de gestión de clases, audios y transcripciones para materias de la carrera de Abogacía en UBA.",
+  applicationName: "Derecho UBA",
+  icons: {
+    icon: "/icon",
+    apple: "/apple-icon",
+  },
+  openGraph: {
+    title: "Derecho UBA — Gestión Académica",
+    description:
+      "Plataforma de gestión de clases, audios y transcripciones para materias de la carrera de Abogacía en UBA.",
+    url: "https://derecho-uba-orpin.vercel.app",
+    siteName: "Derecho UBA",
+    type: "website",
+    locale: "es_AR",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Derecho UBA — Gestión Académica" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Derecho UBA — Gestión Académica",
+    description:
+      "Plataforma de gestión de clases, audios y transcripciones para materias de la carrera de Abogacía en UBA.",
+    images: ["/opengraph-image"],
+  },
 };
 
 export default function RootLayout({
