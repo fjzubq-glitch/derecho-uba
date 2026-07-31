@@ -297,3 +297,13 @@ export function Users(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function MoreVertical(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" {...props}>
+      <circle cx="12" cy="5" r="1.7" />
+      <circle cx="12" cy="12" r="1.7" />
+      <circle cx="12" cy="19" r="1.7" />
+    </svg>
+  );
+}

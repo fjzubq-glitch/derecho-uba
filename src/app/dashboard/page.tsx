@@ -257,7 +257,7 @@ export default function DashboardPage() {
               style={{
                 fontFamily: "var(--font-ibm-plex-mono)",
                 fontSize: "11px",
-                color: "#5A6178",
+                color: "var(--color-text-faint)",
               }}
             >
               {materias.length} materias activas

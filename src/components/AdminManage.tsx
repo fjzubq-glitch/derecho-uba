@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload } from "@/components/icons";
+import { ArrowLeft, Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -63,10 +63,19 @@ export default function AdminManage() {
   const [newNombre, setNewNombre] = useState("");
   const [processing, setProcessing] = useState(false);
   const [message, setMessage] = useState("");
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadClases();
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside() {
+      setOpenMenu(null);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   async function loadClases() {
@@ -274,6 +283,93 @@ export default function AdminManage() {
     transition: "border-color 0.2s ease, color 0.2s ease",
   };
 
+  function KebabMenu({ menuKey, items }: {
+    menuKey: string;
+    items: Array<{ label: string; danger?: boolean; onClick: () => void }>;
+  }) {
+    const isOpen = openMenu === menuKey;
+    return (
+      <div className="relative">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpenMenu(isOpen ? null : menuKey);
+          }}
+          aria-label="Acciones"
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            color: "var(--color-text-faint)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "30px",
+            height: "30px",
+            borderRadius: 0,
+            padding: 0,
+            transition: "color 0.2s ease, background 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "var(--color-gold)";
+            e.currentTarget.style.background = "var(--color-line-soft)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "var(--color-text-faint)";
+            e.currentTarget.style.background = "transparent";
+          }}
+        >
+          <MoreVertical style={{ width: "16px", height: "16px" }} />
+        </button>
+        {isOpen && (
+          <div
+            style={{
+              position: "absolute",
+              right: 0,
+              top: "36px",
+              minWidth: "150px",
+              background: "var(--color-card)",
+              border: "1px solid var(--color-line)",
+              borderRadius: 0,
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.35)",
+              zIndex: 20,
+              padding: "4px",
+            }}
+          >
+            {items.map((item) => (
+              <button
+                key={item.label}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenMenu(null);
+                  item.onClick();
+                }}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  textAlign: "left",
+                  padding: "9px 12px",
+                  fontSize: "12px",
+                  fontFamily: "var(--font-inter)",
+                  background: "none",
+                  border: "none",
+                  borderRadius: 0,
+                  cursor: "pointer",
+                  color: item.danger ? "#E05555" : "var(--color-text)",
+                  transition: "background 0.2s ease",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-line-soft)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   const modalBackdrop: React.CSSProperties = {
     position: "fixed",
     inset: 0,
@@ -351,12 +447,12 @@ export default function AdminManage() {
                 background: "var(--color-card)",
                 border: "1px solid var(--color-line-soft)",
                 borderRadius: 0,
-                padding: "24px",
+                padding: "28px",
               }}
             >
-              <div className="flex items-start justify-between mb-4">
+              <div className="flex items-start justify-between mb-5">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-2">
                     <span
                       style={{
                         fontFamily: "var(--font-ibm-plex-mono)",
@@ -384,14 +480,15 @@ export default function AdminManage() {
                     style={{
                       fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                       fontWeight: 500,
-                      fontSize: "18px",
+                      fontSize: "20px",
+                      lineHeight: 1.3,
                       color: "var(--color-text)",
                     }}
                   >
                     {clase.titulo}
                   </h3>
                   {clase.fecha && (
-                    <div className="flex items-center gap-1.5 mt-1">
+                    <div className="flex items-center gap-1.5 mt-2">
                       <Calendar style={{ width: "13px", height: "13px", color: "var(--color-text-faint)" }} />
                       <span style={{ fontSize: "12px", color: "var(--color-text-faint)" }}>
                         {new Date(clase.fecha).toLocaleDateString("es-AR", {
@@ -403,40 +500,24 @@ export default function AdminManage() {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setEditing({
-                      tipo: "clase",
-                      id: clase.id,
-                      data: { titulo: clase.titulo, fecha: clase.fecha || "", numero: clase.numero }
-                    })}
-                    style={actionBtnStyle}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = "var(--color-gold-dim)";
-                      e.currentTarget.style.color = "var(--color-gold)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = "var(--color-line)";
-                      e.currentTarget.style.color = "var(--color-text-muted)";
-                    }}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => setDeleting({ tipo: "clase", id: clase.id, nombre: clase.titulo })}
-                    style={actionBtnStyle}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = "rgba(224, 85, 85, 0.4)";
-                      e.currentTarget.style.color = "#E05555";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = "var(--color-line)";
-                      e.currentTarget.style.color = "var(--color-text-muted)";
-                    }}
-                  >
-                    Borrar
-                  </button>
-                </div>
+                <KebabMenu
+                  menuKey={`clase-${clase.id}`}
+                  items={[
+                    {
+                      label: "Editar clase",
+                      onClick: () => setEditing({
+                        tipo: "clase",
+                        id: clase.id,
+                        data: { titulo: clase.titulo, fecha: clase.fecha || "", numero: clase.numero }
+                      }),
+                    },
+                    {
+                      label: "Borrar clase",
+                      danger: true,
+                      onClick: () => setDeleting({ tipo: "clase", id: clase.id, nombre: clase.titulo }),
+                    },
+                  ]}
+                />
               </div>
 
               {clase.archivos.length > 0 ? (
@@ -446,19 +527,19 @@ export default function AdminManage() {
                       key={archivo.id}
                       className="flex items-center gap-3"
                       style={{
-                        padding: "12px",
-                        background: "var(--color-ink)",
-                        border: "1px solid var(--color-line-soft)",
-                        borderRadius: 0,
+                        marginLeft: "16px",
+                        padding: "10px 8px 10px 16px",
+                        borderLeft: "2px solid var(--color-line-soft)",
                       }}
                     >
                       <div
                         className="flex items-center justify-center"
                         style={{
-                          width: "32px",
-                          height: "32px",
+                          width: "28px",
+                          height: "28px",
                           borderRadius: "50%",
                           border: "1px solid var(--color-gold-dim)",
+                          flexShrink: 0,
                         }}
                       >
                         <span style={{ color: "var(--color-gold)" }}>{TIPO_ICONS[archivo.tipo] || TIPO_ICONS.transcripcion}</span>
@@ -474,74 +555,51 @@ export default function AdminManage() {
                             whiteSpace: "nowrap",
                           }}
                         >
-                          {archivo.nombre_display}
+                          {TIPO_LABELS[archivo.tipo] || archivo.tipo.replace("_", " ")}
                         </p>
-                        <p style={{ fontSize: "11px", color: "var(--color-text-faint)" }}>
-                          {TIPO_LABELS[archivo.tipo] || archivo.tipo.replace("_", " ")} • {archivo.play_count} reproducciones
+                        <p style={{ fontSize: "11px", color: "var(--color-text-muted)" }}>
+                          {archivo.play_count} reproducciones
                         </p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {canReplace(archivo.tipo) && (
-                          <button
-                            onClick={() => {
-                              setReplacing({ archivoId: archivo.id, nombre: archivo.nombre_display, tipo: archivo.tipo });
-                              setNewFile(null);
-                              setNewDriveLink("");
-                              setNewYoutubeUrl("");
-                              setNewNombre(archivo.nombre_display);
-                            }}
-                            style={actionBtnStyle}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.borderColor = "var(--color-gold-dim)";
-                              e.currentTarget.style.color = "var(--color-gold)";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.borderColor = "var(--color-line)";
-                              e.currentTarget.style.color = "var(--color-text-muted)";
-                            }}
-                          >
-                            Reemplazar
-                          </button>
-                        )}
-                        <button
-                          onClick={() => setEditing({
-                            tipo: "archivo",
-                            id: archivo.id,
-                            data: { nombre_display: archivo.nombre_display }
-                          })}
-                          style={actionBtnStyle}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.borderColor = "var(--color-gold-dim)";
-                            e.currentTarget.style.color = "var(--color-gold)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.borderColor = "var(--color-line)";
-                            e.currentTarget.style.color = "var(--color-text-muted)";
-                          }}
-                        >
-                          Editar
-                        </button>
-                        <button
-                          onClick={() => setDeleting({ tipo: "archivo", id: archivo.id, nombre: archivo.nombre_display })}
-                          style={actionBtnStyle}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.borderColor = "rgba(224, 85, 85, 0.4)";
-                            e.currentTarget.style.color = "#E05555";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.borderColor = "var(--color-line)";
-                            e.currentTarget.style.color = "var(--color-text-muted)";
-                          }}
-                        >
-                          Borrar
-                        </button>
-                      </div>
+                      <KebabMenu
+                        menuKey={`archivo-${archivo.id}`}
+                        items={[
+                          ...(canReplace(archivo.tipo)
+                            ? [{
+                                label: "Reemplazar",
+                                onClick: () => {
+                                  setReplacing({ archivoId: archivo.id, nombre: archivo.nombre_display, tipo: archivo.tipo });
+                                  setNewFile(null);
+                                  setNewDriveLink("");
+                                  setNewYoutubeUrl("");
+                                  setNewNombre(archivo.nombre_display);
+                                },
+                              }]
+                            : []),
+                          {
+                            label: "Editar",
+                            onClick: () => setEditing({
+                              tipo: "archivo",
+                              id: archivo.id,
+                              data: { nombre_display: archivo.nombre_display }
+                            }),
+                          },
+                          {
+                            label: "Borrar",
+                            danger: true,
+                            onClick: () => setDeleting({ tipo: "archivo", id: archivo.id, nombre: archivo.nombre_display }),
+                          },
+                        ]}
+                      />
                     </div>
                   ))}
                 </div>
               ) : (
                 <p
                   style={{
+                    marginLeft: "16px",
+                    paddingLeft: "16px",
+                    borderLeft: "2px solid var(--color-line-soft)",
                     fontSize: "12px",
                     color: "var(--color-text-faint)",
                     fontFamily: "var(--font-ibm-plex-mono)",
