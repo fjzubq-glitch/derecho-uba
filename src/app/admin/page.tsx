@@ -68,6 +68,8 @@ export default function AdminPage() {
   const [actividadReciente, setActividadReciente] = useState<ActividadReciente[]>([]);
   const [contenidoPopular, setContenidoPopular] = useState<ContenidoPopular[]>([]);
   const [visitasPorDia, setVisitasPorDia] = useState<VisitaDia[]>([]);
+  const [maximoBarras, setMaximoBarras] = useState<Record<string, number>>({});
+  const [expandedActividad, setExpandedActividad] = useState(false);
 
   function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -233,6 +235,86 @@ export default function AdminPage() {
     analytics: "Analytics",
   };
 
+  const promedioReproducciones = stats.totalClases > 0 ? Math.round((stats.totalReproducciones / stats.totalClases) * 10) / 10 : 0;
+
+  // Construir los 7 días consecutivos, rellenando con 0 los días sin actividad
+  const visitasUltimos7 = useMemo(() => {
+    const mapa = new Map(visitasPorDia.map((d) => [d.fecha, d]));
+    const dias: Array<{ fecha: string; label: string; total_visitas: number; visitantes_unicos: number }> = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const fechaKey = d.toLocaleDateString("es-AR");
+      const data = mapa.get(fechaKey);
+      dias.push({
+        fecha: fechaKey,
+        label: d.toLocaleDateString("es-AR", { day: "numeric", month: "short" }).replace(".", ""),
+        total_visitas: data?.total_visitas || 0,
+        visitantes_unicos: data?.visitantes_unicos || 0,
+      });
+    }
+    return dias;
+  }, [visitasPorDia]);
+
+  const maxVisitasDia = Math.max(...visitasUltimos7.map((d) => d.total_visitas), 1);
+
+  // Agrupar actividad reciente por tipo + página en rangos consecutivos
+  const actividadAgrupada = useMemo(() => {
+    const grupos: Array<{
+      tipo: string;
+      pagina: string;
+      materia_slug: string | null;
+      archivo_nombre: string | null;
+      materia: string | null;
+      clase_numero: number | null;
+      count: number;
+      inicio: number;
+      fin: number;
+    }> = [];
+
+    for (const act of [...actividadReciente].reverse()) {
+      const t = new Date(act.created_at).getTime();
+      const ultimo = grupos[grupos.length - 1];
+      if (
+        ultimo &&
+        ultimo.tipo === act.tipo &&
+        ultimo.pagina === act.pagina &&
+        ultimo.materia_slug === act.materia_slug &&
+        t - ultimo.fin < 15 * 60 * 1000
+      ) {
+        ultimo.count += 1;
+        ultimo.fin = t;
+      } else {
+        grupos.push({
+          tipo: act.tipo,
+          pagina: act.pagina,
+          materia_slug: act.materia_slug,
+          archivo_nombre: act.archivo_nombre,
+          materia: act.materia,
+          clase_numero: act.clase_numero,
+          count: 1,
+          inicio: t,
+          fin: t,
+        });
+      }
+    }
+
+    return grupos.reverse();
+  }, [actividadReciente]);
+
+  const ACTIVIDAD_VISIBLE = expandedActividad ? actividadAgrupada : actividadAgrupada.slice(0, 8);
+
+  function fmtHora(ms: number) {
+    return new Date(ms).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function fmtFecha(ms: number) {
+    return new Date(ms).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit" });
+  }
+
+  const esReproduccion = (tipo: string) =>
+    tipo === "play_start" || tipo === "play_complete" || tipo === "youtube_open";
+
   if (!authenticated) {
     return (
       <div
@@ -358,89 +440,6 @@ export default function AdminPage() {
       </div>
     );
   }
-
-  const promedioReproducciones = stats.totalClases > 0 ? Math.round((stats.totalReproducciones / stats.totalClases) * 10) / 10 : 0;
-
-  // Construir los 7 días consecutivos, rellenando con 0 los días sin actividad
-  const visitasUltimos7 = useMemo(() => {
-    const mapa = new Map(visitasPorDia.map((d) => [d.fecha, d]));
-    const dias: Array<{ fecha: string; label: string; total_visitas: number; visitantes_unicos: number }> = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const fechaKey = d.toLocaleDateString("es-AR");
-      const data = mapa.get(fechaKey);
-      dias.push({
-        fecha: fechaKey,
-        label: d.toLocaleDateString("es-AR", { day: "numeric", month: "short" }).replace(".", ""),
-        total_visitas: data?.total_visitas || 0,
-        visitantes_unicos: data?.visitantes_unicos || 0,
-      });
-    }
-    return dias;
-  }, [visitasPorDia]);
-
-  const maxVisitasDia = Math.max(...visitasUltimos7.map((d) => d.total_visitas), 1);
-
-  const [maximoBarras, setMaximoBarras] = useState<Record<string, number>>({});
-  const [expandedActividad, setExpandedActividad] = useState(false);
-
-  // Agrupar actividad reciente por tipo + página en rangos consecutivos
-  const actividadAgrupada = useMemo(() => {
-    const grupos: Array<{
-      tipo: string;
-      pagina: string;
-      materia_slug: string | null;
-      archivo_nombre: string | null;
-      materia: string | null;
-      clase_numero: number | null;
-      count: number;
-      inicio: number;
-      fin: number;
-    }> = [];
-
-    for (const act of [...actividadReciente].reverse()) {
-      const t = new Date(act.created_at).getTime();
-      const ultimo = grupos[grupos.length - 1];
-      if (
-        ultimo &&
-        ultimo.tipo === act.tipo &&
-        ultimo.pagina === act.pagina &&
-        ultimo.materia_slug === act.materia_slug &&
-        t - ultimo.fin < 15 * 60 * 1000
-      ) {
-        ultimo.count += 1;
-        ultimo.fin = t;
-      } else {
-        grupos.push({
-          tipo: act.tipo,
-          pagina: act.pagina,
-          materia_slug: act.materia_slug,
-          archivo_nombre: act.archivo_nombre,
-          materia: act.materia,
-          clase_numero: act.clase_numero,
-          count: 1,
-          inicio: t,
-          fin: t,
-        });
-      }
-    }
-
-    return grupos.reverse();
-  }, [actividadReciente]);
-
-  const ACTIVIDAD_VISIBLE = expandedActividad ? actividadAgrupada : actividadAgrupada.slice(0, 8);
-
-  function fmtHora(ms: number) {
-    return new Date(ms).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
-  }
-
-  function fmtFecha(ms: number) {
-    return new Date(ms).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit" });
-  }
-
-  const esReproduccion = (tipo: string) =>
-    tipo === "play_start" || tipo === "play_complete" || tipo === "youtube_open";
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-ink)" }}>
