@@ -26,12 +26,23 @@ export async function GET() {
     const visitantesUnicos = uniqueIps.size;
     const totalVisitas = allActivity?.length || 0;
 
-    // Recent activity
+    // Recent activity — usar vista enriquecida con joins
     const { data: recentActivity } = await supabase
       .from("actividad")
-      .select("tipo, pagina, materia_slug, created_at, ip_hash")
+      .select("tipo, pagina, materia_slug, archivo_id, clase_id, created_at, ip_hash, archivos(nombre_display), clases(numero, materias(nombre))")
       .order("created_at", { ascending: false })
-      .limit(20);
+      .limit(30);
+
+    const actividadReciente = (recentActivity || []).map((a: any) => ({
+      tipo: a.tipo,
+      pagina: a.pagina,
+      materia_slug: a.materia_slug,
+      archivo_nombre: a.archivos?.nombre_display || null,
+      materia: a.clases?.materias?.nombre || null,
+      clase_numero: a.clases?.numero || null,
+      created_at: a.created_at,
+      ip_hash: a.ip_hash,
+    }));
 
     // Popular content
     const { data: popularRows } = await supabase
@@ -82,7 +93,7 @@ export async function GET() {
       materias: materias || [],
       visitantesUnicos,
       totalVisitas,
-      actividadReciente: recentActivity || [],
+      actividadReciente,
       contenidoPopular,
       visitasPorDia,
     });
