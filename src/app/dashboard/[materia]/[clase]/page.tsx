@@ -195,7 +195,6 @@ export default function ClaseDetailPage() {
                   textTransform: "uppercase",
                   color: "var(--color-gold)",
                   marginBottom: "4px",
-                  whiteSpace: "nowrap",
                 }}
               >
                 Clase {clase?.numero.toString().padStart(2, "0")}
@@ -205,11 +204,9 @@ export default function ClaseDetailPage() {
                   fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                   fontWeight: 500,
                   fontSize: "20px",
-                  lineHeight: 1.2,
+                  lineHeight: 1.25,
                   color: "var(--color-text)",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
+                  overflowWrap: "break-word",
                 }}
               >
                 {clase?.titulo}
@@ -340,9 +337,10 @@ export default function ClaseDetailPage() {
                             fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                             fontWeight: 500,
                             fontSize: "18px",
-                            lineHeight: 1.2,
+                            lineHeight: 1.25,
                             color: "var(--color-text)",
                             marginBottom: "4px",
+                            overflowWrap: "break-word",
                           }}
                         >
                           {archivo.nombre_display}

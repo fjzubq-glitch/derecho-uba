@@ -258,9 +258,10 @@ export default function ClaseNumeroPage() {
                   fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                   fontWeight: 500,
                   fontSize: "20px",
-                  lineHeight: 1.2,
+                  lineHeight: 1.25,
                   color: exists ? "var(--color-text)" : "var(--color-text-faint)",
                   marginBottom: "4px",
+                  overflowWrap: "break-word",
                 }}
               >
                 {exists ? archivo.nombre_display : "—"}

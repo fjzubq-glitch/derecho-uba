@@ -81,11 +81,9 @@ export default function MateriaPage() {
                 fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                 fontWeight: 500,
                 fontSize: "20px",
-                lineHeight: 1.2,
+                lineHeight: 1.25,
                 color: "var(--color-text)",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
+                overflowWrap: "break-word",
               }}
             >
               {materiaTitle}
@@ -98,9 +96,7 @@ export default function MateriaPage() {
                   letterSpacing: "0.08em",
                   color: "var(--color-text-faint)",
                   marginTop: "3px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
+                  overflowWrap: "break-word",
                 }}
               >
                 {materiaMeta}

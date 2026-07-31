@@ -71,7 +71,7 @@ export default function DashboardPage() {
               <Shield style={{ width: "15px", height: "15px", color: "var(--color-gold)" }} />
             </div>
             <div className="min-w-0">
-              <div style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 500, fontSize: "20px", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              <div style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 500, fontSize: "20px", lineHeight: 1.2, whiteSpace: "nowrap" }}>
                 Derecho <span style={{ color: "var(--color-gold)" }}>UBA</span>
               </div>
               <div
@@ -83,8 +83,6 @@ export default function DashboardPage() {
                   color: "var(--color-text-faint)",
                   marginTop: "3px",
                   whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
                 }}
               >
                 Gestión académica
