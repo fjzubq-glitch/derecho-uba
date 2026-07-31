@@ -41,3 +41,49 @@ export function formatFechaLocal(fecha: string, opts: Intl.DateTimeFormatOptions
     ...opts,
   });
 }
+
+// ── Resumen de reproducción (localStorage) ──
+const RESUME_PREFIX = "derecho:resume:";
+const VISTAS_PREFIX = "derecho:vistas";
+
+export function saveResumeTime(archivoId: string, time: number): void {
+  try {
+    localStorage.setItem(RESUME_PREFIX + archivoId, String(Math.floor(time)));
+  } catch {}
+}
+
+export function getResumeTime(archivoId: string): number {
+  try {
+    const v = localStorage.getItem(RESUME_PREFIX + archivoId);
+    return v ? Number(v) || 0 : 0;
+  } catch {
+    return 0;
+  }
+}
+
+export function clearResumeTime(archivoId: string): void {
+  try {
+    localStorage.removeItem(RESUME_PREFIX + archivoId);
+  } catch {}
+}
+
+// ── Clases vistas (localStorage) ──
+export function getVistas(): Record<string, number> {
+  try {
+    const v = localStorage.getItem(VISTAS_PREFIX);
+    return v ? JSON.parse(v) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function markVista(claseId: string): Record<string, number> {
+  const vistas = getVistas();
+  if (!vistas[claseId]) {
+    vistas[claseId] = Date.now();
+    try {
+      localStorage.setItem(VISTAS_PREFIX, JSON.stringify(vistas));
+    } catch {}
+  }
+  return vistas;
+}

@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { trackActivity } from "@/lib/tracking";
-import { Shield, ArrowRight, BookOpen } from "@/components/icons";
+import { Shield, ArrowRight, BookOpen, Search } from "@/components/icons";
+import { getVistas } from "@/lib/utils";
 
 const PLANIFICADOR_URL = "https://fjzubq-glitch.github.io/Recomendacion-Materias-UBA/index.html";
 
@@ -12,13 +13,14 @@ interface Materia {
   nombre: string;
   slug: string;
   total_clases: number;
+  clase_ids?: string[];
 }
 
 export default function DashboardPage() {
   const router = useRouter();
   const [materias, setMaterias] = useState<Materia[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [busqueda, setBusqueda] = useState("");
 
   useEffect(() => {
     loadMaterias();
@@ -42,6 +44,14 @@ export default function DashboardPage() {
     const p = n.split(",");
     return { title: p[0]?.trim() || n, meta: p.slice(1).map((s) => s.trim()).join(", ") || null };
   };
+
+  const vistas = getVistas();
+
+  const materiasFiltradas = materias.filter((m) => {
+    if (!busqueda.trim()) return true;
+    const q = busqueda.trim().toLowerCase();
+    return m.nombre.toLowerCase().includes(q);
+  });
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-ink)" }}>
@@ -308,7 +318,7 @@ export default function DashboardPage() {
       {/* ═══════════ MATERIAS ═══════════ */}
       <section className="flex-1">
         <div className="pad-lateral" style={{ padding: "48px 48px 80px" }}>
-          <div className="flex items-baseline justify-between mb-12 flex-wrap gap-4">
+          <div className="flex items-baseline justify-between mb-8 flex-wrap gap-4">
             <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "28px" }}>
               Mis materias
             </h2>
@@ -321,6 +331,56 @@ export default function DashboardPage() {
             >
               {materias.length} materias activas
             </span>
+          </div>
+
+          {/* Búsqueda */}
+          <div style={{ marginBottom: "32px" }}>
+            <div
+              className="flex items-center gap-3"
+              style={{
+                border: "1px solid var(--color-line-soft)",
+                borderRadius: 0,
+                background: "var(--color-card)",
+                padding: "12px 16px",
+                transition: "border-color 0.2s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-line-soft)")}
+            >
+              <Search style={{ width: "16px", height: "16px", color: "var(--color-text-faint)", flexShrink: 0 }} />
+              <input
+                type="text"
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                placeholder="Buscar materia..."
+                style={{
+                  flex: 1,
+                  background: "none",
+                  border: "none",
+                  outline: "none",
+                  color: "var(--color-text)",
+                  fontSize: "14px",
+                  fontFamily: "var(--font-inter)",
+                }}
+              />
+              {busqueda && (
+                <button
+                  onClick={() => setBusqueda("")}
+                  aria-label="Limpiar búsqueda"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 0,
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "10px",
+                    color: "var(--color-text-faint)",
+                  }}
+                >
+                  LIMPIAR
+                </button>
+              )}
+            </div>
           </div>
 
           {loading ? (
@@ -336,6 +396,20 @@ export default function DashboardPage() {
                 <div key={i} className="h-80" style={{ background: "var(--color-card)", borderRadius: 0 }} />
               ))}
             </div>
+          ) : materiasFiltradas.length === 0 ? (
+            <div
+              style={{
+                padding: "80px 24px",
+                textAlign: "center",
+                background: "var(--color-card)",
+                border: "1px solid var(--color-line-soft)",
+                borderRadius: 0,
+              }}
+            >
+              <p style={{ color: "var(--color-text-muted)", fontSize: "15px" }}>
+                No hay materias que coincidan con "{busqueda}"
+              </p>
+            </div>
           ) : (
             <div
               className="grid grid-cols-1 md:grid-cols-3 overflow-hidden"
@@ -345,9 +419,11 @@ export default function DashboardPage() {
                 borderRadius: 0,
               }}
             >
-              {materias.map((m) => {
+              {materiasFiltradas.map((m) => {
                 const { title, meta } = splitName(m.nombre);
                 const isEmpty = m.total_clases === 0;
+                const vistasCount = m.clase_ids?.filter((id) => vistas[id]).length || 0;
+                const progreso = m.total_clases > 0 ? Math.round((vistasCount / m.total_clases) * 100) : 0;
 
                 return (
                   <article
@@ -434,11 +510,56 @@ export default function DashboardPage() {
                         fontSize: "12px",
                         color: "var(--color-text-faint)",
                         letterSpacing: "0.01em",
-                        marginBottom: "28px",
+                        marginBottom: "20px",
                       }}
                     >
                       {meta || "Sin comisión asignada"}
                     </div>
+
+                    {/* Progreso de estudio */}
+                    {m.total_clases > 0 && (
+                      <div style={{ marginBottom: "20px" }}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span
+                            style={{
+                              fontFamily: "var(--font-ibm-plex-mono)",
+                              fontSize: "9px",
+                              letterSpacing: "0.12em",
+                              textTransform: "uppercase",
+                              color: "var(--color-text-faint)",
+                            }}
+                          >
+                            Progreso
+                          </span>
+                          <span
+                            style={{
+                              fontFamily: "var(--font-ibm-plex-mono)",
+                              fontSize: "10px",
+                              color: progreso === 100 ? "var(--color-gold)" : "var(--color-text-muted)",
+                            }}
+                          >
+                            {vistasCount}/{m.total_clases}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            height: "3px",
+                            background: "var(--color-line-soft)",
+                            overflow: "hidden",
+                            borderRadius: 0,
+                          }}
+                        >
+                          <div
+                            style={{
+                              height: "100%",
+                              width: `${progreso}%`,
+                              background: "var(--color-gold)",
+                              transition: "width 0.3s ease",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     {/* CTA */}
                     <div

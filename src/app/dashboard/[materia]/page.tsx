@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { trackActivity } from "@/lib/tracking";
-import { formatFechaLocal } from "@/lib/utils";
-import { ArrowLeft, ArrowRight, Calendar } from "@/components/icons";
+import { formatFechaLocal, getVistas } from "@/lib/utils";
+import { ArrowLeft, ArrowRight, Calendar, Check } from "@/components/icons";
 
 interface Clase {
   id: string;
@@ -12,8 +12,6 @@ interface Clase {
   titulo: string;
   fecha: string;
 }
-
-
 
 export default function MateriaPage() {
   const params = useParams();
@@ -47,6 +45,9 @@ export default function MateriaPage() {
   };
 
   const { title: materiaTitle, meta: materiaMeta } = materia ? splitName(materia.nombre) : { title: "", meta: null };
+
+  const vistas = getVistas();
+  const vistasCount = clases.filter((c) => vistas[c.id]).length;
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-ink)" }}>
@@ -109,6 +110,26 @@ export default function MateriaPage() {
       {/* ═══════════ MAIN ═══════════ */}
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "60px 48px" }}>
+          {!loading && clases.length > 0 && (
+            <div
+              className="flex items-center gap-3 mb-8"
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "11px",
+                letterSpacing: "0.08em",
+                color: "var(--color-text-faint)",
+              }}
+            >
+              <span>
+                {vistasCount}/{clases.length} vistas
+              </span>
+              <span style={{ color: "var(--color-line)" }}>·</span>
+              <span style={{ color: vistasCount === clases.length ? "var(--color-gold)" : "var(--color-text-muted)" }}>
+                {vistasCount === clases.length ? "Completo" : "En curso"}
+              </span>
+            </div>
+          )}
+
           {loading ? (
             <div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
@@ -177,9 +198,25 @@ export default function MateriaPage() {
                       textTransform: "uppercase",
                       color: "var(--color-gold)",
                       marginBottom: "8px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
                     }}
                   >
-                    Clase {clase.numero.toString().padStart(2, "0")}
+                    <span>Clase {clase.numero.toString().padStart(2, "0")}</span>
+                    {vistas[clase.id] && (
+                      <span
+                        className="flex items-center gap-1"
+                        style={{
+                          fontSize: "9px",
+                          letterSpacing: "0.08em",
+                          color: "var(--color-gold)",
+                        }}
+                      >
+                        <Check style={{ width: "11px", height: "11px", color: "var(--color-gold)" }} />
+                        vista
+                      </span>
+                    )}
                   </div>
                   <div className="flex-1">
                     <h3

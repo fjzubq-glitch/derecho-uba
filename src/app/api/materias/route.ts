@@ -37,6 +37,7 @@ export async function GET() {
           total_clases: totalClases || 0,
           total_audios: totalAudios,
           total_reproducciones: totalRep,
+          clase_ids: claseIds,
         };
       })
     );

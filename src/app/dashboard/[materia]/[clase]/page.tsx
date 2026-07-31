@@ -3,8 +3,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { trackActivity } from "@/lib/tracking";
-import { ArrowLeft, Calendar, Play, FileText, Headphones, Pause, ExternalLink } from "@/components/icons";
-import { formatDuration, formatFechaLocal } from "@/lib/utils";
+import { ArrowLeft, Calendar, Play, FileText, Headphones, Pause, ExternalLink, Download, RotateCcw } from "@/components/icons";
+import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime, markVista } from "@/lib/utils";
 
 interface Archivo {
   id: string;
@@ -48,6 +48,8 @@ export default function ClaseDetailPage() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [resumeNotice, setResumeNotice] = useState<string | null>(null);
 
   // Transcription expand
   const [openTranscription, setOpenTranscription] = useState<string | null>(null);
@@ -56,6 +58,7 @@ export default function ClaseDetailPage() {
     if (claseId) {
       loadClase();
       trackActivity({ tipo: "page_view", pagina: "clase", materia_slug: materiaSlug, clase_id: claseId });
+      markVista(claseId);
     }
   }, [claseId]);
 
@@ -63,9 +66,25 @@ export default function ClaseDetailPage() {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onDurationChange = () => setDuration(audio.duration);
-    const onEnded = () => { setIsPlaying(false); setCurrentTime(0); };
+    const onTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+      if (playingId) saveResumeTime(playingId, audio.currentTime);
+    };
+    const onDurationChange = () => {
+      setDuration(audio.duration);
+      if (playingId && Number.isFinite(audio.duration) && audio.duration > 0) {
+        fetch("/api/stream/" + playingId, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ duration: Math.round(audio.duration) }),
+        }).catch(() => {});
+      }
+    };
+    const onEnded = () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+      if (playingId) clearResumeTime(playingId);
+    };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("durationchange", onDurationChange);
@@ -77,6 +96,11 @@ export default function ClaseDetailPage() {
       audio.removeEventListener("ended", onEnded);
     };
   }, [playingId]);
+
+  // Aplicar velocidad de reproducción
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.playbackRate = playbackRate;
+  }, [playbackRate, playingId, playingSrc]);
 
   async function loadClase() {
     try {
@@ -108,11 +132,26 @@ export default function ClaseDetailPage() {
     setDuration(archivo.duration_seconds || 0);
     setIsPlaying(true);
 
+    const resumeAt = getResumeTime(archivo.id);
+    if (resumeAt > 15 && (!archivo.duration_seconds || resumeAt < (archivo.duration_seconds - 10))) {
+      setResumeNotice(archivo.nombre_display);
+    } else {
+      setResumeNotice(null);
+    }
+
     fetch("/api/analytics", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ archivo_id: archivo.id }) }).catch(() => {});
     trackActivity({ tipo: "play_start", pagina: "clase", materia_slug: materiaSlug, clase_id: claseId, archivo_id: archivo.id });
 
     setTimeout(() => {
-      audioRef.current?.play();
+      const audio = audioRef.current;
+      if (!audio) return;
+      audio.playbackRate = playbackRate;
+      const resumeAt2 = getResumeTime(archivo.id);
+      if (resumeAt2 > 15) {
+        audio.currentTime = resumeAt2;
+        setCurrentTime(resumeAt2);
+      }
+      audio.play();
     }, 100);
   }
 
@@ -134,6 +173,23 @@ export default function ClaseDetailPage() {
     const time = Number(e.target.value);
     audio.currentTime = time;
     setCurrentTime(time);
+  }
+
+  const SPEEDS = [1, 1.25, 1.5, 2];
+  function cycleSpeed() {
+    setPlaybackRate((prev) => {
+      const i = SPEEDS.indexOf(prev);
+      return SPEEDS[(i + 1) % SPEEDS.length];
+    });
+  }
+
+  function restartFromZero() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = 0;
+    setCurrentTime(0);
+    if (playingId) clearResumeTime(playingId);
+    setResumeNotice(null);
   }
 
   if (loading) {
@@ -436,44 +492,110 @@ export default function ClaseDetailPage() {
                       <div>
                         {/* Barra de progreso */}
                         {playingId === archivo.id && (
-                          <div className="flex items-center gap-3 mb-4">
-                            <button
-                              onClick={togglePlay}
-                              className="flex items-center justify-center flex-shrink-0"
-                              style={{
-                                width: "34px",
-                                height: "34px",
-                                borderRadius: "50%",
-                                border: "1px solid var(--color-gold-dim)",
-                                background: "transparent",
-                                cursor: "pointer",
-                              }}
-                            >
-                              {isThisPlaying ? (
-                                <Pause style={{ width: "12px", height: "12px", color: "var(--color-gold)" }} fill="var(--color-gold)" />
-                              ) : (
-                                <Play style={{ width: "12px", height: "12px", color: "var(--color-gold)", marginLeft: "1px" }} fill="var(--color-gold)" />
+                          <div className="mb-4">
+                            <div className="flex items-center gap-3 mb-2">
+                              <button
+                                onClick={togglePlay}
+                                className="flex items-center justify-center flex-shrink-0"
+                                style={{
+                                  width: "34px",
+                                  height: "34px",
+                                  borderRadius: "50%",
+                                  border: "1px solid var(--color-gold-dim)",
+                                  background: "transparent",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                {isThisPlaying ? (
+                                  <Pause style={{ width: "12px", height: "12px", color: "var(--color-gold)" }} fill="var(--color-gold)" />
+                                ) : (
+                                  <Play style={{ width: "12px", height: "12px", color: "var(--color-gold)", marginLeft: "1px" }} fill="var(--color-gold)" />
+                                )}
+                              </button>
+                              <input
+                                type="range"
+                                min={0}
+                                max={duration || 0}
+                                value={currentTime}
+                                onChange={handleSeek}
+                                style={{ flex: 1 }}
+                              />
+                              <span
+                                style={{
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "11px",
+                                  color: "var(--color-text-faint)",
+                                  minWidth: "80px",
+                                  textAlign: "right",
+                                }}
+                              >
+                                {formatDuration(currentTime)} / {formatDuration(duration)}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              {/* Velocidad */}
+                              <button
+                                onClick={cycleSpeed}
+                                title="Velocidad de reproducción"
+                                style={{
+                                  background: "none",
+                                  border: "1px solid var(--color-line)",
+                                  padding: "5px 10px",
+                                  cursor: "pointer",
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "11px",
+                                  color: playbackRate === 1 ? "var(--color-text-faint)" : "var(--color-gold)",
+                                  transition: "border-color 0.2s ease, color 0.2s ease",
+                                }}
+                                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.color = "var(--color-gold)"; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-line)"; e.currentTarget.style.color = playbackRate === 1 ? "var(--color-text-faint)" : "var(--color-gold)"; }}
+                              >
+                                {playbackRate}×
+                              </button>
+
+                              {/* Reiniciar desde cero si estaba reanudado */}
+                              {resumeNotice && (
+                                <button
+                                  onClick={restartFromZero}
+                                  className="flex items-center gap-1.5"
+                                  style={{
+                                    background: "none",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    padding: 0,
+                                    fontFamily: "var(--font-ibm-plex-mono)",
+                                    fontSize: "10px",
+                                    color: "var(--color-text-muted)",
+                                  }}
+                                >
+                                  <RotateCcw style={{ width: "11px", height: "11px" }} />
+                                  Reanudado
+                                </button>
                               )}
-                            </button>
-                            <input
-                              type="range"
-                              min={0}
-                              max={duration || 0}
-                              value={currentTime}
-                              onChange={handleSeek}
-                              style={{ flex: 1 }}
-                            />
-                            <span
-                              style={{
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "11px",
-                                color: "var(--color-text-faint)",
-                                minWidth: "80px",
-                                textAlign: "right",
-                              }}
-                            >
-                              {formatDuration(currentTime)} / {formatDuration(duration)}
-                            </span>
+
+                              {/* Descargar */}
+                              {archivo.storage_key && (
+                                <a
+                                  href={`/api/stream/${archivo.id}?download=1`}
+                                  download
+                                  title="Descargar audio"
+                                  className="flex items-center gap-1.5"
+                                  style={{
+                                    marginLeft: "auto",
+                                    fontSize: "11px",
+                                    fontWeight: 500,
+                                    color: "var(--color-text-muted)",
+                                    textDecoration: "none",
+                                    transition: "color 0.2s ease",
+                                  }}
+                                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
+                                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+                                >
+                                  <Download style={{ width: "13px", height: "13px" }} />
+                                  Descargar
+                                </a>
+                              )}
+                            </div>
                           </div>
                         )}
 
@@ -502,7 +624,9 @@ export default function ClaseDetailPage() {
                             >
                               <Play style={{ width: "12px", height: "12px", color: "var(--color-gold)", marginLeft: "1px" }} fill="var(--color-gold)" />
                             </div>
-                            <span className="card-link">Reproducir</span>
+                            <span className="card-link">
+                              {getResumeTime(archivo.id) > 15 ? "Continuar" : "Reproducir"}
+                            </span>
                           </button>
                         )}
                       </div>

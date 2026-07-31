@@ -71,19 +71,28 @@ export default function AdminPage() {
   const [maximoBarras, setMaximoBarras] = useState<Record<string, number>>({});
   const [expandedActividad, setExpandedActividad] = useState(false);
 
-  function handlePasswordSubmit(e: React.FormEvent) {
+  async function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
     setPasswordLoading(true);
     setPasswordError("");
 
-    setTimeout(() => {
-      if (password === "Soyapango503") {
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json();
+      if (data.ok) {
         setAuthenticated(true);
       } else {
         setPasswordError("Contraseña incorrecta");
       }
+    } catch {
+      setPasswordError("Error al verificar la contraseña");
+    } finally {
       setPasswordLoading(false);
-    }, 500);
+    }
   }
 
   useEffect(() => {
