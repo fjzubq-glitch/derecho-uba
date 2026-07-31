@@ -318,124 +318,142 @@ export default function AdminPage() {
   if (!authenticated) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center pad-lateral"
+        className="min-h-screen flex flex-col items-center justify-center pad-lateral"
         style={{ background: "var(--color-ink)" }}
       >
-        <div
-          style={{
-            width: "100%",
-            maxWidth: "420px",
-            padding: "48px 40px",
-            background: "var(--color-card)",
-            border: "1px solid var(--color-line-soft)",
-            borderRadius: 0,
-          }}
-        >
-          <div className="text-center mb-8">
-            <div
-              className="flex items-center justify-center mx-auto mb-6"
-              style={{
-                width: "56px",
-                height: "56px",
-                borderRadius: "50%",
-                border: "1px solid var(--color-gold-dim)",
-              }}
-            >
-              <Shield style={{ width: "24px", height: "24px", color: "var(--color-gold)" }} />
-            </div>
-            <h2
-              style={{
-                fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                fontWeight: 400,
-                fontSize: "24px",
-                color: "var(--color-text)",
-                marginBottom: "8px",
-              }}
-            >
-              Panel de administración
-            </h2>
-            <p style={{ fontSize: "13px", color: "var(--color-text-faint)" }}>
-              Ingresá la contraseña para continuar
-            </p>
-          </div>
-
-          <form onSubmit={handlePasswordSubmit}>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoFocus
-              style={{
-                width: "100%",
-                background: "var(--color-ink)",
-                border: "1px solid var(--color-line)",
-                borderRadius: 0,
-                padding: "14px 16px",
-                color: "var(--color-text)",
-                textAlign: "center",
-                fontSize: "18px",
-                letterSpacing: "0.2em",
-                fontFamily: "var(--font-ibm-plex-mono)",
-                outline: "none",
-                marginBottom: "16px",
-              }}
-            />
-
-            {passwordError && (
-              <p
+        <div style={{ width: "100%", maxWidth: "420px" }}>
+          <div
+            style={{
+              padding: "48px 40px",
+              background: "var(--color-card)",
+              border: "1px solid var(--color-line-soft)",
+              borderRadius: 0,
+            }}
+          >
+            <div className="text-center mb-8">
+              <div
+                className="flex items-center justify-center mx-auto mb-6"
                 style={{
-                  fontSize: "13px",
-                  color: "#E05555",
-                  marginBottom: "16px",
-                  textAlign: "center",
-                  fontFamily: "var(--font-ibm-plex-mono)",
+                  width: "56px",
+                  height: "56px",
+                  borderRadius: "50%",
+                  border: "1px solid var(--color-gold-dim)",
                 }}
               >
-                {passwordError}
+                <Shield style={{ width: "24px", height: "24px", color: "var(--color-gold)" }} />
+              </div>
+              <h2
+                style={{
+                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                  fontWeight: 400,
+                  fontSize: "24px",
+                  color: "var(--color-text)",
+                  marginBottom: "8px",
+                }}
+              >
+                Panel de administración
+              </h2>
+              <p style={{ fontSize: "13px", color: "var(--color-text-faint)" }}>
+                Ingresá la contraseña para continuar
               </p>
-            )}
+            </div>
 
-            <button
-              type="submit"
-              disabled={passwordLoading || !password}
-              style={{
-                width: "100%",
-                padding: "14px",
-                background: "var(--color-gold)",
-                color: "var(--color-ink)",
-                border: "none",
-                borderRadius: 0,
-                fontSize: "14px",
-                fontWeight: 600,
-                cursor: passwordLoading || !password ? "not-allowed" : "pointer",
-                opacity: passwordLoading || !password ? 0.5 : 1,
-                transition: "opacity 0.2s ease",
-                fontFamily: "var(--font-inter)",
-              }}
-            >
-              {passwordLoading ? "Verificando..." : "Acceder"}
-            </button>
-          </form>
+            <form onSubmit={handlePasswordSubmit}>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (passwordError) setPasswordError("");
+                }}
+                placeholder="••••••••"
+                autoFocus
+                style={{
+                  width: "100%",
+                  background: "var(--color-card)",
+                  border: `1px solid ${passwordError ? "rgba(196, 117, 107, 0.5)" : "var(--color-line-soft)"}`,
+                  borderRadius: 0,
+                  padding: "12px 14px",
+                  color: "var(--color-text)",
+                  textAlign: "center",
+                  fontSize: "16px",
+                  letterSpacing: "0.1em",
+                  fontFamily: "var(--font-inter)",
+                  outline: "none",
+                  marginBottom: "16px",
+                  transition: "border-color 0.2s ease",
+                }}
+                onFocus={(e) => {
+                  if (!passwordError) e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                }}
+                onBlur={(e) => {
+                  if (!passwordError) e.currentTarget.style.borderColor = "var(--color-line-soft)";
+                }}
+              />
 
-          <div className="flex justify-center mt-6">
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="flex items-center justify-center"
-              style={{
-                width: "34px",
-                height: "34px",
-                borderRadius: "50%",
-                border: "1px solid var(--color-gold)",
-                color: "var(--color-gold)",
-                transition: "border-color 0.25s ease",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-gold)")}
-            >
-              <ArrowLeft style={{ width: "15px", height: "15px" }} />
-            </button>
+              {passwordError && (
+                <div
+                  style={{
+                    padding: "12px 16px",
+                    marginBottom: "16px",
+                    background: "rgba(196, 117, 107, 0.08)",
+                    border: "1px solid rgba(196, 117, 107, 0.3)",
+                    borderRadius: 0,
+                  }}
+                >
+                  <p style={{ fontSize: "13px", color: "#C4756B", fontFamily: "var(--font-inter)" }}>
+                    {passwordError}
+                  </p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={passwordLoading || !password}
+                style={{
+                  width: "100%",
+                  padding: "14px",
+                  background: passwordLoading || !password ? "var(--color-gold-dim)" : "var(--color-gold)",
+                  color: "var(--color-ink)",
+                  border: "none",
+                  borderRadius: 0,
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  cursor: passwordLoading || !password ? "not-allowed" : "pointer",
+                  transition: "background 0.2s ease",
+                  fontFamily: "var(--font-inter)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!passwordLoading && password) e.currentTarget.style.background = "var(--color-gold-dim)";
+                }}
+                onMouseLeave={(e) => {
+                  if (!passwordLoading && password) e.currentTarget.style.background = "var(--color-gold)";
+                }}
+              >
+                {passwordLoading ? "Verificando..." : "Acceder"}
+              </button>
+            </form>
           </div>
+
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="flex items-center gap-2 mt-5"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "6px 0",
+              fontSize: "13px",
+              color: "var(--color-text-muted)",
+              fontFamily: "var(--font-inter)",
+              transition: "color 0.25s ease",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+          >
+            <ArrowLeft style={{ width: "13px", height: "13px" }} />
+            Volver al inicio
+          </button>
         </div>
       </div>
     );
