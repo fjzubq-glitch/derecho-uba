@@ -14,7 +14,7 @@ export async function PUT(request: NextRequest) {
     if (tipo === "clase") {
       const { error } = await getSupabaseAdmin()
         .from("clases")
-        .update({ titulo: data.titulo, fecha: data.fecha, numero: data.numero })
+        .update({ titulo: data.titulo, fecha: data.fecha || null, numero: data.numero })
         .eq("id", id);
 
       if (error) throw error;
