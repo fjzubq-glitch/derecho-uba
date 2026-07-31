@@ -26,23 +26,42 @@ export async function GET() {
     const visitantesUnicos = uniqueIps.size;
     const totalVisitas = allActivity?.length || 0;
 
-    // Recent activity — usar vista enriquecida con joins
+    // Recent activity — sin join anidado (actividad no tiene FK); lookup por lotes
     const { data: recentActivity } = await supabase
       .from("actividad")
-      .select("tipo, pagina, materia_slug, archivo_id, clase_id, created_at, ip_hash, archivos(nombre_display), clases(numero, materias(nombre))")
+      .select("tipo, pagina, materia_slug, archivo_id, clase_id, created_at, ip_hash")
       .order("created_at", { ascending: false })
       .limit(30);
 
-    const actividadReciente = (recentActivity || []).map((a: any) => ({
-      tipo: a.tipo,
-      pagina: a.pagina,
-      materia_slug: a.materia_slug,
-      archivo_nombre: a.archivos?.nombre_display || null,
-      materia: a.clases?.materias?.nombre || null,
-      clase_numero: a.clases?.numero || null,
-      created_at: a.created_at,
-      ip_hash: a.ip_hash,
-    }));
+    const activityRows = recentActivity || [];
+    const archivoIds = [...new Set(activityRows.map((a: any) => a.archivo_id).filter(Boolean))];
+    const claseIds = [...new Set(activityRows.map((a: any) => a.clase_id).filter(Boolean))];
+
+    const [{ data: archivoRows }, { data: claseRows }] = await Promise.all([
+      archivoIds.length > 0
+        ? supabase.from("archivos").select("id, nombre_display").in("id", archivoIds)
+        : Promise.resolve({ data: [] }),
+      claseIds.length > 0
+        ? supabase.from("clases").select("id, numero, materias(nombre)").in("id", claseIds)
+        : Promise.resolve({ data: [] }),
+    ]);
+
+    const archivoMap = new Map((archivoRows || []).map((a: any) => [a.id, a.nombre_display]));
+    const claseMap = new Map((claseRows || []).map((c: any) => [c.id, c]));
+
+    const actividadReciente = activityRows.map((a: any) => {
+      const clase = claseMap.get(a.clase_id);
+      return {
+        tipo: a.tipo,
+        pagina: a.pagina,
+        materia_slug: a.materia_slug,
+        archivo_nombre: a.archivo_id ? archivoMap.get(a.archivo_id) || null : null,
+        materia: clase?.materias?.nombre || null,
+        clase_numero: clase?.numero || null,
+        created_at: a.created_at,
+        ip_hash: a.ip_hash,
+      };
+    });
 
     // Popular content
     const { data: popularRows } = await supabase

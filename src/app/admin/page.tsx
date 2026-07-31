@@ -815,7 +815,7 @@ export default function AdminPage() {
                       >
                         {visitasUltimos7.map((dia, idx) => {
                           const pct = (dia.total_visitas / maxVisitasDia) * 100;
-                          const altura = dia.total_visitas === 0 ? "3px" : `${Math.max(pct, 6)}%`;
+                          const altura = dia.total_visitas === 0 ? 3 : Math.max(Math.round(pct * 1.6), 6);
                           return (
                             <div
                               key={dia.fecha}
@@ -864,7 +864,7 @@ export default function AdminPage() {
 
                               <div
                                 className="w-full flex items-end justify-center"
-                                style={{ minHeight: "172px" }}
+                                style={{ height: "172px" }}
                                 onMouseEnter={() => setMaximoBarras((prev) => ({ ...prev, [dia.fecha]: 1 }))}
                                 onMouseLeave={() => setMaximoBarras((prev) => ({ ...prev, [dia.fecha]: 0 }))}
                               >
@@ -872,7 +872,7 @@ export default function AdminPage() {
                                   style={{
                                     width: "60%",
                                     maxWidth: "40px",
-                                    height: altura,
+                                    height: `${altura}px`,
                                     background:
                                       dia.total_visitas === 0
                                         ? "var(--color-line-soft)"
