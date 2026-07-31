@@ -81,6 +81,13 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
   const [podcastDropHover, setPodcastDropHover] = useState(false);
   const [resultMsg, setResultMsg] = useState<{ text: string; isError: boolean } | null>(null);
 
+  const hasAudio = audioFile !== null || (useYoutube && youtubeUrl.trim() !== "");
+  const hasPodcast = podcastFile !== null;
+  const hasTranscripcion =
+    (transcripcionMethod === "drive" && transcripcionDriveLink.trim() !== "") ||
+    (transcripcionMethod === "texto" && transcripcionTexto.trim() !== "");
+  const loadedCount = [hasAudio, hasPodcast, hasTranscripcion].filter(Boolean).length;
+
   useEffect(() => {
     if (materias.length > 0 && !materiaId) {
       setMateriaId(materias[0].id);
@@ -240,8 +247,35 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
         Subir Nueva Clase
       </h2>
 
-      {/* Fila superior: Materia / Número / Fecha */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      {/* ═══ BLOQUE 1 · DATOS DE LA CLASE ═══ */}
+      <div className="mb-8">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            paddingBottom: "12px",
+            marginBottom: "24px",
+            borderBottom: "1px solid var(--color-line-soft)",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "10px",
+              letterSpacing: "0.14em",
+              color: "var(--color-gold)",
+            }}
+          >
+            01
+          </span>
+          <h3 style={{ ...sectionHeaderStyle, marginBottom: 0 }}>
+            Datos de la clase
+          </h3>
+        </div>
+
+        {/* Fila superior: Materia / Número / Fecha */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
           <label style={labelStyle}>Materia</label>
           <select
@@ -288,8 +322,36 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
           style={{ ...inputStyle }}
         />
       </div>
+      </div>
 
-      <div className="space-y-4">
+      {/* ═══ BLOQUE 2 · CONTENIDO A SUBIR ═══ */}
+      <div className="mb-8">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            paddingBottom: "12px",
+            marginBottom: "24px",
+            borderBottom: "1px solid var(--color-line-soft)",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "10px",
+              letterSpacing: "0.14em",
+              color: "var(--color-gold)",
+            }}
+          >
+            02
+          </span>
+          <h3 style={{ ...sectionHeaderStyle, marginBottom: 0 }}>
+            Contenido a subir
+          </h3>
+        </div>
+
+        <div className="space-y-4">
         {/* Video / Audio de Clase */}
         <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
           <h3 style={sectionHeaderStyle}>
@@ -423,6 +485,68 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
             />
           )}
         </div>
+        </div>
+      </div>
+
+      {/* ═══ INDICADOR DE COMPLETITUD ═══ */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "16px",
+          flexWrap: "wrap",
+          padding: "16px 20px",
+          marginBottom: "24px",
+          background: "var(--color-ink)",
+          border: "1px solid var(--color-line-soft)",
+          borderRadius: 0,
+        }}
+      >
+        <div className="flex flex-wrap items-center gap-4">
+          {[
+            { label: "Audio", ready: hasAudio },
+            { label: "Podcast", ready: hasPodcast },
+            { label: "Transcripción", ready: hasTranscripcion },
+          ].map((item) => (
+            <div key={item.label} className="flex items-center gap-2">
+              <div
+                className="flex items-center justify-center"
+                style={{
+                  width: "18px",
+                  height: "18px",
+                  borderRadius: "50%",
+                  border: `1px solid ${item.ready ? "var(--color-gold)" : "var(--color-line)"}`,
+                  background: item.ready ? "var(--color-gold)" : "transparent",
+                  transition: "all 0.25s ease",
+                }}
+              >
+                {item.ready && <Check style={{ width: "10px", height: "10px", color: "var(--color-ink)" }} />}
+              </div>
+              <span
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "10px",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: item.ready ? "var(--color-text)" : "var(--color-text-faint)",
+                  transition: "color 0.25s ease",
+                }}
+              >
+                {item.label}
+              </span>
+            </div>
+          ))}
+        </div>
+        <span
+          style={{
+            fontFamily: "var(--font-ibm-plex-mono)",
+            fontSize: "12px",
+            color: loadedCount === 3 ? "var(--color-gold)" : "var(--color-text-muted)",
+          }}
+        >
+          {loadedCount}/3 cargados
+        </span>
       </div>
 
       {/* Resultado */}

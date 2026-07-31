@@ -2,8 +2,6 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
-import GlassCard from "@/components/ui/GlassCard";
-import Button from "@/components/ui/Button";
 import { ArrowLeft, Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload } from "@/components/icons";
 
 interface Archivo {
@@ -30,6 +28,28 @@ interface EditData {
   id: string;
   data: Record<string, string | number>;
 }
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  fontFamily: "var(--font-ibm-plex-mono)",
+  fontSize: "10px",
+  letterSpacing: "0.14em",
+  textTransform: "uppercase",
+  color: "var(--color-text-faint)",
+  marginBottom: "8px",
+};
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  background: "var(--color-ink)",
+  border: "1px solid var(--color-line-soft)",
+  borderRadius: 0,
+  padding: "12px 14px",
+  fontSize: "16px",
+  color: "var(--color-text)",
+  outline: "none",
+  fontFamily: "var(--font-inter)",
+};
 
 export default function AdminManage() {
   const [clases, setClases] = useState<Clase[]>([]);
@@ -226,56 +246,160 @@ export default function AdminManage() {
   }
 
   const TIPO_ICONS: Record<string, React.ReactNode> = {
-    audio_clase: <Headphones className="w-4 h-4" />,
-    podcast: <Play className="w-4 h-4" />,
-    transcripcion: <FileText className="w-4 h-4" />,
-    youtube: <ExternalLink className="w-4 h-4" />,
+    audio_clase: <Headphones style={{ width: "14px", height: "14px" }} />,
+    podcast: <Play style={{ width: "14px", height: "14px" }} />,
+    transcripcion: <FileText style={{ width: "14px", height: "14px" }} />,
+    youtube: <ExternalLink style={{ width: "14px", height: "14px" }} />,
+  };
+
+  const TIPO_LABELS: Record<string, string> = {
+    audio_clase: "Audio de clase",
+    podcast: "LexPodcast",
+    transcripcion: "Transcripción",
+    youtube: "YouTube",
   };
 
   const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "podcast" || tipo === "transcripcion" || tipo === "youtube";
 
+  const actionBtnStyle: React.CSSProperties = {
+    padding: "6px 12px",
+    fontSize: "11px",
+    fontWeight: 500,
+    fontFamily: "var(--font-inter)",
+    background: "transparent",
+    border: "1px solid var(--color-line)",
+    borderRadius: 0,
+    color: "var(--color-text-muted)",
+    cursor: "pointer",
+    transition: "border-color 0.2s ease, color 0.2s ease",
+  };
+
+  const modalBackdrop: React.CSSProperties = {
+    position: "fixed",
+    inset: 0,
+    zIndex: 50,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "rgba(5, 7, 12, 0.7)",
+    padding: "16px",
+  };
+
+  const modalCard: React.CSSProperties = {
+    width: "100%",
+    maxWidth: "440px",
+    background: "var(--color-card)",
+    border: "1px solid var(--color-line-soft)",
+    borderRadius: 0,
+    padding: "28px",
+  };
+
   return (
     <div className="space-y-6">
       {message && (
-        <GlassCard className={`p-4 ${message.startsWith("Error") ? "border-red-500/30" : "border-green-500/30"}`}>
-          <p className={`text-sm ${message.startsWith("Error") ? "text-red-400" : "text-green-400"}`}>
+        <div
+          style={{
+            padding: "14px 18px",
+            background: message.startsWith("Error") ? "rgba(224, 85, 85, 0.08)" : "rgba(185, 154, 98, 0.08)",
+            border: `1px solid ${message.startsWith("Error") ? "rgba(224, 85, 85, 0.3)" : "var(--color-gold-dim)"}`,
+            borderRadius: 0,
+          }}
+        >
+          <p
+            style={{
+              fontSize: "13px",
+              color: message.startsWith("Error") ? "#E05555" : "var(--color-gold)",
+              fontFamily: "var(--font-inter)",
+            }}
+          >
             {message}
           </p>
-        </GlassCard>
+        </div>
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
+        <div className="flex items-center justify-center" style={{ padding: "80px 0" }}>
+          <div
+            className="animate-spin"
+            style={{
+              width: "32px",
+              height: "32px",
+              border: "2px solid var(--color-line)",
+              borderTopColor: "var(--color-gold)",
+              borderRadius: "50%",
+            }}
+          />
         </div>
       ) : clases.length === 0 ? (
-        <GlassCard className="p-8 text-center">
-          <p className="text-gray-400">No hay clases cargadas</p>
-        </GlassCard>
+        <div
+          style={{
+            padding: "48px 24px",
+            textAlign: "center",
+            background: "var(--color-card)",
+            border: "1px solid var(--color-line-soft)",
+            borderRadius: 0,
+          }}
+        >
+          <p style={{ fontSize: "14px", color: "var(--color-text-faint)" }}>No hay clases cargadas</p>
+        </div>
       ) : (
         <div className="space-y-4">
           {clases.map((clase) => (
-            <GlassCard key={clase.id} className="p-5">
+            <div
+              key={clase.id}
+              style={{
+                background: "var(--color-card)",
+                border: "1px solid var(--color-line-soft)",
+                borderRadius: 0,
+                padding: "24px",
+              }}
+            >
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-medium text-violet-400">
+                    <span
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "10px",
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        color: "var(--color-gold)",
+                      }}
+                    >
                       {clase.materia_nombre}
                     </span>
-                    <span className="text-xs text-gray-600">•</span>
-                    <span className="text-xs font-medium text-gray-400">
+                    <span style={{ fontSize: "12px", color: "var(--color-text-faint)" }}>•</span>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "10px",
+                        letterSpacing: "0.14em",
+                        color: "var(--color-text-muted)",
+                      }}
+                    >
                       CLASE {clase.numero.toString().padStart(2, "0")}
                     </span>
                   </div>
-                  <h3 className="text-lg font-semibold text-white">{clase.titulo}</h3>
+                  <h3
+                    style={{
+                      fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                      fontWeight: 500,
+                      fontSize: "18px",
+                      color: "var(--color-text)",
+                    }}
+                  >
+                    {clase.titulo}
+                  </h3>
                   {clase.fecha && (
-                    <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-1">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {new Date(clase.fecha).toLocaleDateString("es-AR", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <Calendar style={{ width: "13px", height: "13px", color: "var(--color-text-faint)" }} />
+                      <span style={{ fontSize: "12px", color: "var(--color-text-faint)" }}>
+                        {new Date(clase.fecha).toLocaleDateString("es-AR", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -286,30 +410,74 @@ export default function AdminManage() {
                       id: clase.id,
                       data: { titulo: clase.titulo, fecha: clase.fecha || "", numero: clase.numero }
                     })}
-                    className="px-3 py-1.5 text-xs font-medium text-violet-400 hover:text-white bg-violet-500/10 hover:bg-violet-500/20 rounded-lg transition-colors"
+                    style={actionBtnStyle}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                      e.currentTarget.style.color = "var(--color-gold)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "var(--color-line)";
+                      e.currentTarget.style.color = "var(--color-text-muted)";
+                    }}
                   >
                     Editar
                   </button>
                   <button
                     onClick={() => setDeleting({ tipo: "clase", id: clase.id, nombre: clase.titulo })}
-                    className="px-3 py-1.5 text-xs font-medium text-red-400 hover:text-white bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-colors"
+                    style={actionBtnStyle}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(224, 85, 85, 0.4)";
+                      e.currentTarget.style.color = "#E05555";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "var(--color-line)";
+                      e.currentTarget.style.color = "var(--color-text-muted)";
+                    }}
                   >
                     Borrar
                   </button>
                 </div>
               </div>
 
-              {clase.archivos.length > 0 && (
+              {clase.archivos.length > 0 ? (
                 <div className="space-y-2">
                   {clase.archivos.map((archivo) => (
-                    <div key={archivo.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                      <div className="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center text-violet-400">
-                        {TIPO_ICONS[archivo.tipo]}
+                    <div
+                      key={archivo.id}
+                      className="flex items-center gap-3"
+                      style={{
+                        padding: "12px",
+                        background: "var(--color-ink)",
+                        border: "1px solid var(--color-line-soft)",
+                        borderRadius: 0,
+                      }}
+                    >
+                      <div
+                        className="flex items-center justify-center"
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "50%",
+                          border: "1px solid var(--color-gold-dim)",
+                        }}
+                      >
+                        <span style={{ color: "var(--color-gold)" }}>{TIPO_ICONS[archivo.tipo] || TIPO_ICONS.transcripcion}</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-white truncate">{archivo.nombre_display}</p>
-                        <p className="text-xs text-gray-500">
-                          {archivo.tipo.replace("_", " ")} • {archivo.play_count} reproducciones
+                        <p
+                          style={{
+                            fontSize: "13px",
+                            fontWeight: 500,
+                            color: "var(--color-text)",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {archivo.nombre_display}
+                        </p>
+                        <p style={{ fontSize: "11px", color: "var(--color-text-faint)" }}>
+                          {TIPO_LABELS[archivo.tipo] || archivo.tipo.replace("_", " ")} • {archivo.play_count} reproducciones
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -322,7 +490,15 @@ export default function AdminManage() {
                               setNewYoutubeUrl("");
                               setNewNombre(archivo.nombre_display);
                             }}
-                            className="px-3 py-1.5 text-xs font-medium text-amber-400 hover:text-white bg-amber-500/10 hover:bg-amber-500/20 rounded-lg transition-colors"
+                            style={actionBtnStyle}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                              e.currentTarget.style.color = "var(--color-gold)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.borderColor = "var(--color-line)";
+                              e.currentTarget.style.color = "var(--color-text-muted)";
+                            }}
                           >
                             Reemplazar
                           </button>
@@ -333,13 +509,29 @@ export default function AdminManage() {
                             id: archivo.id,
                             data: { nombre_display: archivo.nombre_display }
                           })}
-                          className="px-3 py-1.5 text-xs font-medium text-violet-400 hover:text-white bg-violet-500/10 hover:bg-violet-500/20 rounded-lg transition-colors"
+                          style={actionBtnStyle}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                            e.currentTarget.style.color = "var(--color-gold)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = "var(--color-line)";
+                            e.currentTarget.style.color = "var(--color-text-muted)";
+                          }}
                         >
                           Editar
                         </button>
                         <button
                           onClick={() => setDeleting({ tipo: "archivo", id: archivo.id, nombre: archivo.nombre_display })}
-                          className="px-3 py-1.5 text-xs font-medium text-red-400 hover:text-white bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-colors"
+                          style={actionBtnStyle}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = "rgba(224, 85, 85, 0.4)";
+                            e.currentTarget.style.color = "#E05555";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = "var(--color-line)";
+                            e.currentTarget.style.color = "var(--color-text-muted)";
+                          }}
                         >
                           Borrar
                         </button>
@@ -347,22 +539,43 @@ export default function AdminManage() {
                     </div>
                   ))}
                 </div>
+              ) : (
+                <p
+                  style={{
+                    fontSize: "12px",
+                    color: "var(--color-text-faint)",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontStyle: "italic",
+                  }}
+                >
+                  Sin archivos cargados
+                </p>
               )}
-            </GlassCard>
+            </div>
           ))}
         </div>
       )}
 
       {/* Edit Modal */}
       {editing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <GlassCard className="w-full max-w-md p-6">
+        <div style={modalBackdrop}>
+          <div style={modalCard}>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-white">
+              <h3
+                style={{
+                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                  fontWeight: 500,
+                  fontSize: "18px",
+                  color: "var(--color-text)",
+                }}
+              >
                 Editar {editing.tipo === "clase" ? "Clase" : "Archivo"}
               </h3>
-              <button onClick={() => setEditing(null)} className="text-gray-400 hover:text-white">
-                <X className="w-5 h-5" />
+              <button
+                onClick={() => setEditing(null)}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)" }}
+              >
+                <X style={{ width: "18px", height: "18px" }} />
               </button>
             </div>
 
@@ -370,139 +583,218 @@ export default function AdminManage() {
               {editing.tipo === "clase" ? (
                 <>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Número</label>
+                    <label style={labelStyle}>Número</label>
                     <input
                       type="number"
                       value={editing.data.numero as number}
                       onChange={(e) => setEditing({ ...editing, data: { ...editing.data, numero: Number(e.target.value) } })}
-                      className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-violet-500/50"
+                      style={inputStyle}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Título</label>
+                    <label style={labelStyle}>Título</label>
                     <input
                       type="text"
                       value={editing.data.titulo as string}
                       onChange={(e) => setEditing({ ...editing, data: { ...editing.data, titulo: e.target.value } })}
-                      className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-violet-500/50"
+                      style={inputStyle}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Fecha</label>
+                    <label style={labelStyle}>Fecha</label>
                     <input
                       type="date"
                       value={editing.data.fecha as string}
                       onChange={(e) => setEditing({ ...editing, data: { ...editing.data, fecha: e.target.value } })}
-                      className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-violet-500/50"
+                      style={inputStyle}
                     />
                   </div>
                 </>
               ) : (
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Nombre</label>
+                  <label style={labelStyle}>Nombre</label>
                   <input
                     type="text"
                     value={editing.data.nombre_display as string}
                     onChange={(e) => setEditing({ ...editing, data: { ...editing.data, nombre_display: e.target.value } })}
-                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-violet-500/50"
+                    style={inputStyle}
                   />
                 </div>
               )}
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <Button onClick={() => setEditing(null)} className="bg-white/[0.05] hover:bg-white/[0.1]">
+              <button
+                onClick={() => setEditing(null)}
+                style={{ ...actionBtnStyle, padding: "10px 20px" }}
+              >
                 Cancelar
-              </Button>
-              <Button onClick={handleEdit} disabled={processing}>
-                {processing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
+              </button>
+              <button
+                onClick={handleEdit}
+                disabled={processing}
+                style={{
+                  ...actionBtnStyle,
+                  padding: "10px 20px",
+                  background: "var(--color-gold)",
+                  color: "var(--color-ink)",
+                  border: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+              >
+                {processing ? <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} /> : <Check style={{ width: "14px", height: "14px" }} />}
                 Guardar
-              </Button>
+              </button>
             </div>
-          </GlassCard>
+          </div>
         </div>
       )}
 
       {/* Delete Modal */}
       {deleting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <GlassCard className="w-full max-w-md p-6">
+        <div style={modalBackdrop}>
+          <div style={modalCard}>
             <div className="text-center">
-              <div className="w-16 h-16 rounded-2xl bg-red-500/20 flex items-center justify-center mx-auto mb-4">
-                <X className="w-8 h-8 text-red-400" />
+              <div
+                className="flex items-center justify-center mx-auto mb-4"
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  border: "1px solid rgba(224, 85, 85, 0.4)",
+                }}
+              >
+                <X style={{ width: "20px", height: "20px", color: "#E05555" }} />
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
+              <h3
+                style={{
+                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                  fontWeight: 500,
+                  fontSize: "18px",
+                  color: "var(--color-text)",
+                  marginBottom: "8px",
+                }}
+              >
                 Eliminar {deleting.tipo === "clase" ? "Clase" : "Archivo"}
               </h3>
-              <p className="text-sm text-gray-400 mb-6">
-                ¿Estás seguro de que querés eliminar <span className="text-white font-medium">"{deleting.nombre}"</span>?
+              <p
+                style={{
+                  fontSize: "13px",
+                  color: "var(--color-text-muted)",
+                  lineHeight: 1.6,
+                  marginBottom: "20px",
+                }}
+              >
+                ¿Estás seguro de que querés eliminar <span style={{ color: "var(--color-text)", fontWeight: 500 }}>"{deleting.nombre}"</span>?
                 {deleting.tipo === "clase" && " Se eliminarán todos los archivos asociados."}
-                <br /><br />
+                <br />
+                <br />
                 Esta acción no se puede deshacer.
               </p>
 
               <div className="flex justify-center gap-3">
-                <Button onClick={() => setDeleting(null)} className="bg-white/[0.05] hover:bg-white/[0.1]">
+                <button
+                  onClick={() => setDeleting(null)}
+                  style={{ ...actionBtnStyle, padding: "10px 20px" }}
+                >
                   Cancelar
-                </Button>
-                <Button onClick={handleDelete} disabled={processing} className="bg-red-600 hover:bg-red-500">
-                  {processing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <X className="w-4 h-4 mr-2" />}
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={processing}
+                  style={{
+                    padding: "10px 20px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    fontFamily: "var(--font-inter)",
+                    background: "#E05555",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 0,
+                    cursor: processing ? "not-allowed" : "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    opacity: processing ? 0.6 : 1,
+                  }}
+                >
+                  {processing ? <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} /> : <X style={{ width: "14px", height: "14px" }} />}
                   Eliminar
-                </Button>
+                </button>
               </div>
             </div>
-          </GlassCard>
+          </div>
         </div>
       )}
 
       {/* Replace Modal */}
       {replacing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <GlassCard className="w-full max-w-md p-6">
+        <div style={modalBackdrop}>
+          <div style={modalCard}>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-white">Reemplazar Archivo</h3>
-              <button onClick={() => { setReplacing(null); setNewFile(null); setNewDriveLink(""); setNewYoutubeUrl(""); }} className="text-gray-400 hover:text-white">
-                <X className="w-5 h-5" />
+              <h3
+                style={{
+                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                  fontWeight: 500,
+                  fontSize: "18px",
+                  color: "var(--color-text)",
+                }}
+              >
+                Reemplazar Archivo
+              </h3>
+              <button
+                onClick={() => { setReplacing(null); setNewFile(null); setNewDriveLink(""); setNewYoutubeUrl(""); }}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)" }}
+              >
+                <X style={{ width: "18px", height: "18px" }} />
               </button>
             </div>
 
-            <p className="text-sm text-gray-400 mb-4">
-              Reemplazar <span className="text-white font-medium">"{replacing.nombre}"</span>
+            <p style={{ fontSize: "13px", color: "var(--color-text-muted)", marginBottom: "16px" }}>
+              Reemplazar <span style={{ color: "var(--color-text)", fontWeight: 500 }}>"{replacing.nombre}"</span>
             </p>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Nombre</label>
+                <label style={labelStyle}>Nombre</label>
                 <input
                   type="text"
                   value={newNombre}
                   onChange={(e) => setNewNombre(e.target.value)}
-                  className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-violet-500/50"
+                  style={inputStyle}
                 />
               </div>
 
               {(replacing.tipo === "audio_clase" || replacing.tipo === "podcast") && (
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Archivo de audio</label>
+                  <label style={labelStyle}>Archivo de audio</label>
                   <div
                     onClick={() => fileInputRef.current?.click()}
-                    className="border-2 border-dashed border-white/[0.15] rounded-xl p-6 text-center cursor-pointer hover:border-violet-500/40 transition-colors"
+                    style={{
+                      border: "1px dashed var(--color-line)",
+                      borderRadius: 0,
+                      padding: "24px",
+                      textAlign: "center",
+                      cursor: "pointer",
+                    }}
                   >
                     {newFile ? (
                       <div className="flex items-center justify-center gap-2">
-                        <Check className="w-5 h-5 text-green-400" />
-                        <span className="text-sm text-white">{newFile.name}</span>
+                        <Check style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
+                        <span style={{ fontSize: "13px", color: "var(--color-text)" }}>{newFile.name}</span>
                         <button
                           onClick={(e) => { e.stopPropagation(); setNewFile(null); }}
-                          className="ml-2"
+                          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)" }}
                         >
-                          <X className="w-4 h-4 text-gray-400 hover:text-white" />
+                          <X style={{ width: "14px", height: "14px" }} />
                         </button>
                       </div>
                     ) : (
                       <div>
-                        <Upload className="w-8 h-8 text-gray-500 mx-auto mb-2" />
-                        <p className="text-sm text-gray-400">Seleccioná el archivo nuevo</p>
+                        <Upload style={{ width: "28px", height: "28px", color: "var(--color-text-faint)", margin: "0 auto 8px", display: "block" }} />
+                        <p style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>Seleccioná el archivo nuevo</p>
                       </div>
                     )}
                   </div>
@@ -511,48 +803,64 @@ export default function AdminManage() {
                     type="file"
                     accept="audio/*"
                     onChange={(e) => setNewFile(e.target.files?.[0] || null)}
-                    className="hidden"
+                    style={{ display: "none" }}
                   />
                 </div>
               )}
 
               {replacing.tipo === "transcripcion" && (
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Link de Google Drive</label>
+                  <label style={labelStyle}>Link de Google Drive</label>
                   <input
                     type="url"
                     value={newDriveLink}
                     onChange={(e) => setNewDriveLink(e.target.value)}
                     placeholder="https://drive.google.com/file/d/..."
-                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-violet-500/50"
+                    style={inputStyle}
                   />
                 </div>
               )}
 
               {replacing.tipo === "youtube" && (
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Link de YouTube</label>
+                  <label style={labelStyle}>Link de YouTube</label>
                   <input
                     type="url"
                     value={newYoutubeUrl}
                     onChange={(e) => setNewYoutubeUrl(e.target.value)}
                     placeholder="https://youtube.com/watch?v=..."
-                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-violet-500/50"
+                    style={inputStyle}
                   />
                 </div>
               )}
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <Button onClick={() => { setReplacing(null); setNewFile(null); setNewDriveLink(""); setNewYoutubeUrl(""); }} className="bg-white/[0.05] hover:bg-white/[0.1]">
+              <button
+                onClick={() => { setReplacing(null); setNewFile(null); setNewDriveLink(""); setNewYoutubeUrl(""); }}
+                style={{ ...actionBtnStyle, padding: "10px 20px" }}
+              >
                 Cancelar
-              </Button>
-              <Button onClick={handleReplace} disabled={processing}>
-                {processing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
+              </button>
+              <button
+                onClick={handleReplace}
+                disabled={processing}
+                style={{
+                  ...actionBtnStyle,
+                  padding: "10px 20px",
+                  background: "var(--color-gold)",
+                  color: "var(--color-ink)",
+                  border: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+              >
+                {processing ? <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} /> : <Upload style={{ width: "14px", height: "14px" }} />}
                 Reemplazar
-              </Button>
+              </button>
             </div>
-          </GlassCard>
+          </div>
         </div>
       )}
     </div>

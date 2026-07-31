@@ -457,7 +457,8 @@ export default function AdminPage() {
       {/* ═══════════ MAIN ═══════════ */}
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "48px 48px 80px" }}>
-          {/* Stats */}
+          {/* Stats — solo en tabs de contenido */}
+          {activeTab !== "analytics" && (
           <div
             className="grid grid-cols-1 md:grid-cols-3 overflow-hidden mb-8"
             style={{
@@ -516,6 +517,7 @@ export default function AdminPage() {
               </div>
             ))}
           </div>
+          )}
 
           {/* Upload Tab */}
           {activeTab === "upload" && (
