@@ -66,7 +66,6 @@ export default function HomePage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const destacadas = materias.slice(0, 3);
   const materiasFiltradas = materias.filter((m) => {
     if (!busqueda.trim()) return true;
     const q = busqueda.trim().toLowerCase();
