@@ -39,16 +39,16 @@ export default function HomePage() {
 
       {/* ═══════════ HERO ═══════════ */}
       <section className="relative overflow-hidden border-b" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div className="relative z-10 pad-lateral" style={{ padding: "52px 48px 44px" }}>
+        <div className="relative z-10 pad-lateral" style={{ padding: "72px 48px 64px" }}>
           <svg
-            className="absolute pointer-events-none hidden sm:block"
+            className="absolute pointer-events-none hidden md:block"
             style={{
-              right: "-40px",
+              right: "0",
               top: "50%",
               transform: "translateY(-50%)",
-              width: "340px",
-              height: "340px",
-              opacity: "0.035",
+              width: "440px",
+              height: "440px",
+              opacity: "0.05",
             }}
             viewBox="0 0 100 100"
             fill="none"
@@ -70,44 +70,60 @@ export default function HomePage() {
             <path d="M70 55 Q75 62 80 55 Q85 62 90 55" />
           </svg>
 
-          <div
-            className="flex items-center gap-3 mb-6"
-            style={{
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "11px",
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "var(--color-gold)",
-            }}
-          >
-            <span style={{ width: "24px", height: "1px", background: "var(--color-gold-dim)" }} />
-            Biblioteca de cursada
+          <div style={{ maxWidth: "640px" }}>
+            <div
+              className="flex items-center gap-3 mb-6"
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "11px",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "var(--color-gold)",
+              }}
+            >
+              <span style={{ width: "24px", height: "1px", background: "var(--color-gold-dim)" }} />
+              Biblioteca de cursada
+            </div>
+
+            <h1
+              style={{
+                fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                fontWeight: 400,
+                fontSize: "clamp(36px, 4.5vw, 54px)",
+                lineHeight: 1.08,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              Clases, transcripciones y podcasts <br className="hidden sm:block" />
+              organizados por <span style={{ fontStyle: "italic", color: "var(--color-gold)", fontWeight: 300 }}>materia</span>.
+            </h1>
+
+            <p className="mt-7 hero-sub" style={{ maxWidth: "520px", fontSize: "15px", lineHeight: 1.7 }}>
+              Accedé a grabaciones, transcripciones, archivos y enlaces clave por clase.
+              Material de estudio curado y ordenado para estudiantes de Derecho UBA.
+            </p>
           </div>
-
-          <h1
-            style={{
-              fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-              fontWeight: 400,
-              fontSize: "clamp(34px, 4vw, 50px)",
-              lineHeight: 1.08,
-              letterSpacing: "-0.02em",
-              maxWidth: "680px",
-            }}
-          >
-            Clases, transcripciones y podcasts <br className="hidden sm:block" />
-            organizados por <span style={{ fontStyle: "italic", color: "var(--color-gold)", fontWeight: 300 }}>materia</span>.
-          </h1>
-
-          <p className="mt-6 hero-sub" style={{ maxWidth: "520px", fontSize: "15px", lineHeight: 1.7 }}>
-            Accedé a grabaciones, transcripciones, archivos y enlaces clave por clase.
-            Material de estudio curado y ordenado para estudiantes de Derecho UBA.
-          </p>
         </div>
       </section>
 
       {/* ═══════════ MATERIAS ═══════════ */}
       <section className="flex-1">
-        <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
+        <div className="pad-lateral" style={{ padding: "0 48px 80px" }}>
+          <div className="flex items-center gap-4" style={{ padding: "40px 0 32px" }}>
+            <span
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "10px",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "var(--color-gold)",
+              }}
+            >
+              Materias publicadas
+            </span>
+            <span style={{ flex: 1, height: "1px", background: "var(--color-line-soft)" }} />
+          </div>
+
           <div className="flex items-baseline justify-between mb-8 flex-wrap gap-4">
             <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "30px" }}>
               Materias
@@ -126,7 +142,7 @@ export default function HomePage() {
               onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
               onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
-              Ver todas →
+              Ver materias →
             </Link>
           </div>
 
