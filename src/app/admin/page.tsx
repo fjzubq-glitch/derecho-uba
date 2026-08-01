@@ -129,6 +129,7 @@ export default function AdminPage() {
       nombre: string;
       archivo?: File;
       driveLink?: string;
+      cloudinaryUrl?: string;
       textoContenido?: string;
     }>
   ): Promise<{ ok: boolean; error?: string }> {
@@ -147,6 +148,12 @@ export default function AdminPage() {
             tipo: item.tipo,
             nombre: item.nombre,
             youtubeUrl: item.driveLink,
+          });
+        } else if (item.cloudinaryUrl) {
+          processedItems.push({
+            tipo: item.tipo,
+            nombre: item.nombre,
+            cloudinaryUrl: item.cloudinaryUrl,
           });
         } else if (item.archivo) {
           const CHUNK_SIZE = 1024 * 1024;

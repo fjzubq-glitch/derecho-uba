@@ -11,6 +11,7 @@ interface Archivo {
   nombre_display: string;
   storage_key: string | null;
   youtube_url: string | null;
+  cloudinary_url: string | null;
   play_count: number;
 }
 
@@ -61,6 +62,7 @@ export default function AdminManage() {
   const [newFile, setNewFile] = useState<File | null>(null);
   const [newDriveLink, setNewDriveLink] = useState("");
   const [newYoutubeUrl, setNewYoutubeUrl] = useState("");
+  const [newCloudinaryUrl, setNewCloudinaryUrl] = useState("");
   const [newNombre, setNewNombre] = useState("");
   const [processing, setProcessing] = useState(false);
   const [message, setMessage] = useState("");
@@ -100,7 +102,7 @@ export default function AdminManage() {
         clasesData.map(async (c: any) => {
           const { data: archivos } = await supabase
             .from("archivos")
-            .select("id, tipo, nombre_display, storage_key, youtube_url, play_count")
+            .select("id, tipo, nombre_display, storage_key, youtube_url, cloudinary_url, play_count")
             .eq("clase_id", c.id)
             .order("created_at");
 
@@ -177,23 +179,41 @@ export default function AdminManage() {
 
     try {
       if (replacing.tipo === "audio_clase" || replacing.tipo === "podcast") {
-        if (!newFile) {
-          setMessage("Error: seleccioná un archivo");
-          setProcessing(false);
-          return;
-        }
-        const formData = new FormData();
-        formData.append("archivoId", replacing.archivoId);
-        formData.append("file", newFile);
+        if (newCloudinaryUrl) {
+          const res = await fetch("/api/admin", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              tipo: "archivo_link",
+              id: replacing.archivoId,
+              data: { cloudinary_url: newCloudinaryUrl, nombre_display: newNombre || replacing.nombre },
+            }),
+          });
 
-        const res = await fetch("/api/admin", {
-          method: "POST",
-          body: formData,
-        });
+          const data = await res.json();
+          if (!data.ok) {
+            setMessage("Error: " + data.error);
+            setProcessing(false);
+            return;
+          }
+        } else if (newFile) {
+          const formData = new FormData();
+          formData.append("archivoId", replacing.archivoId);
+          formData.append("file", newFile);
 
-        const data = await res.json();
-        if (!data.ok) {
-          setMessage("Error: " + data.error);
+          const res = await fetch("/api/admin", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await res.json();
+          if (!data.ok) {
+            setMessage("Error: " + data.error);
+            setProcessing(false);
+            return;
+          }
+        } else {
+          setMessage("Error: subí un archivo o pegá un link de Cloudinary");
           setProcessing(false);
           return;
         }
@@ -248,6 +268,7 @@ export default function AdminManage() {
       setNewFile(null);
       setNewDriveLink("");
       setNewYoutubeUrl("");
+      setNewCloudinaryUrl("");
       setNewNombre("");
       loadClases();
     } catch (err) {
@@ -571,6 +592,7 @@ export default function AdminManage() {
                                   setNewFile(null);
                                   setNewDriveLink("");
                                   setNewYoutubeUrl("");
+                                  setNewCloudinaryUrl("");
                                   setNewNombre(archivo.nombre_display);
                                 },
                               }]
@@ -802,7 +824,7 @@ export default function AdminManage() {
                 Reemplazar Archivo
               </h3>
               <button
-                onClick={() => { setReplacing(null); setNewFile(null); setNewDriveLink(""); setNewYoutubeUrl(""); }}
+                onClick={() => { setReplacing(null); setNewFile(null); setNewDriveLink(""); setNewYoutubeUrl(""); setNewCloudinaryUrl(""); }}
                 style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)" }}
               >
                 <X style={{ width: "18px", height: "18px" }} />
@@ -825,8 +847,19 @@ export default function AdminManage() {
               </div>
 
               {(replacing.tipo === "audio_clase" || replacing.tipo === "podcast") && (
-                <div>
-                  <label style={labelStyle}>Archivo de audio</label>
+                <>
+                  <div>
+                    <label style={labelStyle}>Link de Cloudinary (opcional)</label>
+                    <input
+                      type="url"
+                      value={newCloudinaryUrl}
+                      onChange={(e) => setNewCloudinaryUrl(e.target.value)}
+                      placeholder="https://res.cloudinary.com/.../video/audio.mp3"
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>O subir archivo de audio</label>
                   <div
                     onClick={() => fileInputRef.current?.click()}
                     style={{
@@ -855,14 +888,15 @@ export default function AdminManage() {
                       </div>
                     )}
                   </div>
-                  <input
+                      <input
                     ref={fileInputRef}
                     type="file"
                     accept="audio/*"
                     onChange={(e) => setNewFile(e.target.files?.[0] || null)}
                     style={{ display: "none" }}
                   />
-                </div>
+                  </div>
+                </>
               )}
 
               {replacing.tipo === "transcripcion" && (
@@ -894,7 +928,7 @@ export default function AdminManage() {
 
             <div className="flex justify-end gap-3 mt-6">
               <button
-                onClick={() => { setReplacing(null); setNewFile(null); setNewDriveLink(""); setNewYoutubeUrl(""); }}
+                onClick={() => { setReplacing(null); setNewFile(null); setNewDriveLink(""); setNewYoutubeUrl(""); setNewCloudinaryUrl(""); }}
                 style={{ ...actionBtnStyle, padding: "10px 20px" }}
               >
                 Cancelar

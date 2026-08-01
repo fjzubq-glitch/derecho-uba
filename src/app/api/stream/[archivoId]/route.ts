@@ -10,7 +10,7 @@ export async function GET(
 
   const { data: archivo, error } = await getSupabaseAdmin()
     .from("archivos")
-    .select("storage_key, youtube_url, tipo, contenido_texto, nombre_display")
+    .select("storage_key, youtube_url, cloudinary_url, tipo, contenido_texto, nombre_display")
     .eq("id", archivoId)
     .single();
 
@@ -20,6 +20,10 @@ export async function GET(
 
   if (archivo.youtube_url) {
     return Response.json({ url: archivo.youtube_url });
+  }
+
+  if (archivo.cloudinary_url) {
+    return Response.json({ url: archivo.cloudinary_url });
   }
 
   if (!archivo.storage_key) {

@@ -12,6 +12,7 @@ interface Archivo {
   nombre_display: string;
   storage_key: string | null;
   youtube_url: string | null;
+  cloudinary_url: string | null;
   contenido_texto: string | null;
   duration_seconds: number | null;
   play_count: number;
@@ -181,8 +182,10 @@ export default function ClaseNumeroPage() {
       return;
     }
 
+    const src = archivo.cloudinary_url || `/api/stream/${archivo.id}`;
+
     setPlayingTipo(tipo);
-    setPlayingSrc(`/api/stream/${archivo.id}`);
+    setPlayingSrc(src);
     setCurrentTime(0);
     setDuration(archivo.duration_seconds || 0);
     setIsPlaying(true);

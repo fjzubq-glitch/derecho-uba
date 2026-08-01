@@ -8,6 +8,7 @@ interface UploadItem {
   nombre: string;
   archivo?: File;
   driveLink?: string;
+  cloudinaryUrl?: string;
   textoContenido?: string;
 }
 
@@ -77,6 +78,11 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
   const [youtubeNombre, setYoutubeNombre] = useState("");
   const [useYoutube, setUseYoutube] = useState(false);
 
+  const [cloudinaryUrl, setCloudinaryUrl] = useState("");
+  const [useCloudinary, setUseCloudinary] = useState(false);
+  const [podcastCloudinaryUrl, setPodcastCloudinaryUrl] = useState("");
+  const [usePodcastCloudinary, setUsePodcastCloudinary] = useState(false);
+
   const [audioDropHover, setAudioDropHover] = useState(false);
   const [podcastDropHover, setPodcastDropHover] = useState(false);
   const [resultMsg, setResultMsg] = useState<{ text: string; isError: boolean } | null>(null);
@@ -108,13 +114,17 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
 
     const items: UploadItem[] = [];
 
-    if (useYoutube && youtubeUrl) {
+    if (useCloudinary && cloudinaryUrl) {
+      items.push({ tipo: "audio_clase", nombre: audioNombre || `Clase ${claseNumero}`, cloudinaryUrl: cloudinaryUrl });
+    } else if (useYoutube && youtubeUrl) {
       items.push({ tipo: "audio_clase", nombre: youtubeNombre || `Clase ${claseNumero}`, driveLink: youtubeUrl });
     } else if (audioFile) {
       items.push({ tipo: "audio_clase", nombre: audioNombre || `Clase ${claseNumero}`, archivo: audioFile });
     }
 
-    if (podcastFile) {
+    if (usePodcastCloudinary && podcastCloudinaryUrl) {
+      items.push({ tipo: "podcast", nombre: podcastNombre || `LexPodcast Ep. ${claseNumero}`, cloudinaryUrl: podcastCloudinaryUrl });
+    } else if (podcastFile) {
       items.push({ tipo: "podcast", nombre: podcastNombre || `LexPodcast Ep. ${claseNumero}`, archivo: podcastFile });
     }
 
@@ -152,6 +162,10 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
     setYoutubeUrl("");
     setYoutubeNombre("");
     setUseYoutube(false);
+    setCloudinaryUrl("");
+    setUseCloudinary(false);
+    setPodcastCloudinaryUrl("");
+    setUsePodcastCloudinary(false);
   };
 
   function Radio({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
@@ -360,11 +374,29 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
           </h3>
 
           <div className="flex gap-4 mb-4">
-            <Radio checked={!useYoutube} onChange={() => setUseYoutube(false)} label="Subir audio desde PC" />
-            <Radio checked={useYoutube} onChange={() => setUseYoutube(true)} label="Link de YouTube" />
+            <Radio checked={!useYoutube && !useCloudinary} onChange={() => { setUseYoutube(false); setUseCloudinary(false); }} label="Subir audio desde PC" />
+            <Radio checked={useYoutube} onChange={() => { setUseYoutube(true); setUseCloudinary(false); }} label="Link de YouTube" />
+            <Radio checked={useCloudinary} onChange={() => { setUseCloudinary(true); setUseYoutube(false); }} label="Link de Cloudinary" />
           </div>
 
-          {useYoutube ? (
+          {useCloudinary ? (
+            <div className="space-y-3">
+              <input
+                type="text"
+                value={audioNombre}
+                onChange={(e) => setAudioNombre(e.target.value)}
+                placeholder="Nombre del audio"
+                style={inputStyle}
+              />
+              <input
+                type="url"
+                value={cloudinaryUrl}
+                onChange={(e) => setCloudinaryUrl(e.target.value)}
+                placeholder="https://res.cloudinary.com/.../video/audio.mp3"
+                style={inputStyle}
+              />
+            </div>
+          ) : useYoutube ? (
             <div className="space-y-3">
               <input
                 type="text"
@@ -418,6 +450,30 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
             <Volume2 style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
             LexPodcast
           </h3>
+
+          <div className="flex gap-4 mb-4">
+            <Radio checked={!usePodcastCloudinary} onChange={() => setUsePodcastCloudinary(false)} label="Subir audio desde PC" />
+            <Radio checked={usePodcastCloudinary} onChange={() => setUsePodcastCloudinary(true)} label="Link de Cloudinary" />
+          </div>
+
+          {usePodcastCloudinary ? (
+            <div className="space-y-3">
+              <input
+                type="text"
+                value={podcastNombre}
+                onChange={(e) => setPodcastNombre(e.target.value)}
+                placeholder="Nombre del podcast"
+                style={inputStyle}
+              />
+              <input
+                type="url"
+                value={podcastCloudinaryUrl}
+                onChange={(e) => setPodcastCloudinaryUrl(e.target.value)}
+                placeholder="https://res.cloudinary.com/.../video/podcast.mp3"
+                style={inputStyle}
+              />
+            </div>
+          ) : (
           <div className="space-y-3">
             <input
               type="text"
@@ -445,6 +501,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
               style={{ display: "none" }}
             />
           </div>
+          )}
         </div>
 
         {/* Transcripción */}

@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
         nombre_display: item.nombre,
         storage_key: item.storageKey || null,
         youtube_url: item.youtubeUrl || null,
+        cloudinary_url: item.cloudinaryUrl || null,
         contenido_texto: item.contenidoTexto || null,
         file_size: item.fileSize || null,
         duration_seconds: item.durationSeconds || null,

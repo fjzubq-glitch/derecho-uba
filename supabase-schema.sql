@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS archivos (
   nombre_display TEXT NOT NULL,
   storage_key TEXT,
   youtube_url TEXT,
+  cloudinary_url TEXT,
   youtube_thumbnail TEXT,
   contenido_texto TEXT,
   file_size BIGINT,
