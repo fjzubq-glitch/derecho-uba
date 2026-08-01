@@ -388,7 +388,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
                 <option value="">{cargandoClases ? "Cargando..." : "Seleccioná una clase..."}</option>
                 {clasesExistentes.map((c) => (
                   <option key={c.id} value={c.id} style={{ background: "var(--color-card)", color: "var(--color-text)" }}>
-                    Clase {String(c.numero).padStart(2, "0")} — {c.titulo}
+                    {String(c.numero).padStart(2, "0")} — {c.titulo}
                     {c.fecha ? ` — ${formatFechaLocal(c.fecha, { day: "numeric", month: "short", year: "numeric" })}` : ""}
                   </option>
                 ))}
