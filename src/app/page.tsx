@@ -79,15 +79,15 @@ export default function HomePage() {
 
       {/* ═══════════ HERO ═══════════ */}
       <section className="relative overflow-hidden border-b" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div className="relative z-10 pad-lateral" style={{ padding: "88px 48px 56px" }}>
+        <div className="relative z-10 pad-lateral" style={{ padding: "52px 48px 44px" }}>
           <svg
             className="absolute pointer-events-none hidden sm:block"
             style={{
               right: "-40px",
               top: "50%",
               transform: "translateY(-50%)",
-              width: "420px",
-              height: "420px",
+              width: "340px",
+              height: "340px",
               opacity: "0.035",
             }}
             viewBox="0 0 100 100"
@@ -111,7 +111,7 @@ export default function HomePage() {
           </svg>
 
           <div
-            className="flex items-center gap-3 mb-8"
+            className="flex items-center gap-3 mb-6"
             style={{
               fontFamily: "var(--font-ibm-plex-mono)",
               fontSize: "11px",
@@ -128,29 +128,29 @@ export default function HomePage() {
             style={{
               fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
               fontWeight: 400,
-              fontSize: "clamp(40px, 5vw, 62px)",
-              lineHeight: 1.06,
+              fontSize: "clamp(34px, 4vw, 50px)",
+              lineHeight: 1.08,
               letterSpacing: "-0.02em",
-              maxWidth: "720px",
+              maxWidth: "680px",
             }}
           >
             Clases, transcripciones y podcasts <br className="hidden sm:block" />
             organizados por <span style={{ fontStyle: "italic", color: "var(--color-gold)", fontWeight: 300 }}>materia</span>.
           </h1>
 
-          <p className="mt-8 hero-sub" style={{ maxWidth: "520px", fontSize: "15px", lineHeight: 1.7 }}>
+          <p className="mt-6 hero-sub" style={{ maxWidth: "520px", fontSize: "15px", lineHeight: 1.7 }}>
             Accedé a grabaciones, transcripciones, archivos y enlaces clave por clase.
             Material de estudio curado y ordenado para estudiantes de Derecho UBA.
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 mt-10">
+          <div className="flex flex-wrap items-center gap-4 mt-8">
             <Link
               href="/dashboard"
               style={{
                 background: "var(--color-gold)",
                 color: "var(--color-ink)",
-                padding: "16px 34px",
-                fontSize: "15px",
+                padding: "15px 32px",
+                fontSize: "14px",
                 fontWeight: 600,
                 textDecoration: "none",
                 lineHeight: 1,
@@ -171,9 +171,9 @@ export default function HomePage() {
 
       {/* ═══════════ MATERIAS DESTACADAS ═══════════ */}
       <section className="flex-1">
-        <div className="pad-lateral" style={{ padding: "48px 48px 64px" }}>
+        <div className="pad-lateral" style={{ padding: "40px 48px 56px" }}>
           <div className="flex items-baseline justify-between mb-8 flex-wrap gap-4">
-            <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "28px" }}>
+            <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "30px" }}>
               Materias
             </h2>
             <Link
@@ -200,7 +200,7 @@ export default function HomePage() {
               style={{ background: "var(--color-line-soft)", gap: "1px" }}
             >
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-56" style={{ background: "var(--color-card)" }} />
+                <div key={i} className="h-64" style={{ background: "var(--color-card)" }} />
               ))}
             </div>
           ) : materias.length === 0 ? (
@@ -230,15 +230,16 @@ export default function HomePage() {
                     className="group flex flex-col"
                     style={{
                       background: "var(--color-card)",
-                      padding: "28px 26px",
+                      padding: "34px 30px",
                       textDecoration: "none",
                       transition: "background 0.25s ease",
+                      minHeight: "210px",
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
                   >
-                    <div className="flex items-center gap-2 mb-8" style={{ color: "var(--color-gold)" }}>
-                      <Grid style={{ width: "15px", height: "15px" }} />
+                    <div className="flex items-center gap-2 mb-10" style={{ color: "var(--color-gold)" }}>
+                      <Grid style={{ width: "16px", height: "16px" }} />
                       <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase" }}>
                         {m.total_clases} clases
                       </span>
@@ -248,7 +249,7 @@ export default function HomePage() {
                       style={{
                         fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                         fontWeight: 500,
-                        fontSize: "21px",
+                        fontSize: "23px",
                         lineHeight: 1.25,
                         color: "var(--color-text)",
                       }}
@@ -268,14 +269,16 @@ export default function HomePage() {
                       </p>
                     )}
                     <span
-                      className="mt-8 pt-4 border-t flex items-center gap-2"
+                      className="mt-auto pt-5 border-t"
                       style={{ borderColor: "var(--color-line-soft)", fontSize: "13px", fontWeight: 500, color: "var(--color-gold)" }}
                     >
-                      Abrir materia
-                      <ArrowRight
-                        style={{ width: "14px", height: "14px", transition: "transform 0.2s ease" }}
-                        className="group-hover:translate-x-[3px]"
-                      />
+                      <span className="flex items-center gap-2">
+                        Abrir materia
+                        <ArrowRight
+                          style={{ width: "14px", height: "14px", transition: "transform 0.2s ease" }}
+                          className="group-hover:translate-x-[3px]"
+                        />
+                      </span>
                     </span>
                   </Link>
                 );
@@ -287,8 +290,8 @@ export default function HomePage() {
 
       {/* ═══════════ ÚLTIMAS CLASES SUBIDAS ═══════════ */}
       <section className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div className="pad-lateral" style={{ padding: "48px 48px 64px" }}>
-          <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "28px", marginBottom: "8px" }}>
+        <div className="pad-lateral" style={{ padding: "40px 48px 48px" }}>
+          <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "24px", marginBottom: "8px" }}>
             Últimas clases subidas
           </h2>
           <p className="hero-sub mb-8" style={{ fontSize: "13px", lineHeight: 1.6, maxWidth: "480px" }}>
@@ -309,7 +312,7 @@ export default function HomePage() {
                   className="group flex flex-col"
                   style={{
                     background: "var(--color-card)",
-                    padding: "26px 24px",
+                    padding: "24px 22px",
                     textDecoration: "none",
                     transition: "background 0.25s ease",
                   }}
@@ -333,7 +336,7 @@ export default function HomePage() {
                     style={{
                       fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                       fontWeight: 500,
-                      fontSize: "19px",
+                      fontSize: "18px",
                       lineHeight: 1.3,
                       color: "var(--color-text)",
                     }}
@@ -371,10 +374,10 @@ export default function HomePage() {
 
       {/* ═══════════ PODCASTS RECIENTES ═══════════ */}
       <section className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div className="pad-lateral" style={{ padding: "48px 48px 80px" }}>
+        <div className="pad-lateral" style={{ padding: "40px 48px 64px" }}>
           <div className="flex items-center gap-3 mb-8">
             <Mic style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
-            <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "28px" }}>
+            <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "24px" }}>
               Podcasts recientes
             </h2>
           </div>
