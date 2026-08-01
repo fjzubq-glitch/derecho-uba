@@ -77,6 +77,7 @@ export default function ClaseNumeroPage() {
   const [duration, setDuration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
+  const playTrackedRef = useRef<string | null>(null);
 
   // Transcription expand
   const [openTranscripcion, setOpenTranscripcion] = useState(false);
@@ -188,14 +189,8 @@ export default function ClaseNumeroPage() {
     setPlayingSrc(src);
     setCurrentTime(0);
     setDuration(archivo.duration_seconds || 0);
-    setIsPlaying(true);
-
-    fetch("/api/analytics", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ archivo_id: archivo.id }),
-    }).catch(() => {});
-    trackActivity({ tipo: "play_start", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+    setIsPlaying(false);
+    playTrackedRef.current = null;
 
     setTimeout(() => {
       const audio = audioRef.current;
@@ -206,7 +201,6 @@ export default function ClaseNumeroPage() {
         audio.currentTime = resumeAt;
         setCurrentTime(resumeAt);
       }
-      audio.play();
     }, 100);
   }
 
@@ -217,6 +211,18 @@ export default function ClaseNumeroPage() {
       audio.pause();
       setIsPlaying(false);
     } else {
+      if (playingTipo && playTrackedRef.current !== playingTipo) {
+        const archivo = getArchivo(playingTipo);
+        if (archivo) {
+          fetch("/api/analytics", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ archivo_id: archivo.id }),
+          }).catch(() => {});
+          trackActivity({ tipo: "play_start", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+          playTrackedRef.current = playingTipo;
+        }
+      }
       audio.play();
       setIsPlaying(true);
     }
