@@ -347,7 +347,7 @@ export default function ClaseNumeroPage() {
           </div>
 
         {/* Audio player inline */}
-        {isAudioTipo && isThisPlaying && exists && (
+        {isAudioTipo && playingTipo === tipo && exists && (
           <div className="mt-4 pt-4 border-t" style={{ borderColor: "var(--color-line-soft)" }}>
             <div className="flex items-center gap-3">
               <button
