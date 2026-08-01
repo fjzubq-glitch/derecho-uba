@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
-import { Shield, ArrowRight, BookOpen } from "@/components/icons";
+import { Shield, ArrowRight } from "@/components/icons";
 import { getVistas } from "@/lib/utils";
 
 interface Materia {
@@ -135,28 +135,6 @@ export default function HomePage() {
           >
             Entrá a una materia para consultar clases, transcripciones, podcasts, archivos y enlaces clave de cursada.
           </p>
-
-          {/* Herramienta complementaria */}
-          <a
-            href="https://fjzubq-glitch.github.io/Recomendacion-Materias-UBA/index.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 mt-8"
-            style={{
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "11px",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: "var(--color-text-muted)",
-              textDecoration: "none",
-              transition: "color 0.2s ease",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
-          >
-            <BookOpen style={{ width: "13px", height: "13px" }} />
-            Planificador de materias
-          </a>
 
         </div>
       </section>

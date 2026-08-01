@@ -2,7 +2,9 @@
 
 import React from "react";
 import Link from "next/link";
-import { Shield } from "@/components/icons";
+import { Shield, BookOpen } from "@/components/icons";
+
+const PLANIFICADOR_URL = "https://fjzubq-glitch.github.io/Recomendacion-Materias-UBA/index.html";
 
 interface PortalHeaderProps {
   /** Ruta a la que apunta la acción principal "Ver materias". */
@@ -68,7 +70,7 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
           </div>
         </Link>
 
-        {/* Derecha: nav contextual o CTA única */}
+        {/* Derecha: nav contextual, CTA única o Planificador */}
         <div className="flex items-center gap-4 flex-shrink-0">
           {nav ? (
             nav
@@ -96,6 +98,38 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
               Ver materias
             </Link>
           )}
+          <a
+            href={PLANIFICADOR_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2"
+            style={{
+              background: "none",
+              border: "1px solid var(--color-line)",
+              color: "var(--color-text-muted)",
+              padding: "9px 16px",
+              cursor: "pointer",
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "11px",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              lineHeight: 1,
+              transition: "border-color 0.2s ease, color 0.2s ease",
+              whiteSpace: "nowrap",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "var(--color-gold)";
+              e.currentTarget.style.color = "var(--color-gold)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "var(--color-line)";
+              e.currentTarget.style.color = "var(--color-text-muted)";
+            }}
+          >
+            <BookOpen style={{ width: "13px", height: "13px" }} />
+            Planificador
+          </a>
         </div>
       </div>
     </header>
