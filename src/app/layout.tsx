@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
+import AdminShortcut from "@/components/AdminShortcut";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -60,6 +61,7 @@ export default function RootLayout({
       className={`${fraunces.variable} ${inter.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+        <AdminShortcut />
         {children}
       </body>
     </html>
