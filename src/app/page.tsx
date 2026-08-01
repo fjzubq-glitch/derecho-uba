@@ -98,7 +98,7 @@ export default function HomePage() {
               organizados por <span style={{ fontStyle: "italic", color: "var(--color-gold)", fontWeight: 300 }}>materia</span>.
             </h1>
 
-            <p className="mt-7 hero-sub" style={{ maxWidth: "520px", fontSize: "15px", lineHeight: 1.7 }}>
+            <p className="mt-8 hero-sub" style={{ maxWidth: "520px", fontSize: "15px", lineHeight: 1.7 }}>
               Accedé a grabaciones, transcripciones, archivos y enlaces clave por clase.
               Material de estudio curado y ordenado para estudiantes de Derecho UBA.
             </p>
