@@ -134,6 +134,7 @@ input[type="range"]::-webkit-slider-thumb {
 /* ── Responsive padding ── */
 @media (max-width: 640px) {
   .pad-lateral { padding-left: 22px !important; padding-right: 22px !important; }
+  .hero-pad { padding-top: 40px !important; padding-bottom: 32px !important; }
 }
 
 /* ── Select ── */
