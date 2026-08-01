@@ -13,9 +13,14 @@ interface Archivo {
   nombre_display: string;
   storage_key: string | null;
   youtube_url: string | null;
+  cloudinary_url: string | null;
   contenido_texto: string | null;
   duration_seconds: number | null;
   play_count: number;
+}
+
+function audioSourceUrl(archivo: Archivo) {
+  return archivo.cloudinary_url || `/api/stream/${archivo.id}`;
 }
 
 const TIPO_LABELS: Record<string, string> = {
@@ -129,7 +134,7 @@ export default function ClaseDetailPage() {
     }
 
     setPlayingId(archivo.id);
-    setPlayingSrc(`/api/stream/${archivo.id}`);
+    setPlayingSrc(audioSourceUrl(archivo));
     setPlayingTitle(archivo.nombre_display);
     setCurrentTime(0);
     setDuration(archivo.duration_seconds || 0);
@@ -659,6 +664,7 @@ export default function ClaseDetailPage() {
                       <button
                         onClick={() => {
                           if (archivo.youtube_url) window.open(archivo.youtube_url, "_blank");
+                          else if (archivo.cloudinary_url) window.open(archivo.cloudinary_url, "_blank");
                           else if (archivo.storage_key) window.open(`/api/stream/${archivo.id}?download=1`, "_blank");
                         }}
                         className="card-link"
