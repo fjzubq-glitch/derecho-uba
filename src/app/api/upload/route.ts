@@ -4,53 +4,66 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { materiaId, claseNumero, claseTitulo, claseFecha, items } = body;
+    const { materiaId, claseNumero, claseTitulo, claseFecha, items, claseId } = body;
 
-    if (!materiaId || !claseTitulo || !items) {
+    if ((!materiaId || !claseTitulo || !items) && !claseId) {
       return NextResponse.json({ ok: false, error: "Missing required fields" });
     }
 
-    const { data: existingClase } = await getSupabaseAdmin()
-      .from("clases")
-      .select("id")
-      .eq("materia_id", materiaId)
-      .eq("numero", claseNumero)
-      .single();
+    let targetClaseId: string;
 
-    let claseId: string;
-
-    if (existingClase) {
-      claseId = existingClase.id;
-      const { error: updErr } = await getSupabaseAdmin()
+    if (claseId) {
+      const { data: claseExistente } = await getSupabaseAdmin()
         .from("clases")
-        .update({ titulo: claseTitulo, fecha: claseFecha || null })
-        .eq("id", claseId);
-      if (updErr) {
-        return NextResponse.json({ ok: false, error: "Failed to update class: " + updErr.message });
-      }
-    } else {
-      const { data: newClase, error: claseError } = await getSupabaseAdmin()
-        .from("clases")
-        .insert({
-          materia_id: materiaId,
-          numero: claseNumero,
-          titulo: claseTitulo,
-          fecha: claseFecha || null,
-        })
         .select("id")
+        .eq("id", claseId)
         .single();
 
-      if (claseError || !newClase) {
-        return NextResponse.json({ ok: false, error: "Failed to create class: " + (claseError?.message || "no data") });
+      if (!claseExistente) {
+        return NextResponse.json({ ok: false, error: "Clase no encontrada" });
       }
-      claseId = newClase.id;
+      targetClaseId = claseId;
+    } else {
+      const { data: existingClase } = await getSupabaseAdmin()
+        .from("clases")
+        .select("id")
+        .eq("materia_id", materiaId)
+        .eq("numero", claseNumero)
+        .single();
+
+      if (existingClase) {
+        targetClaseId = existingClase.id;
+        const { error: updErr } = await getSupabaseAdmin()
+          .from("clases")
+          .update({ titulo: claseTitulo, fecha: claseFecha || null })
+          .eq("id", targetClaseId);
+        if (updErr) {
+          return NextResponse.json({ ok: false, error: "Failed to update class: " + updErr.message });
+        }
+      } else {
+        const { data: newClase, error: claseError } = await getSupabaseAdmin()
+          .from("clases")
+          .insert({
+            materia_id: materiaId,
+            numero: claseNumero,
+            titulo: claseTitulo,
+            fecha: claseFecha || null,
+          })
+          .select("id")
+          .single();
+
+        if (claseError || !newClase) {
+          return NextResponse.json({ ok: false, error: "Failed to create class: " + (claseError?.message || "no data") });
+        }
+        targetClaseId = newClase.id;
+      }
     }
 
     const insertErrors: string[] = [];
 
     for (const item of items) {
       const { error: insertError } = await getSupabaseAdmin().from("archivos").insert({
-        clase_id: claseId,
+        clase_id: targetClaseId,
         tipo: item.tipo,
         nombre_display: item.nombre,
         storage_key: item.storageKey || null,
@@ -72,7 +85,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: insertErrors.join("; ") });
     }
 
-    return NextResponse.json({ ok: true, claseId });
+    return NextResponse.json({ ok: true, claseId: targetClaseId });
   } catch (error: any) {
     console.error("Upload error:", error);
     return NextResponse.json({ ok: false, error: "Server error: " + (error?.message || String(error)) });

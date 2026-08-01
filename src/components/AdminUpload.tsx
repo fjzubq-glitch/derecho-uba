@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 import { Upload, FileText, X, Check, Loader2, Headphones, Volume2, Shield } from "@/components/icons";
 
 interface UploadItem {
@@ -12,9 +13,17 @@ interface UploadItem {
   textoContenido?: string;
 }
 
+interface ClaseExistente {
+  id: string;
+  numero: number;
+  titulo: string;
+  fecha: string | null;
+  archivos: Array<{ tipo: string }>;
+}
+
 interface AdminUploadProps {
   materias: { id: string; nombre: string; slug: string }[];
-  onSubmit: (materiaId: string, claseNumero: number, claseTitulo: string, claseFecha: string, items: UploadItem[]) => Promise<{ ok: boolean; error?: string }>;
+  onSubmit: (materiaId: string, claseNumero: number, claseTitulo: string, claseFecha: string, items: UploadItem[], claseId?: string) => Promise<{ ok: boolean; error?: string }>;
 }
 
 const inputStyle: React.CSSProperties = {
@@ -55,10 +64,14 @@ const sectionHeaderStyle: React.CSSProperties = {
 };
 
 export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
+  const [modo, setModo] = useState<"nueva" | "existente">("nueva");
   const [materiaId, setMateriaId] = useState(materias[0]?.id || "");
   const [claseNumero, setClaseNumero] = useState(1);
   const [claseTitulo, setClaseTitulo] = useState("");
   const [claseFecha, setClaseFecha] = useState("");
+  const [clasesExistentes, setClasesExistentes] = useState<ClaseExistente[]>([]);
+  const [claseSeleccionada, setClaseSeleccionada] = useState("");
+  const [cargandoClases, setCargandoClases] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [transcripcionMethod, setTranscripcionMethod] = useState<"drive" | "texto">("drive");
 
@@ -87,8 +100,8 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
   const [podcastDropHover, setPodcastDropHover] = useState(false);
   const [resultMsg, setResultMsg] = useState<{ text: string; isError: boolean } | null>(null);
 
-  const hasAudio = audioFile !== null || (useYoutube && youtubeUrl.trim() !== "");
-  const hasPodcast = podcastFile !== null;
+  const hasAudio = audioFile !== null || (useYoutube && youtubeUrl.trim() !== "") || (useCloudinary && cloudinaryUrl.trim() !== "");
+  const hasPodcast = podcastFile !== null || (usePodcastCloudinary && podcastCloudinaryUrl.trim() !== "");
   const hasTranscripcion =
     (transcripcionMethod === "drive" && transcripcionDriveLink.trim() !== "") ||
     (transcripcionMethod === "texto" && transcripcionTexto.trim() !== "");
@@ -100,13 +113,58 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
     }
   }, [materias]);
 
+  useEffect(() => {
+    if (modo === "existente" && materiaId) {
+      cargarClasesExistentes(materiaId);
+    }
+  }, [modo, materiaId]);
+
+  async function cargarClasesExistentes(materiaIdSel: string) {
+    setCargandoClases(true);
+    setClaseSeleccionada("");
+    const { data } = await supabase
+      .from("clases")
+      .select("id, numero, titulo, fecha")
+      .eq("materia_id", materiaIdSel)
+      .order("numero");
+
+    const clases: ClaseExistente[] = (data || []).map((c: any) => ({ ...c, archivos: [] }));
+
+    const clasesConArchivos = await Promise.all(
+      clases.map(async (c) => {
+        const { data: archivos } = await supabase
+          .from("archivos")
+          .select("tipo")
+          .eq("clase_id", c.id);
+        return { ...c, archivos: archivos || [] };
+      })
+    );
+
+    setClasesExistentes(clasesConArchivos);
+    setCargandoClases(false);
+  }
+
+  function onSeleccionarClase(claseId: string) {
+    setClaseSeleccionada(claseId);
+    const clase = clasesExistentes.find((c) => c.id === claseId);
+    if (clase) {
+      setClaseNumero(clase.numero);
+      setClaseTitulo(clase.titulo);
+      setClaseFecha(clase.fecha || "");
+    }
+  }
+
   const handleSubmit = async () => {
     setResultMsg(null);
     if (!materiaId) {
       setResultMsg({ text: "Seleccioná una materia", isError: true });
       return;
     }
-    if (!claseTitulo) {
+    if (modo === "existente" && !claseSeleccionada) {
+      setResultMsg({ text: "Seleccioná una clase existente", isError: true });
+      return;
+    }
+    if (modo === "nueva" && !claseTitulo) {
       setResultMsg({ text: "Completá el título de la clase", isError: true });
       return;
     }
@@ -134,10 +192,16 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
       items.push({ tipo: "transcripcion", nombre: transcripcionNombre || `Transcripción Clase ${claseNumero}`, textoContenido: transcripcionTexto });
     }
 
+    if (items.length === 0) {
+      setResultMsg({ text: "Cargá al menos un archivo", isError: true });
+      setUploading(false);
+      return;
+    }
+
     try {
-      const result = await onSubmit(materiaId, claseNumero, claseTitulo, claseFecha, items);
+      const result = await onSubmit(materiaId, claseNumero, claseTitulo, claseFecha, items, modo === "existente" ? claseSeleccionada : undefined);
       if (result.ok) {
-        setResultMsg({ text: "Clase subida correctamente", isError: false });
+        setResultMsg({ text: modo === "existente" ? "Contenido agregado correctamente" : "Clase subida correctamente", isError: false });
         resetForm();
       } else {
         setResultMsg({ text: result.error || "Error desconocido", isError: true });
@@ -152,6 +216,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
   const resetForm = () => {
     setClaseTitulo("");
     setClaseFecha("");
+    setClaseSeleccionada("");
     setAudioNombre("");
     setAudioFile(null);
     setPodcastNombre("");
@@ -257,11 +322,17 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
           fontWeight: 400,
           fontSize: "22px",
           color: "var(--color-text)",
-          marginBottom: "28px",
+          marginBottom: "20px",
         }}
       >
-        Subir Nueva Clase
+        Subir Contenido
       </h2>
+
+      {/* Selector de modo */}
+      <div className="flex gap-4 mb-8">
+        <Radio checked={modo === "nueva"} onChange={() => setModo("nueva")} label="Clase nueva" />
+        <Radio checked={modo === "existente"} onChange={() => setModo("existente")} label="Agregar a clase existente" />
+      </div>
 
       {/* ═══ BLOQUE 1 · DATOS DE LA CLASE ═══ */}
       <div className="mb-8">
@@ -286,9 +357,43 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
             01
           </span>
           <h3 style={{ ...sectionHeaderStyle, marginBottom: 0 }}>
-            Datos de la clase
+            {modo === "existente" ? "Seleccionar clase" : "Datos de la clase"}
           </h3>
         </div>
+
+        {modo === "existente" ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+              <label style={labelStyle}>Materia</label>
+              <select
+                value={materiaId}
+                onChange={(e) => setMateriaId(e.target.value)}
+                style={inputStyle}
+              >
+                {materias.map((m) => (
+                  <option key={m.id} value={m.id} style={{ background: "var(--color-card)", color: "var(--color-text)" }}>
+                    {m.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label style={labelStyle}>Clase</label>
+              <select
+                value={claseSeleccionada}
+                onChange={(e) => onSeleccionarClase(e.target.value)}
+                style={inputStyle}
+              >
+                <option value="">{cargandoClases ? "Cargando..." : "Seleccioná una clase..."}</option>
+                {clasesExistentes.map((c) => (
+                  <option key={c.id} value={c.id} style={{ background: "var(--color-card)", color: "var(--color-text)" }}>
+                    Clase {String(c.numero).padStart(2, "0")} — {c.titulo}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        ) : (
 
         {/* Fila superior: Materia / Número / Fecha */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -339,6 +444,68 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
         />
       </div>
       </div>
+      )}
+
+      {/* Info de archivos existentes */}
+      {modo === "existente" && claseSeleccionada && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "16px",
+            flexWrap: "wrap",
+            padding: "16px 20px",
+            marginBottom: "24px",
+            background: "var(--color-ink)",
+            border: "1px solid var(--color-line-soft)",
+            borderRadius: 0,
+          }}
+        >
+          <div className="flex flex-wrap items-center gap-4">
+            {["audio_clase", "podcast", "transcripcion"].map((tipo) => {
+              const exist = (clasesExistentes.find((c) => c.id === claseSeleccionada)?.archivos || []).some((a) => a.tipo === tipo);
+              const label = tipo === "audio_clase" ? "Audio" : tipo === "podcast" ? "Podcast" : "Transcripción";
+              return (
+                <div key={tipo} className="flex items-center gap-2">
+                  <div
+                    className="flex items-center justify-center"
+                    style={{
+                      width: "18px",
+                      height: "18px",
+                      borderRadius: "50%",
+                      border: `1px solid ${exist ? "var(--color-gold)" : "var(--color-line)"}`,
+                      background: exist ? "var(--color-gold)" : "transparent",
+                    }}
+                  >
+                    {exist && <Check style={{ width: "10px", height: "10px", color: "var(--color-ink)" }} />}
+                  </div>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "10px",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      color: exist ? "var(--color-text)" : "var(--color-text-faint)",
+                    }}
+                  >
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <span
+            style={{
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "11px",
+              color: "var(--color-text-muted)",
+            }}
+          >
+            Agregá solo el contenido que falta
+          </span>
+        </div>
+      )}
 
       {/* ═══ BLOQUE 2 · CONTENIDO A SUBIR ═══ */}
       <div className="mb-8">
@@ -635,9 +802,9 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
       <div className="flex justify-end" style={{ marginTop: resultMsg ? "8px" : "24px" }}>
         <button
           onClick={handleSubmit}
-          disabled={uploading || !claseTitulo}
+          disabled={uploading || (modo === "nueva" ? !claseTitulo : !claseSeleccionada)}
           style={{
-            background: uploading || !claseTitulo ? "var(--color-gold-dim)" : "var(--color-gold)",
+            background: uploading || (modo === "nueva" ? !claseTitulo : !claseSeleccionada) ? "var(--color-gold-dim)" : "var(--color-gold)",
             color: "var(--color-ink)",
             border: "none",
             borderRadius: 0,
@@ -645,17 +812,17 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
             fontSize: "14px",
             fontWeight: 600,
             fontFamily: "var(--font-inter)",
-            cursor: uploading || !claseTitulo ? "not-allowed" : "pointer",
+            cursor: uploading || (modo === "nueva" ? !claseTitulo : !claseSeleccionada) ? "not-allowed" : "pointer",
             transition: "background 0.2s ease",
             display: "flex",
             alignItems: "center",
             gap: "8px",
           }}
           onMouseEnter={(e) => {
-            if (!uploading && claseTitulo) e.currentTarget.style.background = "var(--color-gold-dim)";
+            if (!uploading && (modo === "nueva" ? claseTitulo : claseSeleccionada)) e.currentTarget.style.background = "var(--color-gold-dim)";
           }}
           onMouseLeave={(e) => {
-            if (!uploading && claseTitulo) e.currentTarget.style.background = "var(--color-gold)";
+            if (!uploading && (modo === "nueva" ? claseTitulo : claseSeleccionada)) e.currentTarget.style.background = "var(--color-gold)";
           }}
         >
           {uploading ? (
@@ -666,7 +833,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
           ) : (
             <>
               <Upload style={{ width: "16px", height: "16px" }} />
-              Subir Clase
+              {modo === "existente" ? "Agregar contenido" : "Subir Clase"}
             </>
           )}
         </button>

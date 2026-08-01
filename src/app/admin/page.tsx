@@ -131,7 +131,8 @@ export default function AdminPage() {
       driveLink?: string;
       cloudinaryUrl?: string;
       textoContenido?: string;
-    }>
+    }>,
+    claseId?: string
   ): Promise<{ ok: boolean; error?: string }> {
     try {
       const processedItems = [];
@@ -220,6 +221,7 @@ export default function AdminPage() {
           claseNumero,
           claseTitulo,
           claseFecha,
+          claseId: claseId || null,
           items: processedItems,
         }),
       });
