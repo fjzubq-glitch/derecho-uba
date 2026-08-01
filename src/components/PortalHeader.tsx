@@ -9,9 +9,11 @@ interface PortalHeaderProps {
   ctaHref?: string;
   /** Navegación contextual opcional (breadcrumb o título) que reemplaza la CTA. */
   nav?: React.ReactNode;
+  /** Oculta la CTA de la derecha (ej. cuando la página ya es la de materias). */
+  hideCta?: boolean;
 }
 
-export default function PortalHeader({ ctaHref = "/dashboard", nav }: PortalHeaderProps) {
+export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = false }: PortalHeaderProps) {
   return (
     <header
       className="border-b"
@@ -70,7 +72,7 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav }: PortalHead
         <div className="flex items-center gap-4 flex-shrink-0">
           {nav ? (
             nav
-          ) : (
+          ) : hideCta ? null : (
             <Link
               href={ctaHref}
               className="flex items-center gap-2"
