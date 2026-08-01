@@ -3,8 +3,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { trackActivity } from "@/lib/tracking";
-import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Volume2, Download, RotateCcw } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Volume2, Download, RotateCcw, Check, Loader2 } from "@/components/icons";
 import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime, markVista } from "@/lib/utils";
+import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline } from "@/lib/offline";
 
 interface Archivo {
   id: string;
@@ -78,6 +79,10 @@ export default function ClaseNumeroPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
   const playTrackedRef = useRef<string | null>(null);
+  const [offlineStatus, setOfflineStatus] = useState<Record<string, "idle" | "downloading" | "saved">>({});
+  const [offlineProgress, setOfflineProgress] = useState<Record<string, number>>({});
+  const [offlineError, setOfflineError] = useState<string | null>(null);
+  const objectUrlRef = useRef<string | null>(null);
 
   // Transcription expand
   const [openTranscripcion, setOpenTranscripcion] = useState(false);
@@ -92,6 +97,43 @@ export default function ClaseNumeroPage() {
   useEffect(() => {
     if (clase?.id) markVista(clase.id);
   }, [clase?.id]);
+
+  useEffect(() => {
+    if (!clase) return;
+    const audios = clase.archivos.filter((a) => a.tipo === "audio_clase" || a.tipo === "podcast");
+    audios.forEach((a) => {
+      isAudioOffline(a.id).then((saved) => {
+        if (saved) {
+          setOfflineStatus((prev) => ({ ...prev, [a.id]: "saved" }));
+        }
+      });
+    });
+  }, [clase]);
+
+  function audioSourceUrl(archivo: Archivo) {
+    return archivo.cloudinary_url || `/api/stream/${archivo.id}`;
+  }
+
+  async function guardarOffline(archivo: Archivo) {
+    try {
+      setOfflineError(null);
+      setOfflineStatus((prev) => ({ ...prev, [archivo.id]: "downloading" }));
+      setOfflineProgress((prev) => ({ ...prev, [archivo.id]: 0 }));
+      await saveAudioOffline(archivo.id, audioSourceUrl(archivo), (p) => {
+        setOfflineProgress((prev) => ({ ...prev, [archivo.id]: p }));
+      });
+      setOfflineStatus((prev) => ({ ...prev, [archivo.id]: "saved" }));
+    } catch (e) {
+      setOfflineStatus((prev) => ({ ...prev, [archivo.id]: "idle" }));
+      setOfflineError("No se pudo guardar el audio. Verificá la conexión e intentá de nuevo.");
+      console.error("Error guardando offline:", e);
+    }
+  }
+
+  async function eliminarOffline(archivo: Archivo) {
+    await deleteAudioOffline(archivo.id);
+    setOfflineStatus((prev) => ({ ...prev, [archivo.id]: "idle" }));
+  }
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -183,25 +225,36 @@ export default function ClaseNumeroPage() {
       return;
     }
 
-    const src = archivo.cloudinary_url || `/api/stream/${archivo.id}`;
-
     setPlayingTipo(tipo);
-    setPlayingSrc(src);
-    setCurrentTime(0);
-    setDuration(archivo.duration_seconds || 0);
-    setIsPlaying(false);
-    playTrackedRef.current = null;
 
-    setTimeout(() => {
-      const audio = audioRef.current;
-      if (!audio) return;
-      audio.playbackRate = playbackRate;
-      const resumeAt = getResumeTime(archivo.id);
-      if (resumeAt > 15) {
-        audio.currentTime = resumeAt;
-        setCurrentTime(resumeAt);
+    const usarOffline = async () => {
+      const blob = await getAudioOffline(archivo.id);
+      if (blob) {
+        if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+        const objUrl = URL.createObjectURL(blob);
+        objectUrlRef.current = objUrl;
+        setPlayingSrc(objUrl);
+      } else {
+        setPlayingSrc(audioSourceUrl(archivo));
       }
-    }, 100);
+      setCurrentTime(0);
+      setDuration(archivo.duration_seconds || 0);
+      setIsPlaying(false);
+      playTrackedRef.current = null;
+
+      setTimeout(() => {
+        const audio = audioRef.current;
+        if (!audio) return;
+        audio.playbackRate = playbackRate;
+        const resumeAt = getResumeTime(archivo.id);
+        if (resumeAt > 15) {
+          audio.currentTime = resumeAt;
+          setCurrentTime(resumeAt);
+        }
+      }, 100);
+    };
+
+    usarOffline();
   }
 
   function togglePlay() {
@@ -430,29 +483,71 @@ export default function ClaseNumeroPage() {
                 <RotateCcw style={{ width: "11px", height: "11px" }} />
                 Inicio
               </button>
-              {archivo.storage_key && (
-                <a
-                  href={`/api/stream/${archivo.id}?download=1`}
-                  download
-                  title="Descargar audio"
+              {isAudioTipo && archivo && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (offlineStatus[archivo.id] === "saved") {
+                      eliminarOffline(archivo);
+                    } else if (offlineStatus[archivo.id] !== "downloading") {
+                      guardarOffline(archivo);
+                    }
+                  }}
+                  title={
+                    offlineStatus[archivo.id] === "saved"
+                      ? "Audio guardado. Clic para eliminar la copia offline"
+                      : "Guardar audio para escucharlo sin conexión (sin gastar datos)"
+                  }
                   className="flex items-center gap-1.5"
                   style={{
                     marginLeft: "auto",
                     fontSize: "11px",
                     fontWeight: 500,
-                    color: "var(--color-text-muted)",
-                    textDecoration: "none",
+                    background: "none",
+                    border: "none",
+                    cursor: offlineStatus[archivo.id] === "downloading" ? "wait" : "pointer",
+                    padding: 0,
+                    fontFamily: "var(--font-inter)",
+                    color:
+                      offlineStatus[archivo.id] === "saved"
+                        ? "var(--color-gold)"
+                        : "var(--color-text-muted)",
                     transition: "color 0.2s ease",
                   }}
-                  onClick={(e) => e.stopPropagation()}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+                  onMouseEnter={(e) => { if (offlineStatus[archivo.id] !== "saved") e.currentTarget.style.color = "var(--color-gold)"; }}
+                  onMouseLeave={(e) => { if (offlineStatus[archivo.id] !== "saved") e.currentTarget.style.color = "var(--color-text-muted)"; }}
                 >
-                  <Download style={{ width: "13px", height: "13px" }} />
-                  Descargar
-                </a>
+                  {offlineStatus[archivo.id] === "saved" ? (
+                    <>
+                      <Check style={{ width: "13px", height: "13px" }} />
+                      Offline
+                    </>
+                  ) : offlineStatus[archivo.id] === "downloading" ? (
+                    <>
+                      <Loader2 style={{ width: "13px", height: "13px", animation: "spin 1s linear infinite" }} />
+                      Guardando {offlineProgress[archivo.id] ? Math.round(offlineProgress[archivo.id] * 100) : 0}%
+                    </>
+                  ) : (
+                    <>
+                      <Download style={{ width: "13px", height: "13px" }} />
+                      Guardar offline
+                    </>
+                  )}
+                </button>
               )}
             </div>
+            {offlineError && (
+              <p
+                style={{
+                  marginTop: "8px",
+                  fontSize: "11px",
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  color: "#ff6b6b",
+                }}
+              >
+                {offlineError}
+              </p>
+            )}
           </div>
         )}
 
