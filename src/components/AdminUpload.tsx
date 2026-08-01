@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { formatFechaLocal } from "@/lib/utils";
 import { Upload, FileText, X, Check, Loader2, Headphones, Volume2, Shield } from "@/components/icons";
 
 interface UploadItem {
@@ -388,6 +389,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
                 {clasesExistentes.map((c) => (
                   <option key={c.id} value={c.id} style={{ background: "var(--color-card)", color: "var(--color-text)" }}>
                     Clase {String(c.numero).padStart(2, "0")} — {c.titulo}
+                    {c.fecha ? ` — ${formatFechaLocal(c.fecha, { day: "numeric", month: "short", year: "numeric" })}` : ""}
                   </option>
                 ))}
               </select>
