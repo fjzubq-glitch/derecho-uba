@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import PortalHeader from "@/components/PortalHeader";
+import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
 import { Shield, ArrowRight, BookOpen, Search } from "@/components/icons";
 import { getVistas } from "@/lib/utils";
-
-const PLANIFICADOR_URL = "https://fjzubq-glitch.github.io/Recomendacion-Materias-UBA/index.html";
 
 interface Materia {
   id: string;
@@ -56,174 +56,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-ink)" }}>
 
-      {/* ═══════════ HEADER ═══════════ */}
-      <header
-        className="border-b"
-        style={{
-          borderColor: "var(--color-line-soft)",
-          background: "linear-gradient(180deg, var(--color-ink-2) 0%, var(--color-ink) 100%)",
-        }}
-      >
-        <div
-          className="flex items-center justify-between pad-lateral"
-          style={{ padding: "22px 48px" }}
-        >
-          <div className="flex items-center gap-4 min-w-0">
-            <div
-              className="flex items-center justify-center flex-shrink-0"
-              style={{
-                width: "34px",
-                height: "34px",
-                borderRadius: "50%",
-                border: "1px solid var(--color-gold-dim)",
-              }}
-            >
-              <Shield style={{ width: "15px", height: "15px", color: "var(--color-gold)" }} />
-            </div>
-            <div className="min-w-0">
-              <div style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 500, fontSize: "20px", lineHeight: 1.2, whiteSpace: "nowrap" }}>
-                Derecho <span style={{ color: "var(--color-gold)" }}>UBA</span>
-              </div>
-              <div
-                style={{
-                  fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "10px",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: "var(--color-text-faint)",
-                  marginTop: "3px",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Gestión académica
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-6 flex-shrink-0">
-            <div
-              className="hidden sm:block text-right"
-              style={{
-                fontFamily: "var(--font-ibm-plex-mono)",
-                fontSize: "11px",
-                color: "var(--color-text-faint)",
-                letterSpacing: "0.04em",
-                lineHeight: 1.7,
-              }}
-            >
-              {new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-              <br />
-              Sesión — Admin
-            </div>
-            <button
-              onClick={() => router.push("/admin")}
-              className="admin-btn-full flex items-center gap-2"
-              style={{
-                background: "none",
-                border: "1px solid var(--color-line)",
-                padding: "10px 18px",
-                cursor: "pointer",
-                fontFamily: "var(--font-inter)",
-                fontSize: "13px",
-                color: "var(--color-text-muted)",
-                transition: "border-color 0.25s ease, color 0.25s ease",
-                lineHeight: 1,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-gold)";
-                e.currentTarget.style.color = "var(--color-gold)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-line)";
-                e.currentTarget.style.color = "var(--color-text-muted)";
-              }}
-            >
-              <Shield style={{ width: "14px", height: "14px", flexShrink: 0 }} />
-              Panel de administración
-            </button>
-            <a
-              href={PLANIFICADOR_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="admin-btn-full flex items-center gap-2"
-              style={{
-                background: "none",
-                border: "1px solid var(--color-line)",
-                padding: "10px 18px",
-                cursor: "pointer",
-                fontFamily: "var(--font-inter)",
-                fontSize: "13px",
-                color: "var(--color-text-muted)",
-                transition: "border-color 0.25s ease, color 0.25s ease",
-                lineHeight: 1,
-                textDecoration: "none",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-gold)";
-                e.currentTarget.style.color = "var(--color-gold)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-line)";
-                e.currentTarget.style.color = "var(--color-text-muted)";
-              }}
-            >
-              <BookOpen style={{ width: "14px", height: "14px", flexShrink: 0 }} />
-              Planificador de materias
-            </a>
-            <button
-              onClick={() => router.push("/admin")}
-              className="admin-btn-icon flex items-center justify-center"
-              style={{
-                background: "none",
-                border: "1px solid var(--color-line)",
-                width: "34px",
-                height: "34px",
-                borderRadius: "50%",
-                cursor: "pointer",
-                color: "var(--color-text-muted)",
-                transition: "border-color 0.25s ease, color 0.25s ease",
-                flexShrink: 0,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-gold)";
-                e.currentTarget.style.color = "var(--color-gold)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-line)";
-                e.currentTarget.style.color = "var(--color-text-muted)";
-              }}
-            >
-              <Shield style={{ width: "14px", height: "14px" }} />
-            </button>
-            <a
-              href={PLANIFICADOR_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="admin-btn-icon flex items-center justify-center"
-              style={{
-                background: "none",
-                border: "1px solid var(--color-line)",
-                width: "34px",
-                height: "34px",
-                borderRadius: "50%",
-                cursor: "pointer",
-                color: "var(--color-text-muted)",
-                transition: "border-color 0.25s ease, color 0.25s ease",
-                flexShrink: 0,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-gold)";
-                e.currentTarget.style.color = "var(--color-gold)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-line)";
-                e.currentTarget.style.color = "var(--color-text-muted)";
-              }}
-            >
-              <BookOpen style={{ width: "14px", height: "14px" }} />
-            </a>
-          </div>
-        </div>
-      </header>
+      <PortalHeader />
 
       {/* ═══════════ HERO ═══════════ */}
       <section className="relative overflow-hidden border-b" style={{ borderColor: "var(--color-line-soft)" }}>
@@ -278,7 +111,7 @@ export default function DashboardPage() {
             }}
           >
             <span style={{ width: "24px", height: "1px", background: "var(--color-gold-dim)" }} />
-            Panel de materias
+            Biblioteca de cursada
           </div>
 
           {/* Title */}
@@ -292,10 +125,9 @@ export default function DashboardPage() {
               maxWidth: "720px",
             }}
           >
-            Tus clases, ordenadas{" "}
+            Todo el material de clase,{" "}
             <br className="hidden sm:block" />
-            con <span style={{ fontStyle: "italic", color: "var(--color-gold)", fontWeight: 300 }}>criterio</span>{" "}
-            de estudio.
+            en un <span style={{ fontStyle: "italic", color: "var(--color-gold)", fontWeight: 300 }}>solo lugar</span>.
           </h1>
 
           {/* Description */}
@@ -308,9 +140,30 @@ export default function DashboardPage() {
               color: "var(--color-text-muted)",
             }}
           >
-            Seleccioná una materia para gestionar clases, audios y transcripciones.
+            Entrá a una materia para consultar clases, transcripciones, podcasts, archivos y enlaces clave de cursada.
           </p>
 
+          {/* Herramienta complementaria */}
+          <a
+            href="https://fjzubq-glitch.github.io/Recomendacion-Materias-UBA/index.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mt-8"
+            style={{
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "11px",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "var(--color-text-muted)",
+              textDecoration: "none",
+              transition: "color 0.2s ease",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+          >
+            <BookOpen style={{ width: "13px", height: "13px" }} />
+            Planificador de materias
+          </a>
 
         </div>
       </section>
@@ -320,7 +173,7 @@ export default function DashboardPage() {
         <div className="pad-lateral" style={{ padding: "48px 48px 80px" }}>
           <div className="flex items-baseline justify-between mb-8 flex-wrap gap-4">
             <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "28px" }}>
-              Mis materias
+              Materias
             </h2>
             <span
               style={{
@@ -329,7 +182,7 @@ export default function DashboardPage() {
                 color: "var(--color-text-faint)",
               }}
             >
-              {materias.length} materias activas
+              {materias.length} materias publicadas
             </span>
           </div>
 
@@ -352,8 +205,7 @@ export default function DashboardPage() {
                 type="text"
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
-                placeholder="Buscar materia..."
-                style={{
+                placeholder="Buscar materia..."                style={{
                   flex: 1,
                   background: "none",
                   border: "none",
@@ -584,23 +436,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* ═══════════ FOOTER ═══════════ */}
-      <footer className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div
-          className="footer-inner flex items-center justify-between pad-lateral"
-          style={{
-            padding: "28px 48px",
-            fontFamily: "var(--font-ibm-plex-mono)",
-            fontSize: "10px",
-            letterSpacing: "0.08em",
-            color: "var(--color-text-faint)",
-            textTransform: "uppercase",
-          }}
-        >
-          <span>Derecho UBA — Sistema de gestión de clases</span>
-          <span>© 2026 — Designed & developed by <span style={{ color: "var(--color-gold)" }}>Franklin ZG</span></span>
-        </div>
-      </footer>
+      <PortalFooter />
     </div>
   );
 }

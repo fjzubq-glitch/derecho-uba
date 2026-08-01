@@ -22,29 +22,29 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://derecho-uba-orpin.vercel.app"),
-  title: "Derecho UBA — Gestión Académica",
+  title: "Derecho UBA — Portal de cursada",
   description:
-    "Plataforma de gestión de clases, audios y transcripciones para materias de la carrera de Abogacía en UBA.",
+    "Clases, transcripciones, podcasts y materiales organizados por materia. Contenido de cursada curado para estudiantes de Derecho UBA.",
   applicationName: "Derecho UBA",
   icons: {
     icon: "/icon",
     apple: "/apple-icon",
   },
   openGraph: {
-    title: "Derecho UBA — Gestión Académica",
+    title: "Derecho UBA — Portal de cursada",
     description:
-      "Plataforma de gestión de clases, audios y transcripciones para materias de la carrera de Abogacía en UBA.",
+      "Clases, transcripciones, podcasts y materiales organizados por materia. Contenido de cursada curado para estudiantes de Derecho UBA.",
     url: "https://derecho-uba-orpin.vercel.app",
     siteName: "Derecho UBA",
     type: "website",
     locale: "es_AR",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Derecho UBA — Gestión Académica" }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Derecho UBA — Portal de cursada" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Derecho UBA — Gestión Académica",
+    title: "Derecho UBA — Portal de cursada",
     description:
-      "Plataforma de gestión de clases, audios y transcripciones para materias de la carrera de Abogacía en UBA.",
+      "Clases, transcripciones, podcasts y materiales organizados por materia. Contenido de cursada curado para estudiantes de Derecho UBA.",
     images: ["/opengraph-image"],
   },
 };

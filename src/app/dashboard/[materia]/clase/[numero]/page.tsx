@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
-import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Volume2, Download, RotateCcw, Check, Loader2 } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Volume2, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
 import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime, markVista } from "@/lib/utils";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline } from "@/lib/offline";
 
@@ -32,7 +33,7 @@ interface MateriaData {
   nombre: string;
 }
 
-type CardTipo = "audio_clase" | "transcripcion" | "podcast";
+type CardTipo = "audio_clase" | "transcripcion" | "podcast" | "archivo" | "enlace";
 
 const CARD_CONFIG: Record<CardTipo, {
   icon: React.ReactNode;
@@ -56,6 +57,18 @@ const CARD_CONFIG: Record<CardTipo, {
     icon: <Volume2 style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "PODCAST",
     subtitle: () => "Disponible",
+    emptySubtitle: "No disponible",
+  },
+  archivo: {
+    icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
+    label: "ARCHIVO",
+    subtitle: () => "Descargar material",
+    emptySubtitle: "No disponible",
+  },
+  enlace: {
+    icon: <Link2 style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
+    label: "ENLACE ÚTIL",
+    subtitle: () => "Abrir enlace",
     emptySubtitle: "No disponible",
   },
 };
@@ -331,6 +344,7 @@ export default function ClaseNumeroPage() {
     const isAudioTipo = tipo === "audio_clase" || tipo === "podcast";
     const isThisPlaying = playingTipo === tipo && isPlaying;
     const isTranscription = tipo === "transcripcion";
+    const isEnlace = tipo === "enlace";
 
     return (
       <article
@@ -347,6 +361,11 @@ export default function ClaseNumeroPage() {
         onClick={() => {
           if (isTranscription && exists) {
             handleTranscriptionClick();
+          } else if (isEnlace && exists) {
+            if (archivo?.youtube_url) window.open(archivo.youtube_url, "_blank");
+          } else if (tipo === "archivo" && exists) {
+            if (archivo?.youtube_url) window.open(archivo.youtube_url, "_blank");
+            else if (archivo?.storage_key) window.open(`/api/stream/${archivo.id}?download=1`, "_blank");
           } else if (isAudioTipo && exists) {
             handleAudioAction(tipo);
           }
@@ -575,7 +594,7 @@ export default function ClaseNumeroPage() {
     );
   }
 
-  const tipos: CardTipo[] = ["audio_clase", "transcripcion", "podcast"];
+  const tipos: CardTipo[] = ["audio_clase", "transcripcion", "podcast", "archivo", "enlace"];
 
   if (loading) {
     return (
@@ -669,9 +688,9 @@ export default function ClaseNumeroPage() {
             )}
           </div>
 
-          {/* 3 cards en grid */}
+          {/* Cards de contenido */}
           <div
-            className="grid grid-cols-1 md:grid-cols-3 overflow-hidden"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
             style={{
               background: "var(--color-line-soft)",
               gap: "1px",
@@ -684,22 +703,7 @@ export default function ClaseNumeroPage() {
       </main>
 
       {/* ═══════════ FOOTER ═══════════ */}
-      <footer className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div
-          className="footer-inner flex items-center justify-between pad-lateral"
-          style={{
-            padding: "28px 48px",
-            fontFamily: "var(--font-ibm-plex-mono)",
-            fontSize: "10px",
-            letterSpacing: "0.08em",
-            color: "var(--color-text-faint)",
-            textTransform: "uppercase",
-          }}
-        >
-          <span>Derecho UBA — Sistema de gestión de clases</span>
-          <span>© 2026 — Designed & developed by <span style={{ color: "var(--color-gold)" }}>Franklin ZG</span></span>
-        </div>
-      </footer>
+      <PortalFooter />
     </div>
   );
 }

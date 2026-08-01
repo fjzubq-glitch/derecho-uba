@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import PortalFooter from "@/components/PortalFooter";
 import AdminUpload from "@/components/AdminUpload";
 import AdminManage from "@/components/AdminManage";
 import { ArrowLeft, BarChart3, Headphones, FileText, Users, Lock, Loader2, Calendar, TrendingUp, Eye, Shield, Upload } from "@/components/icons";
@@ -125,7 +126,7 @@ export default function AdminPage() {
     claseTitulo: string,
     claseFecha: string,
     items: Array<{
-      tipo: "audio_clase" | "podcast" | "transcripcion";
+      tipo: "audio_clase" | "podcast" | "transcripcion" | "archivo" | "enlace";
       nombre: string;
       archivo?: File;
       driveLink?: string;
@@ -1209,22 +1210,7 @@ export default function AdminPage() {
       </main>
 
       {/* ═══════════ FOOTER ═══════════ */}
-      <footer className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div
-          className="footer-inner flex items-center justify-between pad-lateral"
-          style={{
-            padding: "28px 48px",
-            fontFamily: "var(--font-ibm-plex-mono)",
-            fontSize: "10px",
-            letterSpacing: "0.08em",
-            color: "var(--color-text-faint)",
-            textTransform: "uppercase",
-          }}
-        >
-          <span>Derecho UBA — Sistema de gestión de clases</span>
-          <span>© 2026 — Designed & developed by <span style={{ color: "var(--color-gold)" }}>Franklin ZG</span></span>
-        </div>
-      </footer>
+      <PortalFooter />
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatFechaLocal } from "@/lib/utils";
-import { ArrowLeft, Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical } from "@/components/icons";
+import { ArrowLeft, Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical, Link2 } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -217,6 +217,60 @@ export default function AdminManage() {
           setProcessing(false);
           return;
         }
+      } else if (replacing.tipo === "archivo") {
+        if (newFile) {
+          const formData = new FormData();
+          formData.append("archivoId", replacing.archivoId);
+          formData.append("file", newFile);
+          const res = await fetch("/api/admin", { method: "POST", body: formData });
+          const data = await res.json();
+          if (!data.ok) {
+            setMessage("Error: " + data.error);
+            setProcessing(false);
+            return;
+          }
+        } else if (newDriveLink) {
+          const res = await fetch("/api/admin", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              tipo: "archivo_link",
+              id: replacing.archivoId,
+              data: { youtube_url: newDriveLink, nombre_display: newNombre || replacing.nombre },
+            }),
+          });
+          const data = await res.json();
+          if (!data.ok) {
+            setMessage("Error: " + data.error);
+            setProcessing(false);
+            return;
+          }
+        } else {
+          setMessage("Error: seleccioná un archivo o pegá un link");
+          setProcessing(false);
+          return;
+        }
+      } else if (replacing.tipo === "enlace") {
+        if (!newDriveLink) {
+          setMessage("Error: pegá un enlace");
+          setProcessing(false);
+          return;
+        }
+        const res = await fetch("/api/admin", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tipo: "archivo_link",
+            id: replacing.archivoId,
+            data: { youtube_url: newDriveLink, nombre_display: newNombre || replacing.nombre },
+          }),
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          setMessage("Error: " + data.error);
+          setProcessing(false);
+          return;
+        }
       } else if (replacing.tipo === "transcripcion") {
         if (!newDriveLink && !newNombre) {
           setMessage("Error: pegá un link de Drive o escribí un nombre");
@@ -282,6 +336,8 @@ export default function AdminManage() {
     audio_clase: <Headphones style={{ width: "14px", height: "14px" }} />,
     podcast: <Play style={{ width: "14px", height: "14px" }} />,
     transcripcion: <FileText style={{ width: "14px", height: "14px" }} />,
+    archivo: <FileText style={{ width: "14px", height: "14px" }} />,
+    enlace: <Link2 style={{ width: "14px", height: "14px" }} />,
     youtube: <ExternalLink style={{ width: "14px", height: "14px" }} />,
   };
 
@@ -289,10 +345,12 @@ export default function AdminManage() {
     audio_clase: "Audio de clase",
     podcast: "LexPodcast",
     transcripcion: "Transcripción",
+    archivo: "Archivo adjunto",
+    enlace: "Enlace útil",
     youtube: "YouTube",
   };
 
-  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "podcast" || tipo === "transcripcion" || tipo === "youtube";
+  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "podcast" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo";
 
   const actionBtnStyle: React.CSSProperties = {
     padding: "6px 12px",
@@ -899,14 +957,62 @@ export default function AdminManage() {
                 </>
               )}
 
-              {replacing.tipo === "transcripcion" && (
+              {replacing.tipo === "archivo" && (
                 <div>
-                  <label style={labelStyle}>Link de Google Drive</label>
+                  <label style={labelStyle}>Archivo nuevo (o pegá un link)</label>
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    style={{
+                      border: "1px dashed var(--color-line)",
+                      borderRadius: 0,
+                      padding: "24px",
+                      textAlign: "center",
+                      cursor: "pointer",
+                      marginBottom: "16px",
+                    }}
+                  >
+                    {newFile ? (
+                      <div className="flex items-center justify-center gap-2">
+                        <Check style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
+                        <span style={{ fontSize: "13px", color: "var(--color-text)" }}>{newFile.name}</span>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setNewFile(null); }}
+                          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)" }}
+                        >
+                          <X style={{ width: "14px", height: "14px" }} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <Upload style={{ width: "28px", height: "28px", color: "var(--color-text-faint)", margin: "0 auto 8px", display: "block" }} />
+                        <p style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>Seleccioná un archivo nuevo</p>
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    onChange={(e) => setNewFile(e.target.files?.[0] || null)}
+                    style={{ display: "none" }}
+                  />
                   <input
                     type="url"
                     value={newDriveLink}
                     onChange={(e) => setNewDriveLink(e.target.value)}
-                    placeholder="https://drive.google.com/file/d/..."
+                    placeholder="O pegá un link externo (https://...)"
+                    style={inputStyle}
+                  />
+                </div>
+              )}
+
+              {(replacing.tipo === "enlace" || replacing.tipo === "transcripcion") && (
+                <div>
+                  <label style={labelStyle}>{replacing.tipo === "enlace" ? "Enlace" : "Link de Google Drive"}</label>
+                  <input
+                    type="url"
+                    value={newDriveLink}
+                    onChange={(e) => setNewDriveLink(e.target.value)}
+                    placeholder={replacing.tipo === "enlace" ? "https://..." : "https://drive.google.com/file/d/..."}
                     style={inputStyle}
                   />
                 </div>

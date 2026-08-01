@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
-import { ArrowLeft, Calendar, Play, FileText, Headphones, Pause, ExternalLink, Download, RotateCcw } from "@/components/icons";
+import { ArrowLeft, Calendar, Play, FileText, Headphones, Pause, ExternalLink, Download, RotateCcw, Link2 } from "@/components/icons";
 import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime, markVista } from "@/lib/utils";
 
 interface Archivo {
@@ -21,6 +22,8 @@ const TIPO_LABELS: Record<string, string> = {
   audio_clase: "Audio de clase",
   podcast: "Podcast",
   transcripcion: "Transcripción",
+  archivo: "Archivo adjunto",
+  enlace: "Enlace útil",
   youtube: "YouTube",
 };
 
@@ -343,11 +346,14 @@ export default function ClaseDetailPage() {
               {archivos.map((archivo) => {
                 const isAudio = archivo.tipo === "audio_clase" || archivo.tipo === "podcast";
                 const isTranscription = archivo.tipo === "transcripcion";
-                const isYouTube = archivo.tipo === "youtube" || archivo.youtube_url;
+                const isArchivo = archivo.tipo === "archivo";
+                const isEnlace = archivo.tipo === "enlace";
+                const linkType = isArchivo || isEnlace;
+                const isYouTube = !linkType && (archivo.tipo === "youtube" || archivo.youtube_url);
                 const isThisPlaying = playingId === archivo.id && isPlaying;
                 const isOpen = openTranscription === archivo.id;
 
-                const IconComponent = isTranscription ? FileText : isYouTube ? ExternalLink : archivo.tipo === "podcast" ? Headphones : Headphones;
+                const IconComponent = isTranscription ? FileText : isEnlace ? Link2 : isArchivo ? FileText : isYouTube ? ExternalLink : Headphones;
 
                 return (
                   <article
@@ -649,6 +655,28 @@ export default function ClaseDetailPage() {
                         Abrir en YouTube
                         <ExternalLink style={{ width: "14px", height: "14px" }} />
                       </button>
+                    ) : isArchivo || isEnlace ? (
+                      <button
+                        onClick={() => {
+                          if (archivo.youtube_url) window.open(archivo.youtube_url, "_blank");
+                          else if (archivo.storage_key) window.open(`/api/stream/${archivo.id}?download=1`, "_blank");
+                        }}
+                        className="card-link"
+                        style={{
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          padding: 0,
+                        }}
+                      >
+                        {isEnlace ? "Abrir enlace" : "Descargar archivo"}
+                        <ExternalLink style={{ width: "14px", height: "14px" }} />
+                      </button>
                     ) : null}
                   </article>
                 );
@@ -659,22 +687,7 @@ export default function ClaseDetailPage() {
       </main>
 
       {/* ═══════════ FOOTER ═══════════ */}
-      <footer className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div
-          className="footer-inner flex items-center justify-between pad-lateral"
-          style={{
-            padding: "28px 48px",
-            fontFamily: "var(--font-ibm-plex-mono)",
-            fontSize: "10px",
-            letterSpacing: "0.08em",
-            color: "var(--color-text-faint)",
-            textTransform: "uppercase",
-          }}
-        >
-          <span>Derecho UBA — Sistema de gestión de clases</span>
-          <span>© 2026 — Designed & developed by <span style={{ color: "var(--color-gold)" }}>Franklin ZG</span></span>
-        </div>
-      </footer>
+      <PortalFooter />
     </div>
   );
 }
