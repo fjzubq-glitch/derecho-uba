@@ -394,7 +394,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
             </div>
           </div>
         ) : (
-
+          <>
         {/* Fila superior: Materia / Número / Fecha */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
@@ -443,8 +443,9 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
           style={{ ...inputStyle }}
         />
       </div>
+          </>
+        )}
       </div>
-      )}
 
       {/* Info de archivos existentes */}
       {modo === "existente" && claseSeleccionada && (
