@@ -170,17 +170,19 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
 
   function Radio({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
     return (
-      <label className="flex items-center gap-2 radio-tap" style={{ cursor: "pointer", userSelect: "none" }}>
+      <label
+        className="flex items-center gap-2 radio-tap"
+        onClick={(e) => { e.preventDefault(); onChange(); }}
+        style={{ cursor: "pointer", userSelect: "none" }}
+      >
         <div
           className="flex items-center justify-center"
-          onClick={(e) => { e.preventDefault(); onChange(); }}
           style={{
             width: "14px",
             height: "14px",
             borderRadius: "50%",
             border: `1px solid ${checked ? "var(--color-gold)" : "var(--color-line)"}`,
             background: "transparent",
-            cursor: "pointer",
             transition: "border-color 0.2s ease",
           }}
         >
