@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
-import { ArrowRight, Grid } from "@/components/icons";
+import { ArrowRight, Scale } from "@/components/icons";
 
 interface Materia {
   id: string;
@@ -107,23 +107,8 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════ MATERIAS ═══════════ */}
-      <section className="flex-1">
-        <div className="pad-lateral" style={{ padding: "0 48px 80px" }}>
-          <div className="flex items-center gap-4" style={{ padding: "40px 0 32px" }}>
-            <span
-              style={{
-                fontFamily: "var(--font-ibm-plex-mono)",
-                fontSize: "10px",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "var(--color-gold)",
-              }}
-            >
-              Materias publicadas
-            </span>
-            <span style={{ flex: 1, height: "1px", background: "var(--color-line-soft)" }} />
-          </div>
-
+      <section>
+        <div className="pad-lateral" style={{ padding: "72px 48px 56px" }}>
           <div className="flex items-baseline justify-between mb-8 flex-wrap gap-4">
             <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "30px" }}>
               Materias
@@ -142,7 +127,7 @@ export default function HomePage() {
               onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
               onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
-              Ver materias →
+              Ver todas →
             </Link>
           </div>
 
@@ -191,7 +176,7 @@ export default function HomePage() {
                     onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
                   >
                     <div className="flex items-center gap-2 mb-10" style={{ color: "var(--color-gold)" }}>
-                      <Grid style={{ width: "16px", height: "16px" }} />
+                      <Scale style={{ width: "16px", height: "16px" }} />
                       <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase" }}>
                         {m.total_clases} clases
                       </span>
