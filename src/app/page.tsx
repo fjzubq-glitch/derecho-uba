@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
-import { ArrowRight, Clock, Search, Headphones, FileText, Volume2, Link2, Grid, Mic } from "@/components/icons";
+import { ArrowRight, Clock, Headphones, FileText, Volume2, Link2, Grid, Mic } from "@/components/icons";
 import { formatDuration, formatFechaLocal } from "@/lib/utils";
 
 interface Materia {
@@ -48,8 +48,6 @@ export default function HomePage() {
   const [recientes, setRecientes] = useState<Reciente[]>([]);
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
   const [loading, setLoading] = useState(true);
-  const [busqueda, setBusqueda] = useState("");
-  const searchRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     Promise.all([
@@ -65,16 +63,6 @@ export default function HomePage() {
       .catch((e) => console.error("Error cargando home:", e))
       .finally(() => setLoading(false));
   }, []);
-
-  const materiasFiltradas = materias.filter((m) => {
-    if (!busqueda.trim()) return true;
-    const q = busqueda.trim().toLowerCase();
-    return m.nombre.toLowerCase().includes(q);
-  });
-
-  const scrollToSearch = () => {
-    searchRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
 
   const recursoIcons = (r: Reciente) => {
     const items: { key: string; icon: React.ReactNode; label: string }[] = [];
@@ -161,102 +149,22 @@ export default function HomePage() {
               style={{
                 background: "var(--color-gold)",
                 color: "var(--color-ink)",
-                padding: "14px 28px",
-                fontSize: "14px",
+                padding: "16px 34px",
+                fontSize: "15px",
                 fontWeight: 600,
                 textDecoration: "none",
                 lineHeight: 1,
                 transition: "background 0.2s ease",
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "8px",
+                gap: "10px",
               }}
               onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-gold-dim)")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-gold)")}
             >
               Ver materias
-              <ArrowRight style={{ width: "14px", height: "14px" }} />
+              <ArrowRight style={{ width: "15px", height: "15px" }} />
             </Link>
-            <button
-              onClick={scrollToSearch}
-              style={{
-                background: "none",
-                border: "1px solid var(--color-line)",
-                color: "var(--color-text-muted)",
-                padding: "13px 24px",
-                fontSize: "13px",
-                cursor: "pointer",
-                fontFamily: "var(--font-inter)",
-                transition: "border-color 0.2s ease, color 0.2s ease",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                lineHeight: 1,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-gold)";
-                e.currentTarget.style.color = "var(--color-gold)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-line)";
-                e.currentTarget.style.color = "var(--color-text-muted)";
-              }}
-            >
-              <Search style={{ width: "14px", height: "14px" }} />
-              Buscar contenido
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════ BUSCADOR ═══════════ */}
-      <section ref={searchRef} className="border-b scroll-mt-6" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div className="pad-lateral" style={{ padding: "40px 48px" }}>
-          <div
-            className="flex items-center gap-3"
-            style={{
-              border: "1px solid var(--color-line-soft)",
-              background: "var(--color-card)",
-              padding: "14px 18px",
-              maxWidth: "640px",
-              transition: "border-color 0.2s ease",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-line-soft)")}
-          >
-            <Search style={{ width: "16px", height: "16px", color: "var(--color-text-faint)", flexShrink: 0 }} />
-            <input
-              type="text"
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Buscar materia..."
-              style={{
-                flex: 1,
-                background: "none",
-                border: "none",
-                outline: "none",
-                color: "var(--color-text)",
-                fontSize: "15px",
-                fontFamily: "var(--font-inter)",
-              }}
-            />
-            {busqueda && (
-              <button
-                onClick={() => setBusqueda("")}
-                aria-label="Limpiar búsqueda"
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                  fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "10px",
-                  color: "var(--color-text-faint)",
-                }}
-              >
-                LIMPIAR
-              </button>
-            )}
           </div>
         </div>
       </section>
@@ -295,7 +203,7 @@ export default function HomePage() {
                 <div key={i} className="h-56" style={{ background: "var(--color-card)" }} />
               ))}
             </div>
-          ) : materiasFiltradas.length === 0 ? (
+          ) : materias.length === 0 ? (
             <div
               style={{
                 padding: "60px 24px",
@@ -305,7 +213,7 @@ export default function HomePage() {
               }}
             >
               <p style={{ color: "var(--color-text-muted)", fontSize: "15px" }}>
-                No hay materias que coincidan con "{busqueda}"
+                Todavía no hay materias publicadas.
               </p>
             </div>
           ) : (
@@ -313,7 +221,7 @@ export default function HomePage() {
               className="grid grid-cols-1 md:grid-cols-3 overflow-hidden"
               style={{ background: "var(--color-line-soft)", gap: "1px" }}
             >
-              {materiasFiltradas.slice(0, 6).map((m) => {
+              {materias.map((m) => {
                 const { title, meta } = splitName(m.nombre);
                 return (
                   <Link
