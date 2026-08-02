@@ -132,9 +132,7 @@ export default function HomePage() {
               color: "var(--color-text-muted)",
             }}
           >
-            Clases, transcripciones, podcasts y materiales de cursada.
-            <br />
-            Todo organizado por materia.
+            Clases, transcripciones, podcasts y materiales de cursada, organizados por materia.
           </p>
 
         </div>
@@ -219,8 +217,8 @@ export default function HomePage() {
                       <div
                         className="flex items-center justify-center"
                         style={{
-                          width: "34px",
-                          height: "34px",
+                          width: "38px",
+                          height: "38px",
                           borderRadius: "50%",
                           border: `1px solid ${isEmpty ? "var(--color-line)" : "var(--color-gold-dim)"}`,
                           transition: "border-color 0.25s ease",
@@ -228,8 +226,8 @@ export default function HomePage() {
                       >
                         <Shield
                           style={{
-                            width: "15px",
-                            height: "15px",
+                            width: "17px",
+                            height: "17px",
                             color: "var(--color-gold)",
                             opacity: isEmpty ? 0.3 : 0.75,
                           }}
