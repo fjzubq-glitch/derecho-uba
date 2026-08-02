@@ -51,7 +51,7 @@ export default function HomePage() {
 
       {/* ═══════════ HERO ═══════════ */}
       <section className="relative overflow-hidden border-b" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div className="relative z-10 pad-lateral hero-pad" style={{ padding: "72px 48px 48px" }}>
+        <div className="relative z-10 pad-lateral hero-pad" style={{ padding: "72px 48px 64px" }}>
 
           {/* Watermark — 420px, opacity 0.035, stroke-width 1.1 — Balanza de la justicia */}
           <svg
@@ -132,7 +132,9 @@ export default function HomePage() {
               color: "var(--color-text-muted)",
             }}
           >
-            Entrá a una materia para consultar clases, transcripciones, podcasts, archivos y enlaces clave de cursada.
+            Clases, transcripciones, podcasts y materiales de cursada.
+            <br />
+            Todo organizado por materia.
           </p>
 
         </div>
