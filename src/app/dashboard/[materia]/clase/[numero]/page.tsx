@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Volume2, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
-import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime, markVista } from "@/lib/utils";
+import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime, markVista, isAdminSession } from "@/lib/utils";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline } from "@/lib/offline";
 
 interface Archivo {
@@ -281,11 +281,13 @@ export default function ClaseNumeroPage() {
       if (playingTipo && playTrackedRef.current !== playingTipo) {
         const archivo = getArchivo(playingTipo);
         if (archivo) {
-          fetch("/api/analytics", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ archivo_id: archivo.id }),
-          }).catch(() => {});
+          if (!isAdminSession()) {
+            fetch("/api/analytics", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ archivo_id: archivo.id }),
+            }).catch(() => {});
+          }
           trackActivity({ tipo: "play_start", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
           playTrackedRef.current = playingTipo;
         }

@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, Calendar, Play, FileText, Headphones, Pause, ExternalLink, Download, RotateCcw, Link2 } from "@/components/icons";
-import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime, markVista } from "@/lib/utils";
+import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime, markVista, isAdminSession } from "@/lib/utils";
 
 interface Archivo {
   id: string;
@@ -148,7 +148,9 @@ export default function ClaseDetailPage() {
       setResumeNotice(null);
     }
 
-    fetch("/api/analytics", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ archivo_id: archivo.id }) }).catch(() => {});
+    if (!isAdminSession()) {
+      fetch("/api/analytics", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ archivo_id: archivo.id }) }).catch(() => {});
+    }
     trackActivity({ tipo: "play_start", pagina: "clase", materia_slug: materiaSlug, clase_id: claseId, archivo_id: archivo.id });
 
     setTimeout(() => {

@@ -1,3 +1,5 @@
+import { isAdminSession } from "./utils";
+
 export async function trackActivity(data: {
   tipo: string;
   pagina?: string;
@@ -6,6 +8,7 @@ export async function trackActivity(data: {
   archivo_id?: string;
   metadata?: Record<string, unknown>;
 }) {
+  if (isAdminSession()) return;
   try {
     await fetch("/api/track", {
       method: "POST",

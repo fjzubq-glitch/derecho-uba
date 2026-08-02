@@ -87,3 +87,26 @@ export function markVista(claseId: string): Record<string, number> {
   }
   return vistas;
 }
+
+// ── Admin session (localStorage) ──
+const ADMIN_KEY = "derecho:admin";
+
+export function isAdminSession(): boolean {
+  try {
+    return localStorage.getItem(ADMIN_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function setAdminSession(): void {
+  try {
+    localStorage.setItem(ADMIN_KEY, "1");
+  } catch {}
+}
+
+export function clearAdminSession(): void {
+  try {
+    localStorage.removeItem(ADMIN_KEY);
+  } catch {}
+}
