@@ -5,8 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
-import { formatFechaLocal, getVistas } from "@/lib/utils";
-import { ArrowLeft, ArrowRight, Calendar, Check, Headphones, FileText, Volume2, Link2 } from "@/components/icons";
+import { formatFechaLocal } from "@/lib/utils";
+import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2 } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -69,9 +69,6 @@ export default function MateriaPage() {
   };
 
   const { title: materiaTitle, meta: materiaMeta } = materia ? splitName(materia.nombre) : { title: "", meta: null };
-
-  const vistas = getVistas();
-  const vistasCount = clases.filter((c) => vistas[c.id]).length;
 
   const tieneRecurso = (c: Clase, tipo: string) => c.archivos.some((a) => a.tipo === tipo);
 
@@ -183,10 +180,6 @@ export default function MateriaPage() {
               }}
             >
               <span>{clases.length} clases</span>
-              <span style={{ color: "var(--color-line)" }}>·</span>
-              <span>
-                {vistasCount}/{clases.length} vistas
-              </span>
               <span style={{ color: "var(--color-line)" }}>·</span>
               <span style={{ color: materia?.estado === "finalizada" ? "var(--color-gold)" : "var(--color-text-muted)" }}>
                 {materia?.estado === "finalizada" ? "Finalizada" : "En curso"}
@@ -301,15 +294,6 @@ export default function MateriaPage() {
                     }}
                   >
                     <span>Clase {clase.numero.toString().padStart(2, "0")}</span>
-                    {vistas[clase.id] && (
-                      <span
-                        className="flex items-center gap-1"
-                        style={{ fontSize: "9px", letterSpacing: "0.08em", color: "var(--color-gold)" }}
-                      >
-                        <Check style={{ width: "11px", height: "11px", color: "var(--color-gold)" }} />
-                        vista
-                      </span>
-                    )}
                   </div>
                   <div className="flex-1">
                     <h3

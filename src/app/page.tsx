@@ -6,7 +6,7 @@ import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
 import { Shield, ArrowRight } from "@/components/icons";
-import { getVistas } from "@/lib/utils";
+
 
 interface Materia {
   id: string;
@@ -43,8 +43,6 @@ export default function HomePage() {
     const p = n.split(",");
     return { title: p[0]?.trim() || n, meta: p.slice(1).map((s) => s.trim()).join(", ") || null };
   };
-
-  const vistas = getVistas();
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-ink)" }}>
@@ -196,8 +194,6 @@ export default function HomePage() {
               {materias.map((m) => {
                 const { title, meta } = splitName(m.nombre);
                 const isEmpty = m.total_clases === 0;
-                const vistasCount = m.clase_ids?.filter((id) => vistas[id]).length || 0;
-                const progreso = m.total_clases > 0 ? Math.round((vistasCount / m.total_clases) * 100) : 0;
 
                 return (
                   <article
@@ -289,51 +285,6 @@ export default function HomePage() {
                     >
                       {meta || "Sin comisión asignada"}
                     </div>
-
-                    {/* Progreso de estudio */}
-                    {m.total_clases > 0 && (
-                      <div style={{ marginBottom: "20px" }}>
-                        <div className="flex items-center justify-between mb-2">
-                          <span
-                            style={{
-                              fontFamily: "var(--font-ibm-plex-mono)",
-                              fontSize: "9px",
-                              letterSpacing: "0.12em",
-                              textTransform: "uppercase",
-                              color: "var(--color-text-faint)",
-                            }}
-                          >
-                            Progreso
-                          </span>
-                          <span
-                            style={{
-                              fontFamily: "var(--font-ibm-plex-mono)",
-                              fontSize: "10px",
-                              color: progreso === 100 ? "var(--color-gold)" : "var(--color-text-muted)",
-                            }}
-                          >
-                            {vistasCount}/{m.total_clases}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            height: "3px",
-                            background: "var(--color-line-soft)",
-                            overflow: "hidden",
-                            borderRadius: 0,
-                          }}
-                        >
-                          <div
-                            style={{
-                              height: "100%",
-                              width: `${progreso}%`,
-                              background: "var(--color-gold)",
-                              transition: "width 0.3s ease",
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
 
                     {/* CTA */}
                     <div

@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, Calendar, Play, FileText, Headphones, Pause, ExternalLink, Download, RotateCcw, Link2 } from "@/components/icons";
-import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime, markVista, isAdminSession } from "@/lib/utils";
+import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime, isAdminSession } from "@/lib/utils";
 
 interface Archivo {
   id: string;
@@ -67,7 +67,6 @@ export default function ClaseDetailPage() {
     if (claseId) {
       loadClase();
       trackActivity({ tipo: "page_view", pagina: "clase", materia_slug: materiaSlug, clase_id: claseId });
-      markVista(claseId);
     }
   }, [claseId]);
 

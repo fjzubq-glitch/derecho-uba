@@ -44,7 +44,6 @@ export function formatFechaLocal(fecha: string, opts: Intl.DateTimeFormatOptions
 
 // ── Resumen de reproducción (localStorage) ──
 const RESUME_PREFIX = "derecho:resume:";
-const VISTAS_PREFIX = "derecho:vistas";
 
 export function saveResumeTime(archivoId: string, time: number): void {
   try {
@@ -65,27 +64,6 @@ export function clearResumeTime(archivoId: string): void {
   try {
     localStorage.removeItem(RESUME_PREFIX + archivoId);
   } catch {}
-}
-
-// ── Clases vistas (localStorage) ──
-export function getVistas(): Record<string, number> {
-  try {
-    const v = localStorage.getItem(VISTAS_PREFIX);
-    return v ? JSON.parse(v) : {};
-  } catch {
-    return {};
-  }
-}
-
-export function markVista(claseId: string): Record<string, number> {
-  const vistas = getVistas();
-  if (!vistas[claseId]) {
-    vistas[claseId] = Date.now();
-    try {
-      localStorage.setItem(VISTAS_PREFIX, JSON.stringify(vistas));
-    } catch {}
-  }
-  return vistas;
 }
 
 // ── Admin session (localStorage) ──
