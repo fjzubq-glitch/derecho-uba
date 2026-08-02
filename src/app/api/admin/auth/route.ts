@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sessionCookieHeader } from "@/lib/auth";
+import { checkRateLimit, registerFailedAttempt } from "@/lib/rateLimit";
 
 export async function POST(request: NextRequest) {
   try {
+    const rate = checkRateLimit(request);
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { ok: false, error: "Demasiados intentos. Probá de nuevo más tarde." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSec || 900) } }
+      );
+    }
+
     const body = await request.json();
     const password = String(body.password || "");
 
@@ -17,6 +26,8 @@ export async function POST(request: NextRequest) {
       response.headers.set("Set-Cookie", sessionCookieHeader());
       return response;
     }
+
+    registerFailedAttempt(request);
     return NextResponse.json({ ok: false, error: "Contraseña incorrecta" }, { status: 401 });
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: e.message }, { status: 500 });

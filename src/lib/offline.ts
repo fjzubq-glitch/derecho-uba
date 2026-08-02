@@ -1,13 +1,17 @@
 const DB_NAME = "derecho-uba-offline";
-const STORE = "audios";
+const STORE_AUDIOS = "audios";
+const STORE_CLASES = "clases";
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, 1);
+    const req = indexedDB.open(DB_NAME, 2);
     req.onupgradeneeded = () => {
       const db = req.result;
-      if (!db.objectStoreNames.contains(STORE)) {
-        db.createObjectStore(STORE);
+      if (!db.objectStoreNames.contains(STORE_AUDIOS)) {
+        db.createObjectStore(STORE_AUDIOS);
+      }
+      if (!db.objectStoreNames.contains(STORE_CLASES)) {
+        db.createObjectStore(STORE_CLASES);
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -19,8 +23,8 @@ function putBlob(archivoId: string, blob: Blob): Promise<void> {
   return openDb().then(
     (db) =>
       new Promise<void>((resolve, reject) => {
-        const tx = db.transaction(STORE, "readwrite");
-        tx.objectStore(STORE).put(blob, archivoId);
+        const tx = db.transaction(STORE_AUDIOS, "readwrite");
+        tx.objectStore(STORE_AUDIOS).put(blob, archivoId);
         tx.oncomplete = () => resolve();
         tx.onerror = () => reject(tx.error);
       })
@@ -61,8 +65,8 @@ export function getAudioOffline(archivoId: string): Promise<Blob | null> {
   return openDb().then(
     (db) =>
       new Promise<Blob | null>((resolve) => {
-        const tx = db.transaction(STORE, "readonly");
-        const req = tx.objectStore(STORE).get(archivoId);
+        const tx = db.transaction(STORE_AUDIOS, "readonly");
+        const req = tx.objectStore(STORE_AUDIOS).get(archivoId);
         req.onsuccess = () => resolve((req.result as Blob) || null);
         req.onerror = () => resolve(null);
       })
@@ -81,12 +85,44 @@ export async function deleteAudioOffline(archivoId: string): Promise<void> {
   try {
     const db = await openDb();
     await new Promise<void>((resolve) => {
-      const tx = db.transaction(STORE, "readwrite");
-      tx.objectStore(STORE).delete(archivoId);
+      const tx = db.transaction(STORE_AUDIOS, "readwrite");
+      tx.objectStore(STORE_AUDIOS).delete(archivoId);
       tx.oncomplete = () => resolve();
       tx.onerror = () => resolve();
     });
   } catch {
     /* noop */
   }
+}
+
+function putJson(key: string, value: unknown): Promise<void> {
+  return openDb().then(
+    (db) =>
+      new Promise<void>((resolve, reject) => {
+        const tx = db.transaction(STORE_CLASES, "readwrite");
+        tx.objectStore(STORE_CLASES).put(value, key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      })
+  );
+}
+
+export async function saveClaseOffline(key: string, data: unknown): Promise<void> {
+  try {
+    await putJson(key, data);
+  } catch {
+    /* noop */
+  }
+}
+
+export function getClaseOffline(key: string): Promise<unknown | null> {
+  return openDb().then(
+    (db) =>
+      new Promise<unknown | null>((resolve) => {
+        const tx = db.transaction(STORE_CLASES, "readonly");
+        const req = tx.objectStore(STORE_CLASES).get(key);
+        req.onsuccess = () => resolve(req.result ?? null);
+        req.onerror = () => resolve(null);
+      })
+  );
 }

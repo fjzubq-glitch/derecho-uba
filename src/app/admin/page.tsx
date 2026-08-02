@@ -84,6 +84,12 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
       });
+      if (res.status === 429) {
+        const data = await res.json().catch(() => null);
+        setPasswordError(data?.error || "Demasiados intentos. Probá de nuevo más tarde.");
+        setPasswordLoading(false);
+        return;
+      }
       const data = await res.json();
       if (data.ok) {
         setAuthenticated(true);
@@ -186,6 +192,7 @@ export default function AdminPage() {
             const base64 = await new Promise<string>((resolve) => {
               const reader = new FileReader();
               reader.onload = () => resolve((reader.result as string).split(",")[1]);
+              reader.onerror = () => resolve("");
               reader.readAsDataURL(slice);
             });
 
@@ -209,6 +216,7 @@ export default function AdminPage() {
               totalParts,
               finalKey,
               contentType: item.archivo.type || "audio/mpeg",
+              fileType: item.tipo,
             }),
           });
           if (!assemRes.ok) {

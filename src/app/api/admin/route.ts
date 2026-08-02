@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { uploadToR2, deleteFromR2 } from "@/lib/r2";
 import { isAdminRequest } from "@/lib/auth";
+import { validateAudioFile, validateDocumentFile } from "@/lib/fileValidation";
 
 export async function PUT(request: NextRequest) {
   if (!isAdminRequest(request.headers.get("cookie"))) {
@@ -80,11 +81,21 @@ export async function POST(request: NextRequest) {
 
     const { data: archivo } = await getSupabaseAdmin()
       .from("archivos")
-      .select("storage_key")
+      .select("storage_key, tipo")
       .eq("id", archivoId)
       .single();
 
-    if (archivo?.storage_key) {
+    if (!archivo) {
+      return NextResponse.json({ error: "Archivo no encontrado" }, { status: 404 });
+    }
+
+    const isAudio = archivo.tipo === "audio_clase" || archivo.tipo === "podcast";
+    const validation = isAudio ? validateAudioFile(file) : validateDocumentFile(file);
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
+    }
+
+    if (archivo.storage_key) {
       await deleteFromR2(archivo.storage_key);
     }
 

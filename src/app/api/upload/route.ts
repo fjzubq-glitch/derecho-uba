@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
+import { validateAudioFile, validateDocumentFile } from "@/lib/fileValidation";
 
 export async function POST(request: NextRequest) {
   if (!isAdminRequest(request.headers.get("cookie"))) {
@@ -66,6 +67,18 @@ export async function POST(request: NextRequest) {
     const insertErrors: string[] = [];
 
     for (const item of items) {
+      if (item.storageKey) {
+        const fileName = String(item.storageKey).split("/").pop() || "";
+        const isAudio = item.tipo === "audio_clase" || item.tipo === "podcast";
+        const validation = isAudio
+          ? validateAudioFile({ name: fileName, size: Number(item.fileSize) || 0, type: item.tipo === "audio_clase" || item.tipo === "podcast" ? "audio/mpeg" : undefined })
+          : validateDocumentFile({ name: fileName, size: Number(item.fileSize) || 0 });
+        if (!validation.ok) {
+          insertErrors.push(validation.error || "Archivo inválido");
+          continue;
+        }
+      }
+
       const { error: insertError } = await getSupabaseAdmin().from("archivos").insert({
         clase_id: targetClaseId,
         tipo: item.tipo,

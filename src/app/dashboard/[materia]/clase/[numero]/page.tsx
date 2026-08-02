@@ -6,7 +6,7 @@ import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Volume2, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
 import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime, isAdminSession } from "@/lib/utils";
-import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline } from "@/lib/offline";
+import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
 
 interface Archivo {
   id: string;
@@ -96,6 +96,7 @@ export default function ClaseNumeroPage() {
   const [offlineStatus, setOfflineStatus] = useState<Record<string, "idle" | "downloading" | "saved">>({});
   const [offlineProgress, setOfflineProgress] = useState<Record<string, number>>({});
   const [offlineError, setOfflineError] = useState<string | null>(null);
+  const [offlineMode, setOfflineMode] = useState(false);
   const objectUrlRef = useRef<string | null>(null);
 
   // Transcription expand
@@ -195,16 +196,28 @@ export default function ClaseNumeroPage() {
   }, [playbackRate, playingTipo, playingSrc]);
 
   async function loadData() {
+    const cacheKey = `materia:${materiaSlug}:clase:${numero}`;
     try {
       const res = await fetch(`/api/materias/${materiaSlug}`);
       const data = await res.json();
       if (data.materia) setMateria(data.materia);
       if (data.clases) {
         const found = data.clases.find((c: Clase) => c.numero === parseInt(numero));
-        if (found) setClase(found);
+        if (found) {
+          setClase(found);
+          saveClaseOffline(cacheKey, data);
+        }
       }
     } catch (e) {
-      console.error("Error loading clase:", e);
+      console.error("Error loading clase, intentando offline:", e);
+      setOfflineMode(true);
+      const cached = await getClaseOffline(cacheKey);
+      if (cached) {
+        const anyData = cached as { materia?: MateriaData; clases?: Clase[] };
+        if (anyData.materia) setMateria(anyData.materia);
+        const found = (anyData.clases || []).find((c) => c.numero === parseInt(numero));
+        if (found) setClase(found);
+      }
     }
     setLoading(false);
   }
@@ -695,6 +708,24 @@ export default function ClaseNumeroPage() {
               {materiaTitle}
             </span>
           </div>
+
+          {/* Modo offline */}
+          {offlineMode && (
+            <div
+              role="status"
+              style={{
+                marginBottom: "24px",
+                padding: "12px 16px",
+                border: "1px solid var(--color-gold-dim)",
+                background: "rgba(0,0,0,0.2)",
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "11px",
+                color: "var(--color-gold)",
+              }}
+            >
+              Sin conexión. Mostrando contenido guardado. Las transcripciones y el audio guardado siguen disponibles.
+            </div>
+          )}
 
           {/* Page title */}
           <div style={{ marginBottom: "40px" }}>
