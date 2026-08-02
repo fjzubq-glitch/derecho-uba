@@ -48,6 +48,7 @@ export async function PUT(request: NextRequest) {
     if (tipo === "archivo_link") {
       const updateData: Record<string, string> = { nombre_display: data.nombre_display };
       if (data.youtube_url !== undefined) updateData.youtube_url = data.youtube_url;
+      if (data.cloudinary_url !== undefined) updateData.cloudinary_url = data.cloudinary_url;
 
       const { error } = await getSupabaseAdmin()
         .from("archivos")

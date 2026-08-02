@@ -357,7 +357,10 @@ export default function MateriaPage() {
                   <article
                     key={p.id}
                     onClick={() => router.push(claseHref(p.clase.numero))}
-                    className="flex items-center gap-4 cursor-pointer"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(claseHref(p.clase.numero)); } }}
+                    className="flex items-center gap-4 cursor-pointer focus-visible"
                     style={{ background: "var(--color-card)", padding: "20px 22px", transition: "background 0.25s ease" }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
@@ -409,7 +412,10 @@ export default function MateriaPage() {
                   <article
                     key={a.id}
                     onClick={() => router.push(claseHref(a.clase.numero))}
-                    className="flex items-center gap-4 cursor-pointer"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(claseHref(a.clase.numero)); } }}
+                    className="flex items-center gap-4 cursor-pointer focus-visible"
                     style={{ background: "var(--color-card)", padding: "20px 22px", transition: "background 0.25s ease" }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
@@ -461,7 +467,10 @@ export default function MateriaPage() {
                   <article
                     key={e.id}
                     onClick={() => router.push(claseHref(e.clase.numero))}
-                    className="flex items-center gap-4 cursor-pointer"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); router.push(claseHref(e.clase.numero)); } }}
+                    className="flex items-center gap-4 cursor-pointer focus-visible"
                     style={{ background: "var(--color-card)", padding: "20px 22px", transition: "background 0.25s ease" }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}

@@ -220,6 +220,18 @@ export default function ClaseNumeroPage() {
     return clase?.archivos.find((a) => a.tipo === tipo);
   }
 
+  function isAudioTipo(tipo: CardTipo) {
+    return tipo === "audio_clase" || tipo === "podcast";
+  }
+
+  function isTranscription(tipo: CardTipo) {
+    return tipo === "transcripcion";
+  }
+
+  function isEnlace(tipo: CardTipo) {
+    return tipo === "enlace";
+  }
+
   function handleAudioAction(tipo: CardTipo) {
     const archivo = getArchivo(tipo);
     if (!archivo) return;
@@ -337,18 +349,40 @@ export default function ClaseNumeroPage() {
     }
   }
 
+  function handleCardClick(tipo: CardTipo) {
+    const archivo = getArchivo(tipo);
+    const exists = !!archivo;
+    if (isTranscription(tipo) && exists) {
+      handleTranscriptionClick();
+    } else if (isEnlace(tipo) && exists) {
+      if (archivo?.youtube_url) window.open(archivo.youtube_url, "_blank");
+    } else if (tipo === "archivo" && exists) {
+      if (archivo?.youtube_url) window.open(archivo.youtube_url, "_blank");
+      else if (archivo?.storage_key) window.open(`/api/stream/${archivo.id}?download=1`, "_blank");
+    } else if (isAudioTipo(tipo) && exists) {
+      handleAudioAction(tipo);
+    }
+  }
+
   function renderCard(tipo: CardTipo) {
     const config = CARD_CONFIG[tipo];
     const archivo = getArchivo(tipo);
     const exists = !!archivo;
-    const isAudioTipo = tipo === "audio_clase" || tipo === "podcast";
     const isThisPlaying = playingTipo === tipo && isPlaying;
-    const isTranscription = tipo === "transcripcion";
-    const isEnlace = tipo === "enlace";
 
     return (
       <article
         key={tipo}
+        role="button"
+        tabIndex={exists ? 0 : -1}
+        aria-disabled={!exists}
+        onKeyDown={(e) => {
+          if (!exists) return;
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleCardClick(tipo);
+          }
+        }}
         style={{
           background: "var(--color-card)",
           padding: "28px 24px",
@@ -358,18 +392,7 @@ export default function ClaseNumeroPage() {
         }}
         onMouseEnter={(e) => { if (exists) e.currentTarget.style.background = "var(--color-card-hover)"; }}
         onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; }}
-        onClick={() => {
-          if (isTranscription && exists) {
-            handleTranscriptionClick();
-          } else if (isEnlace && exists) {
-            if (archivo?.youtube_url) window.open(archivo.youtube_url, "_blank");
-          } else if (tipo === "archivo" && exists) {
-            if (archivo?.youtube_url) window.open(archivo.youtube_url, "_blank");
-            else if (archivo?.storage_key) window.open(`/api/stream/${archivo.id}?download=1`, "_blank");
-          } else if (isAudioTipo && exists) {
-            handleAudioAction(tipo);
-          }
-        }}
+        onClick={() => handleCardClick(tipo)}
       >
         <div className="flex items-start justify-between gap-3">
           <div
@@ -438,7 +461,7 @@ export default function ClaseNumeroPage() {
           </div>
 
         {/* Audio player inline */}
-        {isAudioTipo && playingTipo === tipo && exists && (
+        {isAudioTipo(tipo) && playingTipo === tipo && exists && (
           <div className="mt-4 pt-4 border-t" style={{ borderColor: "var(--color-line-soft)" }}>
             <div className="flex items-center gap-3">
               <button
@@ -515,7 +538,7 @@ export default function ClaseNumeroPage() {
                 <RotateCcw style={{ width: "11px", height: "11px" }} />
                 Inicio
               </button>
-              {isAudioTipo && archivo && (
+              {isAudioTipo(tipo) && archivo && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -584,7 +607,7 @@ export default function ClaseNumeroPage() {
         )}
 
         {/* Transcription expand */}
-        {isTranscription && openTranscripcion && exists && archivo.contenido_texto && (
+        {isTranscription(tipo) && openTranscripcion && exists && archivo.contenido_texto && (
           <div
             style={{
               marginTop: "16px",

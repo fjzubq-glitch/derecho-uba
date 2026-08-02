@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const { materiaId, claseNumero, claseTitulo, claseFecha, items, claseId } = body;
 
     if ((!materiaId || !claseTitulo || !items) && !claseId) {
-      return NextResponse.json({ ok: false, error: "Missing required fields" });
+      return NextResponse.json({ ok: false, error: "Missing required fields" }, { status: 400 });
     }
 
     let targetClaseId: string;
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (!claseExistente) {
-        return NextResponse.json({ ok: false, error: "Clase no encontrada" });
+        return NextResponse.json({ ok: false, error: "Clase no encontrada" }, { status: 404 });
       }
       targetClaseId = claseId;
     } else {
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
           .update({ titulo: claseTitulo, fecha: claseFecha || null })
           .eq("id", targetClaseId);
         if (updErr) {
-          return NextResponse.json({ ok: false, error: "Failed to update class: " + updErr.message });
+          return NextResponse.json({ ok: false, error: "Failed to update class: " + updErr.message }, { status: 500 });
         }
       } else {
         const { data: newClase, error: claseError } = await getSupabaseAdmin()
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
           .single();
 
         if (claseError || !newClase) {
-          return NextResponse.json({ ok: false, error: "Failed to create class: " + (claseError?.message || "no data") });
+          return NextResponse.json({ ok: false, error: "Failed to create class: " + (claseError?.message || "no data") }, { status: 500 });
         }
         targetClaseId = newClase.id;
       }
@@ -86,12 +86,12 @@ export async function POST(request: NextRequest) {
     }
 
     if (insertErrors.length > 0) {
-      return NextResponse.json({ ok: false, error: insertErrors.join("; ") });
+      return NextResponse.json({ ok: false, error: insertErrors.join("; ") }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true, claseId: targetClaseId });
   } catch (error: any) {
     console.error("Upload error:", error);
-    return NextResponse.json({ ok: false, error: "Server error: " + (error?.message || String(error)) });
+    return NextResponse.json({ ok: false, error: "Server error: " + (error?.message || String(error)) }, { status: 500 });
   }
 }

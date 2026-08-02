@@ -864,8 +864,9 @@ export default function AdminManage() {
               {editing.tipo === "clase" ? (
                 <>
                   <div>
-                    <label style={labelStyle}>Número</label>
+                    <label htmlFor="manage-numero" style={labelStyle}>Número</label>
                     <input
+                      id="manage-numero"
                       type="number"
                       value={editing.data.numero as number}
                       onChange={(e) => setEditing({ ...editing, data: { ...editing.data, numero: Number(e.target.value) } })}
@@ -873,8 +874,9 @@ export default function AdminManage() {
                     />
                   </div>
                   <div>
-                    <label style={labelStyle}>Título</label>
+                    <label htmlFor="manage-titulo" style={labelStyle}>Título</label>
                     <input
+                      id="manage-titulo"
                       type="text"
                       value={editing.data.titulo as string}
                       onChange={(e) => setEditing({ ...editing, data: { ...editing.data, titulo: e.target.value } })}
@@ -882,8 +884,9 @@ export default function AdminManage() {
                     />
                   </div>
                   <div>
-                    <label style={labelStyle}>Fecha</label>
+                    <label htmlFor="manage-fecha" style={labelStyle}>Fecha</label>
                     <input
+                      id="manage-fecha"
                       type="date"
                       value={editing.data.fecha as string}
                       onChange={(e) => setEditing({ ...editing, data: { ...editing.data, fecha: e.target.value } })}
@@ -894,8 +897,9 @@ export default function AdminManage() {
               ) : (
                 <>
                   <div>
-                    <label style={labelStyle}>Nombre</label>
+                    <label htmlFor="manage-nombre" style={labelStyle}>Nombre</label>
                     <input
+                      id="manage-nombre"
                       type="text"
                       value={editing.data.nombre_display as string}
                       onChange={(e) => setEditing({ ...editing, data: { ...editing.data, nombre_display: e.target.value } })}
@@ -903,8 +907,9 @@ export default function AdminManage() {
                     />
                   </div>
                   <div>
-                    <label style={labelStyle}>Nota (opcional)</label>
+                    <label htmlFor="manage-nota" style={labelStyle}>Nota (opcional)</label>
                     <textarea
+                      id="manage-nota"
                       value={(editing.data.nota as string) || ""}
                       onChange={(e) => setEditing({ ...editing, data: { ...editing.data, nota: e.target.value } })}
                       placeholder="Ej: El audio empieza en el minuto 3"
@@ -1055,8 +1060,9 @@ export default function AdminManage() {
 
             <div className="space-y-4">
               <div>
-                <label style={labelStyle}>Nombre</label>
+                <label htmlFor="replace-nombre" style={labelStyle}>Nombre</label>
                 <input
+                  id="replace-nombre"
                   type="text"
                   value={newNombre}
                   onChange={(e) => setNewNombre(e.target.value)}
@@ -1067,8 +1073,9 @@ export default function AdminManage() {
               {(replacing.tipo === "audio_clase" || replacing.tipo === "podcast") && (
                 <>
                   <div>
-                    <label style={labelStyle}>Link de Cloudinary (opcional)</label>
+                    <label htmlFor="replace-cloudinary" style={labelStyle}>Link de Cloudinary (opcional)</label>
                     <input
+                      id="replace-cloudinary"
                       type="url"
                       value={newCloudinaryUrl}
                       onChange={(e) => setNewCloudinaryUrl(e.target.value)}
@@ -1167,8 +1174,9 @@ export default function AdminManage() {
 
               {(replacing.tipo === "enlace" || replacing.tipo === "transcripcion") && (
                 <div>
-                  <label style={labelStyle}>{replacing.tipo === "enlace" ? "Enlace" : "Link de Google Drive"}</label>
+                  <label htmlFor="replace-drive" style={labelStyle}>{replacing.tipo === "enlace" ? "Enlace" : "Link de Google Drive"}</label>
                   <input
+                    id="replace-drive"
                     type="url"
                     value={newDriveLink}
                     onChange={(e) => setNewDriveLink(e.target.value)}
@@ -1180,8 +1188,9 @@ export default function AdminManage() {
 
               {replacing.tipo === "youtube" && (
                 <div>
-                  <label style={labelStyle}>Link de YouTube</label>
+                  <label htmlFor="replace-youtube" style={labelStyle}>Link de YouTube</label>
                   <input
+                    id="replace-youtube"
                     type="url"
                     value={newYoutubeUrl}
                     onChange={(e) => setNewYoutubeUrl(e.target.value)}

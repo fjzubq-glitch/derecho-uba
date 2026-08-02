@@ -395,8 +395,9 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
         {modo === "existente" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
-              <label style={labelStyle}>Materia</label>
+              <label htmlFor="admin-materia-existente" style={labelStyle}>Materia</label>
               <select
+                id="admin-materia-existente"
                 value={materiaId}
                 onChange={(e) => setMateriaId(e.target.value)}
                 style={inputStyle}
@@ -409,8 +410,9 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
               </select>
             </div>
             <div>
-              <label style={labelStyle}>Clase</label>
+              <label htmlFor="admin-clase-existente" style={labelStyle}>Clase</label>
               <select
+                id="admin-clase-existente"
                 value={claseSeleccionada}
                 onChange={(e) => onSeleccionarClase(e.target.value)}
                 style={inputStyle}
@@ -430,8 +432,9 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
         {/* Fila superior: Materia / Número / Fecha */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
-          <label style={labelStyle}>Materia</label>
+          <label htmlFor="admin-materia-nueva" style={labelStyle}>Materia</label>
           <select
+            id="admin-materia-nueva"
             value={materiaId}
             onChange={(e) => setMateriaId(e.target.value)}
             style={inputStyle}
@@ -444,8 +447,9 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
           </select>
         </div>
         <div>
-          <label style={labelStyle}>Número de clase</label>
+          <label htmlFor="admin-clase-numero" style={labelStyle}>Número de clase</label>
           <input
+            id="admin-clase-numero"
             type="number"
             value={claseNumero}
             onChange={(e) => setClaseNumero(Number(e.target.value))}
@@ -453,8 +457,9 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
           />
         </div>
         <div>
-          <label style={labelStyle}>Fecha</label>
+          <label htmlFor="admin-clase-fecha" style={labelStyle}>Fecha</label>
           <input
+            id="admin-clase-fecha"
             type="date"
             value={claseFecha}
             onChange={(e) => setClaseFecha(e.target.value)}
@@ -465,9 +470,10 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
 
       {/* Título */}
       <div className="mb-6">
-            <label style={labelStyle}>Título de la clase</label>
+            <label htmlFor="admin-clase-titulo" style={labelStyle}>Título de la clase</label>
 
         <input
+          id="admin-clase-titulo"
           type="text"
           value={claseTitulo}
           onChange={(e) => setClaseTitulo(e.target.value)}
@@ -588,6 +594,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
                 value={audioNombre}
                 onChange={(e) => setAudioNombre(e.target.value)}
                 placeholder="Nombre del audio"
+                aria-label="Nombre del audio"
                 style={inputStyle}
               />
               <input
@@ -595,6 +602,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
                 value={cloudinaryUrl}
                 onChange={(e) => setCloudinaryUrl(e.target.value)}
                 placeholder="https://res.cloudinary.com/.../video/audio.mp3"
+                aria-label="URL de Cloudinary"
                 style={inputStyle}
               />
             </div>
@@ -605,6 +613,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
                 value={youtubeNombre}
                 onChange={(e) => setYoutubeNombre(e.target.value)}
                 placeholder="Nombre del video"
+                aria-label="Nombre del video"
                 style={inputStyle}
               />
               <input
@@ -612,6 +621,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
                 value={youtubeUrl}
                 onChange={(e) => setYoutubeUrl(e.target.value)}
                 placeholder="https://youtube.com/watch?v=..."
+                aria-label="URL de YouTube"
                 style={inputStyle}
               />
             </div>
@@ -622,6 +632,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
                 value={audioNombre}
                 onChange={(e) => setAudioNombre(e.target.value)}
                 placeholder="Nombre del audio"
+                aria-label="Nombre del audio"
                 style={inputStyle}
               />
               <DropZone
@@ -665,6 +676,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
                 value={podcastNombre}
                 onChange={(e) => setPodcastNombre(e.target.value)}
                 placeholder="Nombre del podcast"
+                aria-label="Nombre del podcast"
                 style={inputStyle}
               />
               <input
@@ -672,6 +684,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
                 value={podcastCloudinaryUrl}
                 onChange={(e) => setPodcastCloudinaryUrl(e.target.value)}
                 placeholder="https://res.cloudinary.com/.../video/podcast.mp3"
+                aria-label="URL de Cloudinary del podcast"
                 style={inputStyle}
               />
             </div>
@@ -682,6 +695,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
               value={podcastNombre}
               onChange={(e) => setPodcastNombre(e.target.value)}
               placeholder="Nombre del podcast"
+              aria-label="Nombre del podcast"
               style={inputStyle}
             />
             <DropZone
@@ -718,6 +732,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
             value={transcripcionNombre}
             onChange={(e) => setTranscripcionNombre(e.target.value)}
             placeholder="Nombre de la transcripción"
+            aria-label="Nombre de la transcripción"
             style={{ ...inputStyle, marginBottom: "16px" }}
           />
 
@@ -732,6 +747,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
               value={transcripcionDriveLink}
               onChange={(e) => setTranscripcionDriveLink(e.target.value)}
               placeholder="https://drive.google.com/file/d/..."
+              aria-label="Link de Google Drive"
               style={inputStyle}
             />
           ) : (
@@ -739,6 +755,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
               value={transcripcionTexto}
               onChange={(e) => setTranscripcionTexto(e.target.value)}
               placeholder="Pegá el texto de la transcripción acá..."
+              aria-label="Texto de la transcripción"
               rows={6}
               style={{ ...inputStyle, resize: "none", lineHeight: 1.6 }}
             />
@@ -757,6 +774,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
             value={archivoNombre}
             onChange={(e) => setArchivoNombre(e.target.value)}
             placeholder="Nombre del material (PDF, programa, etc.)"
+            aria-label="Nombre del material"
             style={{ ...inputStyle, marginBottom: "16px" }}
           />
 
@@ -771,6 +789,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
               value={archivoLink}
               onChange={(e) => setArchivoLink(e.target.value)}
               placeholder="https://drive.google.com/file/d/..."
+              aria-label="Link externo del archivo"
               style={inputStyle}
             />
           ) : (
@@ -808,6 +827,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
               value={enlaceNombre}
               onChange={(e) => setEnlaceNombre(e.target.value)}
               placeholder="Nombre del enlace (ej: Fallo CSJN, Ley X, material)"
+              aria-label="Nombre del enlace"
               style={inputStyle}
             />
             <input
@@ -815,6 +835,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
               value={enlaceUrl}
               onChange={(e) => setEnlaceUrl(e.target.value)}
               placeholder="https://..."
+              aria-label="URL del enlace"
               style={inputStyle}
             />
           </div>

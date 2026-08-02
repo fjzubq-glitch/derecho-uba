@@ -1,27 +1,17 @@
 # Derecho UBA - Plataforma de Estudio
 
-## Instrucciones para configuración
+Portal de cursada para la carrera de Derecho de la UBA: clases, transcripciones, podcasts, archivos y enlaces de cada materia, con panel de administración y analytics.
 
-### 1. Crear cuenta en Supabase
-- Ir a https://supabase.com
-- Crear nuevo proyecto "derecho-uba"
-- Copiar:
-  - **Project URL**: `https://czmqprvzjsqagpvmspag.supabase.co`
-  - **anon key** (API Keys → Project API keys)
-  - **service_role key** (API Keys → Project API keys → Copy service_role secret)
+## Stack
 
-### 2. Crear bucket en Cloudflare R2
-- Ir a https://dash.cloudflare.com
-- Crear bucket `derecho-uba-audios`
-- Hacerlo **Private**
-- Copiar:
-  - **Account ID**
-  - **Access Key ID**
-  - **Secret Access Key**
-  - **Public URL** del bucket
+- **Next.js 15** (App Router) + **Tailwind CSS v4** + TypeScript
+- **Supabase** (Postgres + RLS)
+- **Cloudflare R2** (storage de audios)
+- Deploy en **Vercel**
 
-### 3. Configurar variables de entorno
-Crear archivo `.env.local` en la raíz del proyecto con:
+## Configuración
+
+### 1. Variables de entorno (`.env.local`)
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=tu_project_url
@@ -33,73 +23,76 @@ R2_ACCESS_KEY_ID=tu_access_key
 R2_SECRET_ACCESS_KEY=tu_secret_key
 R2_BUCKET_NAME=derecho-uba-audios
 R2_PUBLIC_URL=tu_r2_public_url
+
+ADMIN_PASSWORD=tu_password_admin
 ```
 
-### 4. Ejecutar schema en Supabase
-- Ir a https://supabase.com/dashboard/project/czmqprvzjsqagpvmspag/sql
-- Pegar el contenido de `supabase-schema.sql`
-- Ejecutar
+### 2. Base de datos
 
-### 5. Ejecutar el proyecto
+Ejecutar en Supabase SQL Editor:
+
+1. `supabase-schema.sql` — tablas `materias`, `clases`, `archivos`, `reproducciones`
+2. `analytics-schema.sql` — tabla `actividad` + vistas de analytics
+3. `migrations/*.sql` — migraciones adicionales según necesidad
+
+### 3. Desarrollar
 
 ```bash
 npm run dev
 ```
 
-El proyecto estará disponible en http://localhost:3000
+Disponible en http://localhost:3000
 
-### 6. Deploy en Vercel
-- Crear cuenta en https://vercel.com
-- Conectar el repositorio
-- Agregar variables de entorno
-- Deploy
+### 4. Deploy en Vercel
 
-## Estructura del proyecto
+Conectar el repo, configurar las mismas variables de entorno y deploy.
+
+## Estructura
 
 ```
-app/
-├── page.tsx                    # Login con magic link
-├── layout.tsx
-├── dashboard/                  # Área de estudiantes
-│   ├── page.tsx                # Lista de 3 materias
-│   ├── [materia]/              # Lista de clases por materia
-│   │   └── page.tsx
-│   └── [materia]/[clase]/      # Detalle de clase (pendiente)
-│       └── page.tsx
-└── admin/                      # Panel de administración
-    └── page.tsx
+src/app/
+├── page.tsx                         # Home / "Mis materias"
+├── dashboard/
+│   ├── page.tsx                     # Redirige a /
+│   ├── [materia]/page.tsx           # Detalle de materia (clases + filtros)
+│   └── [materia]/clase/[numero]/    # Detalle de clase (player, offline, transcripción)
+├── admin/page.tsx                   # Panel de administración (password)
+└── api/
+    ├── admin/*                      # Gestión de contenido (protegido con cookie de sesión)
+    ├── upload*                      # Upload chunked a R2 (protegido)
+    ├── materias/*                   # Lectura pública de materias/clases
+    ├── analytics/                   # Incremento de play_count
+    ├── track/                       # Log de actividad
+    └── stream/[archivoId]           # Streaming de audio desde R2
 
-lib/
-├── supabase.ts                 # Cliente Supabase
-├── r2.ts                       # Cliente Cloudflare R2
+src/lib/
+├── auth.ts                          # Sesión admin (cookie HTTP-only firmada)
+├── supabase.ts                      # Clientes Supabase (anon + service role)
+├── r2.ts                            # Cliente Cloudflare R2
+├── tracking.ts                      # Tracking de actividad (excluye admin)
 └── utils.ts
 
-components/
-├── ui/
-│   ├── GlassCard.tsx
-│   └── Button.tsx
-├── icons.tsx                   # Iconos SVG personalizados
-├── AudioPlayer.tsx
-├── YouTubeCard.tsx
-├── TranscriptionViewer.tsx
-├── MateriaCard.tsx
-└── AdminUpload.tsx
+src/components/
+├── PortalHeader.tsx                 # Header con acceso a admin cuando hay sesión
+├── PortalFooter.tsx
+├── AdminUpload.tsx                  # Formulario de subida de contenido
+├── AdminManage.tsx                  # Edición/borrado de contenido
+├── AdminShortcut.tsx                # Atajo Ctrl/Cmd+Shift+A a /admin
+└── icons.tsx
 ```
 
 ## Características
 
-- ✅ Dashboard con tema oscuro (Dark Glassmorphism)
-- ✅ 3 materias: Contratos I, Contratos II, Derecho Comercial
-- ✅ Sistema de login con magic link (Supabase Auth)
-- ✅ Upload de audios desde PC
-- ✅ Link externo para YouTube (cuenta como vista)
-- ✅ Transcripciones: Google Drive o texto directo
-- ✅ Analytics (reproducciones por archivo)
-- ✅ Storage gratis en Cloudflare R2
+- ✅ Home con grilla de materias (estado: En curso / Finalizada)
+- ✅ Detalle de materia con filtros por tipo de contenido (audios, transcripciones, podcasts, archivos, enlaces)
+- ✅ Detalle de clase con reproductor de audio, velocidad, resume, offline y transcripción
+- ✅ Panel admin: upload, edición, borrado, nota por archivo, estado de materia
+- ✅ Analytics: reproducciones, visitas, contenido popular, actividad reciente
+- ✅ Sesión admin por cookie HTTP-only firmada (sin contraseña hardcodeada)
+- ✅ Los admin no incrementan contadores al navegar
 
-## Próximos pasos
+## Seguridad
 
-1. Completar la vista de detalle de clase (`[materia]/[clase]/page.tsx`)
-2. Configurar variables de entorno
-3. Ejecutar el schema en Supabase
-4. Probar el upload de archivos
+- Todos los endpoints de escritura (`/api/admin*`, `/api/upload*`, `/api/debug*`) verifican la cookie de sesión admin.
+- RLS: solo lectura pública; las escrituras van por API con `service_role` (bypasea RLS). No hay políticas de escritura abiertas al anon key.
+- La contraseña admin se lee de `ADMIN_PASSWORD` (sin fallback en código).
