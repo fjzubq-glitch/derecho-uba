@@ -201,14 +201,14 @@ export default function MateriaPage() {
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
           {/* Filtros */}
           {!loading && clases.length > 0 && (
-            <div className="no-scrollbar flex gap-2 mb-8 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible sm:pb-0">
+            <div className="flex flex-wrap gap-2 mb-8">
               {(Object.keys(FILTRO_LABELS) as Filtro[]).map((f) => (
                 <button
                   key={f}
                   onClick={() => setFiltro(f)}
-                  className="flex items-center gap-1.5 whitespace-nowrap shrink-0 sm:shrink sm:whitespace-normal touch-target px-3 py-2.5 sm:px-4 sm:py-2"
+                  className="flex items-center gap-1 whitespace-nowrap touch-target px-2.5 py-2 sm:px-4 sm:py-2"
                   style={{
-                    fontSize: "12px",
+                    fontSize: "11px",
                     fontFamily: "var(--font-ibm-plex-mono)",
                     cursor: "pointer",
                     border: `1px solid ${filtro === f ? "var(--color-gold)" : "var(--color-line)"}`,
