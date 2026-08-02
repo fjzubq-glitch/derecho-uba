@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Shield, BookOpen, X } from "@/components/icons";
 import { isAdminSession, clearAdminSession } from "@/lib/utils";
 
@@ -17,11 +18,16 @@ interface PortalHeaderProps {
 }
 
 export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = false }: PortalHeaderProps) {
+  const router = useRouter();
   const [adminActive, setAdminActive] = useState(false);
 
   useEffect(() => {
     setAdminActive(isAdminSession());
   }, []);
+
+  function handleGoAdmin() {
+    router.push("/admin");
+  }
 
   function handleLogoutAdmin() {
     clearAdminSession();
@@ -114,31 +120,51 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
           )}
 
           {adminActive && (
-            <button
-              onClick={handleLogoutAdmin}
-              className="flex items-center gap-1.5"
-              title="Cerrar sesión de administrador"
-              style={{
-                background: "rgba(185, 154, 98, 0.12)",
-                border: "1px solid var(--color-gold-dim)",
-                color: "var(--color-gold)",
-                padding: "6px 10px",
-                cursor: "pointer",
-                fontFamily: "var(--font-ibm-plex-mono)",
-                fontSize: "10px",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                lineHeight: 1,
-                transition: "background 0.2s ease",
-                whiteSpace: "nowrap",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(185, 154, 98, 0.22)")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(185, 154, 98, 0.12)")}
-            >
-              <Shield style={{ width: "11px", height: "11px" }} />
-              <span className="hidden sm:inline">Admin</span>
-              <X style={{ width: "10px", height: "10px", opacity: 0.6 }} />
-            </button>
+            <div className="flex items-center" style={{ gap: "4px" }}>
+              <button
+                onClick={handleGoAdmin}
+                className="flex items-center gap-1.5"
+                title="Ir al panel de administración"
+                style={{
+                  background: "rgba(185, 154, 98, 0.12)",
+                  border: "1px solid var(--color-gold-dim)",
+                  color: "var(--color-gold)",
+                  padding: "6px 10px",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "10px",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  lineHeight: 1,
+                  transition: "background 0.2s ease",
+                  whiteSpace: "nowrap",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(185, 154, 98, 0.22)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(185, 154, 98, 0.12)")}
+              >
+                <Shield style={{ width: "11px", height: "11px" }} />
+                <span className="hidden sm:inline">Admin</span>
+              </button>
+              <button
+                onClick={handleLogoutAdmin}
+                title="Cerrar sesión de administrador"
+                className="flex items-center justify-center"
+                style={{
+                  background: "none",
+                  border: "1px solid var(--color-gold-dim)",
+                  color: "var(--color-gold)",
+                  width: "28px",
+                  height: "28px",
+                  cursor: "pointer",
+                  padding: 0,
+                  transition: "background 0.2s ease",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(185, 154, 98, 0.22)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
+              >
+                <X style={{ width: "10px", height: "10px", opacity: 0.6 }} />
+              </button>
+            </div>
           )}
 
           <a
