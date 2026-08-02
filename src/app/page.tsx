@@ -127,7 +127,8 @@ export default function HomePage() {
             style={{
               maxWidth: "500px",
               fontSize: "15px",
-              lineHeight: 1.7,
+              lineHeight: 1.8,
+              letterSpacing: "0.01em",
               color: "var(--color-text-muted)",
             }}
           >
