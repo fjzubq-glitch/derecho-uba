@@ -125,14 +125,14 @@ export default function MateriaPage() {
             onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
           >
             <ArrowLeft style={{ width: "13px", height: "13px" }} />
-            Volver a materias
+            <span className="hidden sm:inline">Volver a materias</span>
           </button>
         }
       />
 
       {/* ═══════════ HEADER MATERIA ═══════════ */}
       <section className="relative overflow-hidden border-b" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div className="relative z-10 pad-lateral" style={{ padding: "64px 48px 48px" }}>
+        <div className="relative z-10 pad-lateral" style={{ padding: "40px 48px 36px" }}>
           <div
             className="flex items-center gap-3 mb-6"
             style={{
@@ -201,12 +201,12 @@ export default function MateriaPage() {
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
           {/* Filtros */}
           {!loading && clases.length > 0 && (
-            <div className="grid grid-cols-2 gap-2 mb-8 sm:flex sm:flex-wrap">
+            <div className="no-scrollbar flex gap-2 mb-8 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible sm:pb-0">
               {(Object.keys(FILTRO_LABELS) as Filtro[]).map((f) => (
                 <button
                   key={f}
                   onClick={() => setFiltro(f)}
-                  className="flex items-center justify-center gap-1.5 text-center whitespace-normal sm:whitespace-nowrap touch-target sm:px-4 sm:py-2 px-3 py-2.5"
+                  className="flex items-center gap-1.5 whitespace-nowrap shrink-0 sm:shrink sm:whitespace-normal touch-target px-3 py-2.5 sm:px-4 sm:py-2"
                   style={{
                     fontSize: "12px",
                     fontFamily: "var(--font-ibm-plex-mono)",

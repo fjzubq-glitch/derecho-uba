@@ -25,8 +25,8 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
       }}
     >
       <div
-        className="flex items-center justify-between gap-4 pad-lateral"
-        style={{ padding: "20px 48px" }}
+        className="flex items-center justify-between gap-2 sm:gap-4 pad-lateral"
+        style={{ padding: "16px 22px" }}
       >
         {/* Logo + nombre */}
         <Link href="/" className="flex items-center gap-4 min-w-0" style={{ textDecoration: "none" }}>
@@ -43,10 +43,10 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
           </div>
           <div className="min-w-0">
             <div
+              className="text-[17px] sm:text-[20px]"
               style={{
                 fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                 fontWeight: 500,
-                fontSize: "20px",
                 lineHeight: 1.2,
                 color: "var(--color-text)",
                 whiteSpace: "nowrap",
@@ -55,6 +55,7 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
               Derecho <span style={{ color: "var(--color-gold)" }}>UBA</span>
             </div>
             <div
+              className="hidden sm:block"
               style={{
                 fontFamily: "var(--font-ibm-plex-mono)",
                 fontSize: "10px",
@@ -128,7 +129,7 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
             }}
           >
             <BookOpen style={{ width: "13px", height: "13px" }} />
-            Planificador
+            <span className="hidden sm:inline">Planificador</span>
           </a>
         </div>
       </div>

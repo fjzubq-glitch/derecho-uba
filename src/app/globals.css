@@ -95,6 +95,10 @@ article {
   }
 }
 
+/* ── Hide scrollbar (filter chips on mobile) ── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
 /* ── Focus visible ── */
 :focus-visible {
   outline: 1px solid var(--color-gold);
