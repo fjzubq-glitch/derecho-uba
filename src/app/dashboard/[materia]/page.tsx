@@ -80,6 +80,15 @@ export default function MateriaPage() {
     return tieneRecurso(c, filtro);
   });
 
+  const FILTRO_COUNT: Record<Filtro, number> = {
+    todas: clases.length,
+    audio_clase: clases.filter((c) => tieneRecurso(c, "audio_clase")).length,
+    transcripcion: clases.filter((c) => tieneRecurso(c, "transcripcion")).length,
+    podcast: clases.filter((c) => tieneRecurso(c, "podcast")).length,
+    archivo: clases.filter((c) => tieneRecurso(c, "archivo")).length,
+    enlace: clases.filter((c) => tieneRecurso(c, "enlace")).length,
+  };
+
   // Podcasts, archivos y enlaces de toda la materia
   const podcasts = clases.flatMap((c) =>
     c.archivos.filter((a) => a.tipo === "podcast").map((a) => ({ ...a, clase: c }))
@@ -192,13 +201,13 @@ export default function MateriaPage() {
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
           {/* Filtros */}
           {!loading && clases.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-8">
+            <div className="grid grid-cols-2 gap-2 mb-8 sm:flex sm:flex-wrap">
               {(Object.keys(FILTRO_LABELS) as Filtro[]).map((f) => (
                 <button
                   key={f}
                   onClick={() => setFiltro(f)}
+                  className="flex items-center justify-center gap-1.5 text-center whitespace-normal sm:whitespace-nowrap touch-target sm:px-4 sm:py-2 px-3 py-2.5"
                   style={{
-                    padding: "7px 14px",
                     fontSize: "12px",
                     fontFamily: "var(--font-ibm-plex-mono)",
                     cursor: "pointer",
@@ -221,6 +230,7 @@ export default function MateriaPage() {
                   }}
                 >
                   {FILTRO_LABELS[f]}
+                  <span style={{ color: filtro === f ? "var(--color-ink)" : "var(--color-gold)", opacity: 0.85 }}>({FILTRO_COUNT[f]})</span>
                 </button>
               ))}
             </div>
@@ -388,7 +398,7 @@ export default function MateriaPage() {
                       >
                         {p.nombre_display}
                       </p>
-                      <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)" }}>
+                      <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-gold)" }}>
                         Clase {p.clase.numero.toString().padStart(2, "0")}
                       </p>
                     </div>
@@ -440,7 +450,7 @@ export default function MateriaPage() {
                       >
                         {a.nombre_display}
                       </p>
-                      <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)" }}>
+                      <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-gold)" }}>
                         Clase {a.clase.numero.toString().padStart(2, "0")}
                       </p>
                     </div>
@@ -492,7 +502,7 @@ export default function MateriaPage() {
                       >
                         {e.nombre_display}
                       </p>
-                      <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)" }}>
+                      <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-gold)" }}>
                         Clase {e.clase.numero.toString().padStart(2, "0")}
                       </p>
                     </div>
