@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Shield, BookOpen } from "@/components/icons";
+import { Shield, BookOpen, X } from "@/components/icons";
+import { isAdminSession, clearAdminSession } from "@/lib/utils";
 
 const PLANIFICADOR_URL = "https://fjzubq-glitch.github.io/Recomendacion-Materias-UBA/index.html";
 
@@ -16,6 +17,18 @@ interface PortalHeaderProps {
 }
 
 export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = false }: PortalHeaderProps) {
+  const [adminActive, setAdminActive] = useState(false);
+
+  useEffect(() => {
+    setAdminActive(isAdminSession());
+  }, []);
+
+  function handleLogoutAdmin() {
+    clearAdminSession();
+    setAdminActive(false);
+    window.location.reload();
+  }
+
   return (
     <header
       className="border-b"
@@ -71,8 +84,8 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
           </div>
         </Link>
 
-        {/* Derecha: nav contextual, CTA única o Planificador */}
-        <div className="flex items-center gap-4 flex-shrink-0">
+        {/* Derecha: nav contextual, CTA única, admin badge o Planificador */}
+        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
           {nav ? (
             nav
           ) : hideCta ? null : (
@@ -99,6 +112,35 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
               Ver materias
             </Link>
           )}
+
+          {adminActive && (
+            <button
+              onClick={handleLogoutAdmin}
+              className="flex items-center gap-1.5"
+              title="Cerrar sesión de administrador"
+              style={{
+                background: "rgba(185, 154, 98, 0.12)",
+                border: "1px solid var(--color-gold-dim)",
+                color: "var(--color-gold)",
+                padding: "6px 10px",
+                cursor: "pointer",
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "10px",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                lineHeight: 1,
+                transition: "background 0.2s ease",
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(185, 154, 98, 0.22)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(185, 154, 98, 0.12)")}
+            >
+              <Shield style={{ width: "11px", height: "11px" }} />
+              <span className="hidden sm:inline">Admin</span>
+              <X style={{ width: "10px", height: "10px", opacity: 0.6 }} />
+            </button>
+          )}
+
           <a
             href={PLANIFICADOR_URL}
             target="_blank"
