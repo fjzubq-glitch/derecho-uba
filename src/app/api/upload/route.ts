@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { isAdminRequest } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
+  if (!isAdminRequest(request.headers.get("cookie"))) {
+    return NextResponse.json({ ok: false, error: "No autorizado" }, { status: 401 });
+  }
   try {
     const body = await request.json();
     const { materiaId, claseNumero, claseTitulo, claseFecha, items, claseId } = body;

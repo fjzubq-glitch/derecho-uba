@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatFechaLocal } from "@/lib/utils";
-import { Upload, FileText, X, Check, Loader2, Headphones, Volume2, Link2, Shield } from "@/components/icons";
+import { Upload, FileText, X, Check, Loader2, Headphones, Volume2, Link2 } from "@/components/icons";
 
 interface UploadItem {
   tipo: "audio_clase" | "podcast" | "transcripcion" | "archivo" | "enlace";

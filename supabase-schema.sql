@@ -63,20 +63,16 @@ ALTER TABLE clases ENABLE ROW LEVEL SECURITY;
 ALTER TABLE archivos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reproducciones ENABLE ROW LEVEL SECURITY;
 
--- Politicas para lectura publica (cualquiera autenticado puede leer)
+-- Politicas para lectura publica (cualquiera puede leer)
 CREATE POLICY "Lectura publica materias" ON materias FOR SELECT USING (true);
 CREATE POLICY "Lectura publica clases" ON clases FOR SELECT USING (true);
 CREATE POLICY "Lectura publica archivos" ON archivos FOR SELECT USING (true);
 
--- Politica para insertar reproducciones (cualquiera autenticado)
-CREATE POLICY "Insertar reproducciones" ON reproducciones FOR INSERT WITH CHECK (true);
-CREATE POLICY "Lectura reproducciones" ON reproducciones FOR SELECT USING (true);
-
--- Politicas de escritura solo para service role (admin)
--- Estas politicas permiten todo al service role (que se usa en las API routes)
-CREATE POLICY "Admin materias" ON materias FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admin clases" ON clases FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admin archivos" ON archivos FOR ALL USING (true) WITH CHECK (true);
+-- Politica para insertar reproducciones
+-- (solo via API route con service role, que bypasea RLS)
+-- Las escrituras NO se habilitan al anon key.
+-- NOTA: No crear politicas de INSERT/UPDATE/DELETE para anon.
+-- El service role bypasea RLS automaticamente.
 
 -- =============================================
 -- INSERTAR MATERIAS INICIALES

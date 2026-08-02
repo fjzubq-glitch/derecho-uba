@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { uploadToR2, deleteFromR2 } from "@/lib/r2";
+import { isAdminRequest } from "@/lib/auth";
 
 export async function PUT(request: NextRequest) {
+  if (!isAdminRequest(request.headers.get("cookie"))) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
   try {
     const body = await request.json();
     const { tipo, id, data } = body;
@@ -61,6 +65,9 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (!isAdminRequest(request.headers.get("cookie"))) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
   try {
     const formData = await request.formData();
     const archivoId = formData.get("archivoId") as string;
@@ -103,6 +110,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  if (!isAdminRequest(request.headers.get("cookie"))) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
   try {
     const { searchParams } = new URL(request.url);
     const tipo = searchParams.get("tipo");

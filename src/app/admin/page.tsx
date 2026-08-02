@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import PortalFooter from "@/components/PortalFooter";
 import AdminUpload from "@/components/AdminUpload";
 import AdminManage from "@/components/AdminManage";
-import { ArrowLeft, BarChart3, Headphones, FileText, Users, Lock, Loader2, Calendar, TrendingUp, Eye, Shield, Upload } from "@/components/icons";
-import { isAdminSession, setAdminSession } from "@/lib/utils";
+import { ArrowLeft, BarChart3, Headphones, FileText, Users, TrendingUp, Eye, Shield } from "@/components/icons";
+import { setAdminSession } from "@/lib/utils";
 
 interface Materia {
   id: string;
@@ -99,9 +99,18 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    if (isAdminSession()) {
-      setAuthenticated(true);
-    }
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/session");
+        const data = await res.json();
+        if (data.ok) {
+          setAuthenticated(true);
+          setAdminSession();
+        }
+      } catch {
+        // Sin sesión válida — mostrar login
+      }
+    })();
   }, []);
 
   useEffect(() => {

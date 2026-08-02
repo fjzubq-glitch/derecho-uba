@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Shield, BookOpen, X } from "@/components/icons";
-import { isAdminSession, clearAdminSession } from "@/lib/utils";
+import { clearAdminSession } from "@/lib/utils";
 
 const PLANIFICADOR_URL = "https://fjzubq-glitch.github.io/Recomendacion-Materias-UBA/index.html";
 
@@ -22,7 +22,15 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
   const [adminActive, setAdminActive] = useState(false);
 
   useEffect(() => {
-    setAdminActive(isAdminSession());
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/session");
+        const data = await res.json();
+        setAdminActive(data.ok === true);
+      } catch {
+        setAdminActive(false);
+      }
+    })();
   }, []);
 
   function handleGoAdmin() {
@@ -32,7 +40,9 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
   function handleLogoutAdmin() {
     clearAdminSession();
     setAdminActive(false);
-    window.location.reload();
+    fetch("/api/admin/session", { method: "DELETE" })
+      .catch(() => {})
+      .finally(() => window.location.reload());
   }
 
   return (

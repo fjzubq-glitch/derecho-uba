@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatFechaLocal } from "@/lib/utils";
-import { ArrowLeft, Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical, Link2 } from "@/components/icons";
+import { Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical, Link2 } from "@/components/icons";
 
 interface Archivo {
   id: string;

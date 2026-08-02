@@ -1,8 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { isAdminRequest } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  if (!isAdminRequest(request.headers.get("cookie"))) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
   const ak = (process.env.R2_ACCESS_KEY_ID || "").trim();
   const bk = (process.env.R2_BUCKET_NAME || "").trim();
 

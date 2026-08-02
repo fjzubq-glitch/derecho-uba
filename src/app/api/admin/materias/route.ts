@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { isAdminRequest } from "@/lib/auth";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  if (!isAdminRequest(request.headers.get("cookie"))) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
   const { slug, nombre } = await request.json();
 
   if (!slug || !nombre) {
@@ -18,7 +23,11 @@ export async function POST(request: Request) {
   return NextResponse.json({ ok: true });
 }
 
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
+  if (!isAdminRequest(request.headers.get("cookie"))) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
   const { slug, estado } = await request.json();
 
   if (!slug || !estado) {

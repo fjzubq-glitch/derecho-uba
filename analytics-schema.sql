@@ -26,8 +26,8 @@ CREATE INDEX IF NOT EXISTS idx_actividad_ip ON actividad(ip_hash);
 -- RLS
 ALTER TABLE actividad ENABLE ROW LEVEL SECURITY;
 
--- Solo service role puede leer/escribir (admin)
-CREATE POLICY "Admin actividad" ON actividad FOR ALL USING (true) WITH CHECK (true);
+-- Las escrituras/lecturas pasan por API routes con service role (bypasea RLS).
+-- NO crear politicas de escritura para el anon key.
 
 -- =============================================
 -- Vistas útiles para el admin

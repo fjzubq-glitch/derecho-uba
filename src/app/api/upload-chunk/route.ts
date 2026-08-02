@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { uploadToR2 } from "@/lib/r2";
+import { isAdminRequest } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
+  if (!isAdminRequest(request.headers.get("cookie"))) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
   try {
     const { sessionId, partNumber, data } = await request.json();
     if (!sessionId || !partNumber || !data) {

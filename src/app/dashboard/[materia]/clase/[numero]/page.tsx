@@ -261,6 +261,7 @@ export default function ClaseNumeroPage() {
           audio.currentTime = resumeAt;
           setCurrentTime(resumeAt);
         }
+        audio.play().catch(() => {});
       }, 100);
     };
 
@@ -288,7 +289,7 @@ export default function ClaseNumeroPage() {
           playTrackedRef.current = playingTipo;
         }
       }
-      audio.play();
+      audio.play().catch(() => {});
       setIsPlaying(true);
     }
   }

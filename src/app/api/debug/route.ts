@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { isAdminRequest } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  if (!isAdminRequest(request.headers.get("cookie"))) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
   const diag: Record<string, any> = {};
 
   diag.env_defined = {

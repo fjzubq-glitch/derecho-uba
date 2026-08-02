@@ -69,10 +69,6 @@ export function getAudioPublicUrl(key: string): string {
   return `${R2_PUBLIC_URL}/${key}`;
 }
 
-export async function getSignedAudioUrl(key: string): Promise<string> {
-  return getAudioPublicUrl(key);
-}
-
 const host = () => `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
 
 function encodePath(p: string): string {
