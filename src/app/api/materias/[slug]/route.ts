@@ -10,7 +10,7 @@ export async function GET(
 
   const { data: materia } = await supabase
     .from("materias")
-    .select("id, nombre")
+    .select("id, nombre, estado")
     .eq("slug", slug)
     .single();
 

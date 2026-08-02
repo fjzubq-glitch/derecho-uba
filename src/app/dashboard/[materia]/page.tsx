@@ -41,7 +41,7 @@ export default function MateriaPage() {
   const router = useRouter();
   const slug = params.materia as string;
 
-  const [materia, setMateria] = useState<{ id: string; nombre: string } | null>(null);
+  const [materia, setMateria] = useState<{ id: string; nombre: string; estado?: string } | null>(null);
   const [clases, setClases] = useState<Clase[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>("todas");
@@ -188,8 +188,8 @@ export default function MateriaPage() {
                 {vistasCount}/{clases.length} vistas
               </span>
               <span style={{ color: "var(--color-line)" }}>·</span>
-              <span style={{ color: vistasCount === clases.length ? "var(--color-gold)" : "var(--color-text-muted)" }}>
-                {vistasCount === clases.length ? "Completo" : "En curso"}
+              <span style={{ color: materia?.estado === "finalizada" ? "var(--color-gold)" : "var(--color-text-muted)" }}>
+                {materia?.estado === "finalizada" ? "Finalizada" : "En curso"}
               </span>
             </div>
           )}

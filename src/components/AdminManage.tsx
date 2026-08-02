@@ -15,6 +15,13 @@ interface Archivo {
   play_count: number;
 }
 
+interface Materia {
+  id: string;
+  nombre: string;
+  slug: string;
+  estado: string;
+}
+
 interface Clase {
   id: string;
   numero: number;
@@ -54,6 +61,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 export default function AdminManage() {
+  const [materias, setMaterias] = useState<Materia[]>([]);
   const [clases, setClases] = useState<Clase[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<EditData | null>(null);
@@ -85,6 +93,20 @@ export default function AdminManage() {
 
   async function loadClases() {
     setLoading(true);
+
+    const { data: materiasData } = await supabase
+      .from("materias")
+      .select("id, nombre, slug, estado")
+      .order("nombre");
+
+    if (materiasData) {
+      setMaterias(materiasData.map((m) => ({
+        id: m.id,
+        nombre: m.nombre,
+        slug: m.slug,
+        estado: m.estado || "en_curso",
+      })));
+    }
 
     const { data: clasesData } = await supabase
       .from("clases")
@@ -121,6 +143,28 @@ export default function AdminManage() {
     }
 
     setLoading(false);
+  }
+
+  async function toggleEstado(slug: string, currentEstado: string) {
+    const nuevoEstado = currentEstado === "finalizada" ? "en_curso" : "finalizada";
+    try {
+      const res = await fetch("/api/admin/materias", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug, estado: nuevoEstado }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setMaterias((prev) =>
+          prev.map((m) => (m.slug === slug ? { ...m, estado: nuevoEstado } : m))
+        );
+        setMessage(`Estado cambiado a "${nuevoEstado === "finalizada" ? "Finalizada" : "En curso"}"`);
+      } else {
+        setMessage("Error: " + data.error);
+      }
+    } catch (err) {
+      setMessage("Error: " + String(err));
+    }
   }
 
   async function handleEdit() {
@@ -492,6 +536,100 @@ export default function AdminManage() {
           >
             {message}
           </p>
+        </div>
+      )}
+
+      {materias.length > 0 && (
+        <div
+          style={{
+            background: "var(--color-card)",
+            border: "1px solid var(--color-line-soft)",
+            borderRadius: 0,
+            padding: "20px 22px",
+          }}
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <h3
+              style={{
+                fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                fontWeight: 500,
+                fontSize: "16px",
+                color: "var(--color-text)",
+              }}
+            >
+              Estado de materias
+            </h3>
+          </div>
+          <div className="space-y-2">
+            {materias.map((m) => (
+              <div
+                key={m.id}
+                className="flex items-center justify-between gap-4"
+                style={{
+                  padding: "10px 14px",
+                  background: "var(--color-ink)",
+                  border: "1px solid var(--color-line-soft)",
+                  borderRadius: 0,
+                }}
+              >
+                <div className="min-w-0">
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "var(--color-text)",
+                      fontFamily: "var(--font-inter)",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {m.nombre}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "11px",
+                      color: "var(--color-text-faint)",
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      marginTop: "2px",
+                    }}
+                  >
+                    {m.slug}
+                  </p>
+                </div>
+                <button
+                  onClick={() => toggleEstado(m.slug, m.estado)}
+                  style={{
+                    flexShrink: 0,
+                    padding: "6px 14px",
+                    fontSize: "11px",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    background: m.estado === "finalizada" ? "var(--color-gold)" : "transparent",
+                    color: m.estado === "finalizada" ? "var(--color-ink)" : "var(--color-text-muted)",
+                    border: `1px solid ${m.estado === "finalizada" ? "var(--color-gold)" : "var(--color-line)"}`,
+                    borderRadius: 0,
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (m.estado !== "finalizada") {
+                      e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                      e.currentTarget.style.color = "var(--color-text)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (m.estado !== "finalizada") {
+                      e.currentTarget.style.borderColor = "var(--color-line)";
+                      e.currentTarget.style.color = "var(--color-text-muted)";
+                    }
+                  }}
+                >
+                  {m.estado === "finalizada" ? "Finalizada" : "En curso"}
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

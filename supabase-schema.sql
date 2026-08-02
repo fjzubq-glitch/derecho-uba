@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS materias (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nombre TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
+  estado TEXT DEFAULT 'en_curso' CHECK (estado IN ('en_curso', 'finalizada')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
