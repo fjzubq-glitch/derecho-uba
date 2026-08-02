@@ -21,9 +21,21 @@ export async function PUT(request: NextRequest) {
     }
 
     if (tipo === "archivo") {
+      const updateData: Record<string, string> = { nombre_display: data.nombre_display };
+      if (data.nota !== undefined) updateData.nota = data.nota;
+
       const { error } = await getSupabaseAdmin()
         .from("archivos")
-        .update({ nombre_display: data.nombre_display })
+        .update(updateData)
+        .eq("id", id);
+
+      if (error) throw error;
+    }
+
+    if (tipo === "archivo_nota") {
+      const { error } = await getSupabaseAdmin()
+        .from("archivos")
+        .update({ nota: data.nota || null })
         .eq("id", id);
 
       if (error) throw error;

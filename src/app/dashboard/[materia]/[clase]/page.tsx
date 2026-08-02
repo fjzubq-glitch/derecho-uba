@@ -15,6 +15,7 @@ interface Archivo {
   youtube_url: string | null;
   cloudinary_url: string | null;
   contenido_texto: string | null;
+  nota: string | null;
   duration_seconds: number | null;
   play_count: number;
 }
@@ -427,6 +428,19 @@ export default function ClaseDetailPage() {
                             <span>{archivo.contenido_texto.split(/\s+/).length} palabras</span>
                           )}
                         </div>
+                        {archivo.nota && (
+                          <p
+                            style={{
+                              fontFamily: "var(--font-ibm-plex-mono)",
+                              fontSize: "11px",
+                              color: "var(--color-gold)",
+                              fontStyle: "italic",
+                              marginTop: "6px",
+                            }}
+                          >
+                            {archivo.nota}
+                          </p>
+                        )}
                       </div>
                     </div>
 

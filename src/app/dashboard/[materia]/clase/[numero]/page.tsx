@@ -16,6 +16,7 @@ interface Archivo {
   youtube_url: string | null;
   cloudinary_url: string | null;
   contenido_texto: string | null;
+  nota: string | null;
   duration_seconds: number | null;
   play_count: number;
 }
@@ -418,6 +419,19 @@ export default function ClaseNumeroPage() {
               >
                 {exists ? config.subtitle(archivo) : config.emptySubtitle}
               </div>
+              {exists && archivo.nota && (
+                <p
+                  style={{
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "11px",
+                    color: "var(--color-gold)",
+                    fontStyle: "italic",
+                    marginTop: "6px",
+                  }}
+                >
+                  {archivo.nota}
+                </p>
+              )}
             </div>
             {exists && (
               <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0, marginTop: "14px" }} />

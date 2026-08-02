@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS archivos (
   cloudinary_url TEXT,
   youtube_thumbnail TEXT,
   contenido_texto TEXT,
+  nota TEXT,
   file_size BIGINT,
   duration_seconds INT,
   play_count INT DEFAULT 0,

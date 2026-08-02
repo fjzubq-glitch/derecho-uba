@@ -13,6 +13,7 @@ interface Archivo {
   youtube_url: string | null;
   cloudinary_url: string | null;
   play_count: number;
+  nota: string | null;
 }
 
 interface Materia {
@@ -124,7 +125,7 @@ export default function AdminManage() {
         clasesData.map(async (c: any) => {
           const { data: archivos } = await supabase
             .from("archivos")
-            .select("id, tipo, nombre_display, storage_key, youtube_url, cloudinary_url, play_count")
+            .select("id, tipo, nombre_display, storage_key, youtube_url, cloudinary_url, play_count, nota")
             .eq("clase_id", c.id)
             .order("created_at");
 
@@ -776,6 +777,11 @@ export default function AdminManage() {
                         <p style={{ fontSize: "11px", color: "var(--color-text-muted)" }}>
                           {archivo.play_count} reproducciones
                         </p>
+                        {archivo.nota && (
+                          <p style={{ fontSize: "11px", color: "var(--color-gold)", fontStyle: "italic", marginTop: "2px" }}>
+                            {archivo.nota}
+                          </p>
+                        )}
                       </div>
                       <KebabMenu
                         menuKey={`archivo-${archivo.id}`}
@@ -798,7 +804,7 @@ export default function AdminManage() {
                             onClick: () => setEditing({
                               tipo: "archivo",
                               id: archivo.id,
-                              data: { nombre_display: archivo.nombre_display }
+                              data: { nombre_display: archivo.nombre_display, nota: archivo.nota || "" }
                             }),
                           },
                           {
@@ -886,15 +892,31 @@ export default function AdminManage() {
                   </div>
                 </>
               ) : (
-                <div>
-                  <label style={labelStyle}>Nombre</label>
-                  <input
-                    type="text"
-                    value={editing.data.nombre_display as string}
-                    onChange={(e) => setEditing({ ...editing, data: { ...editing.data, nombre_display: e.target.value } })}
-                    style={inputStyle}
-                  />
-                </div>
+                <>
+                  <div>
+                    <label style={labelStyle}>Nombre</label>
+                    <input
+                      type="text"
+                      value={editing.data.nombre_display as string}
+                      onChange={(e) => setEditing({ ...editing, data: { ...editing.data, nombre_display: e.target.value } })}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Nota (opcional)</label>
+                    <textarea
+                      value={(editing.data.nota as string) || ""}
+                      onChange={(e) => setEditing({ ...editing, data: { ...editing.data, nota: e.target.value } })}
+                      placeholder="Ej: El audio empieza en el minuto 3"
+                      rows={3}
+                      style={{
+                        ...inputStyle,
+                        resize: "vertical",
+                        minHeight: "80px",
+                      }}
+                    />
+                  </div>
+                </>
               )}
             </div>
 
