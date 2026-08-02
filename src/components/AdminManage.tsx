@@ -97,7 +97,7 @@ export default function AdminManage() {
 
     const { data: materiasData } = await supabase
       .from("materias")
-      .select("id, nombre, slug, estado")
+      .select("*")
       .order("nombre");
 
     if (materiasData) {
@@ -125,7 +125,7 @@ export default function AdminManage() {
         clasesData.map(async (c: any) => {
           const { data: archivos } = await supabase
             .from("archivos")
-            .select("id, tipo, nombre_display, storage_key, youtube_url, cloudinary_url, play_count, nota")
+            .select("*")
             .eq("clase_id", c.id)
             .order("created_at");
 

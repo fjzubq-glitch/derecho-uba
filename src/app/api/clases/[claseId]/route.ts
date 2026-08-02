@@ -12,7 +12,7 @@ export async function GET(
     .from("clases")
     .select(`
       id, numero, titulo, fecha,
-      archivos (id, tipo, nombre_display, storage_key, youtube_url, contenido_texto, nota, duration_seconds, play_count)
+      archivos (*)
     `)
     .eq("id", claseId)
     .single();
