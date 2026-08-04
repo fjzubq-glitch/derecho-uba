@@ -30,7 +30,7 @@ type Filtro = "todas" | "audio_clase" | "clase_youtube" | "transcripcion" | "pod
 const FILTRO_LABELS: Record<Filtro, string> = {
   todas: "Todas",
   audio_clase: "Audio",
-  clase_youtube: "YouTube",
+  clase_youtube: "Virtual",
   transcripcion: "Transcripción",
   podcast: "Podcast",
   archivo: "Archivos",
@@ -196,20 +196,22 @@ export default function MateriaPage() {
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
           {/* Filtros */}
           {!loading && clases.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-8">
+            <div className="flex flex-wrap gap-1.5 mb-8">
               {(Object.keys(FILTRO_LABELS) as Filtro[]).map((f) => (
                 <button
                   key={f}
                   onClick={() => setFiltro(f)}
-                  className="flex items-center gap-1 whitespace-nowrap touch-target px-2.5 py-2 sm:px-4 sm:py-2"
+                  className="flex items-center gap-1.5 whitespace-nowrap touch-target px-3 py-1.5"
                   style={{
-                    fontSize: "11px",
+                    fontSize: "10px",
                     fontFamily: "var(--font-ibm-plex-mono)",
+                    letterSpacing: "0.06em",
                     cursor: "pointer",
+                    borderRadius: "2px",
                     border: `1px solid ${filtro === f ? "var(--color-gold)" : "var(--color-line)"}`,
-                    background: filtro === f ? "var(--color-gold)" : "transparent",
-                    color: filtro === f ? "var(--color-ink)" : "var(--color-text-muted)",
-                    transition: "color 0.2s ease, background 0.2s ease, border-color 0.2s ease",
+                    background: filtro === f ? "rgba(199, 168, 106, 0.12)" : "transparent",
+                    color: filtro === f ? "var(--color-gold)" : "var(--color-text-muted)",
+                    transition: "all 0.2s ease",
                   }}
                   onMouseEnter={(e) => {
                     if (filtro !== f) {
@@ -225,7 +227,7 @@ export default function MateriaPage() {
                   }}
                 >
                   {FILTRO_LABELS[f]}
-                  <span style={{ color: filtro === f ? "var(--color-ink)" : "var(--color-gold)", opacity: 0.85 }}>({FILTRO_COUNT[f]})</span>
+                  <span style={{ color: "var(--color-text-faint)" }}>{FILTRO_COUNT[f]}</span>
                 </button>
               ))}
             </div>

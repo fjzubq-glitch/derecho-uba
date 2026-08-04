@@ -523,7 +523,7 @@ const hasEnlace = enlaceUrl.trim() !== "";
           <div className="flex flex-wrap items-center gap-4">
             {["audio_clase", "clase_youtube", "podcast", "transcripcion"].map((tipo) => {
               const exist = (clasesExistentes.find((c) => c.id === claseSeleccionada)?.archivos || []).some((a) => a.tipo === tipo);
-              const label = tipo === "audio_clase" ? "Audio" : tipo === "clase_youtube" ? "YouTube" : tipo === "podcast" ? "Podcast" : "Transcripción";
+              const label = tipo === "audio_clase" ? "Audio" : tipo === "clase_youtube" ? "Clase Virtual" : tipo === "podcast" ? "Podcast" : "Transcripción";
               return (
                 <div key={tipo} className="flex items-center gap-2">
                   <div
@@ -946,7 +946,7 @@ Clase Virtual
         <div className="flex flex-wrap items-center gap-4">
           {[
             { label: "Audio", ready: hasAudio },
-            { label: "YouTube", ready: hasClaseYoutube },
+            { label: "Clase Virtual", ready: hasClaseYoutube },
             { label: "Podcast", ready: hasPodcast },
             { label: "Transcripción", ready: hasTranscripcion },
             { label: "Archivo", ready: hasArchivo },
