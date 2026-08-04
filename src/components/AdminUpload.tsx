@@ -3,10 +3,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatFechaLocal } from "@/lib/utils";
-import { Upload, FileText, X, Check, Loader2, Headphones, Volume2, Link2 } from "@/components/icons";
+import { Upload, FileText, X, Check, Loader2, Headphones, Volume2, Link2, Play } from "@/components/icons";
 
 interface UploadItem {
-  tipo: "audio_clase" | "podcast" | "transcripcion" | "archivo" | "enlace";
+  tipo: "audio_clase" | "clase_youtube" | "podcast" | "transcripcion" | "archivo" | "enlace";
   nombre: string;
   archivo?: File;
   driveLink?: string;
@@ -25,6 +25,7 @@ interface ClaseExistente {
 interface AdminUploadProps {
   materias: { id: string; nombre: string; slug: string }[];
   onSubmit: (materiaId: string, claseNumero: number, claseTitulo: string, claseFecha: string, items: UploadItem[], claseId?: string) => Promise<{ ok: boolean; error?: string }>;
+  claseInicial?: { claseId: string; materiaId: string } | null;
 }
 
 const inputStyle: React.CSSProperties = {
@@ -64,7 +65,7 @@ const sectionHeaderStyle: React.CSSProperties = {
   gap: "10px",
 };
 
-export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
+export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminUploadProps) {
   const [modo, setModo] = useState<"nueva" | "existente">("nueva");
   const [materiaId, setMateriaId] = useState(materias[0]?.id || "");
   const [claseNumero, setClaseNumero] = useState(1);
@@ -102,6 +103,8 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
   const [youtubeNombre, setYoutubeNombre] = useState("");
   const [useYoutube, setUseYoutube] = useState(false);
 
+  const [claseYoutubeItems, setClaseYoutubeItems] = useState<Array<{ nombre: string; url: string }>>([{ nombre: "", url: "" }]);
+
   const [cloudinaryUrl, setCloudinaryUrl] = useState("");
   const [useCloudinary, setUseCloudinary] = useState(false);
   const [podcastCloudinaryUrl, setPodcastCloudinaryUrl] = useState("");
@@ -117,9 +120,10 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
     (transcripcionMethod === "drive" && transcripcionDriveLink.trim() !== "") ||
     (transcripcionMethod === "texto" && transcripcionTexto.trim() !== "");
   const hasArchivo = archivoFile !== null || (archivoUseLink && archivoLink.trim() !== "");
-  const hasEnlace = enlaceUrl.trim() !== "";
-  const loadedCount = [hasAudio, hasPodcast, hasTranscripcion, hasArchivo, hasEnlace].filter(Boolean).length;
+const hasEnlace = enlaceUrl.trim() !== "";
+  const hasClaseYoutube = claseYoutubeItems.some((i) => i.url.trim() !== "");
 
+  const loadedCount = [hasAudio, hasPodcast, hasTranscripcion, hasArchivo, hasEnlace, hasClaseYoutube].filter(Boolean).length;
   useEffect(() => {
     if (materias.length > 0 && !materiaId) {
       setMateriaId(materias[0].id);
@@ -128,13 +132,21 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
 
   useEffect(() => {
     if (modo === "existente" && materiaId) {
-      cargarClasesExistentes(materiaId);
+      cargarClasesExistentes(materiaId, claseInicial?.claseId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modo, materiaId]);
 
-  async function cargarClasesExistentes(materiaIdSel: string) {
+  useEffect(() => {
+    if (claseInicial?.claseId) {
+      setModo("existente");
+      setMateriaId(claseInicial.materiaId);
+    }
+  }, [claseInicial]);
+
+  async function cargarClasesExistentes(materiaIdSel: string, preseleccionarId?: string) {
     setCargandoClases(true);
-    setClaseSeleccionada("");
+    setClaseSeleccionada(preseleccionarId || "");
     const { data } = await supabase
       .from("clases")
       .select("id, numero, titulo, fecha")
@@ -217,6 +229,12 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
       items.push({ tipo: "enlace", nombre: enlaceNombre || `Enlace útil`, driveLink: enlaceUrl });
     }
 
+    claseYoutubeItems.forEach((item, idx) => {
+      if (item.url.trim()) {
+        items.push({ tipo: "clase_youtube", nombre: item.nombre.trim() || `Clase en YouTube ${claseYoutubeItems.filter((i) => i.url.trim()).length > 1 ? idx + 1 : ""}`.trim(), driveLink: item.url.trim() });
+      }
+    });
+
     if (items.length === 0) {
       setResultMsg({ text: "Cargá al menos un archivo", isError: true });
       setUploading(false);
@@ -262,6 +280,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
     setArchivoUseLink(false);
     setEnlaceNombre("");
     setEnlaceUrl("");
+    setClaseYoutubeItems([{ nombre: "", url: "" }]);
   };
 
   function Radio({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
@@ -502,9 +521,9 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
           }}
         >
           <div className="flex flex-wrap items-center gap-4">
-            {["audio_clase", "podcast", "transcripcion"].map((tipo) => {
+            {["audio_clase", "clase_youtube", "podcast", "transcripcion"].map((tipo) => {
               const exist = (clasesExistentes.find((c) => c.id === claseSeleccionada)?.archivos || []).some((a) => a.tipo === tipo);
-              const label = tipo === "audio_clase" ? "Audio" : tipo === "podcast" ? "Podcast" : "Transcripción";
+              const label = tipo === "audio_clase" ? "Audio" : tipo === "clase_youtube" ? "YouTube" : tipo === "podcast" ? "Podcast" : "Transcripción";
               return (
                 <div key={tipo} className="flex items-center gap-2">
                   <div
@@ -655,6 +674,72 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
               />
             </div>
           )}
+        </div>
+
+        {/* Clase en YouTube */}
+        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
+          <h3 style={sectionHeaderStyle}>
+            <Play style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+            Clase en YouTube
+          </h3>
+
+          <div className="space-y-3">
+            <p style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
+              Podés agregar uno o más videos de YouTube de la misma clase. Cada uno aparecerá como card separada.
+            </p>
+            {claseYoutubeItems.map((item, idx) => (
+              <div key={idx} className="space-y-3" style={{ padding: "16px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
+                <div className="flex items-start justify-between gap-2">
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
+                    Video {idx + 1}
+                  </span>
+                  {claseYoutubeItems.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setClaseYoutubeItems((prev) => prev.filter((_, i) => i !== idx))}
+                      style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                      aria-label={`Quitar video ${idx + 1}`}
+                    >
+                      <X style={{ width: "14px", height: "14px", color: "var(--color-text-faint)" }} />
+                    </button>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={item.nombre}
+                  onChange={(e) => setClaseYoutubeItems((prev) => prev.map((it, i) => (i === idx ? { ...it, nombre: e.target.value } : it)))}
+                  placeholder={`Nombre del video ${idx + 1} (ej: Clase completa, Parte 1...)`}
+                  aria-label={`Nombre del video ${idx + 1}`}
+                  style={{ ...inputStyle, marginBottom: "8px" }}
+                />
+                <input
+                  type="url"
+                  value={item.url}
+                  onChange={(e) => setClaseYoutubeItems((prev) => prev.map((it, i) => (i === idx ? { ...it, url: e.target.value } : it)))}
+                  placeholder="https://youtube.com/watch?v=..."
+                  aria-label={`URL de YouTube del video ${idx + 1}`}
+                  style={inputStyle}
+                />
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => setClaseYoutubeItems((prev) => [...prev, { nombre: "", url: "" }])}
+              style={{
+                background: "none",
+                border: "1px solid var(--color-line)",
+                color: "var(--color-gold)",
+                padding: "10px 16px",
+                cursor: "pointer",
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "11px",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+              }}
+            >
+              + Agregar otro video
+            </button>
+          </div>
         </div>
 
         {/* Podcast */}
@@ -861,6 +946,7 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
         <div className="flex flex-wrap items-center gap-4">
           {[
             { label: "Audio", ready: hasAudio },
+            { label: "YouTube", ready: hasClaseYoutube },
             { label: "Podcast", ready: hasPodcast },
             { label: "Transcripción", ready: hasTranscripcion },
             { label: "Archivo", ready: hasArchivo },
@@ -899,10 +985,10 @@ export default function AdminUpload({ materias, onSubmit }: AdminUploadProps) {
           style={{
             fontFamily: "var(--font-ibm-plex-mono)",
             fontSize: "12px",
-            color: loadedCount === 5 ? "var(--color-gold)" : "var(--color-text-muted)",
+            color: loadedCount === 6 ? "var(--color-gold)" : "var(--color-text-muted)",
           }}
         >
-          {loadedCount}/5 cargados
+          {loadedCount}/6 cargados
         </span>
       </div>
 

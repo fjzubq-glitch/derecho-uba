@@ -34,7 +34,7 @@ interface MateriaData {
   nombre: string;
 }
 
-type CardTipo = "audio_clase" | "transcripcion" | "podcast" | "archivo" | "enlace";
+type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "podcast" | "archivo" | "enlace";
 
 const CARD_CONFIG: Record<CardTipo, {
   icon: React.ReactNode;
@@ -46,6 +46,12 @@ const CARD_CONFIG: Record<CardTipo, {
     icon: <Headphones style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "AUDIO DE CLASE",
     subtitle: () => "Disponible",
+    emptySubtitle: "No disponible",
+  },
+  clase_youtube: {
+    icon: <Play style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
+    label: "CLASE EN YOUTUBE",
+    subtitle: () => "Ver clase grabada",
     emptySubtitle: "No disponible",
   },
   transcripcion: {
@@ -87,6 +93,7 @@ export default function ClaseNumeroPage() {
   // Audio player state
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playingTipo, setPlayingTipo] = useState<CardTipo | null>(null);
+  const [playingArchivoId, setPlayingArchivoId] = useState<string | null>(null);
   const [playingSrc, setPlayingSrc] = useState("");
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -150,31 +157,31 @@ export default function ClaseNumeroPage() {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const onTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
-      if (playingTipo) {
-        const archivo = getArchivo(playingTipo);
-        if (archivo) saveResumeTime(archivo.id, audio.currentTime);
-      }
-    };
-    const onDurationChange = () => {
-      setDuration(audio.duration);
-      if (playingTipo) {
-        const archivo = getArchivo(playingTipo);
-        if (archivo && Number.isFinite(audio.duration) && audio.duration > 0) {
-          fetch("/api/stream/" + archivo.id, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ duration: Math.round(audio.duration) }),
-          }).catch(() => {});
-        }
-      }
-    };
+const onTimeUpdate = () => {
+     setCurrentTime(audio.currentTime);
+     if (playingArchivoId) {
+       const archivo = getArchivoById(playingArchivoId);
+       if (archivo) saveResumeTime(archivo.id, audio.currentTime);
+     }
+   };
+     const onDurationChange = () => {
+       setDuration(audio.duration);
+       if (playingArchivoId) {
+         const archivo = getArchivoById(playingArchivoId);
+         if (archivo && Number.isFinite(audio.duration) && audio.duration > 0) {
+           fetch("/api/stream/" + archivo.id, {
+             method: "PUT",
+             headers: { "Content-Type": "application/json" },
+             body: JSON.stringify({ duration: Math.round(audio.duration) }),
+           }).catch(() => {});
+         }
+       }
+     };
     const onEnded = () => {
       setIsPlaying(false);
       setCurrentTime(0);
-      if (playingTipo) {
-        const archivo = getArchivo(playingTipo);
+      if (playingArchivoId) {
+        const archivo = getArchivoById(playingArchivoId);
         if (archivo) clearResumeTime(archivo.id);
       }
     };
@@ -188,7 +195,7 @@ export default function ClaseNumeroPage() {
       audio.removeEventListener("durationchange", onDurationChange);
       audio.removeEventListener("ended", onEnded);
     };
-  }, [playingTipo, clase]);
+  }, [playingArchivoId, clase]);
 
   // Aplicar velocidad de reproducción
   useEffect(() => {
@@ -227,70 +234,84 @@ export default function ClaseNumeroPage() {
     return { title: p[0]?.trim() || n, meta: p.slice(1).map((s) => s.trim()).join(", ") || null };
   };
 
+  function youtubeThumbUrl(url: string): string | null {
+    const id = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1];
+    return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : null;
+  }
+
   const { title: materiaTitle } = materia ? splitName(materia.nombre) : { title: "" };
 
-  function getArchivo(tipo: CardTipo): Archivo | undefined {
-    return clase?.archivos.find((a) => a.tipo === tipo);
+  function getArchivos(tipo: CardTipo): Archivo[] {
+    return clase?.archivos.filter((a) => a.tipo === tipo) || [];
   }
 
-  function isAudioTipo(tipo: CardTipo) {
-    return tipo === "audio_clase" || tipo === "podcast";
+  function getFirstArchivo(tipo: CardTipo): Archivo | undefined {
+    return getArchivos(tipo)[0];
   }
 
-  function isTranscription(tipo: CardTipo) {
-    return tipo === "transcripcion";
+  function getArchivoById(id: string | null): Archivo | undefined {
+    if (!id) return undefined;
+    return clase?.archivos.find((a) => a.id === id);
   }
 
-  function isEnlace(tipo: CardTipo) {
-    return tipo === "enlace";
-  }
-
-  function handleAudioAction(tipo: CardTipo) {
-    const archivo = getArchivo(tipo);
-    if (!archivo) return;
-
-    if (archivo.youtube_url) {
-      window.open(archivo.youtube_url, "_blank");
-      trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
-      return;
+    function isAudioTipo(tipo: CardTipo) {
+      return tipo === "audio_clase" || tipo === "podcast";
     }
 
-    if (playingTipo === tipo) {
-      togglePlay();
-      return;
+    function isTranscription(tipo: CardTipo) {
+      return tipo === "transcripcion";
     }
 
-    setPlayingTipo(tipo);
+    function isEnlace(tipo: CardTipo) {
+      return tipo === "enlace";
+    }
 
-    const usarOffline = async () => {
-      const blob = await getAudioOffline(archivo.id);
-      if (blob) {
-        if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
-        const objUrl = URL.createObjectURL(blob);
-        objectUrlRef.current = objUrl;
-        setPlayingSrc(objUrl);
-      } else {
-        setPlayingSrc(audioSourceUrl(archivo));
-      }
-      setCurrentTime(0);
-      setDuration(archivo.duration_seconds || 0);
-      setIsPlaying(false);
-      playTrackedRef.current = null;
+   function handleAudioAction(archivo: Archivo) {
+     if (!archivo) return;
 
-      setTimeout(() => {
-        const audio = audioRef.current;
-        if (!audio) return;
-        audio.playbackRate = playbackRate;
-        const resumeAt = getResumeTime(archivo.id);
-        if (resumeAt > 15) {
-          audio.currentTime = resumeAt;
-          setCurrentTime(resumeAt);
-        }
-      }, 100);
-    };
+     if (archivo.youtube_url) {
+       window.open(archivo.youtube_url, "_blank");
+       trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+       return;
+     }
 
-    usarOffline();
-  }
+     if (playingArchivoId === archivo.id) {
+       togglePlay();
+       return;
+     }
+
+     setPlayingTipo(archivo.tipo as CardTipo);
+     setPlayingArchivoId(archivo.id);
+
+     const usarOffline = async () => {
+       const blob = await getAudioOffline(archivo.id);
+       if (blob) {
+         if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+         const objUrl = URL.createObjectURL(blob);
+         objectUrlRef.current = objUrl;
+         setPlayingSrc(objUrl);
+       } else {
+         setPlayingSrc(audioSourceUrl(archivo));
+       }
+       setCurrentTime(0);
+       setDuration(archivo.duration_seconds || 0);
+       setIsPlaying(false);
+       playTrackedRef.current = null;
+
+       setTimeout(() => {
+         const audio = audioRef.current;
+         if (!audio) return;
+         audio.playbackRate = playbackRate;
+         const resumeAt = getResumeTime(archivo.id);
+         if (resumeAt > 15) {
+           audio.currentTime = resumeAt;
+           setCurrentTime(resumeAt);
+         }
+       }, 100);
+     };
+
+     usarOffline();
+   }
 
   function togglePlay() {
     const audio = audioRef.current;
@@ -299,8 +320,8 @@ export default function ClaseNumeroPage() {
       audio.pause();
       setIsPlaying(false);
     } else {
-      if (playingTipo && playTrackedRef.current !== playingTipo) {
-        const archivo = getArchivo(playingTipo);
+      if (playingArchivoId && playTrackedRef.current !== playingArchivoId) {
+        const archivo = getArchivoById(playingArchivoId);
         if (archivo) {
           if (!isAdminSession()) {
             fetch("/api/analytics", {
@@ -310,7 +331,7 @@ export default function ClaseNumeroPage() {
             }).catch(() => {});
           }
           trackActivity({ tipo: "play_start", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
-          playTrackedRef.current = playingTipo;
+          playTrackedRef.current = playingArchivoId;
         }
       }
       audio.play().catch(() => {});
@@ -339,14 +360,13 @@ export default function ClaseNumeroPage() {
     if (!audio) return;
     audio.currentTime = 0;
     setCurrentTime(0);
-    if (playingTipo) {
-      const archivo = getArchivo(playingTipo);
+    if (playingArchivoId) {
+      const archivo = getArchivoById(playingArchivoId);
       if (archivo) clearResumeTime(archivo.id);
     }
   }
 
-  function handleTranscriptionClick() {
-    const archivo = getArchivo("transcripcion");
+  function handleTranscriptionClick(archivo: Archivo) {
     if (!archivo) return;
     if (archivo.youtube_url) {
       window.open(archivo.youtube_url, "_blank");
@@ -361,63 +381,59 @@ export default function ClaseNumeroPage() {
     }
   }
 
-  function handleCardClick(tipo: CardTipo) {
-    const archivo = getArchivo(tipo);
-    const exists = !!archivo;
-    if (isTranscription(tipo) && exists) {
-      handleTranscriptionClick();
-    } else if (isEnlace(tipo) && exists) {
-      if (archivo?.youtube_url) window.open(archivo.youtube_url, "_blank");
-    } else if (tipo === "archivo" && exists) {
-      if (archivo?.youtube_url) window.open(archivo.youtube_url, "_blank");
-      else if (archivo?.storage_key) window.open(`/api/stream/${archivo.id}?download=1`, "_blank");
-    } else if (isAudioTipo(tipo) && exists) {
-      handleAudioAction(tipo);
-    }
-  }
+   function handleCardClick(archivo: Archivo | null) {
+     if (!archivo) return;
+     const tipo = archivo.tipo as CardTipo;
+if (isTranscription(tipo)) {
+        handleTranscriptionClick(archivo);
+      } else if (tipo === "clase_youtube") {
+        if (archivo.youtube_url) {
+          window.open(archivo.youtube_url, "_blank");
+          trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+        }
+      } else if (isEnlace(tipo)) {
+        if (archivo.youtube_url) window.open(archivo.youtube_url, "_blank");
+      } else if (tipo === "archivo") {
+       if (archivo.youtube_url) window.open(archivo.youtube_url, "_blank");
+       else if (archivo.storage_key) window.open(`/api/stream/${archivo.id}?download=1`, "_blank");
+} else if (isAudioTipo(tipo)) {
+       handleAudioAction(archivo);
+     }
+   }
 
-  function renderCard(tipo: CardTipo) {
+   function renderCard(tipo: CardTipo) {
     const config = CARD_CONFIG[tipo];
-    const archivo = getArchivo(tipo);
-    const exists = !!archivo;
+    const archivos = getArchivos(tipo);
+    const exists = archivos.length > 0;
     const isThisPlaying = playingTipo === tipo && isPlaying;
 
-    return (
-      <article
-        key={tipo}
-        role="button"
-        tabIndex={exists ? 0 : -1}
-        aria-disabled={!exists}
-        onKeyDown={(e) => {
-          if (!exists) return;
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            handleCardClick(tipo);
-          }
-        }}
-        style={{
-          background: "var(--color-card)",
-          padding: "28px 24px",
-          opacity: exists ? 1 : 0.4,
-          cursor: exists ? "pointer" : "default",
-          transition: "background 0.25s ease",
-        }}
-        onMouseEnter={(e) => { if (exists) e.currentTarget.style.background = "var(--color-card-hover)"; }}
-        onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; }}
-        onClick={() => handleCardClick(tipo)}
-      >
-        <div className="flex items-start justify-between gap-3">
-          <div
-            className="flex items-center justify-center flex-shrink-0"
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              border: "1px solid var(--color-gold-dim)",
-            }}
-          >
-            {config.icon}
-          </div>
+if (archivos.length === 0) {
+      return [
+        <article
+        key={`${tipo}-empty`}
+          role="button"
+          tabIndex={-1}
+          aria-disabled={true}
+          style={{
+            background: "var(--color-card)",
+            padding: "28px 24px",
+            opacity: 0.4,
+            cursor: "default",
+            transition: "background 0.25s ease",
+          }}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div
+              className="flex items-center justify-center flex-shrink-0"
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                border: "1px solid var(--color-gold-dim)",
+              }}
+            >
+              {config.icon}
+            </div>
             <div className="flex-1 min-w-0">
               <div
                 style={{
@@ -437,12 +453,12 @@ export default function ClaseNumeroPage() {
                   fontWeight: 500,
                   fontSize: "20px",
                   lineHeight: 1.25,
-                  color: exists ? "var(--color-text)" : "var(--color-text-faint)",
+                  color: "var(--color-text-faint)",
                   marginBottom: "4px",
                   overflowWrap: "break-word",
                 }}
               >
-                {exists ? archivo.nombre_display : "—"}
+                —
               </p>
               <div
                 style={{
@@ -451,29 +467,125 @@ export default function ClaseNumeroPage() {
                   color: "var(--color-text-faint)",
                 }}
               >
-                {exists ? config.subtitle(archivo) : config.emptySubtitle}
+                {config.emptySubtitle}
               </div>
-              {exists && archivo.nota && (
-                <p
-                  style={{
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "11px",
-                    color: "var(--color-gold)",
-                    fontStyle: "italic",
-                    marginTop: "6px",
-                  }}
-                >
-                  {archivo.nota}
-                </p>
-              )}
             </div>
-            {exists && (
-              <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0, marginTop: "14px" }} />
+          </div>
+        </article>,
+      ];
+    }
+
+    return archivos.map((archivo) => renderArchivoCard(tipo, archivo, isThisPlaying));
+  }
+
+  function renderArchivoCard(tipo: CardTipo, archivo: Archivo, isThisPlaying: boolean) {
+    const config = CARD_CONFIG[tipo];
+    const youtubeThumb = archivo.youtube_url ? youtubeThumbUrl(archivo.youtube_url) : null;
+
+    return (
+      <article
+        key={archivo.id}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleCardClick(archivo);
+          }
+        }}
+        style={{
+          background: "var(--color-card)",
+          padding: "28px 24px",
+          opacity: 1,
+          cursor: "pointer",
+          transition: "background 0.25s ease",
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; }}
+        onClick={() => handleCardClick(archivo)}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div
+            className="flex items-center justify-center flex-shrink-0"
+            style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              border: "1px solid var(--color-gold-dim)",
+            }}
+          >
+            {config.icon}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "9px",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--color-gold)",
+                marginBottom: "6px",
+              }}
+            >
+              {config.label}
+            </div>
+            <p
+              style={{
+                fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                fontWeight: 500,
+                fontSize: "20px",
+                lineHeight: 1.25,
+                color: "var(--color-text)",
+                marginBottom: "4px",
+                overflowWrap: "break-word",
+              }}
+            >
+              {archivo.nombre_display}
+            </p>
+            <div
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "11px",
+                color: "var(--color-text-faint)",
+              }}
+            >
+              {config.subtitle(archivo)}
+            </div>
+            {archivo.nota && (
+              <p
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "11px",
+                  color: "var(--color-gold)",
+                  fontStyle: "italic",
+                  marginTop: "6px",
+                }}
+              >
+                {archivo.nota}
+              </p>
             )}
           </div>
+          <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0, marginTop: "14px" }} />
+        </div>
+
+        {/* Thumbnail YouTube */}
+        {youtubeThumb && (
+          <div className="mt-4" style={{ }}>
+            <img
+              src={youtubeThumb}
+              alt=""
+              style={{
+                width: "100%",
+                height: "auto",
+                borderRadius: "4px",
+                border: "1px solid var(--color-line-soft)",
+              }}
+            />
+          </div>
+        )}
 
         {/* Audio player inline */}
-        {isAudioTipo(tipo) && playingTipo === tipo && exists && (
+        {isAudioTipo(tipo) && playingArchivoId === archivo.id && (
           <div className="mt-4 pt-4 border-t" style={{ borderColor: "var(--color-line-soft)" }}>
             <div className="flex items-center gap-3">
               <button
@@ -550,7 +662,7 @@ export default function ClaseNumeroPage() {
                 <RotateCcw style={{ width: "11px", height: "11px" }} />
                 Inicio
               </button>
-              {isAudioTipo(tipo) && archivo && (
+              {isAudioTipo(tipo) && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -581,8 +693,6 @@ export default function ClaseNumeroPage() {
                         : "var(--color-text-muted)",
                     transition: "color 0.2s ease",
                   }}
-                  onMouseEnter={(e) => { if (offlineStatus[archivo.id] !== "saved") e.currentTarget.style.color = "var(--color-gold)"; }}
-                  onMouseLeave={(e) => { if (offlineStatus[archivo.id] !== "saved") e.currentTarget.style.color = "var(--color-text-muted)"; }}
                 >
                   {offlineStatus[archivo.id] === "saved" ? (
                     <>
@@ -619,7 +729,7 @@ export default function ClaseNumeroPage() {
         )}
 
         {/* Transcription expand */}
-        {isTranscription(tipo) && openTranscripcion && exists && archivo.contenido_texto && (
+        {isTranscription(tipo) && openTranscripcion && archivo.contenido_texto && (
           <div
             style={{
               marginTop: "16px",
@@ -642,7 +752,7 @@ export default function ClaseNumeroPage() {
     );
   }
 
-  const tipos: CardTipo[] = ["audio_clase", "transcripcion", "podcast", "archivo", "enlace"];
+   const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "podcast", "archivo", "enlace"];
 
   if (loading) {
     return (
@@ -763,7 +873,7 @@ export default function ClaseNumeroPage() {
               borderRadius: 0,
             }}
           >
-            {tipos.map(renderCard)}
+            {tipos.flatMap(renderCard)}
           </div>
         </div>
       </main>

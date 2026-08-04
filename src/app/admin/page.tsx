@@ -64,6 +64,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
 
   const [activeTab, setActiveTab] = useState<"upload" | "manage" | "analytics">("upload");
+   const [claseEditar, setClaseEditar] = useState<{ claseId: string; materiaId: string } | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [visitantesUnicos, setVisitantesUnicos] = useState(0);
   const [totalVisitas, setTotalVisitas] = useState(0);
@@ -149,7 +150,7 @@ export default function AdminPage() {
     claseTitulo: string,
     claseFecha: string,
     items: Array<{
-      tipo: "audio_clase" | "podcast" | "transcripcion" | "archivo" | "enlace";
+      tipo: "audio_clase" | "clase_youtube" | "podcast" | "transcripcion" | "archivo" | "enlace";
       nombre: string;
       archivo?: File;
       driveLink?: string;
@@ -671,11 +672,18 @@ export default function AdminPage() {
 
           {/* Upload Tab */}
           {activeTab === "upload" && (
-            <AdminUpload materias={materias} onSubmit={handleUpload} />
+            <AdminUpload materias={materias} onSubmit={handleUpload} claseInicial={claseEditar} />
           )}
 
           {/* Manage Tab */}
-          {activeTab === "manage" && <AdminManage />}
+          {activeTab === "manage" && (
+            <AdminManage
+              onEditarClase={(claseId, materiaId) => {
+                setClaseEditar({ claseId, materiaId });
+                setActiveTab("upload");
+              }}
+            />
+          )}
 
           {/* Analytics Tab */}
           {activeTab === "analytics" && (

@@ -28,6 +28,7 @@ interface Clase {
   numero: number;
   titulo: string;
   fecha: string | null;
+  materia_id: string;
   materia_nombre: string;
   materia_slug: string;
   archivos: Archivo[];
@@ -61,7 +62,7 @@ const inputStyle: React.CSSProperties = {
   fontFamily: "var(--font-inter)",
 };
 
-export default function AdminManage() {
+export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseId: string, materiaId: string) => void }) {
   const [materias, setMaterias] = useState<Materia[]>([]);
   const [clases, setClases] = useState<Clase[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,7 +117,7 @@ export default function AdminManage() {
         numero,
         titulo,
         fecha,
-        materias!inner(nombre, slug)
+        materias!inner(id, nombre, slug)
       `)
       .order("numero");
 
@@ -134,6 +135,7 @@ export default function AdminManage() {
             numero: c.numero,
             titulo: c.titulo,
             fecha: c.fecha,
+            materia_id: c.materias?.id || "",
             materia_nombre: c.materias?.nombre || "",
             materia_slug: c.materias?.slug || "",
             archivos: archivos || [],
@@ -338,7 +340,7 @@ export default function AdminManage() {
           setProcessing(false);
           return;
         }
-      } else if (replacing.tipo === "youtube") {
+      } else if (replacing.tipo === "youtube" || replacing.tipo === "clase_youtube") {
         if (!newYoutubeUrl) {
           setMessage("Error: pegá un link de YouTube");
           setProcessing(false);
@@ -379,6 +381,7 @@ export default function AdminManage() {
 
   const TIPO_ICONS: Record<string, React.ReactNode> = {
     audio_clase: <Headphones style={{ width: "14px", height: "14px" }} />,
+    clase_youtube: <Play style={{ width: "14px", height: "14px" }} />,
     podcast: <Play style={{ width: "14px", height: "14px" }} />,
     transcripcion: <FileText style={{ width: "14px", height: "14px" }} />,
     archivo: <FileText style={{ width: "14px", height: "14px" }} />,
@@ -388,6 +391,7 @@ export default function AdminManage() {
 
   const TIPO_LABELS: Record<string, string> = {
     audio_clase: "Audio de clase",
+    clase_youtube: "Clase en YouTube",
     podcast: "LexPodcast",
     transcripcion: "Transcripción",
     archivo: "Archivo adjunto",
@@ -395,7 +399,7 @@ export default function AdminManage() {
     youtube: "YouTube",
   };
 
-  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "podcast" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo";
+  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "podcast" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo";
 
   const actionBtnStyle: React.CSSProperties = {
     padding: "6px 12px",
@@ -720,6 +724,10 @@ export default function AdminManage() {
                 <KebabMenu
                   menuKey={`clase-${clase.id}`}
                   items={[
+                    {
+                      label: "Agregar contenido",
+                      onClick: () => { if (onEditarClase) onEditarClase(clase.id, clase.materia_id); },
+                    },
                     {
                       label: "Editar clase",
                       onClick: () => setEditing({
@@ -1186,7 +1194,7 @@ export default function AdminManage() {
                 </div>
               )}
 
-              {replacing.tipo === "youtube" && (
+              {(replacing.tipo === "youtube" || replacing.tipo === "clase_youtube") && (
                 <div>
                   <label htmlFor="replace-youtube" style={labelStyle}>Link de YouTube</label>
                   <input

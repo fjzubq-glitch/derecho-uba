@@ -6,7 +6,7 @@ import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
 import { formatFechaLocal } from "@/lib/utils";
-import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2 } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2, Play } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -25,11 +25,12 @@ interface Clase {
   archivos: Archivo[];
 }
 
-type Filtro = "todas" | "audio_clase" | "transcripcion" | "podcast" | "archivo" | "enlace";
+type Filtro = "todas" | "audio_clase" | "clase_youtube" | "transcripcion" | "podcast" | "archivo" | "enlace";
 
 const FILTRO_LABELS: Record<Filtro, string> = {
   todas: "Todas",
   audio_clase: "Audio",
+  clase_youtube: "YouTube",
   transcripcion: "Transcripción",
   podcast: "Podcast",
   archivo: "Archivos",
@@ -80,6 +81,7 @@ export default function MateriaPage() {
   const FILTRO_COUNT: Record<Filtro, number> = {
     todas: clases.length,
     audio_clase: clases.filter((c) => tieneRecurso(c, "audio_clase")).length,
+    clase_youtube: clases.filter((c) => tieneRecurso(c, "clase_youtube")).length,
     transcripcion: clases.filter((c) => tieneRecurso(c, "transcripcion")).length,
     podcast: clases.filter((c) => tieneRecurso(c, "podcast")).length,
     archivo: clases.filter((c) => tieneRecurso(c, "archivo")).length,
@@ -325,6 +327,7 @@ export default function MateriaPage() {
                       {clase.archivos.length > 0 && (
                         <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
                           {tieneRecurso(clase, "audio_clase") && <Headphones style={{ width: "12px", height: "12px" }} />}
+                          {tieneRecurso(clase, "clase_youtube") && <Play style={{ width: "12px", height: "12px" }} />}
                           {tieneRecurso(clase, "transcripcion") && <FileText style={{ width: "12px", height: "12px" }} />}
                           {tieneRecurso(clase, "podcast") && <Volume2 style={{ width: "12px", height: "12px" }} />}
                           {(tieneRecurso(clase, "archivo") || tieneRecurso(clase, "enlace")) && (
