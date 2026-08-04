@@ -50,7 +50,7 @@ const CARD_CONFIG: Record<CardTipo, {
   },
   clase_youtube: {
     icon: <Play style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
-    label: "CLASE EN YOUTUBE",
+    label: "CLASE VIRTUAL",
     subtitle: () => "Ver clase grabada",
     emptySubtitle: "No disponible",
   },

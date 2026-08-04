@@ -231,7 +231,7 @@ const hasEnlace = enlaceUrl.trim() !== "";
 
     claseYoutubeItems.forEach((item, idx) => {
       if (item.url.trim()) {
-        items.push({ tipo: "clase_youtube", nombre: item.nombre.trim() || `Clase en YouTube ${claseYoutubeItems.filter((i) => i.url.trim()).length > 1 ? idx + 1 : ""}`.trim(), driveLink: item.url.trim() });
+        items.push({ tipo: "clase_youtube", nombre: item.nombre.trim() || `Clase Virtual ${claseYoutubeItems.filter((i) => i.url.trim()).length > 1 ? idx + 1 : ""}`.trim(), driveLink: item.url.trim() });
       }
     });
 
@@ -676,11 +676,11 @@ const hasEnlace = enlaceUrl.trim() !== "";
           )}
         </div>
 
-        {/* Clase en YouTube */}
+        {/* Clase Virtual */}
         <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
           <h3 style={sectionHeaderStyle}>
             <Play style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
-            Clase en YouTube
+Clase Virtual
           </h3>
 
           <div className="space-y-3">
