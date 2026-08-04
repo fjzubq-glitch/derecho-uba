@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
+export const revalidate = 300; // Revalidar cada 5 minutos (ISR)
+
 export async function GET() {
   try {
     const supabase = getSupabaseAdmin();
