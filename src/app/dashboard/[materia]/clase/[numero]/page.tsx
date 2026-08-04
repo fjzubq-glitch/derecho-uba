@@ -286,7 +286,6 @@ export default function ClaseNumeroPage() {
           audio.currentTime = resumeAt;
           setCurrentTime(resumeAt);
         }
-        audio.play().catch(() => {});
       }, 100);
     };
 
