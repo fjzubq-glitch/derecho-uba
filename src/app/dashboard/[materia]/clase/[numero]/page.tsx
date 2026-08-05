@@ -46,20 +46,22 @@ function TranscripcionThumb() {
       <rect width="320" height="180" fill="#211E14" />
       <circle cx="160" cy="95" r="104" fill="none" stroke="#2E2A1B" strokeWidth="1.5" />
       <circle cx="160" cy="95" r="78" fill="none" stroke="#C7A86A" strokeOpacity="0.18" strokeWidth="1" strokeDasharray="3 6" />
-      <g stroke="#C7A86A" strokeLinecap="round" strokeLinejoin="round" fill="none">
-        <line x1="90" y1="50" x2="230" y2="50" strokeWidth="3" />
-        <line x1="160" y1="56" x2="160" y2="142" strokeWidth="3" />
-        <line x1="114" y1="50" x2="114" y2="122" strokeWidth="2" />
-        <line x1="206" y1="50" x2="206" y2="122" strokeWidth="2" />
-        <line x1="160" y1="142" x2="138" y2="168" strokeWidth="2.5" />
-        <line x1="160" y1="142" x2="182" y2="168" strokeWidth="2.5" />
+      <g transform="translate(160 95) scale(0.78) translate(-160 -95)">
+        <g stroke="#C7A86A" strokeLinecap="round" strokeLinejoin="round" fill="none">
+          <line x1="90" y1="50" x2="230" y2="50" strokeWidth="3" />
+          <line x1="160" y1="56" x2="160" y2="142" strokeWidth="3" />
+          <line x1="114" y1="50" x2="114" y2="122" strokeWidth="2" />
+          <line x1="206" y1="50" x2="206" y2="122" strokeWidth="2" />
+          <line x1="160" y1="142" x2="138" y2="168" strokeWidth="2.5" />
+          <line x1="160" y1="142" x2="182" y2="168" strokeWidth="2.5" />
+        </g>
+        <circle cx="160" cy="28" r="5" fill="#C7A86A" />
+        <g stroke="#C7A86A" strokeWidth="2" fill="#C7A86A" fillOpacity="0.9" strokeLinejoin="round">
+          <path d="M 92 122 C 92 148, 136 148, 136 122 Z" />
+          <path d="M 184 122 C 184 148, 228 148, 228 122 Z" />
+        </g>
+        <line x1="136" y1="168" x2="184" y2="168" stroke="#C7A86A" strokeWidth="3" strokeLinecap="round" />
       </g>
-      <circle cx="160" cy="28" r="5" fill="#C7A86A" />
-      <g stroke="#C7A86A" strokeWidth="2" fill="#C7A86A" fillOpacity="0.9" strokeLinejoin="round">
-        <path d="M 92 122 C 92 148, 136 148, 136 122 Z" />
-        <path d="M 184 122 C 184 148, 228 148, 228 122 Z" />
-      </g>
-      <line x1="136" y1="168" x2="184" y2="168" stroke="#C7A86A" strokeWidth="3" strokeLinecap="round" />
     </svg>
   );
 }
