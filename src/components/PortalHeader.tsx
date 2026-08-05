@@ -47,10 +47,9 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
 
   return (
     <header
-      className="border-b"
+      className="site-header border-b"
       style={{
         borderColor: "var(--color-line-soft)",
-        background: "linear-gradient(180deg, var(--color-ink-2) 0%, var(--color-ink) 100%)",
       }}
     >
       <div

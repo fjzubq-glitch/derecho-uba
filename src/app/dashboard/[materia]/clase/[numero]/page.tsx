@@ -101,6 +101,7 @@ export default function ClaseNumeroPage() {
 
   // Transcription expand
   const [openTranscripcion, setOpenTranscripcion] = useState(false);
+  let cardIndex = 0;
 
   useEffect(() => {
     if (materiaSlug && numero) {
@@ -392,7 +393,7 @@ if (isTranscription(tipo)) {
      }
    }
 
-    function renderCard(tipo: CardTipo) {
+  function renderCard(tipo: CardTipo) {
     const archivos = getArchivos(tipo);
     const isThisPlaying = playingTipo === tipo && isPlaying;
 
@@ -400,12 +401,13 @@ if (isTranscription(tipo)) {
       return [];
     }
 
-    return archivos.map((archivo) => renderArchivoCard(tipo, archivo, isThisPlaying));
+    return archivos.map((archivo) => renderArchivoCard(tipo, archivo, isThisPlaying, cardIndex++));
   }
 
-  function renderArchivoCard(tipo: CardTipo, archivo: Archivo, isThisPlaying: boolean) {
+  function renderArchivoCard(tipo: CardTipo, archivo: Archivo, isThisPlaying: boolean, cardIndex: number) {
     const config = CARD_CONFIG[tipo];
     const youtubeThumb = archivo.youtube_url ? youtubeThumbUrl(archivo.youtube_url) : null;
+    const isActive = playingArchivoId === archivo.id;
 
     return (
       <article
@@ -418,12 +420,15 @@ if (isTranscription(tipo)) {
             handleCardClick(archivo);
           }
         }}
+        className="card-reveal card-hover"
         style={{
           background: "var(--color-card)",
           padding: "28px 24px",
           opacity: 1,
           cursor: "pointer",
-          transition: "background 0.25s ease",
+          animationDelay: `${cardIndex * 55}ms`,
+          transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease",
+          boxShadow: isActive ? "inset 0 0 0 1px var(--color-gold)" : "none",
         }}
         onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; }}
         onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; }}
@@ -450,9 +455,22 @@ if (isTranscription(tipo)) {
                 textTransform: "uppercase",
                 color: "var(--color-gold)",
                 marginBottom: "6px",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
               }}
             >
               {config.label}
+              <div
+                className="flex items-end"
+                style={{ gap: "2px", height: "10px", opacity: isThisPlaying ? 1 : 0, transition: "opacity 0.2s ease" }}
+                aria-label="Reproduciendo"
+              >
+                <span className="eq-bar" />
+                <span className="eq-bar" />
+                <span className="eq-bar" />
+                <span className="eq-bar" />
+              </div>
             </div>
             <p
               style={{

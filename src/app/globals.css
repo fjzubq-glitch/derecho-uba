@@ -95,6 +95,64 @@ article {
   }
 }
 
+/* ── Reveal al cargar ── */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card-reveal {
+  animation: cardIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Hover de tarjeta: subida + acento dorado izquierdo ── */
+.card-hover {
+  position: relative;
+}
+.card-hover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-gold);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.3s ease;
+}
+.card-hover:hover::before {
+  transform: scaleY(1);
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+}
+
+/* ── Header sticky con blur ── */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(14, 12, 10, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* ── Indicador "reproduciendo" ── */
+@keyframes eq {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+.eq-bar {
+  width: 2px;
+  height: 10px;
+  background: var(--color-gold);
+  transform-origin: bottom;
+  animation: eq 1s ease-in-out infinite;
+}
+.eq-bar:nth-child(2) { animation-delay: 0.18s; }
+.eq-bar:nth-child(3) { animation-delay: 0.36s; }
+.eq-bar:nth-child(4) { animation-delay: 0.54s; }
+
 /* ── Hide scrollbar (filter chips on mobile) ── */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }

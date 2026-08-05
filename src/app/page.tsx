@@ -192,7 +192,7 @@ export default function HomePage() {
                 borderRadius: 0,
               }}
             >
-              {materias.map((m) => {
+              {materias.map((m, i) => {
                 const { title, meta } = splitName(m.nombre);
                 const isEmpty = m.total_clases === 0;
 
@@ -200,14 +200,15 @@ export default function HomePage() {
                   <article
                     key={m.id}
                     onClick={() => router.push(`/dashboard/${m.slug}`)}
-                    className="group flex flex-col cursor-pointer"
+                    className="group card-reveal card-hover flex flex-col cursor-pointer"
                     tabIndex={0}
                     onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") router.push(`/dashboard/${m.slug}`); }}
                     style={{
                       background: "var(--color-card)",
                       padding: "32px 30px",
                       borderRadius: 0,
-                      transition: "background 0.25s ease",
+                      animationDelay: `${i * 60}ms`,
+                      transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease",
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}

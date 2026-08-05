@@ -262,14 +262,14 @@ export default function MateriaPage() {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
               style={{ background: "var(--color-line-soft)", gap: "1px" }}
             >
-              {clasesFiltradas.map((clase) => (
+              {clasesFiltradas.map((clase, i) => (
                 <article
                   key={clase.id}
                   onClick={() => {
                     trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
                     router.push(claseHref(clase.numero));
                   }}
-                  className="group flex flex-col cursor-pointer"
+                  className="group card-reveal card-hover flex flex-col cursor-pointer"
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
@@ -280,7 +280,8 @@ export default function MateriaPage() {
                   style={{
                     background: "var(--color-card)",
                     padding: "28px 24px",
-                    transition: "background 0.25s ease",
+                    animationDelay: `${i * 50}ms`,
+                    transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease",
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
@@ -359,15 +360,15 @@ export default function MateriaPage() {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
                 style={{ background: "var(--color-line-soft)", gap: "1px" }}
               >
-                {podcasts.map((p) => (
+                {podcasts.map((p, i) => (
                   <article
                     key={p.id}
                     onClick={() => router.push(claseHref(p.clase.numero))}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(claseHref(p.clase.numero)); } }}
-                    className="flex items-center gap-4 cursor-pointer focus-visible"
-                    style={{ background: "var(--color-card)", padding: "20px 22px", transition: "background 0.25s ease" }}
+                    className="card-reveal card-hover flex items-center gap-4 cursor-pointer focus-visible"
+                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease" }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
                   >
@@ -414,15 +415,15 @@ export default function MateriaPage() {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
                 style={{ background: "var(--color-line-soft)", gap: "1px" }}
               >
-                {archivosAdjuntos.map((a) => (
+                {archivosAdjuntos.map((a, i) => (
                   <article
                     key={a.id}
                     onClick={() => router.push(claseHref(a.clase.numero))}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(claseHref(a.clase.numero)); } }}
-                    className="flex items-center gap-4 cursor-pointer focus-visible"
-                    style={{ background: "var(--color-card)", padding: "20px 22px", transition: "background 0.25s ease" }}
+                    className="card-reveal card-hover flex items-center gap-4 cursor-pointer focus-visible"
+                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease" }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
                   >
@@ -469,15 +470,15 @@ export default function MateriaPage() {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
                 style={{ background: "var(--color-line-soft)", gap: "1px" }}
               >
-                {enlaces.map((e) => (
+                {enlaces.map((e, i) => (
                   <article
                     key={e.id}
                     onClick={() => router.push(claseHref(e.clase.numero))}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); router.push(claseHref(e.clase.numero)); } }}
-                    className="flex items-center gap-4 cursor-pointer focus-visible"
-                    style={{ background: "var(--color-card)", padding: "20px 22px", transition: "background 0.25s ease" }}
+                    className="card-reveal card-hover flex items-center gap-4 cursor-pointer focus-visible"
+                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease" }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
                   >
