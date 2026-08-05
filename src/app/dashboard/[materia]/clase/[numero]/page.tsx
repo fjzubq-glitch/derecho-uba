@@ -36,6 +36,42 @@ interface MateriaData {
 
 type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "podcast" | "archivo" | "enlace";
 
+function TranscripcionThumb() {
+  return (
+    <svg
+      viewBox="0 0 320 180"
+      aria-hidden="true"
+      style={{ width: "100%", height: "auto", display: "block" }}
+    >
+      <rect width="320" height="180" fill="#211E14" />
+      <rect x="60" y="32" width="200" height="116" fill="#E9E1CD" />
+      <rect x="60" y="32" width="200" height="116" fill="none" stroke="#C7A86A" strokeWidth="1.5" />
+      <rect x="76" y="48" width="70" height="5" fill="#A3998A" />
+      <rect x="76" y="62" width="168" height="4" fill="#C9C2B2" />
+      <rect x="76" y="74" width="168" height="4" fill="#C9C2B2" />
+      <rect x="76" y="86" width="150" height="4" fill="#C9C2B2" />
+      <rect x="76" y="98" width="168" height="4" fill="#C9C2B2" />
+      <rect x="76" y="110" width="120" height="4" fill="#C9C2B2" />
+      <rect x="76" y="128" width="90" height="1.5" fill="#A3998A" />
+      <g transform="translate(228 122)">
+        <path d="M-6 -16 L-14 -4 L-6 -8 Z" fill="#C7A86A" opacity="0.85" />
+        <path d="M6 -16 L14 -4 L6 -8 Z" fill="#C7A86A" opacity="0.85" />
+        <circle r="17" fill="#C7A86A" />
+        <circle r="13.5" fill="none" stroke="#211E14" strokeWidth="1.2" opacity="0.35" />
+        <g stroke="#211E14" strokeWidth="1.4" strokeLinecap="round" fill="none">
+          <circle cx="0" cy="-9" r="2" fill="#211E14" stroke="none" />
+          <line x1="0" y1="-7" x2="0" y2="8" />
+          <line x1="-9" y1="-3" x2="9" y2="-3" />
+          <line x1="-5" y1="-3" x2="-5" y2="6" />
+          <line x1="5" y1="-3" x2="5" y2="6" />
+          <path d="M-10 7 Q-5 14 0 7" />
+          <path d="M0 7 Q5 14 10 7" />
+        </g>
+      </g>
+    </svg>
+  );
+}
+
 const CARD_CONFIG: Record<CardTipo, {
   icon: React.ReactNode;
   label: string;
@@ -415,6 +451,7 @@ if (isTranscription(tipo)) {
   function renderArchivoCard(tipo: CardTipo, archivo: Archivo, isThisPlaying: boolean) {
     const config = CARD_CONFIG[tipo];
     const youtubeThumb = archivo.youtube_url ? youtubeThumbUrl(archivo.youtube_url) : null;
+    const transcriptionThumb = !youtubeThumb && tipo === "transcripcion" ? <TranscripcionThumb /> : null;
 
     return (
       <article
@@ -515,6 +552,20 @@ if (isTranscription(tipo)) {
                 border: "1px solid var(--color-line-soft)",
               }}
             />
+          </div>
+        )}
+
+        {/* Thumbnail genérica de transcripción */}
+        {transcriptionThumb && (
+          <div
+            className="mt-4"
+            style={{
+              borderRadius: "4px",
+              border: "1px solid var(--color-line-soft)",
+              overflow: "hidden",
+            }}
+          >
+            {transcriptionThumb}
           </div>
         )}
 
