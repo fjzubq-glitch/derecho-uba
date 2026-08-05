@@ -401,78 +401,12 @@ if (isTranscription(tipo)) {
      }
    }
 
-   function renderCard(tipo: CardTipo) {
-    const config = CARD_CONFIG[tipo];
+    function renderCard(tipo: CardTipo) {
     const archivos = getArchivos(tipo);
-    const exists = archivos.length > 0;
     const isThisPlaying = playingTipo === tipo && isPlaying;
 
-if (archivos.length === 0) {
-      return [
-        <article
-        key={`${tipo}-empty`}
-          role="button"
-          tabIndex={-1}
-          aria-disabled={true}
-          style={{
-            background: "var(--color-card)",
-            padding: "28px 24px",
-            opacity: 0.4,
-            cursor: "default",
-            transition: "background 0.25s ease",
-          }}
-        >
-          <div className="flex items-start justify-between gap-3">
-            <div
-              className="flex items-center justify-center flex-shrink-0"
-              style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                border: "1px solid var(--color-gold-dim)",
-              }}
-            >
-              {config.icon}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div
-                style={{
-                  fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "9px",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: "var(--color-gold)",
-                  marginBottom: "6px",
-                }}
-              >
-                {config.label}
-              </div>
-              <p
-                style={{
-                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                  fontWeight: 500,
-                  fontSize: "20px",
-                  lineHeight: 1.25,
-                  color: "var(--color-text-faint)",
-                  marginBottom: "4px",
-                  overflowWrap: "break-word",
-                }}
-              >
-                —
-              </p>
-              <div
-                style={{
-                  fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "11px",
-                  color: "var(--color-text-faint)",
-                }}
-              >
-                {config.emptySubtitle}
-              </div>
-            </div>
-          </div>
-        </article>,
-      ];
+    if (archivos.length === 0) {
+      return [];
     }
 
     return archivos.map((archivo) => renderArchivoCard(tipo, archivo, isThisPlaying));
@@ -865,16 +799,31 @@ if (archivos.length === 0) {
           </div>
 
           {/* Cards de contenido */}
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
-            style={{
-              background: "var(--color-line-soft)",
-              gap: "1px",
-              borderRadius: 0,
-            }}
-          >
-            {tipos.flatMap(renderCard)}
-          </div>
+          {clase.archivos.length === 0 ? (
+            <div
+              style={{
+                padding: "80px 48px",
+                textAlign: "center",
+                background: "var(--color-card)",
+                border: "1px solid var(--color-line-soft)",
+              }}
+            >
+              <p style={{ color: "var(--color-text-muted)", fontSize: "15px" }}>
+                Esta clase todavía no tiene contenido disponible
+              </p>
+            </div>
+          ) : (
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
+              style={{
+                background: "var(--color-line-soft)",
+                gap: "1px",
+                borderRadius: 0,
+              }}
+            >
+              {tipos.flatMap(renderCard)}
+            </div>
+          )}
         </div>
       </main>
 
