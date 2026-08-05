@@ -72,8 +72,6 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const [cargandoClases, setCargandoClases] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [transcripcionMethod, setTranscripcionMethod] = useState<"drive" | "texto">("drive");
-
-  const [audioNombre, setAudioNombre] = useState("");
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const audioInputRef = useRef<HTMLInputElement>(null);
 
@@ -81,7 +79,6 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const [podcastFile, setPodcastFile] = useState<File | null>(null);
   const podcastInputRef = useRef<HTMLInputElement>(null);
 
-  const [transcripcionNombre, setTranscripcionNombre] = useState("");
   const [transcripcionDriveLink, setTranscripcionDriveLink] = useState("");
   const [transcripcionTexto, setTranscripcionTexto] = useState("");
 
@@ -194,11 +191,11 @@ const hasEnlace = enlaceUrl.trim() !== "";
     const items: UploadItem[] = [];
 
     if (useCloudinary && cloudinaryUrl) {
-      items.push({ tipo: "audio_clase", nombre: audioNombre || `Clase ${claseNumero}`, cloudinaryUrl: cloudinaryUrl });
+      items.push({ tipo: "audio_clase", nombre: `Clase ${claseNumero}`, cloudinaryUrl: cloudinaryUrl });
     } else if (useYoutube && youtubeUrl) {
       items.push({ tipo: "audio_clase", nombre: youtubeNombre || `Clase ${claseNumero}`, driveLink: youtubeUrl });
     } else if (audioFile) {
-      items.push({ tipo: "audio_clase", nombre: audioNombre || `Clase ${claseNumero}`, archivo: audioFile });
+      items.push({ tipo: "audio_clase", nombre: `Clase ${claseNumero}`, archivo: audioFile });
     }
 
     if (usePodcastCloudinary && podcastCloudinaryUrl) {
@@ -208,9 +205,9 @@ const hasEnlace = enlaceUrl.trim() !== "";
     }
 
     if (transcripcionMethod === "drive" && transcripcionDriveLink) {
-      items.push({ tipo: "transcripcion", nombre: transcripcionNombre || `Transcripción Clase ${claseNumero}`, driveLink: transcripcionDriveLink });
+      items.push({ tipo: "transcripcion", nombre: `Clase ${claseNumero}`, driveLink: transcripcionDriveLink });
     } else if (transcripcionMethod === "texto" && transcripcionTexto) {
-      items.push({ tipo: "transcripcion", nombre: transcripcionNombre || `Transcripción Clase ${claseNumero}`, textoContenido: transcripcionTexto });
+      items.push({ tipo: "transcripcion", nombre: `Clase ${claseNumero}`, textoContenido: transcripcionTexto });
     }
 
     if (hasArchivo) {
@@ -256,11 +253,9 @@ const hasEnlace = enlaceUrl.trim() !== "";
     setClaseTitulo("");
     setClaseFecha("");
     setClaseSeleccionada("");
-    setAudioNombre("");
     setAudioFile(null);
     setPodcastNombre("");
     setPodcastFile(null);
-    setTranscripcionNombre("");
     setTranscripcionDriveLink("");
     setTranscripcionTexto("");
     setYoutubeUrl("");
@@ -605,14 +600,6 @@ const hasEnlace = enlaceUrl.trim() !== "";
           {useCloudinary ? (
             <div className="space-y-3">
               <input
-                type="text"
-                value={audioNombre}
-                onChange={(e) => setAudioNombre(e.target.value)}
-                placeholder="Nombre del audio"
-                aria-label="Nombre del audio"
-                style={inputStyle}
-              />
-              <input
                 type="url"
                 value={cloudinaryUrl}
                 onChange={(e) => setCloudinaryUrl(e.target.value)}
@@ -642,14 +629,6 @@ const hasEnlace = enlaceUrl.trim() !== "";
             </div>
           ) : (
             <div className="space-y-3">
-              <input
-                type="text"
-                value={audioNombre}
-                onChange={(e) => setAudioNombre(e.target.value)}
-                placeholder="Nombre del audio"
-                aria-label="Nombre del audio"
-                style={inputStyle}
-              />
               <DropZone
                 file={audioFile}
                 onFile={(f) => setAudioFile(f)}
@@ -807,15 +786,6 @@ Clase Virtual
             <FileText style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
             Transcripción
           </h3>
-
-          <input
-            type="text"
-            value={transcripcionNombre}
-            onChange={(e) => setTranscripcionNombre(e.target.value)}
-            placeholder="Nombre de la transcripción"
-            aria-label="Nombre de la transcripción"
-            style={{ ...inputStyle, marginBottom: "16px" }}
-          />
 
           <div className="flex gap-4 mb-4">
             <Radio checked={transcripcionMethod === "drive"} onChange={() => setTranscripcionMethod("drive")} label="Link de Google Drive" />
