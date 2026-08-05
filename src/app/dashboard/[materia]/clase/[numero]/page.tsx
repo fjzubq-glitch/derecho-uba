@@ -44,30 +44,22 @@ function TranscripcionThumb() {
       style={{ width: "100%", height: "auto", display: "block" }}
     >
       <rect width="320" height="180" fill="#211E14" />
-      <rect x="60" y="32" width="200" height="116" fill="#E9E1CD" />
-      <rect x="60" y="32" width="200" height="116" fill="none" stroke="#C7A86A" strokeWidth="1.5" />
-      <rect x="76" y="48" width="70" height="5" fill="#A3998A" />
-      <rect x="76" y="62" width="168" height="4" fill="#C9C2B2" />
-      <rect x="76" y="74" width="168" height="4" fill="#C9C2B2" />
-      <rect x="76" y="86" width="150" height="4" fill="#C9C2B2" />
-      <rect x="76" y="98" width="168" height="4" fill="#C9C2B2" />
-      <rect x="76" y="110" width="120" height="4" fill="#C9C2B2" />
-      <rect x="76" y="128" width="90" height="1.5" fill="#A3998A" />
-      <g transform="translate(228 122)">
-        <path d="M-6 -16 L-14 -4 L-6 -8 Z" fill="#C7A86A" opacity="0.85" />
-        <path d="M6 -16 L14 -4 L6 -8 Z" fill="#C7A86A" opacity="0.85" />
-        <circle r="17" fill="#C7A86A" />
-        <circle r="13.5" fill="none" stroke="#211E14" strokeWidth="1.2" opacity="0.35" />
-        <g stroke="#211E14" strokeWidth="1.4" strokeLinecap="round" fill="none">
-          <circle cx="0" cy="-9" r="2" fill="#211E14" stroke="none" />
-          <line x1="0" y1="-7" x2="0" y2="8" />
-          <line x1="-9" y1="-3" x2="9" y2="-3" />
-          <line x1="-5" y1="-3" x2="-5" y2="6" />
-          <line x1="5" y1="-3" x2="5" y2="6" />
-          <path d="M-10 7 Q-5 14 0 7" />
-          <path d="M0 7 Q5 14 10 7" />
-        </g>
+      <circle cx="160" cy="95" r="104" fill="none" stroke="#2E2A1B" strokeWidth="1.5" />
+      <circle cx="160" cy="95" r="78" fill="none" stroke="#C7A86A" strokeOpacity="0.18" strokeWidth="1" strokeDasharray="3 6" />
+      <g stroke="#C7A86A" strokeLinecap="round" strokeLinejoin="round" fill="none">
+        <line x1="90" y1="50" x2="230" y2="50" strokeWidth="3" />
+        <line x1="160" y1="56" x2="160" y2="142" strokeWidth="3" />
+        <line x1="114" y1="50" x2="114" y2="122" strokeWidth="2" />
+        <line x1="206" y1="50" x2="206" y2="122" strokeWidth="2" />
+        <line x1="160" y1="142" x2="138" y2="168" strokeWidth="2.5" />
+        <line x1="160" y1="142" x2="182" y2="168" strokeWidth="2.5" />
       </g>
+      <circle cx="160" cy="28" r="5" fill="#C7A86A" />
+      <g stroke="#C7A86A" strokeWidth="2" fill="#C7A86A" fillOpacity="0.9" strokeLinejoin="round">
+        <path d="M 92 122 C 92 148, 136 148, 136 122 Z" />
+        <path d="M 184 122 C 184 148, 228 148, 228 122 Z" />
+      </g>
+      <line x1="136" y1="168" x2="184" y2="168" stroke="#C7A86A" strokeWidth="3" strokeLinecap="round" />
     </svg>
   );
 }
