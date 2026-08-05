@@ -61,11 +61,9 @@ export default function AdminPage() {
     totalArchivos: 0,
     totalReproducciones: 0,
   });
-  const [loading, setLoading] = useState(true);
-
-  const [activeTab, setActiveTab] = useState<"upload" | "manage" | "analytics">("upload");
-   const [claseEditar, setClaseEditar] = useState<{ claseId: string; materiaId: string } | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"upload" | "manage" | "analytics">("upload");
+  const [claseEditar, setClaseEditar] = useState<{ claseId: string; materiaId: string } | null>(null);
   const [visitantesUnicos, setVisitantesUnicos] = useState(0);
   const [totalVisitas, setTotalVisitas] = useState(0);
   const [actividadReciente, setActividadReciente] = useState<ActividadReciente[]>([]);
@@ -140,7 +138,6 @@ export default function AdminPage() {
     } catch (e) {
       console.error("Error loading admin data:", e);
     }
-    setLoading(false);
     setAnalyticsLoading(false);
   }
 
@@ -891,7 +888,7 @@ export default function AdminPage() {
                           minHeight: "200px",
                         }}
                       >
-                        {visitasUltimos7.map((dia, idx) => {
+                        {visitasUltimos7.map((dia) => {
                           const pct = (dia.total_visitas / maxVisitasDia) * 100;
                           const altura = dia.total_visitas === 0 ? 3 : Math.max(Math.round(pct * 1.6), 6);
                           return (

@@ -103,8 +103,9 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ ok: true, claseId: targetClaseId });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Upload error:", error);
-    return NextResponse.json({ ok: false, error: "Server error: " + (error?.message || String(error)) }, { status: 500 });
+    const msg = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ ok: false, error: "Server error: " + msg }, { status: 500 });
   }
 }

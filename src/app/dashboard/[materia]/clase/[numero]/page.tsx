@@ -40,43 +40,36 @@ const CARD_CONFIG: Record<CardTipo, {
   icon: React.ReactNode;
   label: string;
   subtitle: (a: Archivo) => string;
-  emptySubtitle: string;
 }> = {
   audio_clase: {
     icon: <Headphones style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "AUDIO DE CLASE",
     subtitle: () => "Disponible",
-    emptySubtitle: "No disponible",
   },
   clase_youtube: {
     icon: <Play style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "CLASE VIRTUAL",
     subtitle: () => "Ver clase grabada",
-    emptySubtitle: "No disponible",
   },
   transcripcion: {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "TRANSCRIPCIÓN",
     subtitle: () => "Ver documento completo",
-    emptySubtitle: "No disponible",
   },
   podcast: {
     icon: <Volume2 style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "PODCAST",
     subtitle: () => "Disponible",
-    emptySubtitle: "No disponible",
   },
   archivo: {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "ARCHIVO",
     subtitle: () => "Descargar material",
-    emptySubtitle: "No disponible",
   },
   enlace: {
     icon: <Link2 style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "ENLACE ÚTIL",
     subtitle: () => "Abrir enlace",
-    emptySubtitle: "No disponible",
   },
 };
 
@@ -114,6 +107,7 @@ export default function ClaseNumeroPage() {
       loadData();
       trackActivity({ tipo: "page_view", pagina: "clase_detalle", materia_slug: materiaSlug });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [materiaSlug, numero]);
 
   useEffect(() => {
@@ -195,6 +189,7 @@ const onTimeUpdate = () => {
       audio.removeEventListener("durationchange", onDurationChange);
       audio.removeEventListener("ended", onEnded);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playingArchivoId, clase]);
 
   // Aplicar velocidad de reproducción
@@ -243,10 +238,6 @@ const onTimeUpdate = () => {
 
   function getArchivos(tipo: CardTipo): Archivo[] {
     return clase?.archivos.filter((a) => a.tipo === tipo) || [];
-  }
-
-  function getFirstArchivo(tipo: CardTipo): Archivo | undefined {
-    return getArchivos(tipo)[0];
   }
 
   function getArchivoById(id: string | null): Archivo | undefined {
@@ -505,6 +496,8 @@ if (isTranscription(tipo)) {
         {/* Thumbnail YouTube */}
         {youtubeThumb && (
           <div className="mt-4" style={{ }}>
+            {/* Miniaturas externas de YouTube: no se optimizan con next/image */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={youtubeThumb}
               alt=""

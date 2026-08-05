@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const diag: Record<string, any> = {};
+  const diag: Record<string, unknown> = {};
 
   diag.env_defined = {
     NEXT_PUBLIC_SUPABASE_URL: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -23,8 +23,8 @@ export async function GET(request: NextRequest) {
     const admin = getSupabaseAdmin();
     const { data: materias, error } = await admin.from("materias").select("id, nombre").limit(5);
     diag.supabase = materias ? { ok: true, count: materias.length } : { ok: false, error: error?.message };
-  } catch (e: any) {
-    diag.supabase = { ok: false, error: String(e) };
+  } catch (error: unknown) {
+    diag.supabase = { ok: false, error: error instanceof Error ? error.message : String(error) };
   }
 
   return NextResponse.json(diag);

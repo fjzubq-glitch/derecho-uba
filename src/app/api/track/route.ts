@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { hashIp } from "@/lib/hashIp";
+import { ipFromRequest, isRateLimited } from "@/lib/simpleRateLimit";
+
+const RATE_KEY = "track";
+const RATE_MAX = 120;
+const RATE_WINDOW_MS = 60 * 1000;
 
 export async function POST(request: NextRequest) {
   try {
+    if (isRateLimited(`${RATE_KEY}:${ipFromRequest(request)}`, RATE_MAX, RATE_WINDOW_MS)) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
     const body = await request.json();
     const { tipo, pagina, materia_slug, clase_id, archivo_id, metadata } = body;
 
@@ -31,12 +41,4 @@ export async function POST(request: NextRequest) {
     console.error("Track error:", error);
     return NextResponse.json({ ok: true }); // No fallar para el usuario
   }
-}
-
-async function hashIp(ip: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(ip + (process.env.IP_SALT || "derecho-uba-salt"));
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }

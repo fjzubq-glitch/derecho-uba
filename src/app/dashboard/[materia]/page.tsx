@@ -50,6 +50,7 @@ export default function MateriaPage() {
   useEffect(() => {
     loadData();
     trackActivity({ tipo: "page_view", pagina: "materia", materia_slug: slug });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   async function loadData() {

@@ -40,10 +40,6 @@ const inputStyle: React.CSSProperties = {
   fontFamily: "var(--font-inter)",
 };
 
-const inputFocusStyle: React.CSSProperties = {
-  borderColor: "var(--color-gold-dim)",
-};
-
 const labelStyle: React.CSSProperties = {
   display: "block",
   fontFamily: "var(--font-ibm-plex-mono)",
@@ -128,14 +124,14 @@ const hasEnlace = enlaceUrl.trim() !== "";
     if (materias.length > 0 && !materiaId) {
       setMateriaId(materias[0].id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [materias]);
 
   useEffect(() => {
     if (modo === "existente" && materiaId) {
       cargarClasesExistentes(materiaId, claseInicial?.claseId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modo, materiaId]);
+  }, [modo, materiaId, claseInicial]);
 
   useEffect(() => {
     if (claseInicial?.claseId) {
@@ -153,7 +149,7 @@ const hasEnlace = enlaceUrl.trim() !== "";
       .eq("materia_id", materiaIdSel)
       .order("numero");
 
-    const clases: ClaseExistente[] = (data || []).map((c: any) => ({ ...c, archivos: [] }));
+    const clases: ClaseExistente[] = (data || []).map((c: { id: string; numero: number; titulo: string; fecha: string | null }) => ({ ...c, archivos: [] }));
 
     const clasesConArchivos = await Promise.all(
       clases.map(async (c) => {
@@ -317,7 +313,7 @@ const hasEnlace = enlaceUrl.trim() !== "";
     );
   }
 
-  function DropZone({ file, onFile, onClear, hover, onHover, inputRef }: {
+  function DropZone({ file, onClear, hover, onHover, inputRef }: {
     file: File | null;
     onFile: (f: File) => void;
     onClear: () => void;

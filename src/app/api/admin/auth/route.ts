@@ -29,7 +29,8 @@ export async function POST(request: NextRequest) {
 
     registerFailedAttempt(request);
     return NextResponse.json({ ok: false, error: "Contraseña incorrecta" }, { status: 401 });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
   }
 }

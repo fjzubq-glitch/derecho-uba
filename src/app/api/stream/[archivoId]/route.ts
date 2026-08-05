@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { getObjectStream } from "@/lib/r2";
+import { ipFromRequest, isRateLimited } from "@/lib/simpleRateLimit";
 
 export async function GET(
   request: NextRequest,
@@ -56,8 +57,9 @@ export async function GET(
       status: r2Res.status,
       headers,
     });
-  } catch (e: any) {
-    return new Response(e.message, { status: 500 });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return new Response(msg, { status: 500 });
   }
 }
 
@@ -68,11 +70,15 @@ export async function PUT(
   { params }: { params: Promise<{ archivoId: string }> }
 ) {
   try {
+    if (isRateLimited(`stream-put:${ipFromRequest(request)}`, 300, 60 * 60 * 1000)) {
+      return Response.json({ ok: false, error: "Too many requests" }, { status: 429 });
+    }
+
     const { archivoId } = await params;
     const body = await request.json();
     const duration = Number(body.duration);
 
-    if (!archivoId || !Number.isFinite(duration) || duration <= 0) {
+    if (!archivoId || !Number.isFinite(duration) || duration <= 0 || duration > 24 * 60 * 60) {
       return Response.json({ ok: false, error: "duration required" }, { status: 400 });
     }
 
@@ -83,7 +89,8 @@ export async function PUT(
 
     if (error) throw error;
     return Response.json({ ok: true });
-  } catch (e: any) {
-    return Response.json({ ok: false, error: e.message }, { status: 500 });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return Response.json({ ok: false, error: msg }, { status: 500 });
   }
 }

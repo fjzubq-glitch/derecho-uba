@@ -123,7 +123,13 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
 
     if (clasesData) {
       const clasesWithFiles = await Promise.all(
-        clasesData.map(async (c: any) => {
+        (clasesData as unknown as Array<{
+          id: string;
+          numero: number;
+          titulo: string;
+          fecha: string | null;
+          materias?: { id: string; nombre: string; slug: string } | null;
+        }>).map(async (c) => {
           const { data: archivos } = await supabase
             .from("archivos")
             .select("*")
@@ -997,7 +1003,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                   marginBottom: "20px",
                 }}
               >
-                ¿Estás seguro de que querés eliminar <span style={{ color: "var(--color-text)", fontWeight: 500 }}>"{deleting.nombre}"</span>?
+                ¿Estás seguro de que querés eliminar <span style={{ color: "var(--color-text)", fontWeight: 500 }}>&quot;{deleting.nombre}&quot;</span>?
                 {deleting.tipo === "clase" && " Se eliminarán todos los archivos asociados."}
                 <br />
                 <br />
@@ -1063,7 +1069,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
             </div>
 
             <p style={{ fontSize: "13px", color: "var(--color-text-muted)", marginBottom: "16px" }}>
-              Reemplazar <span style={{ color: "var(--color-text)", fontWeight: 500 }}>"{replacing.nombre}"</span>
+              Reemplazar <span style={{ color: "var(--color-text)", fontWeight: 500 }}>&quot;{replacing.nombre}&quot;</span>
             </p>
 
             <div className="space-y-4">

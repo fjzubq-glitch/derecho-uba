@@ -2,6 +2,44 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
 
+interface ActivityRow {
+  tipo: string | null;
+  pagina: string | null;
+  materia_slug: string | null;
+  archivo_id: string | null;
+  clase_id: string | null;
+  created_at: string | null;
+  ip_hash: string | null;
+}
+
+interface ArchivoRow {
+  id: string;
+  nombre_display: string | null;
+}
+
+interface ClaseRow {
+  id: string;
+  numero: number | null;
+  materias?: { nombre: string | null } | null;
+}
+
+interface DailyRow {
+  created_at: string | null;
+  ip_hash: string | null;
+}
+
+interface PopularRow {
+  id: string;
+  nombre_display: string | null;
+  tipo: string | null;
+  play_count: number | null;
+  clases?: {
+    numero: number | null;
+    titulo: string | null;
+    materias?: { nombre: string | null } | null;
+  } | null;
+}
+
 export async function GET(request: NextRequest) {
   if (!isAdminRequest(request.headers.get("cookie"))) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
@@ -24,11 +62,11 @@ export async function GET(request: NextRequest) {
     const { data: allActivity } = await supabase
       .from("actividad")
       .select("ip_hash")
-      .eq("tipo", "page_view");
+      .eq("tipo", "page_view") as { data: Array<{ ip_hash: string | null }> | null };
 
-    const uniqueIps = new Set(allActivity?.map((a: any) => a.ip_hash) || []);
+    const uniqueIps = new Set((allActivity || []).map((a) => a.ip_hash).filter(Boolean) as string[]);
     const visitantesUnicos = uniqueIps.size;
-    const totalVisitas = allActivity?.length || 0;
+    const totalVisitas = (allActivity || []).length;
 
     // Recent activity — sin join anidado (actividad no tiene FK); lookup por lotes
     const { data: recentActivity } = await supabase
@@ -37,11 +75,11 @@ export async function GET(request: NextRequest) {
       .order("created_at", { ascending: false })
       .limit(30);
 
-    const activityRows = recentActivity || [];
-    const archivoIds = [...new Set(activityRows.map((a: any) => a.archivo_id).filter(Boolean))];
-    const claseIds = [...new Set(activityRows.map((a: any) => a.clase_id).filter(Boolean))];
+    const activityRows = (recentActivity || []) as ActivityRow[];
+    const archivoIds = [...new Set(activityRows.map((a) => a.archivo_id).filter(Boolean) as string[])];
+    const claseIds = [...new Set(activityRows.map((a) => a.clase_id).filter(Boolean) as string[])];
 
-    const [{ data: archivoRows }, { data: claseRows }] = await Promise.all([
+    const [{ data: archivoRows }, { data: claseRowsSupabase }] = await Promise.all([
       archivoIds.length > 0
         ? supabase.from("archivos").select("id, nombre_display").in("id", archivoIds)
         : Promise.resolve({ data: [] }),
@@ -50,11 +88,14 @@ export async function GET(request: NextRequest) {
         : Promise.resolve({ data: [] }),
     ]);
 
-    const archivoMap = new Map((archivoRows || []).map((a: any) => [a.id, a.nombre_display]));
-    const claseMap = new Map((claseRows || []).map((c: any) => [c.id, c]));
+    const archivoRowsTyped = (archivoRows || []) as unknown as ArchivoRow[];
+    const claseRowsTyped = (claseRowsSupabase || []) as unknown as ClaseRow[];
 
-    const actividadReciente = activityRows.map((a: any) => {
-      const clase = claseMap.get(a.clase_id);
+    const archivoMap = new Map(archivoRowsTyped.map((a) => [a.id, a.nombre_display]));
+    const claseMap = new Map(claseRowsTyped.map((c) => [c.id, c]));
+
+    const actividadReciente = activityRows.map((a) => {
+      const clase = a.clase_id ? claseMap.get(a.clase_id) : undefined;
       return {
         tipo: a.tipo,
         pagina: a.pagina,
@@ -75,7 +116,7 @@ export async function GET(request: NextRequest) {
       .order("play_count", { ascending: false })
       .limit(10);
 
-    const contenidoPopular = (popularRows || []).map((a: any) => ({
+    const contenidoPopular = ((popularRows || []) as unknown as PopularRow[]).map((a) => ({
       archivo_id: a.id,
       nombre_display: a.nombre_display,
       tipo: a.tipo,
@@ -93,17 +134,22 @@ export async function GET(request: NextRequest) {
       .eq("tipo", "page_view")
       .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
 
+    const dailyRows = (dailyData || []) as DailyRow[];
+
     const dayMap: Record<string, Set<string>> = {};
-    (dailyData || []).forEach((d: any) => {
-      const day = new Date(d.created_at).toLocaleDateString("es-AR");
+    dailyRows.forEach((d) => {
+      const day = d.created_at ? new Date(d.created_at).toLocaleDateString("es-AR") : "sin fecha";
       if (!dayMap[day]) dayMap[day] = new Set();
-      dayMap[day].add(d.ip_hash);
+      dayMap[day].add(d.ip_hash || "unknown");
     });
     const visitasPorDia = Object.entries(dayMap)
       .map(([fecha, ips]) => ({
         fecha,
-        visitantes_unicos: (ips as Set<string>).size,
-        total_visitas: (dailyData || []).filter((d: any) => new Date(d.created_at).toLocaleDateString("es-AR") === fecha).length,
+        visitantes_unicos: ips.size,
+        total_visitas: dailyRows.filter((d) => {
+          const f = d.created_at ? new Date(d.created_at).toLocaleDateString("es-AR") : "sin fecha";
+          return f === fecha;
+        }).length,
       }))
       .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
 
@@ -120,7 +166,8 @@ export async function GET(request: NextRequest) {
       contenidoPopular,
       visitasPorDia,
     });
-  } catch (e: any) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
