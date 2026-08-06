@@ -80,7 +80,7 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
             marginBottom: "12px",
           }}
         >
-          Bienvenido/a al portal. ¿Cómo te llamás?
+          Bienvenido/a. ¿Cómo te llamás?
         </h2>
 
         <p
