@@ -85,7 +85,7 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
         >
           Bienvenido/a.
           <br />
-          ¿Cómo te llamás?
+          ¿Cómo querés que te saludemos?
         </h2>
 
         <p
@@ -96,7 +96,7 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
             marginBottom: "24px",
           }}
         >
-          Así podrás tener una experiencia más personal en cada visita.
+          Así podremos saludarte en cada visita.
         </p>
 
         <form onSubmit={handleSubmit}>
