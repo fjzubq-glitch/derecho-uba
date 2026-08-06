@@ -44,6 +44,7 @@ interface ContenidoPopular {
 
 interface VisitaDia {
   fecha: string;
+  label: string;
   visitantes_unicos: number;
   total_visitas: number;
 }
@@ -64,6 +65,8 @@ interface MateriaStats {
   estudiantes: number;
   reproducciones: number;
 }
+
+type Periodo = "7" | "30" | "all";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -90,6 +93,12 @@ export default function AdminPage() {
   const [materiasStats, setMateriasStats] = useState<MateriaStats[]>([]);
   const [maximoBarras, setMaximoBarras] = useState<Record<string, number>>({});
   const [expandedActividad, setExpandedActividad] = useState(false);
+  const [periodo, setPeriodo] = useState<Periodo>("7");
+  const [tendenciaVisitas, setTendenciaVisitas] = useState(0);
+  const [tendenciaReproducciones, setTendenciaReproducciones] = useState(0);
+  const [compromiso, setCompromiso] = useState(0);
+  const [horasEstudio, setHorasEstudio] = useState<number[]>(new Array(24).fill(0));
+  const [busquedaEstudiante, setBusquedaEstudiante] = useState("");
 
   async function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -143,23 +152,33 @@ export default function AdminPage() {
     }
   }, [authenticated]);
 
-  async function loadAdminData() {
+  async function loadAdminData(periodoActivo: Periodo = periodo) {
     try {
-      const res = await fetch("/api/admin/dashboard");
+      setAnalyticsLoading(true);
+      const res = await fetch(`/api/admin/dashboard?dias=${periodoActivo}`);
       const data = await res.json();
       if (data.materias) setMaterias(data.materias);
       if (data.stats) setStats(data.stats);
       setVisitantesUnicos(data.visitantesUnicos || 0);
       setTotalVisitas(data.totalVisitas || 0);
+      setTendenciaVisitas(data.tendenciaVisitas || 0);
+      setTendenciaReproducciones(data.tendenciaReproducciones || 0);
+      setCompromiso(data.compromiso || 0);
       if (data.actividadReciente) setActividadReciente(data.actividadReciente);
       if (data.contenidoPopular) setContenidoPopular(data.contenidoPopular);
       if (data.visitasPorDia) setVisitasPorDia(data.visitasPorDia);
       if (data.estudiantes) setEstudiantes(data.estudiantes);
       if (data.materiasStats) setMateriasStats(data.materiasStats);
+      if (data.horasEstudio) setHorasEstudio(data.horasEstudio);
     } catch (e) {
       console.error("Error loading admin data:", e);
     }
     setAnalyticsLoading(false);
+  }
+
+  function cambiarPeriodo(p: Periodo) {
+    setPeriodo(p);
+    loadAdminData(p);
   }
 
   async function handleUpload(
@@ -300,26 +319,18 @@ export default function AdminPage() {
 
   const promedioReproducciones = stats.totalClases > 0 ? Math.round((stats.totalReproducciones / stats.totalClases) * 10) / 10 : 0;
 
-  // Construir los 7 días consecutivos, rellenando con 0 los días sin actividad
+  // Los días consecutivos ya vienen armados desde el API (rellenados con 0)
   const visitasUltimos7 = useMemo(() => {
-    const mapa = new Map(visitasPorDia.map((d) => [d.fecha, d]));
-    const dias: Array<{ fecha: string; label: string; total_visitas: number; visitantes_unicos: number }> = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const fechaKey = d.toLocaleDateString("es-AR");
-      const data = mapa.get(fechaKey);
-      dias.push({
-        fecha: fechaKey,
-        label: d.toLocaleDateString("es-AR", { day: "numeric", month: "short" }).replace(".", ""),
-        total_visitas: data?.total_visitas || 0,
-        visitantes_unicos: data?.visitantes_unicos || 0,
-      });
-    }
-    return dias;
+    return visitasPorDia.map((d) => ({
+      fecha: d.fecha,
+      label: d.label,
+      total_visitas: d.total_visitas,
+      visitantes_unicos: d.visitantes_unicos,
+    }));
   }, [visitasPorDia]);
 
   const maxVisitasDia = Math.max(...visitasUltimos7.map((d) => d.total_visitas), 1);
+  const maxHoraEstudio = Math.max(...horasEstudio, 1);
 
   // Agrupar actividad reciente por tipo + página en rangos consecutivos
   const actividadAgrupada = useMemo(() => {
@@ -724,6 +735,47 @@ export default function AdminPage() {
                 </div>
               ) : (
                 <>
+                  {/* Selector de período */}
+                  <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div
+                      className="flex items-center"
+                      style={{ border: "1px solid var(--color-line)", overflow: "hidden" }}
+                    >
+                      {([["7", "7 días"], ["30", "30 días"], ["all", "Total"]] as Array<[Periodo, string]>).map(([val, label], i) => (
+                        <button
+                          key={val}
+                          onClick={() => cambiarPeriodo(val)}
+                          style={{
+                            background: periodo === val ? "var(--color-ink-2)" : "transparent",
+                            border: "none",
+                            borderRight: i < 2 ? "1px solid var(--color-line)" : "none",
+                            padding: "9px 18px",
+                            cursor: "pointer",
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "11px",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                            color: periodo === val ? "var(--color-gold)" : "var(--color-text-muted)",
+                            transition: "background 0.2s ease, color 0.2s ease",
+                          }}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "10px",
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                        color: "var(--color-text-faint)",
+                      }}
+                    >
+                      {periodo === "all" ? "Todo el historial" : `Últimos ${periodo} días`}
+                    </span>
+                  </div>
+
                   {/* Métricas generales */}
                   <div
                     className="grid grid-cols-1 md:grid-cols-3 overflow-hidden"
@@ -807,6 +859,18 @@ export default function AdminPage() {
                       >
                         {String(totalVisitas).padStart(2, "0")}
                       </div>
+                      <div
+                        className="flex items-center gap-2 mt-2"
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "11px",
+                          color: tendenciaVisitas >= 0 ? "var(--color-gold)" : "var(--color-danger, #c65a4f)",
+                        }}
+                      >
+                        <span>{tendenciaVisitas >= 0 ? "▲" : "▼"}</span>
+                        <span>{Math.abs(tendenciaVisitas)}%</span>
+                        <span style={{ color: "var(--color-text-faint)" }}>vs. período anterior</span>
+                      </div>
                     </div>
 
                     <div style={{ background: "var(--color-card)", padding: "28px 30px" }}>
@@ -844,6 +908,76 @@ export default function AdminPage() {
                         }}
                       >
                         {promedioReproducciones.toFixed(1).padStart(2, "0")}
+                      </div>
+                      <div
+                        className="flex items-center gap-2 mt-2"
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "11px",
+                          color: tendenciaReproducciones >= 0 ? "var(--color-gold)" : "var(--color-danger, #c65a4f)",
+                        }}
+                      >
+                        <span>{tendenciaReproducciones >= 0 ? "▲" : "▼"}</span>
+                        <span>{Math.abs(tendenciaReproducciones)}%</span>
+                        <span style={{ color: "var(--color-text-faint)" }}>vs. anterior</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Compromiso */}
+                  <div
+                    style={{
+                      background: "var(--color-card)",
+                      border: "1px solid var(--color-line-soft)",
+                      padding: "24px 30px",
+                      borderRadius: 0,
+                    }}
+                  >
+                    <div className="flex items-center justify-between flex-wrap gap-4">
+                      <div>
+                        <h3
+                          style={{
+                            fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                            fontWeight: 400,
+                            fontSize: "16px",
+                            color: "var(--color-text)",
+                            marginBottom: "4px",
+                          }}
+                        >
+                          Compromiso de los alumnos
+                        </h3>
+                        <p
+                          style={{
+                            fontSize: "12px",
+                            color: "var(--color-text-muted)",
+                            lineHeight: 1.6,
+                          }}
+                        >
+                          Porcentaje de alumnos identificados que reprodujeron al menos un audio.
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "36px",
+                            fontWeight: 500,
+                            lineHeight: 1,
+                            color: "var(--color-gold)",
+                          }}
+                        >
+                          {compromiso}%
+                        </div>
+                        <div
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "10px",
+                            color: "var(--color-text-faint)",
+                            marginTop: "6px",
+                          }}
+                        >
+                          de {estudiantes.length} alumnos
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1008,8 +1142,31 @@ export default function AdminPage() {
                           {estudiantes.length} personas
                         </span>
                       </h3>
+                      <input
+                        type="search"
+                        value={busquedaEstudiante}
+                        onChange={(e) => setBusquedaEstudiante(e.target.value)}
+                        placeholder="Buscar por nombre…"
+                        aria-label="Buscar estudiante"
+                        style={{
+                          width: "100%",
+                          background: "var(--color-ink)",
+                          border: "1px solid var(--color-line)",
+                          color: "var(--color-text)",
+                          padding: "10px 14px",
+                          fontSize: "13px",
+                          outline: "none",
+                          marginBottom: "16px",
+                          borderRadius: 0,
+                        }}
+                      />
                       <div className="space-y-1">
-                        {estudiantes.slice(0, 15).map((est, i) => (
+                        {estudiantes
+                          .filter((est) =>
+                            est.nombre.toLowerCase().includes(busquedaEstudiante.trim().toLowerCase())
+                          )
+                          .slice(0, 15)
+                          .map((est, i) => (
                           <div
                             key={est.nombre}
                             className="flex items-center gap-4"
@@ -1103,7 +1260,7 @@ export default function AdminPage() {
                           marginLeft: "12px",
                         }}
                       >
-                        Últimos 7 días
+                        {periodo === "all" ? "Últimos 14 días" : `Últimos ${periodo} días`}
                       </span>
                     </h3>
 
@@ -1214,6 +1371,105 @@ export default function AdminPage() {
                                 }}
                               >
                                 {dia.label}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </article>
+
+                  {/* Horas de estudio */}
+                  <article
+                    style={{
+                      background: "var(--color-card)",
+                      border: "1px solid var(--color-line-soft)",
+                      padding: "28px 30px",
+                      borderRadius: 0,
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                        fontWeight: 400,
+                        fontSize: "20px",
+                        color: "var(--color-text)",
+                        marginBottom: "24px",
+                      }}
+                    >
+                      Horas de estudio
+                      <span
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "10px",
+                          letterSpacing: "0.12em",
+                          textTransform: "uppercase",
+                          color: "var(--color-text-faint)",
+                          marginLeft: "12px",
+                        }}
+                      >
+                        Actividad por hora del día
+                      </span>
+                    </h3>
+
+                    <div className="flex gap-6">
+                      <div
+                        className="flex flex-col justify-between"
+                        style={{
+                          paddingBottom: "28px",
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "10px",
+                          color: "var(--color-text-faint)",
+                          minHeight: "180px",
+                        }}
+                      >
+                        <span>{maxHoraEstudio}</span>
+                        <span>{Math.round(maxHoraEstudio / 2)}</span>
+                        <span>0</span>
+                      </div>
+                      <div
+                        className="flex-1"
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-end",
+                          justifyContent: "space-between",
+                          gap: "4px",
+                          minHeight: "180px",
+                        }}
+                      >
+                        {horasEstudio.map((count, hora) => {
+                          const pct = count / maxHoraEstudio;
+                          const altura = count === 0 ? 3 : Math.max(Math.round(pct * 140), 6);
+                          return (
+                            <div
+                              key={hora}
+                              className="flex flex-col items-center justify-end flex-1"
+                              style={{ minHeight: "180px" }}
+                              title={`${hora}:00 — ${count} eventos`}
+                            >
+                              <div
+                                style={{
+                                  width: "70%",
+                                  maxWidth: "22px",
+                                  height: `${altura}px`,
+                                  background:
+                                    count === 0
+                                      ? "var(--color-line-soft)"
+                                      : hora >= 8 && hora <= 22
+                                        ? "var(--color-gold)"
+                                        : "var(--color-gold-dim)",
+                                  transition: "height 0.3s ease",
+                                }}
+                              />
+                              <span
+                                style={{
+                                  marginTop: "8px",
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "9px",
+                                  color: hora % 4 === 0 ? "var(--color-text-muted)" : "transparent",
+                                }}
+                              >
+                                {hora % 4 === 0 ? hora : hora}
                               </span>
                             </div>
                           );
