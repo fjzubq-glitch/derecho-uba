@@ -169,6 +169,32 @@ export async function GET(request: NextRequest) {
       }))
       .sort((a, b) => b.visitas - a.visitas);
 
+    // Actividad por materia
+    const materiaAgg: Record<string, { visitas: number; estudiantes: Set<string>; reproducciones: number }> = {};
+    (userActivity || []).forEach((a: { nombre: string | null; tipo: string | null; materia_slug: string | null }) => {
+      const slug = a.materia_slug;
+      if (!slug) return;
+      if (!materiaAgg[slug]) materiaAgg[slug] = { visitas: 0, estudiantes: new Set(), reproducciones: 0 };
+      const m = materiaAgg[slug];
+      if (a.tipo === "page_view") m.visitas += 1;
+      if (a.tipo === "play_start" || a.tipo === "youtube_open") m.reproducciones += 1;
+      if (a.nombre) m.estudiantes.add(a.nombre);
+    });
+
+    const materiasStats = ((materias || []) as Array<{ id: string; nombre: string | null; slug: string | null; total_clases?: number }>)
+      .map((mat) => {
+        const agg = materiaAgg[mat.slug || ""] || { visitas: 0, estudiantes: new Set(), reproducciones: 0 };
+        return {
+          id: mat.id,
+          nombre: mat.nombre || "",
+          total_clases: mat.total_clases || 0,
+          visitas: agg.visitas,
+          estudiantes: agg.estudiantes.size,
+          reproducciones: agg.reproducciones,
+        };
+      })
+      .sort((a, b) => b.visitas - a.visitas || b.reproducciones - a.reproducciones);
+
     const dayMap: Record<string, Set<string>> = {};
     dailyRows.forEach((d) => {
       const day = d.created_at ? new Date(d.created_at).toLocaleDateString("es-AR") : "sin fecha";
@@ -196,6 +222,7 @@ export async function GET(request: NextRequest) {
       visitantesUnicos,
       totalVisitas,
       estudiantes,
+      materiasStats,
       actividadReciente,
       contenidoPopular,
       visitasPorDia,

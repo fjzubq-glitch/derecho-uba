@@ -56,6 +56,15 @@ interface Estudiante {
   reproducciones: number;
 }
 
+interface MateriaStats {
+  id: string;
+  nombre: string;
+  total_clases: number;
+  visitas: number;
+  estudiantes: number;
+  reproducciones: number;
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
@@ -78,6 +87,7 @@ export default function AdminPage() {
   const [contenidoPopular, setContenidoPopular] = useState<ContenidoPopular[]>([]);
   const [visitasPorDia, setVisitasPorDia] = useState<VisitaDia[]>([]);
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
+  const [materiasStats, setMateriasStats] = useState<MateriaStats[]>([]);
   const [maximoBarras, setMaximoBarras] = useState<Record<string, number>>({});
   const [expandedActividad, setExpandedActividad] = useState(false);
 
@@ -145,6 +155,7 @@ export default function AdminPage() {
       if (data.contenidoPopular) setContenidoPopular(data.contenidoPopular);
       if (data.visitasPorDia) setVisitasPorDia(data.visitasPorDia);
       if (data.estudiantes) setEstudiantes(data.estudiantes);
+      if (data.materiasStats) setMateriasStats(data.materiasStats);
     } catch (e) {
       console.error("Error loading admin data:", e);
     }
@@ -836,6 +847,133 @@ export default function AdminPage() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Desglose por materia */}
+                  {materiasStats.length > 0 && (
+                    <article
+                      style={{
+                        background: "var(--color-card)",
+                        border: "1px solid var(--color-line-soft)",
+                        padding: "28px 30px",
+                        borderRadius: 0,
+                      }}
+                    >
+                      <h3
+                        style={{
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontWeight: 400,
+                          fontSize: "20px",
+                          color: "var(--color-text)",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        Actividad por materia
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "10px",
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                            color: "var(--color-text-faint)",
+                            marginLeft: "12px",
+                          }}
+                        >
+                          {materiasStats.length} materias
+                        </span>
+                      </h3>
+                      <div>
+                        {materiasStats.map((mat, i) => {
+                          const maxVis = Math.max(...materiasStats.map((m) => m.visitas), 1);
+                          const pct = Math.max((mat.visitas / maxVis) * 100, 3);
+                          return (
+                            <div
+                              key={mat.id}
+                              className="flex items-center gap-4"
+                              style={{
+                                padding: "12px 0",
+                                borderBottom:
+                                  i < materiasStats.length - 1 ? "1px solid var(--color-line-soft)" : "none",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "13px",
+                                  fontWeight: 500,
+                                  color: i === 0 ? "var(--color-gold)" : "var(--color-text-faint)",
+                                  width: "28px",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                {String(i + 1).padStart(2, "0")}
+                              </span>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <p
+                                    style={{
+                                      fontSize: "14px",
+                                      fontWeight: 500,
+                                      color: "var(--color-text)",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
+                                    }}
+                                  >
+                                    {mat.nombre}
+                                  </p>
+                                  <span
+                                    style={{
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "9px",
+                                      color: "var(--color-text-faint)",
+                                      flexShrink: 0,
+                                    }}
+                                  >
+                                    {mat.total_clases} clases
+                                  </span>
+                                </div>
+                                <div
+                                  style={{
+                                    height: "4px",
+                                    background: "var(--color-line-soft)",
+                                    overflow: "hidden",
+                                    borderRadius: 0,
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      height: "100%",
+                                      background:
+                                        i === 0
+                                          ? "var(--color-gold)"
+                                          : "linear-gradient(90deg, var(--color-gold-dim), var(--color-gold))",
+                                      width: `${pct}%`,
+                                      transition: "width 0.3s ease",
+                                      opacity: i === 0 ? 1 : 0.45,
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                              <div
+                                className="flex items-center gap-3 flex-shrink-0"
+                                style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", textAlign: "right" }}
+                              >
+                                <span style={{ color: "var(--color-text-muted)", minWidth: "40px" }}>
+                                  {mat.visitas} <span style={{ color: "var(--color-text-faint)" }}>visitas</span>
+                                </span>
+                                <span style={{ color: "var(--color-text-muted)", minWidth: "52px" }}>
+                                  {mat.estudiantes} <span style={{ color: "var(--color-text-faint)" }}>estudiantes</span>
+                                </span>
+                                <span style={{ color: "var(--color-text-muted)", minWidth: "60px" }}>
+                                  {mat.reproducciones} <span style={{ color: "var(--color-text-faint)" }}>repros</span>
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </article>
+                  )}
 
                   {/* Estudiantes registrados */}
                   {estudiantes.length > 0 && (
