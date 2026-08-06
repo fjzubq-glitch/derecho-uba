@@ -7,6 +7,8 @@ const RATE_KEY = "track";
 const RATE_MAX = 120;
 const RATE_WINDOW_MS = 60 * 1000;
 
+const ADMIN_NOMBRE = process.env.ADMIN_NOMBRE?.trim().toLowerCase();
+
 export async function POST(request: NextRequest) {
   try {
     if (isRateLimited(`${RATE_KEY}:${ipFromRequest(request)}`, RATE_MAX, RATE_WINDOW_MS)) {
@@ -20,12 +22,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "tipo required" }, { status: 400 });
     }
 
+    const nombre = typeof usuario === "string" && usuario.trim() ? usuario.trim().slice(0, 40) : null;
+
+    // El admin no cuenta como alumno en las estadísticas
+    if (ADMIN_NOMBRE && nombre && nombre.toLowerCase() === ADMIN_NOMBRE) {
+      return NextResponse.json({ ok: true, ignorado: true });
+    }
+
     const forwarded = request.headers.get("x-forwarded-for");
     const ip = forwarded?.split(",")[0] || "unknown";
     const ipHash = await hashIp(ip);
     const userAgent = request.headers.get("user-agent") || "";
-
-    const nombre = typeof usuario === "string" && usuario.trim() ? usuario.trim().slice(0, 40) : null;
 
     await getSupabaseAdmin().from("actividad").insert({
       tipo,
