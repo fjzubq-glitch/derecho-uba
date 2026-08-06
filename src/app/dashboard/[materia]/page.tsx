@@ -243,7 +243,7 @@ export default function MateriaPage() {
               style={{ background: "var(--color-line-soft)", gap: "1px" }}
             >
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-52" style={{ background: "var(--color-card)" }} />
+                <div key={i} className="skeleton h-52" />
               ))}
             </div>
           ) : clasesFiltradas.length === 0 ? (
@@ -255,8 +255,16 @@ export default function MateriaPage() {
                 border: "1px solid var(--color-line-soft)",
               }}
             >
-              <p style={{ color: "var(--color-text-muted)", fontSize: "15px" }}>
-                No hay clases con ese tipo de contenido en esta materia
+              <p style={{ color: "var(--color-text-muted)", fontSize: "15px", lineHeight: 1.7 }}>
+                {clases.length === 0
+                  ? "Todavía no hay clases publicadas en esta materia."
+                  : "No hay clases con ese tipo de contenido."}
+                <br />
+                <span style={{ color: "var(--color-text-faint)", fontSize: "13px" }}>
+                  {clases.length === 0
+                    ? "Volvé más tarde, el material de cursada se publica acá."
+                    : "Probá con otro filtro de contenido."}
+                </span>
               </p>
             </div>
           ) : (

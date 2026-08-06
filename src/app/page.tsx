@@ -53,13 +53,13 @@ export default function HomePage() {
 
           {/* Watermark — 420px, opacity 0.035, stroke-width 1.1 — Balanza de la justicia */}
           <svg
-            className="absolute pointer-events-none hidden sm:block"
+            className="absolute pointer-events-none"
             style={{
               right: "-40px",
               top: "50%",
               transform: "translateY(-50%)",
-              width: "420px",
-              height: "420px",
+              width: "min(420px, 50vw)",
+              height: "min(420px, 50vw)",
               opacity: "0.035",
             }}
             viewBox="0 0 100 100"
@@ -108,7 +108,7 @@ export default function HomePage() {
             style={{
               fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
               fontWeight: 400,
-              fontSize: "clamp(40px, 5vw, 62px)",
+              fontSize: "var(--text-display)",
               lineHeight: 1.06,
               letterSpacing: "-0.02em",
               maxWidth: "720px",
@@ -140,7 +140,7 @@ export default function HomePage() {
       <section className="flex-1">
         <div className="pad-lateral" style={{ padding: "48px 48px 80px" }}>
           <div className="flex items-baseline justify-between mb-8 flex-wrap gap-4">
-            <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "28px" }}>
+            <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "var(--text-title)" }}>
               Mis materias
             </h2>
             <span
@@ -164,7 +164,7 @@ export default function HomePage() {
               }}
             >
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-80" style={{ background: "var(--color-card)", borderRadius: 0 }} />
+                <div key={i} className="skeleton h-80" />
               ))}
             </div>
           ) : materias.length === 0 ? (
@@ -177,8 +177,12 @@ export default function HomePage() {
                 borderRadius: 0,
               }}
             >
-              <p style={{ color: "var(--color-text-muted)", fontSize: "15px" }}>
+              <p style={{ color: "var(--color-text-muted)", fontSize: "15px", lineHeight: 1.7 }}>
                 Todavía no hay materias publicadas.
+                <br />
+                <span style={{ color: "var(--color-text-faint)", fontSize: "13px" }}>
+                  Volvé más tarde, o avisale al administrador del portal.
+                </span>
               </p>
             </div>
           ) : (

@@ -12,6 +12,15 @@
   --color-text: #ECE9E1;
   --color-text-muted: #9C9689;
   --color-text-faint: #8A8578;
+  --color-gold-rgb: 185, 154, 98;
+  --color-gold-soft: rgba(185, 154, 98, 0.12);
+  --color-danger: #C65A4F;
+  --text-display: clamp(40px, 5vw, 62px);
+  --text-title: clamp(24px, 3.2vw, 28px);
+  --text-chapter: 20px;
+  --text-body: 15px;
+  --text-caption: 11px;
+  --text-micro: 10px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -42,8 +51,8 @@ article {
 }
 
 .card-link, .card-link svg {
-  color: #B99A62 !important;
-  stroke: #B99A62 !important;
+  color: var(--color-gold) !important;
+  stroke: var(--color-gold) !important;
 }
 
 /* ── Footer responsive ── */
@@ -152,6 +161,18 @@ article {
 .eq-bar:nth-child(2) { animation-delay: 0.18s; }
 .eq-bar:nth-child(3) { animation-delay: 0.36s; }
 .eq-bar:nth-child(4) { animation-delay: 0.54s; }
+
+/* ── Skeleton de carga (quieto, estilo "estudio") ── */
+@keyframes skPulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.9; }
+}
+.skeleton {
+  background: var(--color-card-hover);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 0;
+  animation: skPulse 1.8s ease-in-out infinite;
+}
 
 /* ── Hide scrollbar (filter chips on mobile) ── */
 .no-scrollbar::-webkit-scrollbar { display: none; }

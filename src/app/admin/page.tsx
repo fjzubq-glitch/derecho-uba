@@ -312,8 +312,8 @@ export default function AdminPage() {
   };
 
   const TAB_LABELS: Record<string, string> = {
-    upload: "Subir Contenido",
-    manage: "Gestionar",
+    upload: "Subir contenido",
+    manage: "Gestionar contenido",
     analytics: "Analytics",
   };
 
@@ -718,20 +718,15 @@ export default function AdminPage() {
           {activeTab === "analytics" && (
             <div className="space-y-6">
               {analyticsLoading ? (
-                <div
-                  className="flex items-center justify-center"
-                  style={{ padding: "80px 0" }}
-                >
-                  <div
-                    className="animate-spin"
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      border: "2px solid var(--color-line)",
-                      borderTopColor: "var(--color-gold)",
-                      borderRadius: "50%",
-                    }}
-                  />
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 overflow-hidden" style={{ background: "var(--color-line-soft)", gap: "1px" }}>
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="skeleton" style={{ padding: "56px 30px" }} />
+                    ))}
+                  </div>
+                  <div className="skeleton" style={{ height: "220px" }} />
+                  <div className="skeleton" style={{ height: "260px" }} />
+                  <div className="skeleton" style={{ height: "200px" }} />
                 </div>
               ) : (
                 <>
@@ -1161,7 +1156,14 @@ export default function AdminPage() {
                         }}
                       />
                       <div className="space-y-1">
-                        {estudiantes
+                        {estudiantes.filter((est) =>
+                            est.nombre.toLowerCase().includes(busquedaEstudiante.trim().toLowerCase())
+                          ).length === 0 ? (
+                          <p style={{ color: "var(--color-text-muted)", fontSize: "13px", padding: "16px 0" }}>
+                            No se encontró ningún estudiante con ese nombre.
+                          </p>
+                        ) : (
+                        estudiantes
                           .filter((est) =>
                             est.nombre.toLowerCase().includes(busquedaEstudiante.trim().toLowerCase())
                           )
@@ -1224,9 +1226,10 @@ export default function AdminPage() {
                               <span style={{ color: "var(--color-text-muted)" }}>
                                 {est.reproducciones} <span style={{ color: "var(--color-text-faint)" }}>repros</span>
                               </span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))
+                        )}
                       </div>
                     </article>
                   )}
