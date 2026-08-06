@@ -75,12 +75,14 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
             fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
             fontWeight: 400,
             fontSize: "30px",
-            lineHeight: 1.15,
+            lineHeight: 1.2,
             color: "var(--color-text)",
             marginBottom: "12px",
           }}
         >
-          Bienvenido/a. ¿Cómo te llamás?
+          Bienvenido/a.
+          <br />
+          ¿Cómo te llamás?
         </h2>
 
         <p
