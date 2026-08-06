@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
-import { trackActivity } from "@/lib/tracking";
 import { Shield, ArrowRight } from "@/components/icons";
 
 
@@ -23,7 +22,6 @@ export default function HomePage() {
 
   useEffect(() => {
     loadMaterias();
-    trackActivity({ tipo: "page_view", pagina: "home" });
   }, []);
 
   async function loadMaterias() {
