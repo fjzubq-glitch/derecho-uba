@@ -77,6 +77,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const [processing, setProcessing] = useState(false);
   const [message, setMessage] = useState("");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [filtroMateria, setFiltroMateria] = useState("todas");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -645,18 +646,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center" style={{ padding: "80px 0" }}>
-          <div
-            className="animate-spin"
-            style={{
-              width: "32px",
-              height: "32px",
-              border: "2px solid var(--color-line)",
-              borderTopColor: "var(--color-gold)",
-              borderRadius: "50%",
-            }}
-          />
-        </div>
+        <div className="skeleton" style={{ height: "220px" }} />
       ) : clases.length === 0 ? (
         <div
           style={{
@@ -671,7 +661,85 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
         </div>
       ) : (
         <div className="space-y-4">
-          {clases.map((clase) => (
+          {/* Selector de materia a gestionar */}
+          <div
+            className="flex items-center justify-between flex-wrap gap-3"
+            style={{
+              background: "var(--color-card)",
+              border: "1px solid var(--color-line-soft)",
+              borderRadius: 0,
+              padding: "18px 22px",
+            }}
+          >
+            <div>
+              <p
+                style={{
+                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                  fontWeight: 500,
+                  fontSize: "16px",
+                  color: "var(--color-text)",
+                }}
+              >
+                Gestionar materia
+              </p>
+              <p
+                style={{
+                  fontSize: "12px",
+                  color: "var(--color-text-muted)",
+                  marginTop: "2px",
+                }}
+              >
+                Elegí qué materia querés editar
+              </p>
+            </div>
+            <select
+              value={filtroMateria}
+              onChange={(e) => setFiltroMateria(e.target.value)}
+              aria-label="Seleccionar materia para gestionar"
+              style={{
+                background: "var(--color-ink)",
+                border: "1px solid var(--color-line)",
+                color: "var(--color-text)",
+                padding: "10px 40px 10px 14px",
+                fontSize: "13px",
+                fontFamily: "var(--font-inter)",
+                outline: "none",
+                borderRadius: 0,
+                cursor: "pointer",
+                minWidth: "220px",
+              }}
+            >
+              <option value="todas">Todas las materias</option>
+              {materias.map((m) => (
+                <option key={m.id} value={m.slug}>
+                  {m.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {clases.filter((c) => filtroMateria === "todas" || c.materia_slug === filtroMateria).length === 0 ? (
+            <div
+              style={{
+                padding: "40px 24px",
+                textAlign: "center",
+                background: "var(--color-card)",
+                border: "1px solid var(--color-line-soft)",
+                borderRadius: 0,
+              }}
+            >
+              <p style={{ fontSize: "14px", color: "var(--color-text-muted)", lineHeight: 1.7 }}>
+                Esta materia todavía no tiene clases.
+                <br />
+                <span style={{ color: "var(--color-text-faint)", fontSize: "12px" }}>
+                  Subilas desde la pestaña &ldquo;Subir contenido&rdquo;.
+                </span>
+              </p>
+            </div>
+          ) : (
+            clases
+            .filter((c) => filtroMateria === "todas" || c.materia_slug === filtroMateria)
+            .map((clase) => (
             <div
               key={clase.id}
               style={{
@@ -847,7 +915,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 </p>
               )}
             </div>
-          ))}
+          )))}
         </div>
       )}
 
