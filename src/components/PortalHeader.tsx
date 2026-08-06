@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Shield, BookOpen, X } from "@/components/icons";
 import { clearAdminSession } from "@/lib/utils";
+import { getPortalUserName, PORTAL_USER_EVENT } from "@/lib/portalUser";
 
 const PLANIFICADOR_URL = "https://fjzubq-glitch.github.io/Recomendacion-Materias-UBA/index.html";
 
@@ -20,6 +21,14 @@ interface PortalHeaderProps {
 export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = false }: PortalHeaderProps) {
   const router = useRouter();
   const [adminActive, setAdminActive] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+    setUserName(getPortalUserName());
+    const onUserChange = () => setUserName(getPortalUserName());
+    window.addEventListener(PORTAL_USER_EVENT, onUserChange);
+    return () => window.removeEventListener(PORTAL_USER_EVENT, onUserChange);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -99,8 +108,25 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
           </div>
         </Link>
 
-        {/* Derecha: nav contextual, CTA única, admin badge o Planificador */}
+        {/* Derecha: saludo, nav contextual, CTA única, admin badge o Planificador */}
         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+          {userName && (
+            <div
+              className="flex items-center gap-2 max-w-[140px] sm:max-w-[200px] min-w-0"
+              title={`Sesión de ${userName}`}
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "11px",
+                letterSpacing: "0.04em",
+                color: "var(--color-gold)",
+              }}
+            >
+              <span className="truncate">
+                Hola {userName}
+              </span>
+            </div>
+          )}
+
           {nav ? (
             nav
           ) : hideCta ? null : (
