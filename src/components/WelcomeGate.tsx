@@ -2,8 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { getPortalUserName, setPortalUserName } from "@/lib/portalUser";
+import { trackActivity } from "@/lib/tracking";
 
-export default function WelcomeGate() {
+interface WelcomeGateProps {
+  materiaSlug?: string;
+}
+
+export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
   const [checking, setChecking] = useState(true);
   const [open, setOpen] = useState(false);
   const [nombre, setNombre] = useState("");
@@ -23,6 +28,7 @@ export default function WelcomeGate() {
       return;
     }
     setPortalUserName(limpio);
+    trackActivity({ tipo: "usuario_registrado", pagina: "materia", materia_slug: materiaSlug });
     setOpen(false);
   }
 

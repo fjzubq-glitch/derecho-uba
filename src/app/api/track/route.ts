@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { tipo, pagina, materia_slug, clase_id, archivo_id, metadata } = body;
+    const { tipo, pagina, materia_slug, clase_id, archivo_id, metadata, usuario } = body;
 
     if (!tipo) {
       return NextResponse.json({ error: "tipo required" }, { status: 400 });
@@ -25,6 +25,8 @@ export async function POST(request: NextRequest) {
     const ipHash = await hashIp(ip);
     const userAgent = request.headers.get("user-agent") || "";
 
+    const nombre = typeof usuario === "string" && usuario.trim() ? usuario.trim().slice(0, 40) : null;
+
     await getSupabaseAdmin().from("actividad").insert({
       tipo,
       pagina: pagina || null,
@@ -34,6 +36,7 @@ export async function POST(request: NextRequest) {
       metadata: metadata || null,
       ip_hash: ipHash,
       user_agent: userAgent,
+      nombre,
     });
 
     return NextResponse.json({ ok: true });

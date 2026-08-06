@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
+import WelcomeGate from "@/components/WelcomeGate";
 import { trackActivity } from "@/lib/tracking";
 import { formatFechaLocal } from "@/lib/utils";
 import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2, Play } from "@/components/icons";
@@ -104,6 +105,7 @@ export default function MateriaPage() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-ink)" }}>
+      <WelcomeGate materiaSlug={slug} />
       <PortalHeader
         nav={
           <button

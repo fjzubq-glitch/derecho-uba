@@ -1,4 +1,5 @@
 import { isAdminSession } from "./utils";
+import { getPortalUserName } from "./portalUser";
 
 export async function trackActivity(data: {
   tipo: string;
@@ -13,7 +14,10 @@ export async function trackActivity(data: {
     await fetch("/api/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        ...data,
+        usuario: getPortalUserName(),
+      }),
     });
   } catch {
     // Silently fail - tracking should never break the app

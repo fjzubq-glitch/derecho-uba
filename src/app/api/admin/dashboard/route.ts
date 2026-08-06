@@ -136,6 +136,39 @@ export async function GET(request: NextRequest) {
 
     const dailyRows = (dailyData || []) as DailyRow[];
 
+    // Estudiantes registrados (por nombre)
+    const { data: userActivity } = await supabase
+      .from("actividad")
+      .select("nombre, created_at, tipo, materia_slug")
+      .not("nombre", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(2000);
+
+    const userMap: Record<string, { nombre: string; visitas: number; ultima_actividad: string; materias: Set<string>; reproducciones: number }> = {};
+    (userActivity || []).forEach((a: { nombre: string | null; created_at: string | null; tipo: string | null; materia_slug: string | null }) => {
+      const n = a.nombre || "";
+      if (!n) return;
+      if (!userMap[n]) {
+        userMap[n] = { nombre: n, visitas: 0, ultima_actividad: a.created_at || "", materias: new Set(), reproducciones: 0 };
+      }
+      userMap[n].visitas += 1;
+      if (a.materia_slug) userMap[n].materias.add(a.materia_slug);
+      if (a.tipo === "play_start" || a.tipo === "youtube_open") userMap[n].reproducciones += 1;
+      if (a.created_at && (!userMap[n].ultima_actividad || a.created_at > userMap[n].ultima_actividad)) {
+        userMap[n].ultima_actividad = a.created_at;
+      }
+    });
+
+    const estudiantes = Object.values(userMap)
+      .map((u) => ({
+        nombre: u.nombre,
+        visitas: u.visitas,
+        ultima_actividad: u.ultima_actividad,
+        materias: u.materias.size,
+        reproducciones: u.reproducciones,
+      }))
+      .sort((a, b) => b.visitas - a.visitas);
+
     const dayMap: Record<string, Set<string>> = {};
     dailyRows.forEach((d) => {
       const day = d.created_at ? new Date(d.created_at).toLocaleDateString("es-AR") : "sin fecha";
@@ -162,6 +195,7 @@ export async function GET(request: NextRequest) {
       materias: materias || [],
       visitantesUnicos,
       totalVisitas,
+      estudiantes,
       actividadReciente,
       contenidoPopular,
       visitasPorDia,

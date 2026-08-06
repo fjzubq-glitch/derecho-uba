@@ -48,6 +48,14 @@ interface VisitaDia {
   total_visitas: number;
 }
 
+interface Estudiante {
+  nombre: string;
+  visitas: number;
+  ultima_actividad: string;
+  materias: number;
+  reproducciones: number;
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
@@ -69,6 +77,7 @@ export default function AdminPage() {
   const [actividadReciente, setActividadReciente] = useState<ActividadReciente[]>([]);
   const [contenidoPopular, setContenidoPopular] = useState<ContenidoPopular[]>([]);
   const [visitasPorDia, setVisitasPorDia] = useState<VisitaDia[]>([]);
+  const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
   const [maximoBarras, setMaximoBarras] = useState<Record<string, number>>({});
   const [expandedActividad, setExpandedActividad] = useState(false);
 
@@ -135,6 +144,7 @@ export default function AdminPage() {
       if (data.actividadReciente) setActividadReciente(data.actividadReciente);
       if (data.contenidoPopular) setContenidoPopular(data.contenidoPopular);
       if (data.visitasPorDia) setVisitasPorDia(data.visitasPorDia);
+      if (data.estudiantes) setEstudiantes(data.estudiantes);
     } catch (e) {
       console.error("Error loading admin data:", e);
     }
@@ -826,6 +836,105 @@ export default function AdminPage() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Estudiantes registrados */}
+                  {estudiantes.length > 0 && (
+                    <article
+                      style={{
+                        background: "var(--color-card)",
+                        border: "1px solid var(--color-line-soft)",
+                        padding: "28px 30px",
+                        borderRadius: 0,
+                      }}
+                    >
+                      <h3
+                        style={{
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontWeight: 400,
+                          fontSize: "20px",
+                          color: "var(--color-text)",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        Estudiantes registrados
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "10px",
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                            color: "var(--color-text-faint)",
+                            marginLeft: "12px",
+                          }}
+                        >
+                          {estudiantes.length} personas
+                        </span>
+                      </h3>
+                      <div className="space-y-1">
+                        {estudiantes.slice(0, 15).map((est, i) => (
+                          <div
+                            key={est.nombre}
+                            className="flex items-center gap-4"
+                            style={{
+                              padding: "10px 0",
+                              borderBottom: i < Math.min(estudiantes.length, 15) - 1 ? "1px solid var(--color-line-soft)" : "none",
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "13px",
+                                fontWeight: 500,
+                                color: "var(--color-gold)",
+                                width: "28px",
+                                flexShrink: 0,
+                              }}
+                            >
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <p
+                                style={{
+                                  fontSize: "14px",
+                                  fontWeight: 500,
+                                  color: "var(--color-text)",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                {est.nombre}
+                              </p>
+                              <p
+                                style={{
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "10px",
+                                  color: "var(--color-text-faint)",
+                                  marginTop: "2px",
+                                }}
+                              >
+                                Última actividad: {est.ultima_actividad ? new Date(est.ultima_actividad).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" }) : "—"}
+                              </p>
+                            </div>
+                            <div
+                              className="flex items-center gap-3 flex-shrink-0"
+                              style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px" }}
+                            >
+                              <span style={{ color: "var(--color-text-muted)" }}>
+                                {est.visitas} <span style={{ color: "var(--color-text-faint)" }}>eventos</span>
+                              </span>
+                              <span style={{ color: "var(--color-text-muted)" }}>
+                                {est.materias} <span style={{ color: "var(--color-text-faint)" }}>materias</span>
+                              </span>
+                              <span style={{ color: "var(--color-text-muted)" }}>
+                                {est.reproducciones} <span style={{ color: "var(--color-text-faint)" }}>repros</span>
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </article>
+                  )}
 
                   {/* Visitas por día — gráfico de barras */}
                   <article
