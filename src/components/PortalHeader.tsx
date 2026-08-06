@@ -78,7 +78,7 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
           >
             <Shield style={{ width: "15px", height: "15px", color: "var(--color-gold)" }} />
           </div>
-          <div className="hidden min-w-0 sm:block">
+          <div className="min-w-0">
             <div
               className="text-[17px] sm:text-[20px]"
               style={{
