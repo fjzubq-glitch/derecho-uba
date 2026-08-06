@@ -29,6 +29,9 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
     }
     setPortalUserName(limpio);
     trackActivity({ tipo: "usuario_registrado", pagina: "materia", materia_slug: materiaSlug });
+    if (materiaSlug) {
+      trackActivity({ tipo: "page_view", pagina: "materia", materia_slug: materiaSlug });
+    }
     setOpen(false);
   }
 

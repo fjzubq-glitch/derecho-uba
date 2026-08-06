@@ -28,6 +28,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true, ignorado: true });
     }
 
+    // Sin usuario identificado no se registra
+    if (!nombre) {
+      return NextResponse.json({ ok: true, ignorado: true });
+    }
+
     const forwarded = request.headers.get("x-forwarded-for");
     const ip = forwarded?.split(",")[0] || "unknown";
     const ipHash = await hashIp(ip);
