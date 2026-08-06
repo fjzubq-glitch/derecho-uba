@@ -66,7 +66,7 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
         style={{ padding: "16px 22px" }}
       >
         {/* Logo + nombre */}
-        <Link href="/" className="flex items-center gap-4 min-w-0" style={{ textDecoration: "none" }}>
+        <Link href="/" className="flex items-center gap-3 sm:gap-4 min-w-0 flex-shrink-0" style={{ textDecoration: "none" }}>
           <div
             className="flex items-center justify-center flex-shrink-0"
             style={{
@@ -78,7 +78,7 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
           >
             <Shield style={{ width: "15px", height: "15px", color: "var(--color-gold)" }} />
           </div>
-          <div className="min-w-0">
+          <div className="hidden min-w-0 sm:block">
             <div
               className="text-[17px] sm:text-[20px]"
               style={{
@@ -112,18 +112,18 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
           {userName && (
             <div
-              className="flex items-center gap-2 max-w-[140px] sm:max-w-[200px] min-w-0"
+              className="flex items-center gap-2 max-w-[80px] sm:max-w-[200px] min-w-0"
               title={`Sesión de ${userName}`}
               style={{
                 fontFamily: "var(--font-ibm-plex-mono)",
                 fontSize: "11px",
                 letterSpacing: "0.04em",
                 color: "var(--color-gold)",
+                flexShrink: 0,
               }}
             >
-              <span className="truncate">
-                Hola {userName}
-              </span>
+              <span className="truncate sm:hidden">{userName}</span>
+              <span className="hidden sm:inline truncate">Hola {userName}</span>
             </div>
           )}
 
