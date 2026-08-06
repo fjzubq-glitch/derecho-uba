@@ -3,9 +3,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import PortalFooter from "@/components/PortalFooter";
-import { trackActivity } from "@/lib/tracking";
+import { trackActivity, isAdminUser } from "@/lib/tracking";
+import { getPortalUserName } from "@/lib/portalUser";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Volume2, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
-import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime, isAdminSession } from "@/lib/utils";
+import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime } from "@/lib/utils";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
 
 interface Archivo {
@@ -315,11 +316,11 @@ const onTimeUpdate = () => {
       if (playingArchivoId && playTrackedRef.current !== playingArchivoId) {
         const archivo = getArchivoById(playingArchivoId);
         if (archivo) {
-          if (!isAdminSession()) {
+          if (!isAdminUser()) {
             fetch("/api/analytics", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ archivo_id: archivo.id }),
+              body: JSON.stringify({ archivo_id: archivo.id, usuario: getPortalUserName() }),
             }).catch(() => {});
           }
           trackActivity({ tipo: "play_start", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });

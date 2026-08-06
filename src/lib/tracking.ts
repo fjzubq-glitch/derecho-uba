@@ -3,6 +3,13 @@ import { getPortalUserName } from "./portalUser";
 
 const ADMIN_NOMBRE = process.env.NEXT_PUBLIC_ADMIN_NOMBRE?.trim().toLowerCase();
 
+/** El admin no cuenta en estadísticas: sesión activa o nombre configurado. */
+export function isAdminUser(): boolean {
+  if (isAdminSession()) return true;
+  const usuario = getPortalUserName();
+  return Boolean(ADMIN_NOMBRE && usuario && usuario.toLowerCase() === ADMIN_NOMBRE);
+}
+
 export async function trackActivity(data: {
   tipo: string;
   pagina?: string;
@@ -11,9 +18,8 @@ export async function trackActivity(data: {
   archivo_id?: string;
   metadata?: Record<string, unknown>;
 }) {
-  if (isAdminSession()) return;
+  if (isAdminUser()) return;
   const usuario = getPortalUserName();
-  if (ADMIN_NOMBRE && usuario && usuario.toLowerCase() === ADMIN_NOMBRE) return;
   try {
     await fetch("/api/track", {
       method: "POST",

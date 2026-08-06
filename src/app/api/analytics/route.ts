@@ -7,6 +7,8 @@ const RATE_KEY = "analytics";
 const RATE_MAX = 30;
 const RATE_WINDOW_MS = 60 * 1000;
 
+const ADMIN_NOMBRE = process.env.ADMIN_NOMBRE?.trim().toLowerCase();
+
 export async function POST(request: NextRequest) {
   try {
     if (isRateLimited(`${RATE_KEY}:${ipFromRequest(request)}`, RATE_MAX, RATE_WINDOW_MS)) {
@@ -14,10 +16,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { archivo_id } = body;
+    const { archivo_id, usuario } = body;
 
     if (!archivo_id) {
       return NextResponse.json({ error: "archivo_id required" }, { status: 400 });
+    }
+
+    // El admin no cuenta como alumno en las estadísticas
+    const nombre = typeof usuario === "string" && usuario.trim() ? usuario.trim().slice(0, 40) : null;
+    if (ADMIN_NOMBRE && nombre && nombre.toLowerCase() === ADMIN_NOMBRE) {
+      return NextResponse.json({ ok: true, ignorado: true });
     }
 
     const forwarded = request.headers.get("x-forwarded-for");
