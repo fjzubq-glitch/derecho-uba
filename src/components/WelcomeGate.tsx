@@ -80,7 +80,7 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
             marginBottom: "12px",
           }}
         >
-          ¿Cómo te llamás?
+          Bienvenido/a al portal. ¿Cómo te llamás?
         </h2>
 
         <p
@@ -91,7 +91,7 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
             marginBottom: "24px",
           }}
         >
-          Decinos tu nombre para saludarte en cada visita. Es lo único que te vamos a pedir.
+          Así podrás tener una experiencia más personal en cada visita.
         </p>
 
         <form onSubmit={handleSubmit}>
