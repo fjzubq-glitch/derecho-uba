@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import PortalFooter from "@/components/PortalFooter";
 import AdminUpload from "@/components/AdminUpload";
 import AdminManage from "@/components/AdminManage";
+import AdminMaterias from "@/components/AdminMaterias";
 import { ArrowLeft, BarChart3, Headphones, FileText, Users, TrendingUp, Eye, Shield } from "@/components/icons";
 import { setAdminSession } from "@/lib/utils";
 
@@ -706,12 +707,37 @@ export default function AdminPage() {
 
           {/* Manage Tab */}
           {activeTab === "manage" && (
-            <AdminManage
-              onEditarClase={(claseId, materiaId) => {
-                setClaseEditar({ claseId, materiaId });
-                setActiveTab("upload");
-              }}
-            />
+            <>
+              <h3
+                style={{
+                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                  fontWeight: 400,
+                  fontSize: "18px",
+                  color: "var(--color-text)",
+                  marginBottom: "16px",
+                }}
+              >
+                Materias
+              </h3>
+              <AdminMaterias />
+              <h3
+                style={{
+                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                  fontWeight: 400,
+                  fontSize: "18px",
+                  color: "var(--color-text)",
+                  margin: "32px 0 16px",
+                }}
+              >
+                Clases
+              </h3>
+              <AdminManage
+                onEditarClase={(claseId, materiaId) => {
+                  setClaseEditar({ claseId, materiaId });
+                  setActiveTab("upload");
+                }}
+              />
+            </>
           )}
 
           {/* Analytics Tab */}

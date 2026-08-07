@@ -9,6 +9,11 @@ CREATE TABLE IF NOT EXISTS materias (
   nombre TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   estado TEXT DEFAULT 'en_curso' CHECK (estado IN ('en_curso', 'finalizada')),
+  comision TEXT,
+  catedra TEXT,
+  anio TEXT,
+  turno TEXT,
+  descripcion TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
