@@ -11,6 +11,10 @@ interface Materia {
   id: string;
   nombre: string;
   slug: string;
+  comision: string | null;
+  catedra: string | null;
+  anio: string | null;
+  turno: string | null;
   total_clases: number;
   clase_ids?: string[];
 }
@@ -36,11 +40,6 @@ export default function HomePage() {
     }
     setLoading(false);
   }
-
-  const splitName = (n: string) => {
-    const p = n.split(",");
-    return { title: p[0]?.trim() || n, meta: p.slice(1).map((s) => s.trim()).join(", ") || null };
-  };
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-ink)" }}>
@@ -195,8 +194,8 @@ export default function HomePage() {
               }}
             >
               {materias.map((m, i) => {
-                const { title, meta } = splitName(m.nombre);
                 const isEmpty = m.total_clases === 0;
+                const metaLine = [m.anio && `Año ${m.anio}`, m.comision && `Comisión ${m.comision}`, m.turno, m.catedra].filter(Boolean).join(" · ");
 
                 return (
                   <article
@@ -274,7 +273,7 @@ export default function HomePage() {
                         color: isEmpty ? "var(--color-text-muted)" : "var(--color-text)",
                       }}
                     >
-                      {title}
+                      {m.nombre}
                     </h3>
 
                     {/* Meta */}
@@ -287,7 +286,7 @@ export default function HomePage() {
                         marginBottom: "20px",
                       }}
                     >
-                      {meta || "Sin comisión asignada"}
+                      {metaLine || "Sin datos de cursada"}
                     </div>
 
                     {/* CTA */}
