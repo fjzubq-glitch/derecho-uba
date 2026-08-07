@@ -268,9 +268,14 @@ export default function HomePage() {
                       style={{
                         fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                         fontWeight: 500,
-                        fontSize: "22px",
-                        lineHeight: 1.2,
+                        fontSize: "clamp(19px, 2vw, 22px)",
+                        lineHeight: 1.25,
                         color: isEmpty ? "var(--color-text-muted)" : "var(--color-text)",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        minHeight: "calc(clamp(19px, 2vw, 22px) * 1.25 * 2)",
                       }}
                     >
                       {m.nombre}
@@ -284,6 +289,9 @@ export default function HomePage() {
                         color: "var(--color-text-faint)",
                         letterSpacing: "0.01em",
                         marginBottom: "20px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
                       }}
                     >
                       {metaLine || "Sin datos de cursada"}
