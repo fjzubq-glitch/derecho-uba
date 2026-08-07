@@ -58,6 +58,7 @@ export default function AdminMaterias() {
   async function handleSave() {
     if (!editing) return;
     setProcessing(true);
+    setMessage("");
     try {
       const res = await fetch("/api/admin/materias", {
         method: "PUT",
@@ -74,13 +75,13 @@ export default function AdminMaterias() {
           },
         }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
       if (data.ok) {
-        setMessage("Materia guardada correctamente");
         setEditing(null);
         loadMaterias();
+        setMessage("Materia guardada correctamente");
       } else {
-        setMessage("Error: " + data.error);
+        setMessage("Error: " + (data.error || res.status));
       }
     } catch (err) {
       setMessage("Error: " + String(err));
@@ -185,7 +186,7 @@ export default function AdminMaterias() {
                 </p>
               </div>
               <button
-                onClick={() => setEditing({ ...m, descripcion: m.descripcion || "" })}
+                onClick={() => { setMessage(""); setEditing({ ...m, descripcion: m.descripcion || "" }); }}
                 className="flex items-center gap-1.5"
                 style={{
                   background: "none",
@@ -241,12 +242,34 @@ export default function AdminMaterias() {
                 Editar materia
               </h3>
               <button
-                onClick={() => setEditing(null)}
+                onClick={() => { setEditing(null); setMessage(""); }}
                 style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)" }}
               >
                 <X style={{ width: "18px", height: "18px" }} />
               </button>
             </div>
+
+            {message && (
+              <div
+                style={{
+                  padding: "12px 16px",
+                  marginBottom: "16px",
+                  background: message.startsWith("Error") ? "rgba(224, 85, 85, 0.08)" : "rgba(185, 154, 98, 0.08)",
+                  border: `1px solid ${message.startsWith("Error") ? "rgba(224, 85, 85, 0.3)" : "var(--color-gold-dim)"}`,
+                  borderRadius: 0,
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "13px",
+                    color: message.startsWith("Error") ? "#E05555" : "var(--color-gold)",
+                    fontFamily: "var(--font-inter)",
+                  }}
+                >
+                  {message}
+                </p>
+              </div>
+            )}
 
             <div className="space-y-4">
               <div>
