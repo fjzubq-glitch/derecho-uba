@@ -206,7 +206,7 @@ export default function HomePage() {
                     onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") router.push(`/dashboard/${m.slug}`); }}
                     style={{
                       background: "var(--color-card)",
-                      padding: "32px 30px",
+                      padding: "28px 26px",
                       borderRadius: 0,
                       animationDelay: `${i * 60}ms`,
                       transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease",
@@ -215,7 +215,7 @@ export default function HomePage() {
                     onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
                   >
                     {/* Top: icon + count */}
-                    <div className="flex items-start justify-between mb-8">
+                    <div className="flex items-start justify-between mb-4">
                       <div
                         className="flex items-center justify-center"
                         style={{
@@ -268,14 +268,13 @@ export default function HomePage() {
                       style={{
                         fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                         fontWeight: 500,
-                        fontSize: "clamp(19px, 2vw, 22px)",
-                        lineHeight: 1.25,
+                        fontSize: "18px",
+                        lineHeight: 1.3,
                         color: isEmpty ? "var(--color-text-muted)" : "var(--color-text)",
                         display: "-webkit-box",
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: "vertical",
                         overflow: "hidden",
-                        minHeight: "calc(clamp(19px, 2vw, 22px) * 1.25 * 2)",
                       }}
                     >
                       {m.nombre}
@@ -299,7 +298,7 @@ export default function HomePage() {
 
                     {/* CTA */}
                     <div
-                      className="flex items-center gap-2 mt-8 pt-5 border-t card-link"
+                      className="flex items-center gap-2 mt-auto pt-4 border-t card-link"
                       style={{ borderColor: "var(--color-line-soft)", fontSize: "13px", fontWeight: 500 }}
                     >
                       Ver contenido
