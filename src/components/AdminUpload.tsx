@@ -106,6 +106,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const [audioDropHover, setAudioDropHover] = useState(false);
   const [podcastDropHover, setPodcastDropHover] = useState(false);
   const [resultMsg, setResultMsg] = useState<{ text: string; isError: boolean } | null>(null);
+  const [errores, setErrores] = useState<Record<string, string>>({});
 
   const hasAudio = audioFile !== null || (useYoutube && youtubeUrl.trim() !== "") || (useCloudinary && cloudinaryUrl.trim() !== "");
   const hasPodcast = podcastFile !== null || (usePodcastCloudinary && podcastCloudinaryUrl.trim() !== "");
@@ -174,18 +175,25 @@ const hasEnlace = enlaceUrl.trim() !== "";
 
   const handleSubmit = async () => {
     setResultMsg(null);
-    if (!materiaId) {
-      setResultMsg({ text: "Seleccioná una materia", isError: true });
+
+    const nuevosErrores: Record<string, string> = {};
+    if (!materiaId) nuevosErrores.materia = "Seleccioná una materia";
+    if (modo === "existente" && !claseSeleccionada) nuevosErrores.clase = "Seleccioná una clase existente";
+    if (modo === "nueva" && !claseTitulo.trim()) nuevosErrores.titulo = "El título de la clase es obligatorio";
+
+    if (Object.keys(nuevosErrores).length > 0) {
+      setErrores(nuevosErrores);
+      const IDS: Record<string, string> = { titulo: "admin-clase-titulo", clase: "admin-clase-existente" };
+      const primerCampo = ["titulo", "materia", "clase"].find((k) => nuevosErrores[k]);
+      if (primerCampo) {
+        const el = document.getElementById(IDS[primerCampo]) || document.getElementById("admin-materia-nueva") || document.getElementById("admin-materia-existente");
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        el?.focus({ preventScroll: true });
+      }
       return;
     }
-    if (modo === "existente" && !claseSeleccionada) {
-      setResultMsg({ text: "Seleccioná una clase existente", isError: true });
-      return;
-    }
-    if (modo === "nueva" && !claseTitulo) {
-      setResultMsg({ text: "Completá el título de la clase", isError: true });
-      return;
-    }
+
+    setErrores({});
     setUploading(true);
 
     const items: UploadItem[] = [];
@@ -424,8 +432,11 @@ const hasEnlace = enlaceUrl.trim() !== "";
               <select
                 id="admin-clase-existente"
                 value={claseSeleccionada}
-                onChange={(e) => onSeleccionarClase(e.target.value)}
-                style={inputStyle}
+                onChange={(e) => {
+                  onSeleccionarClase(e.target.value);
+                  if (errores.clase) setErrores((prev) => ({ ...prev, clase: "" }));
+                }}
+                style={{ ...inputStyle, borderColor: errores.clase ? "#E05555" : "var(--color-line-soft)" }}
               >
                 <option value="">{cargandoClases ? "Cargando..." : "Seleccioná una clase..."}</option>
                 {clasesExistentes.map((c) => (
@@ -435,6 +446,11 @@ const hasEnlace = enlaceUrl.trim() !== "";
                   </option>
                 ))}
               </select>
+              {errores.clase && (
+                <p style={{ marginTop: "6px", fontSize: "11px", fontFamily: "var(--font-inter)", color: "#E05555" }}>
+                  {errores.clase}
+                </p>
+              )}
             </div>
           </div>
         ) : (
@@ -446,8 +462,11 @@ const hasEnlace = enlaceUrl.trim() !== "";
           <select
             id="admin-materia-nueva"
             value={materiaId}
-            onChange={(e) => setMateriaId(e.target.value)}
-            style={inputStyle}
+            onChange={(e) => {
+              setMateriaId(e.target.value);
+              if (errores.materia) setErrores((prev) => ({ ...prev, materia: "" }));
+            }}
+            style={{ ...inputStyle, borderColor: errores.materia ? "#E05555" : "var(--color-line-soft)" }}
           >
             {materias.map((m) => (
               <option key={m.id} value={m.id} style={{ background: "var(--color-card)", color: "var(--color-text)" }}>
@@ -455,6 +474,11 @@ const hasEnlace = enlaceUrl.trim() !== "";
               </option>
             ))}
           </select>
+          {errores.materia && (
+            <p style={{ marginTop: "6px", fontSize: "11px", fontFamily: "var(--font-inter)", color: "#E05555" }}>
+              {errores.materia}
+            </p>
+          )}
         </div>
         <div>
           <label htmlFor="admin-clase-numero" style={labelStyle}>Número de clase</label>
@@ -480,16 +504,35 @@ const hasEnlace = enlaceUrl.trim() !== "";
 
       {/* Título */}
       <div className="mb-6">
-            <label htmlFor="admin-clase-titulo" style={labelStyle}>Título de la clase</label>
+            <label htmlFor="admin-clase-titulo" style={labelStyle}>Título de la clase <span style={{ color: "var(--color-gold)" }}>*</span></label>
 
         <input
           id="admin-clase-titulo"
           type="text"
           value={claseTitulo}
-          onChange={(e) => setClaseTitulo(e.target.value)}
+          onChange={(e) => {
+            setClaseTitulo(e.target.value);
+            if (errores.titulo) setErrores((prev) => ({ ...prev, titulo: "" }));
+          }}
           placeholder="Ej: Introducción al Derecho Contractual"
-          style={{ ...inputStyle }}
+          aria-invalid={!!errores.titulo}
+          style={{
+            ...inputStyle,
+            borderColor: errores.titulo ? "#E05555" : "var(--color-line-soft)",
+          }}
         />
+        {errores.titulo && (
+          <p
+            style={{
+              marginTop: "6px",
+              fontSize: "11px",
+              fontFamily: "var(--font-inter)",
+              color: "#E05555",
+            }}
+          >
+            {errores.titulo}
+          </p>
+        )}
       </div>
           </>
         )}
@@ -985,9 +1028,9 @@ Clase Virtual
       <div className="flex justify-end" style={{ marginTop: resultMsg ? "8px" : "24px" }}>
         <button
           onClick={handleSubmit}
-          disabled={uploading || (modo === "nueva" ? !claseTitulo : !claseSeleccionada)}
+          disabled={uploading}
           style={{
-            background: uploading || (modo === "nueva" ? !claseTitulo : !claseSeleccionada) ? "var(--color-gold-dim)" : "var(--color-gold)",
+            background: uploading ? "var(--color-gold-dim)" : "var(--color-gold)",
             color: "var(--color-ink)",
             border: "none",
             borderRadius: 0,
@@ -995,17 +1038,17 @@ Clase Virtual
             fontSize: "14px",
             fontWeight: 600,
             fontFamily: "var(--font-inter)",
-            cursor: uploading || (modo === "nueva" ? !claseTitulo : !claseSeleccionada) ? "not-allowed" : "pointer",
+            cursor: uploading ? "not-allowed" : "pointer",
             transition: "background 0.2s ease",
             display: "flex",
             alignItems: "center",
             gap: "8px",
           }}
           onMouseEnter={(e) => {
-            if (!uploading && (modo === "nueva" ? claseTitulo : claseSeleccionada)) e.currentTarget.style.background = "var(--color-gold-dim)";
+            if (!uploading) e.currentTarget.style.background = "var(--color-gold-dim)";
           }}
           onMouseLeave={(e) => {
-            if (!uploading && (modo === "nueva" ? claseTitulo : claseSeleccionada)) e.currentTarget.style.background = "var(--color-gold)";
+            if (!uploading) e.currentTarget.style.background = "var(--color-gold)";
           }}
         >
           {uploading ? (
