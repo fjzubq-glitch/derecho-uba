@@ -17,9 +17,16 @@ export async function PUT(request: NextRequest) {
     }
 
     if (tipo === "clase") {
+      const updateData: Record<string, string | number> = {
+        titulo: data.titulo,
+        fecha: data.fecha || null,
+        numero: data.numero,
+      };
+      if (data.tema !== undefined) updateData.tema = data.tema;
+
       const { error } = await getSupabaseAdmin()
         .from("clases")
-        .update({ titulo: data.titulo, fecha: data.fecha || null, numero: data.numero })
+        .update(updateData)
         .eq("id", id);
 
       if (error) throw error;

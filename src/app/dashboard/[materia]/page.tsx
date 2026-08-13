@@ -22,6 +22,7 @@ interface Clase {
   id: string;
   numero: number;
   titulo: string;
+  tema: string | null;
   fecha: string;
   archivos: Archivo[];
 }
@@ -319,8 +320,23 @@ export default function MateriaPage() {
                         marginBottom: "12px",
                       }}
                     >
-                      {clase.titulo}
+                      {clase.tema || clase.titulo}
                     </h3>
+                    {clase.tema && clase.titulo && (
+                      <p
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "10px",
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
+                          color: "var(--color-text-faint)",
+                          marginTop: "-6px",
+                          marginBottom: "12px",
+                        }}
+                      >
+                        {clase.titulo}
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">

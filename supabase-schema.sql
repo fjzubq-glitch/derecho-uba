@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS clases (
   materia_id UUID REFERENCES materias(id) ON DELETE CASCADE,
   numero INT NOT NULL,
   titulo TEXT NOT NULL,
+  tema TEXT,
   fecha DATE,
   created_at TIMESTAMPTZ DEFAULT now(),
   UNIQUE(materia_id, numero)

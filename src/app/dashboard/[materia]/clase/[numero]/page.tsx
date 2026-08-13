@@ -26,6 +26,7 @@ interface Clase {
   id: string;
   numero: number;
   titulo: string;
+  tema: string | null;
   fecha: string | null;
   archivos: Archivo[];
 }
@@ -702,6 +703,20 @@ if (isTranscription(tipo)) {
 
           {/* Page title */}
           <div style={{ marginBottom: "40px" }}>
+            {clase.tema && (
+              <div
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "10px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "var(--color-gold)",
+                  marginBottom: "10px",
+                }}
+              >
+                {clase.tema}
+              </div>
+            )}
             <h2
               style={{
                 fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",

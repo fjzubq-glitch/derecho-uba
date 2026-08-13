@@ -28,6 +28,7 @@ interface Clase {
   id: string;
   numero: number;
   titulo: string;
+  tema: string | null;
   fecha: string | null;
   materia_id: string;
   materia_nombre: string;
@@ -129,6 +130,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
           id: string;
           numero: number;
           titulo: string;
+          tema: string | null;
           fecha: string | null;
           materias?: { id: string; nombre: string; slug: string } | null;
         }>).map(async (c) => {
@@ -143,6 +145,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
             id: c.id,
             numero: c.numero,
             titulo: c.titulo,
+            tema: c.tema,
             fecha: c.fecha,
             materia_id: c.materias?.id || "",
             materia_nombre: c.materias?.nombre || "",
@@ -838,7 +841,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                       onClick: () => setEditing({
                         tipo: "clase",
                         id: clase.id,
-                        data: { titulo: clase.titulo, fecha: clase.fecha || "", numero: clase.numero }
+                        data: { titulo: clase.titulo, tema: clase.tema || "", fecha: clase.fecha || "", numero: clase.numero }
                       }),
                     },
                     {
@@ -1029,6 +1032,17 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                       type="text"
                       value={editing.data.titulo as string}
                       onChange={(e) => setEditing({ ...editing, data: { ...editing.data, titulo: e.target.value } })}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="manage-tema" style={labelStyle}>Tema (opcional)</label>
+                    <input
+                      id="manage-tema"
+                      type="text"
+                      value={(editing.data.tema as string) || ""}
+                      onChange={(e) => setEditing({ ...editing, data: { ...editing.data, tema: e.target.value } })}
+                      placeholder="Ej: Teoría del contrato"
                       style={inputStyle}
                     />
                   </div>

@@ -20,7 +20,7 @@ export async function GET(
 
   const { data: clases } = await supabase
     .from("clases")
-    .select("id, numero, titulo, fecha")
+    .select("id, numero, titulo, tema, fecha")
     .eq("materia_id", materia.id)
     .order("numero");
 
