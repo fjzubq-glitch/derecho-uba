@@ -318,6 +318,7 @@ if (isTranscription(tipo)) {
         style={{
           background: "var(--color-card)",
           padding: "28px 24px",
+          position: "relative",
           opacity: 1,
           cursor: "pointer",
           animationDelay: `${cardIndex * 55}ms`,
@@ -331,7 +332,7 @@ if (isTranscription(tipo)) {
         onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
         onClick={() => handleCardClick(archivo)}
       >
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-3" style={{ position: "relative", zIndex: 1 }}>
           <div
             className="flex items-center justify-center flex-shrink-0"
             style={{
@@ -437,22 +438,27 @@ if (isTranscription(tipo)) {
           )}
         </div>
 
-        {/* Thumbnail YouTube */}
+        {/* Thumbnail YouTube como fondo de la card */}
         {youtubeThumb && (
-          <div className="mt-4" style={{ height: "100%", width: "100%" }}>
-            {/* Miniaturas externas de YouTube: no se optimizan con next/image */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={youtubeThumb}
-              alt=""
+          <>
+            <div
               style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                border: "none",
+                position: "absolute",
+                inset: 0,
+                backgroundImage: `url(${youtubeThumb})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
               }}
             />
-          </div>
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: "linear-gradient(to bottom, rgba(14,12,10,0.15) 20%, rgba(14,12,10,0.94) 85%)",
+                pointerEvents: "none",
+              }}
+            />
+          </>
         )}
 
         {/* Audio player inline */}
