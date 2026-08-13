@@ -438,27 +438,17 @@ if (isTranscription(tipo)) {
           )}
         </div>
 
-        {/* Thumbnail YouTube como fondo de la card */}
+        {/* Thumbnail YouTube */}
         {youtubeThumb && (
-          <>
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                backgroundImage: `url(${youtubeThumb})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background: "linear-gradient(to bottom, rgba(14,12,10,0.15) 20%, rgba(14,12,10,0.94) 85%)",
-                pointerEvents: "none",
-              }}
-            />
-          </>
+          <img
+            src={youtubeThumb}
+            alt=""
+            style={{
+              height: "200px",
+              width: "100%",
+              objectFit: "cover",
+            }}
+          />
         )}
 
         {/* Audio player inline */}
