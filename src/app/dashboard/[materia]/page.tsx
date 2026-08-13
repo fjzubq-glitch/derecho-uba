@@ -90,12 +90,9 @@ export default function MateriaPage() {
     enlace: clases.filter((c) => tieneRecurso(c, "enlace")).length,
   };
 
-  // Podcasts, archivos y enlaces de toda la materia
+  // Podcasts y enlaces de toda la materia
   const podcasts = clases.flatMap((c) =>
     c.archivos.filter((a) => a.tipo === "podcast").map((a) => ({ ...a, clase: c }))
-  );
-  const archivosAdjuntos = clases.flatMap((c) =>
-    c.archivos.filter((a) => a.tipo === "archivo").map((a) => ({ ...a, clase: c }))
   );
   const enlaces = clases.flatMap((c) =>
     c.archivos.filter((a) => a.tipo === "enlace").map((a) => ({ ...a, clase: c }))
@@ -404,61 +401,6 @@ export default function MateriaPage() {
                       </p>
                       <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-gold)" }}>
                         Clase {p.clase.numero.toString().padStart(2, "0")}
-                      </p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Archivos adjuntos de la materia */}
-          {!loading && archivosAdjuntos.length > 0 && (
-            <section style={{ marginTop: "56px" }}>
-              <div className="flex items-center gap-3 mb-6">
-                <FileText style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
-                <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "24px" }}>
-                  Archivos importantes
-                </h2>
-              </div>
-              <div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
-                style={{ background: "var(--color-line-soft)", gap: "1px" }}
-              >
-                {archivosAdjuntos.map((a, i) => (
-                  <article
-                    key={a.id}
-                    onClick={() => router.push(claseHref(a.clase.numero))}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(claseHref(a.clase.numero)); } }}
-                    className="card-reveal card-hover flex items-center gap-4 cursor-pointer focus-visible"
-                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
-                  >
-                    <div
-                      className="flex items-center justify-center flex-shrink-0"
-                      style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)" }}
-                    >
-                      <FileText style={{ width: "14px", height: "14px", color: "var(--color-gold)" }} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p
-                        style={{
-                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                          fontWeight: 500,
-                          fontSize: "15px",
-                          color: "var(--color-text)",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {a.nombre_display}
-                      </p>
-                      <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-gold)" }}>
-                        Clase {a.clase.numero.toString().padStart(2, "0")}
                       </p>
                     </div>
                   </article>
