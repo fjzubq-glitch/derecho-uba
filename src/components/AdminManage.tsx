@@ -885,7 +885,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                             whiteSpace: "nowrap",
                           }}
                         >
-                          {TIPO_LABELS[archivo.tipo] || archivo.tipo.replace("_", " ")}
+                          {archivo.nombre_display || TIPO_LABELS[archivo.tipo] || archivo.tipo.replace("_", " ")}
                         </p>
                         <p style={{ fontSize: "11px", color: "var(--color-text-muted)" }}>
                           {archivo.play_count} reproducciones
