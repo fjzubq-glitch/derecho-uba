@@ -324,6 +324,8 @@ if (isTranscription(tipo)) {
           transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
           boxShadow: isActive ? "inset 0 0 0 1px var(--color-gold)" : "none",
           border: "1px solid var(--color-line-soft)",
+          height: "200px",
+          overflow: "hidden",
         }}
         onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
         onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
