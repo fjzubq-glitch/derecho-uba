@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import PortalFooter from "@/components/PortalFooter";
-import { trackActivity, isAdminUser } from "@/lib/tracking";
-import { getPortalUserName } from "@/lib/portalUser";
+import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Volume2, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
-import { formatDuration, formatFechaLocal, saveResumeTime, getResumeTime, clearResumeTime } from "@/lib/utils";
+import { formatDuration, formatFechaLocal } from "@/lib/utils";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
+import { useAudio } from "@/components/AudioProvider";
 
 interface Archivo {
   id: string;
@@ -83,22 +83,19 @@ export default function ClaseNumeroPage() {
   const [materia, setMateria] = useState<MateriaData | null>(null);
   const [clase, setClase] = useState<Clase | null>(null);
   const [loading, setLoading] = useState(true);
+  const [prevClase, setPrevClase] = useState<Clase | null>(null);
+  const [nextClase, setNextClase] = useState<Clase | null>(null);
 
-  // Audio player state
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [playingTipo, setPlayingTipo] = useState<CardTipo | null>(null);
-  const [playingArchivoId, setPlayingArchivoId] = useState<string | null>(null);
-  const [playingSrc, setPlayingSrc] = useState("");
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [playbackRate, setPlaybackRate] = useState(1);
-  const playTrackedRef = useRef<string | null>(null);
+  // Audio player global (persiste entre rutas)
+  const { currentTrack, isPlaying, currentTime, duration, playbackRate, play, togglePlay, seek, cycleSpeed, restart: restartAudio } = useAudio();
+  const playingArchivoId = currentTrack?.id ?? null;
+  const playingTipo = currentTrack?.tipo as CardTipo | null;
+
+  // Offline state
   const [offlineStatus, setOfflineStatus] = useState<Record<string, "idle" | "downloading" | "saved">>({});
   const [offlineProgress, setOfflineProgress] = useState<Record<string, number>>({});
   const [offlineError, setOfflineError] = useState<string | null>(null);
   const [offlineMode, setOfflineMode] = useState(false);
-  const objectUrlRef = useRef<string | null>(null);
 
   // Transcription expand
   const [openTranscripcion, setOpenTranscripcion] = useState(false);
@@ -144,63 +141,19 @@ export default function ClaseNumeroPage() {
     }
   }
 
-  async function eliminarOffline(archivo: Archivo) {
+async function eliminarOffline(archivo: Archivo) {
     await deleteAudioOffline(archivo.id);
     setOfflineStatus((prev) => ({ ...prev, [archivo.id]: "idle" }));
   }
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-const onTimeUpdate = () => {
-     setCurrentTime(audio.currentTime);
-     if (playingArchivoId) {
-       const archivo = getArchivoById(playingArchivoId);
-       if (archivo) saveResumeTime(archivo.id, audio.currentTime);
-     }
-   };
-     const onDurationChange = () => {
-       setDuration(audio.duration);
-       if (playingArchivoId) {
-         const archivo = getArchivoById(playingArchivoId);
-         if (archivo && Number.isFinite(audio.duration) && audio.duration > 0) {
-           fetch("/api/stream/" + archivo.id, {
-             method: "PUT",
-             headers: { "Content-Type": "application/json" },
-             body: JSON.stringify({ duration: Math.round(audio.duration) }),
-           }).catch(() => {});
-         }
-       }
-     };
-    const onEnded = () => {
-      setIsPlaying(false);
-      setCurrentTime(0);
-      if (playingArchivoId) {
-        const archivo = getArchivoById(playingArchivoId);
-        if (archivo) clearResumeTime(archivo.id);
-      }
-    };
-
-    audio.addEventListener("timeupdate", onTimeUpdate);
-    audio.addEventListener("durationchange", onDurationChange);
-    audio.addEventListener("ended", onEnded);
-
-    return () => {
-      audio.removeEventListener("timeupdate", onTimeUpdate);
-      audio.removeEventListener("durationchange", onDurationChange);
-      audio.removeEventListener("ended", onEnded);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playingArchivoId, clase]);
-
-  // Aplicar velocidad de reproducción
-  useEffect(() => {
-    if (audioRef.current) audioRef.current.playbackRate = playbackRate;
-  }, [playbackRate, playingTipo, playingSrc]);
-
-  async function loadData() {
+async function loadData() {
     const cacheKey = `materia:${materiaSlug}:clase:${numero}`;
+    const setAdjacent = (clases: Clase[]) => {
+      const sorted = [...clases].sort((a, b) => a.numero - b.numero);
+      const idx = sorted.findIndex((c) => c.numero === parseInt(numero));
+      setPrevClase(idx > 0 ? sorted[idx - 1] : null);
+      setNextClase(idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null);
+    };
     try {
       const res = await fetch(`/api/materias/${materiaSlug}`);
       const data = await res.json();
@@ -211,6 +164,7 @@ const onTimeUpdate = () => {
           setClase(found);
           saveClaseOffline(cacheKey, data);
         }
+        setAdjacent(data.clases);
       }
     } catch (e) {
       console.error("Error loading clase, intentando offline:", e);
@@ -221,6 +175,7 @@ const onTimeUpdate = () => {
         if (anyData.materia) setMateria(anyData.materia);
         const found = (anyData.clases || []).find((c) => c.numero === parseInt(numero));
         if (found) setClase(found);
+        setAdjacent(anyData.clases || []);
       }
     }
     setLoading(false);
@@ -238,13 +193,8 @@ const onTimeUpdate = () => {
 
   const { title: materiaTitle } = materia ? splitName(materia.nombre) : { title: "" };
 
-  function getArchivos(tipo: CardTipo): Archivo[] {
+function getArchivos(tipo: CardTipo): Archivo[] {
     return clase?.archivos.filter((a) => a.tipo === tipo) || [];
-  }
-
-  function getArchivoById(id: string | null): Archivo | undefined {
-    if (!id) return undefined;
-    return clase?.archivos.find((a) => a.id === id);
   }
 
     function isAudioTipo(tipo: CardTipo) {
@@ -259,7 +209,7 @@ const onTimeUpdate = () => {
       return tipo === "enlace";
     }
 
-   function handleAudioAction(archivo: Archivo) {
+function handleAudioAction(archivo: Archivo) {
      if (!archivo) return;
 
      if (archivo.youtube_url) {
@@ -273,90 +223,32 @@ const onTimeUpdate = () => {
        return;
      }
 
-     setPlayingTipo(archivo.tipo as CardTipo);
-     setPlayingArchivoId(archivo.id);
-
      const usarOffline = async () => {
        const blob = await getAudioOffline(archivo.id);
+       let src = audioSourceUrl(archivo);
        if (blob) {
-         if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
-         const objUrl = URL.createObjectURL(blob);
-         objectUrlRef.current = objUrl;
-         setPlayingSrc(objUrl);
-       } else {
-         setPlayingSrc(audioSourceUrl(archivo));
+         src = URL.createObjectURL(blob);
        }
-       setCurrentTime(0);
-       setDuration(archivo.duration_seconds || 0);
-       setIsPlaying(false);
-       playTrackedRef.current = null;
-
-       setTimeout(() => {
-         const audio = audioRef.current;
-         if (!audio) return;
-         audio.playbackRate = playbackRate;
-         const resumeAt = getResumeTime(archivo.id);
-         if (resumeAt > 15) {
-           audio.currentTime = resumeAt;
-           setCurrentTime(resumeAt);
-         }
-       }, 100);
+       play({
+         id: archivo.id,
+         nombre: archivo.nombre_display,
+         tipo: archivo.tipo,
+         src,
+         materiaSlug,
+         claseNumero: clase?.numero ?? 0,
+         durationGuess: archivo.duration_seconds || 0,
+       });
      };
 
      usarOffline();
    }
 
-  function togglePlay() {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-    } else {
-      if (playingArchivoId && playTrackedRef.current !== playingArchivoId) {
-        const archivo = getArchivoById(playingArchivoId);
-        if (archivo) {
-          if (!isAdminUser()) {
-            fetch("/api/analytics", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ archivo_id: archivo.id, usuario: getPortalUserName() }),
-            }).catch(() => {});
-          }
-          trackActivity({ tipo: "play_start", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
-          playTrackedRef.current = playingArchivoId;
-        }
-      }
-      audio.play().catch(() => {});
-      setIsPlaying(true);
-    }
-  }
-
   function handleSeek(e: React.ChangeEvent<HTMLInputElement>) {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const time = Number(e.target.value);
-    audio.currentTime = time;
-    setCurrentTime(time);
-  }
-
-  const SPEEDS = [1, 1.25, 1.5, 2];
-  function cycleSpeed() {
-    setPlaybackRate((prev) => {
-      const i = SPEEDS.indexOf(prev);
-      return SPEEDS[(i + 1) % SPEEDS.length];
-    });
+    seek(Number(e.target.value));
   }
 
   function restartFromZero() {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.currentTime = 0;
-    setCurrentTime(0);
-    if (playingArchivoId) {
-      const archivo = getArchivoById(playingArchivoId);
-      if (archivo) clearResumeTime(archivo.id);
-    }
+    restartAudio();
   }
 
   function handleTranscriptionClick(archivo: Archivo) {
@@ -727,9 +619,6 @@ if (isTranscription(tipo)) {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-ink)" }}>
-      {/* Hidden audio element */}
-      <audio ref={audioRef} src={playingSrc} preload="metadata" />
-
       {/* ═══════════ MAIN ═══════════ */}
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "60px 48px 120px" }}>
@@ -838,6 +727,72 @@ if (isTranscription(tipo)) {
           )}
         </div>
       </main>
+
+      {/* ═══════════ NAVEGACIÓN ENTRE CLASES ═══════════ */}
+      {(prevClase || nextClase) && (
+        <nav
+          aria-label="Navegación entre clases"
+          className="pad-lateral"
+          style={{ padding: "0 48px 40px", borderTop: "1px solid var(--color-line-soft)" }}
+        >
+          <div
+            className="grid grid-cols-1 md:grid-cols-2"
+            style={{ background: "var(--color-line-soft)", marginTop: "48px", gap: "1px", overflow: "hidden" }}
+          >
+            {prevClase ? (
+              <button
+                onClick={() => router.push(`/dashboard/${materiaSlug}/clase/${prevClase.numero}`)}
+                className="card-reveal card-hover flex items-center gap-4 text-left cursor-pointer"
+                style={{
+                  background: "var(--color-card)",
+                  padding: "24px",
+                  border: "none",
+                  transition: "background 0.25s ease",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
+              >
+                <ArrowLeft style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} />
+                <div className="min-w-0">
+                  <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)", marginBottom: "4px" }}>
+                    Clase anterior
+                  </p>
+                  <p style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontSize: "15px", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {prevClase.titulo}
+                  </p>
+                </div>
+              </button>
+            ) : (
+              <div style={{ background: "var(--color-card)", padding: "24px" }} />
+            )}
+
+            {nextClase && (
+              <button
+                onClick={() => router.push(`/dashboard/${materiaSlug}/clase/${nextClase.numero}`)}
+                className="card-reveal card-hover flex items-center justify-end gap-4 text-right cursor-pointer"
+                style={{
+                  background: "var(--color-card)",
+                  padding: "24px",
+                  border: "none",
+                  transition: "background 0.25s ease",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
+              >
+                <div className="min-w-0">
+                  <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)", marginBottom: "4px" }}>
+                    Siguiente clase
+                  </p>
+                  <p style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontSize: "15px", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {nextClase.titulo}
+                  </p>
+                </div>
+                <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} />
+              </button>
+            )}
+          </div>
+        </nav>
+      )}
 
       {/* ═══════════ FOOTER ═══════════ */}
       <PortalFooter />

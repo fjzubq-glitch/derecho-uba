@@ -35,6 +35,11 @@ body {
   min-height: 100vh;
 }
 
+/* Padding para que el reproductor global fijo no tape el footer */
+body.has-global-player {
+  padding-bottom: 76px;
+}
+
 /* ── Fraunces on headings ── */
 h1, h2, h3, .section-title, .word {
   font-family: var(--font-fraunces), 'Fraunces', Georgia, 'Times New Roman', serif !important;
