@@ -91,6 +91,17 @@ export default function MateriaPage() {
     enlace: clases.filter((c) => tieneRecurso(c, "enlace")).length,
   };
 
+  // Solo mostrar chips de tipos que tienen contenido
+  const filtrosVisibles = (Object.keys(FILTRO_LABELS) as Filtro[]).filter(
+    (f) => f === "todas" || FILTRO_COUNT[f] > 0
+  );
+
+  // Si el filtro activo se queda sin contenido, volver a "todas"
+  useEffect(() => {
+    if (filtro !== "todas" && FILTRO_COUNT[filtro] === 0) setFiltro("todas");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clases]);
+
   // Podcasts y enlaces de toda la materia
   const podcasts = clases.flatMap((c) =>
     c.archivos.filter((a) => a.tipo === "podcast").map((a) => ({ ...a, clase: c }))
@@ -198,7 +209,7 @@ export default function MateriaPage() {
           {/* Filtros */}
           {!loading && clases.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-8">
-              {(Object.keys(FILTRO_LABELS) as Filtro[]).map((f) => (
+              {(filtrosVisibles as Filtro[]).map((f) => (
                 <button
                   key={f}
                   onClick={() => setFiltro(f)}
