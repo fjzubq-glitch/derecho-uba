@@ -27,18 +27,6 @@ interface Clase {
   archivos: Archivo[];
 }
 
-type Filtro = "todas" | "audio_clase" | "clase_youtube" | "transcripcion" | "podcast" | "archivo" | "enlace";
-
-const FILTRO_LABELS: Record<Filtro, string> = {
-  todas: "Todas",
-  audio_clase: "Audio",
-  clase_youtube: "Virtual",
-  transcripcion: "Transcripción",
-  podcast: "Podcast",
-  archivo: "Archivos",
-  enlace: "Enlaces",
-};
-
 export default function MateriaPage() {
   const params = useParams();
   const router = useRouter();
@@ -47,7 +35,6 @@ export default function MateriaPage() {
   const [materia, setMateria] = useState<{ id: string; nombre: string; estado?: string } | null>(null);
   const [clases, setClases] = useState<Clase[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filtro, setFiltro] = useState<Filtro>("todas");
 
   useEffect(() => {
     loadData();
@@ -75,32 +62,6 @@ export default function MateriaPage() {
   const { title: materiaTitle, meta: materiaMeta } = materia ? splitName(materia.nombre) : { title: "", meta: null };
 
   const tieneRecurso = (c: Clase, tipo: string) => c.archivos.some((a) => a.tipo === tipo);
-
-  const clasesFiltradas = clases.filter((c) => {
-    if (filtro === "todas") return true;
-    return tieneRecurso(c, filtro);
-  });
-
-  const FILTRO_COUNT: Record<Filtro, number> = {
-    todas: clases.length,
-    audio_clase: clases.filter((c) => tieneRecurso(c, "audio_clase")).length,
-    clase_youtube: clases.filter((c) => tieneRecurso(c, "clase_youtube")).length,
-    transcripcion: clases.filter((c) => tieneRecurso(c, "transcripcion")).length,
-    podcast: clases.filter((c) => tieneRecurso(c, "podcast")).length,
-    archivo: clases.filter((c) => tieneRecurso(c, "archivo")).length,
-    enlace: clases.filter((c) => tieneRecurso(c, "enlace")).length,
-  };
-
-  // Solo mostrar chips de tipos que tienen contenido
-  const filtrosVisibles = (Object.keys(FILTRO_LABELS) as Filtro[]).filter(
-    (f) => f === "todas" || FILTRO_COUNT[f] > 0
-  );
-
-  // Si el filtro activo se queda sin contenido, volver a "todas"
-  useEffect(() => {
-    if (filtro !== "todas" && FILTRO_COUNT[filtro] === 0) setFiltro("todas");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clases]);
 
   // Podcasts y enlaces de toda la materia
   const podcasts = clases.flatMap((c) =>
@@ -206,45 +167,6 @@ export default function MateriaPage() {
       {/* ═══════════ MAIN ═══════════ */}
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
-          {/* Filtros */}
-          {!loading && clases.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-8">
-              {(filtrosVisibles as Filtro[]).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFiltro(f)}
-                  className="flex items-center gap-1.5 whitespace-nowrap touch-target px-3 py-1.5"
-                  style={{
-                    fontSize: "10px",
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    letterSpacing: "0.06em",
-                    cursor: "pointer",
-                    borderRadius: "2px",
-                    border: `1px solid ${filtro === f ? "var(--color-gold)" : "var(--color-line)"}`,
-                    background: filtro === f ? "rgba(199, 168, 106, 0.12)" : "transparent",
-                    color: filtro === f ? "var(--color-gold)" : "var(--color-text-muted)",
-                    transition: "all 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (filtro !== f) {
-                      e.currentTarget.style.borderColor = "var(--color-gold-dim)";
-                      e.currentTarget.style.color = "var(--color-text)";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (filtro !== f) {
-                      e.currentTarget.style.borderColor = "var(--color-line)";
-                      e.currentTarget.style.color = "var(--color-text-muted)";
-                    }
-                  }}
-                >
-                  {FILTRO_LABELS[f]}
-                  <span style={{ color: "var(--color-text-faint)" }}>{FILTRO_COUNT[f]}</span>
-                </button>
-              ))}
-            </div>
-          )}
-
           {/* Clases */}
           {loading ? (
             <div
@@ -255,7 +177,7 @@ export default function MateriaPage() {
                 <div key={i} className="skeleton h-52" />
               ))}
             </div>
-          ) : clasesFiltradas.length === 0 ? (
+          ) : clases.length === 0 ? (
             <div
               style={{
                 padding: "80px 48px",
@@ -265,14 +187,10 @@ export default function MateriaPage() {
               }}
             >
               <p style={{ color: "var(--color-text-muted)", fontSize: "15px", lineHeight: 1.7 }}>
-                {clases.length === 0
-                  ? "Todavía no hay clases publicadas en esta materia."
-                  : "No hay clases con ese tipo de contenido."}
+                Todavía no hay clases publicadas en esta materia.
                 <br />
                 <span style={{ color: "var(--color-text-faint)", fontSize: "13px" }}>
-                  {clases.length === 0
-                    ? "Volvé más tarde, el material de cursada se publica acá."
-                    : "Probá con otro filtro de contenido."}
+                  Volvé más tarde, el material de cursada se publica acá.
                 </span>
               </p>
             </div>
@@ -281,7 +199,7 @@ export default function MateriaPage() {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
               style={{ background: "var(--color-line-soft)", gap: "1px" }}
             >
-              {clasesFiltradas.map((clase, i) => (
+              {clases.map((clase, i) => (
                 <article
                   key={clase.id}
                   onClick={() => {
