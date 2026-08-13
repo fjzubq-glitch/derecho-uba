@@ -321,11 +321,12 @@ if (isTranscription(tipo)) {
           opacity: 1,
           cursor: "pointer",
           animationDelay: `${cardIndex * 55}ms`,
-          transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease",
+          transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
           boxShadow: isActive ? "inset 0 0 0 1px var(--color-gold)" : "none",
+          border: "1px solid var(--color-line-soft)",
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; }}
-        onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
         onClick={() => handleCardClick(archivo)}
       >
         <div className="flex items-start justify-between gap-3">
@@ -759,12 +760,7 @@ if (isTranscription(tipo)) {
             </div>
           ) : (
             <div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
-              style={{
-                background: "var(--color-line-soft)",
-                gap: "1px",
-                borderRadius: 0,
-              }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             >
               {tipos.flatMap(renderCard)}
             </div>
@@ -780,8 +776,8 @@ if (isTranscription(tipo)) {
           style={{ padding: "0 48px 40px", borderTop: "1px solid var(--color-line-soft)" }}
         >
           <div
-            className="grid grid-cols-1 md:grid-cols-2"
-            style={{ background: "var(--color-line-soft)", marginTop: "48px", gap: "1px", overflow: "hidden" }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            style={{ marginTop: "48px" }}
           >
             {prevClase ? (
               <button
@@ -790,11 +786,11 @@ if (isTranscription(tipo)) {
                 style={{
                   background: "var(--color-card)",
                   padding: "24px",
-                  border: "none",
-                  transition: "background 0.25s ease",
+                  border: "1px solid var(--color-line-soft)",
+                  transition: "background 0.25s ease, border-color 0.25s ease",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
               >
                 <ArrowLeft style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} />
                 <div className="min-w-0">
@@ -807,7 +803,7 @@ if (isTranscription(tipo)) {
                 </div>
               </button>
             ) : (
-              <div style={{ background: "var(--color-card)", padding: "24px" }} />
+              <div />
             )}
 
             {nextClase && (
@@ -817,11 +813,11 @@ if (isTranscription(tipo)) {
                 style={{
                   background: "var(--color-card)",
                   padding: "24px",
-                  border: "none",
-                  transition: "background 0.25s ease",
+                  border: "1px solid var(--color-line-soft)",
+                  transition: "background 0.25s ease, border-color 0.25s ease",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
               >
                 <div className="min-w-0">
                   <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)", marginBottom: "4px" }}>

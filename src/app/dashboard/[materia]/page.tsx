@@ -196,8 +196,7 @@ export default function MateriaPage() {
             </div>
           ) : (
             <div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
-              style={{ background: "var(--color-line-soft)", gap: "1px" }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             >
               {clases.map((clase, i) => (
                 <article
@@ -218,10 +217,11 @@ export default function MateriaPage() {
                     background: "var(--color-card)",
                     padding: "28px 24px",
                     animationDelay: `${i * 50}ms`,
-                    transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease",
+                    transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease",
+                    border: "1px solid var(--color-line-soft)",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
                 >
                   <div
                     style={{
@@ -308,10 +308,7 @@ export default function MateriaPage() {
                   Podcasts
                 </h2>
               </div>
-              <div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
-                style={{ background: "var(--color-line-soft)", gap: "1px" }}
-              >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {podcasts.map((p, i) => (
                   <article
                     key={p.id}
@@ -320,9 +317,9 @@ export default function MateriaPage() {
                     tabIndex={0}
                     onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(claseHref(p.clase.numero)); } }}
                     className="card-reveal card-hover flex items-center gap-4 cursor-pointer focus-visible"
-                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
+                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease", border: "1px solid var(--color-line-soft)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
                   >
                     <div
                       className="flex items-center justify-center flex-shrink-0"
@@ -363,10 +360,7 @@ export default function MateriaPage() {
                   Enlaces útiles
                 </h2>
               </div>
-              <div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 overflow-hidden"
-                style={{ background: "var(--color-line-soft)", gap: "1px" }}
-              >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {enlaces.map((e, i) => (
                   <article
                     key={e.id}
@@ -375,9 +369,9 @@ export default function MateriaPage() {
                     tabIndex={0}
                     onKeyDown={(ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); router.push(claseHref(e.clase.numero)); } }}
                     className="card-reveal card-hover flex items-center gap-4 cursor-pointer focus-visible"
-                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
+                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease", border: "1px solid var(--color-line-soft)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
                   >
                     <div
                       className="flex items-center justify-center flex-shrink-0"
