@@ -65,7 +65,7 @@ const CARD_CONFIG: Record<CardTipo, {
   archivo: {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "ARCHIVO",
-    subtitle: () => "Descargar material",
+    subtitle: () => "Abrir material",
   },
   enlace: {
     icon: <Link2 style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
@@ -280,7 +280,7 @@ if (isTranscription(tipo)) {
         if (archivo.youtube_url) window.open(archivo.youtube_url, "_blank");
       } else if (tipo === "archivo") {
        if (archivo.youtube_url) window.open(archivo.youtube_url, "_blank");
-       else if (archivo.storage_key) window.open(`/api/stream/${archivo.id}?download=1`, "_blank");
+       else if (archivo.storage_key) window.open(`/api/stream/${archivo.id}`, "_blank");
 } else if (isAudioTipo(tipo)) {
        handleAudioAction(archivo);
      }
@@ -401,7 +401,36 @@ if (isTranscription(tipo)) {
               </p>
             )}
           </div>
-          <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0, marginTop: "14px" }} />
+          {tipo === "archivo" && archivo.storage_key ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(`/api/stream/${archivo.id}?download=1`, "_blank");
+                trackActivity({ tipo: "file_download", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+              }}
+              className="flex items-center gap-1.5"
+              title="Descargar material"
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "10px",
+                color: "var(--color-text-muted)",
+                flexShrink: 0,
+                marginTop: "14px",
+                transition: "color 0.2s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+            >
+              <Download style={{ width: "12px", height: "12px" }} />
+              Descargar
+            </button>
+          ) : (
+            <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0, marginTop: "14px" }} />
+          )}
         </div>
 
         {/* Thumbnail YouTube */}
