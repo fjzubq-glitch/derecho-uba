@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatFechaLocal } from "@/lib/utils";
-import { Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical, Link2 } from "@/components/icons";
+import { Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical, Link2, ChevronUp, ChevronDown } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -14,6 +14,7 @@ interface Archivo {
   cloudinary_url: string | null;
   play_count: number;
   nota: string | null;
+  orden: number;
 }
 
 interface Materia {
@@ -135,6 +136,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
             .from("archivos")
             .select("*")
             .eq("clase_id", c.id)
+            .order("orden")
             .order("created_at");
 
           return {
@@ -383,6 +385,35 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
       setMessage("Error: " + String(err));
     } finally {
       setProcessing(false);
+    }
+  }
+
+  async function handleReorder(archivos: Archivo[], index: number, direction: "up" | "down") {
+    const archivoActual = archivos[index];
+    const indexDestino = direction === "up" ? index - 1 : index + 1;
+    if (indexDestino < 0 || indexDestino >= archivos.length) return;
+
+    const archivoDestino = archivos[indexDestino];
+
+    const newItems = [
+      { id: archivoActual.id, orden: archivoDestino.orden },
+      { id: archivoDestino.id, orden: archivoActual.orden },
+    ];
+
+    try {
+      const res = await fetch("/api/admin/reorder", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: newItems }),
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        setMessage("Error al reordenar");
+        return;
+      }
+      loadClases();
+    } catch {
+      setMessage("Error al reordenar");
     }
   }
 
@@ -821,7 +852,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
 
               {clase.archivos.length > 0 ? (
                 <div className="space-y-2">
-                  {clase.archivos.map((archivo) => (
+                  {clase.archivos.map((archivo, idx) => (
                     <div
                       key={archivo.id}
                       className="flex items-center gap-3"
@@ -865,6 +896,42 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                           </p>
                         )}
                       </div>
+                      {archivo.tipo === "archivo" && (
+                        <div className="flex flex-col" style={{ gap: "2px" }}>
+                          <button
+                            onClick={() => handleReorder(clase.archivos, idx, "up")}
+                            disabled={idx === 0}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              cursor: idx === 0 ? "default" : "pointer",
+                              padding: "2px",
+                              color: idx === 0 ? "var(--color-line-soft)" : "var(--color-gold)",
+                              opacity: idx === 0 ? 0.4 : 1,
+                              transition: "color 0.2s ease",
+                            }}
+                            title="Mover arriba"
+                          >
+                            <ChevronUp style={{ width: "14px", height: "14px" }} />
+                          </button>
+                          <button
+                            onClick={() => handleReorder(clase.archivos, idx, "down")}
+                            disabled={idx === clase.archivos.length - 1}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              cursor: idx === clase.archivos.length - 1 ? "default" : "pointer",
+                              padding: "2px",
+                              color: idx === clase.archivos.length - 1 ? "var(--color-line-soft)" : "var(--color-gold)",
+                              opacity: idx === clase.archivos.length - 1 ? 0.4 : 1,
+                              transition: "color 0.2s ease",
+                            }}
+                            title="Mover abajo"
+                          >
+                            <ChevronDown style={{ width: "14px", height: "14px" }} />
+                          </button>
+                        </div>
+                      )}
                       <KebabMenu
                         menuKey={`archivo-${archivo.id}`}
                         items={[

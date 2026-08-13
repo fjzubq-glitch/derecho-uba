@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS archivos (
   file_size BIGINT,
   duration_seconds INT,
   play_count INT DEFAULT 0,
+  orden INT DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 

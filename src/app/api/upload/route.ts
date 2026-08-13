@@ -66,6 +66,15 @@ export async function POST(request: NextRequest) {
 
     const insertErrors: string[] = [];
 
+    const { data: existingFiles } = await getSupabaseAdmin()
+      .from("archivos")
+      .select("orden")
+      .eq("clase_id", targetClaseId)
+      .order("orden", { ascending: false })
+      .limit(1);
+
+    let nextOrden = (existingFiles?.[0]?.orden ?? -1) + 1;
+
     for (const item of items) {
       if (item.storageKey) {
         const fileName = String(item.storageKey).split("/").pop() || "";
@@ -89,6 +98,7 @@ export async function POST(request: NextRequest) {
         contenido_texto: item.contenidoTexto || null,
         file_size: item.fileSize || null,
         duration_seconds: item.durationSeconds || null,
+        orden: nextOrden++,
       });
 
       if (insertError) {

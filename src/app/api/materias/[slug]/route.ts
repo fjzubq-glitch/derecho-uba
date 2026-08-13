@@ -30,6 +30,7 @@ export async function GET(
         .from("archivos")
         .select("*")
         .eq("clase_id", c.id)
+        .order("orden")
         .order("created_at");
       return { ...c, archivos: archivos || [] };
     })
