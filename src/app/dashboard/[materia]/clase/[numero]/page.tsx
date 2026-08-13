@@ -439,7 +439,7 @@ if (isTranscription(tipo)) {
 
         {/* Thumbnail YouTube */}
         {youtubeThumb && (
-          <div className="mt-4" style={{ }}>
+          <div className="mt-4" style={{ height: "100%", width: "100%" }}>
             {/* Miniaturas externas de YouTube: no se optimizan con next/image */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -447,9 +447,9 @@ if (isTranscription(tipo)) {
               alt=""
               style={{
                 width: "100%",
-                height: "auto",
-                borderRadius: "4px",
-                border: "1px solid var(--color-line-soft)",
+                height: "100%",
+                objectFit: "cover",
+                border: "none",
               }}
             />
           </div>
