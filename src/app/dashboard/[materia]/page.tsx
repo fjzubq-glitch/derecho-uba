@@ -62,14 +62,10 @@ export default function MateriaPage() {
   const { title: materiaTitle, meta: materiaMeta } = materia ? splitName(materia.nombre) : { title: "", meta: null };
 
   const tieneRecurso = (c: Clase, tipo: string) => c.archivos.some((a) => a.tipo === tipo);
-
-  // Podcasts y enlaces de toda la materia
-  const podcasts = clases.flatMap((c) =>
-    c.archivos.filter((a) => a.tipo === "podcast").map((a) => ({ ...a, clase: c }))
-  );
-  const enlaces = clases.flatMap((c) =>
-    c.archivos.filter((a) => a.tipo === "enlace").map((a) => ({ ...a, clase: c }))
-  );
+// enlaces de toda la materia
+const enlaces = clases.flatMap((c) =>
+  c.archivos.filter((a) => a.tipo === "enlace").map((a) => ({ ...a, clase: c }))
+);
 
   const claseHref = (numero: number) => `/dashboard/${slug}/clase/${numero}`;
 
@@ -299,57 +295,8 @@ export default function MateriaPage() {
             </div>
           )}
 
-          {/* Podcasts de la materia */}
-          {!loading && podcasts.length > 0 && (
-            <section style={{ marginTop: "56px" }}>
-              <div className="flex items-center gap-3 mb-6">
-                <Volume2 style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
-                <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "24px" }}>
-                  Podcasts
-                </h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {podcasts.map((p, i) => (
-                  <article
-                    key={p.id}
-                    onClick={() => router.push(claseHref(p.clase.numero))}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(claseHref(p.clase.numero)); } }}
-                    className="card-reveal card-hover flex items-center gap-4 cursor-pointer focus-visible"
-                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease", border: "1px solid var(--color-line-soft)" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
-                  >
-                    <div
-                      className="flex items-center justify-center flex-shrink-0"
-                      style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)" }}
-                    >
-                      <Volume2 style={{ width: "14px", height: "14px", color: "var(--color-gold)" }} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p
-                        style={{
-                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                          fontWeight: 500,
-                          fontSize: "15px",
-                          color: "var(--color-text)",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {p.nombre_display}
-                      </p>
-                      <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-gold)" }}>
-                        Clase {p.clase.numero.toString().padStart(2, "0")}
-                      </p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-          )}
+          {/* Podcasts se ven dentro de cada card de clase */}
+          {null}
 
           {/* Enlaces útiles de la materia */}
           {!loading && enlaces.length > 0 && (
