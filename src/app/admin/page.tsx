@@ -54,6 +54,7 @@ interface MateriaStats {
   visitas: number;
   estudiantes: number;
   reproducciones: number;
+  porTipo: Record<string, number>;
 }
 
 type Periodo = "7" | "30" | "all";
@@ -914,85 +915,142 @@ export default function AdminPage() {
                           fontWeight: 400,
                           fontSize: "20px",
                           color: "var(--color-text)",
-                          marginBottom: "20px",
+                          marginBottom: "4px",
                         }}
                       >
                         Actividad por materia
-                        <span
-                          style={{
-                            fontFamily: "var(--font-ibm-plex-mono)",
-                            fontSize: "10px",
-                            letterSpacing: "0.12em",
-                            textTransform: "uppercase",
-                            color: "var(--color-text-faint)",
-                            marginLeft: "12px",
-                          }}
-                        >
-                          {materiasStats.length} materias
-                        </span>
                       </h3>
-                      <div>
-                        {materiasStats.map((mat, i) => (
-                            <div
-                              key={mat.id}
-                              className="flex items-center gap-4"
-                              style={{
-                                padding: "12px 0",
-                                borderBottom:
-                                  i < materiasStats.length - 1 ? "1px solid var(--color-line-soft)" : "none",
-                              }}
-                            >
-                              <span
+                      <p
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--color-text-muted)",
+                          marginBottom: "20px",
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        Lo que se consumió en cada materia, ordenado por uso total.
+                      </p>
+                      <div style={{ overflowX: "auto" }}>
+                        <div style={{ minWidth: "860px" }}>
+                          {/* Encabezado */}
+                          <div
+                            className="flex items-center gap-4"
+                            style={{
+                              padding: "8px 0",
+                              borderBottom: "1px solid var(--color-line)",
+                              fontFamily: "var(--font-ibm-plex-mono)",
+                              fontSize: "9px",
+                              letterSpacing: "0.12em",
+                              textTransform: "uppercase",
+                              color: "var(--color-text-faint)",
+                            }}
+                          >
+                            <span style={{ width: "28px", flexShrink: 0 }}>#</span>
+                            <span className="flex-1 min-w-0">Materia</span>
+                            <span style={{ width: "56px", textAlign: "right" }}>Visitas</span>
+                            <span style={{ width: "52px", textAlign: "right" }}>Alumnos</span>
+                            <span style={{ width: "42px", textAlign: "right" }}>Audio</span>
+                            <span style={{ width: "42px", textAlign: "right" }}>Video</span>
+                            <span style={{ width: "54px", textAlign: "right" }}>Podcast</span>
+                            <span style={{ width: "58px", textAlign: "right" }}>Transcrip.</span>
+                            <span style={{ width: "50px", textAlign: "right" }}>Punteos</span>
+                            <span style={{ width: "42px", textAlign: "right" }}>Enlaces</span>
+                          </div>
+                          {materiasStats.map((mat, i) => {
+                            const MAT_TIPOS: Array<[string, number]> = [
+                              ["audio_clase", 42],
+                              ["clase_youtube", 42],
+                              ["podcast", 54],
+                              ["transcripcion", 58],
+                              ["archivo", 50],
+                              ["enlace", 42],
+                            ];
+                            return (
+                              <div
+                                key={mat.id}
+                                className="flex items-center gap-4"
                                 style={{
-                                  fontFamily: "var(--font-ibm-plex-mono)",
-                                  fontSize: "13px",
-                                  fontWeight: 500,
-                                  color: i === 0 ? "var(--color-gold)" : "var(--color-text-faint)",
-                                  width: "28px",
-                                  flexShrink: 0,
+                                  padding: "11px 0",
+                                  borderBottom:
+                                    i < materiasStats.length - 1 ? "1px solid var(--color-line-soft)" : "none",
                                 }}
                               >
-                                {String(i + 1).padStart(2, "0")}
-                              </span>
-                              <div className="flex-1 min-w-0">
-                                <p
-                                  style={{
-                                    fontSize: "14px",
-                                    fontWeight: 500,
-                                    color: "var(--color-text)",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
-                                  }}
-                                >
-                                  {mat.nombre}
-                                </p>
                                 <span
                                   style={{
                                     fontFamily: "var(--font-ibm-plex-mono)",
-                                    fontSize: "9px",
-                                    color: "var(--color-text-faint)",
+                                    fontSize: "13px",
+                                    fontWeight: 500,
+                                    color: i === 0 ? "var(--color-gold)" : "var(--color-text-faint)",
+                                    width: "28px",
+                                    flexShrink: 0,
                                   }}
                                 >
-                                  {mat.total_clases} clases
+                                  {String(i + 1).padStart(2, "0")}
                                 </span>
+                                <div className="flex-1 min-w-0">
+                                  <p
+                                    style={{
+                                      fontSize: "14px",
+                                      fontWeight: 500,
+                                      color: "var(--color-text)",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
+                                    }}
+                                  >
+                                    {mat.nombre}
+                                  </p>
+                                  <span
+                                    style={{
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "9px",
+                                      color: "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {mat.total_clases} clases
+                                  </span>
+                                </div>
+                                <span
+                                  style={{
+                                    width: "56px",
+                                    textAlign: "right",
+                                    fontFamily: "var(--font-ibm-plex-mono)",
+                                    fontSize: "11px",
+                                    color: "var(--color-text-muted)",
+                                  }}
+                                >
+                                  {mat.visitas}
+                                </span>
+                                <span
+                                  style={{
+                                    width: "52px",
+                                    textAlign: "right",
+                                    fontFamily: "var(--font-ibm-plex-mono)",
+                                    fontSize: "11px",
+                                    color: "var(--color-text-muted)",
+                                  }}
+                                >
+                                  {mat.estudiantes}
+                                </span>
+                                {MAT_TIPOS.map(([key, width]) => (
+                                  <span
+                                    key={key}
+                                    style={{
+                                      width: `${width}px`,
+                                      textAlign: "right",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      fontWeight: 500,
+                                      color: (mat.porTipo[key] || 0) > 0 ? "var(--color-text)" : "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {mat.porTipo[key] || 0}
+                                  </span>
+                                ))}
                               </div>
-                              <div
-                                className="flex items-center gap-3 flex-shrink-0"
-                                style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", textAlign: "right" }}
-                              >
-                                <span style={{ color: "var(--color-text-muted)", minWidth: "44px" }}>
-                                  {mat.visitas} <span style={{ color: "var(--color-text-faint)" }}>visitas</span>
-                                </span>
-                                <span style={{ color: "var(--color-text-muted)", minWidth: "54px" }}>
-                                  {mat.estudiantes} <span style={{ color: "var(--color-text-faint)" }}>alumnos</span>
-                                </span>
-                                <span style={{ color: "var(--color-text-muted)", minWidth: "70px" }}>
-                                  {mat.reproducciones} <span style={{ color: "var(--color-text-faint)" }}>reproducciones</span>
-                                </span>
-                              </div>
-                            </div>
-                          ))}
+                            );
+                          })}
+                        </div>
                       </div>
                     </article>
                   )}

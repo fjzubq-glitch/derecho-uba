@@ -98,18 +98,26 @@ export async function GET(request: NextRequest) {
     const alumnosActivos = estudiantes.filter((e) => e.total > 0).length;
 
     // ── Actividad por materia ──
-    const materiaAgg: Record<string, { visitas: number; estudiantes: Set<string>; reproducciones: number }> = {};
+    const materiaAgg: Record<
+      string,
+      { visitas: number; estudiantes: Set<string>; reproducciones: number; porTipo: Record<string, number> }
+    > = {};
     for (const e of eventos) {
       if (!e.materia_slug) continue;
-      const m = materiaAgg[e.materia_slug] || (materiaAgg[e.materia_slug] = { visitas: 0, estudiantes: new Set(), reproducciones: 0 });
+      const m = materiaAgg[e.materia_slug] || (materiaAgg[e.materia_slug] = { visitas: 0, estudiantes: new Set(), reproducciones: 0, porTipo: {} });
       if (e.tipo === "page_view") m.visitas += 1;
       if (e.archivo_id && EVENTOS_REPRODUCCION.has(e.tipo || "")) m.reproducciones += 1;
+      if (e.archivo_id) {
+        const t = tipoPorArchivo.get(e.archivo_id);
+        if (t) m.porTipo[t] = (m.porTipo[t] || 0) + 1;
+      }
       if (e.nombre) m.estudiantes.add(e.nombre);
     }
 
     const materiasStats = ((materias || []) as Array<{ id: string; nombre: string | null; slug: string | null; total_clases?: number }>)
       .map((mat) => {
-        const agg = materiaAgg[mat.slug || ""] || { visitas: 0, estudiantes: new Set(), reproducciones: 0 };
+        const agg = materiaAgg[mat.slug || ""] || { visitas: 0, estudiantes: new Set(), reproducciones: 0, porTipo: {} };
+        const total = Object.values(agg.porTipo).reduce((a, b) => a + b, 0);
         return {
           id: mat.id,
           nombre: mat.nombre || "",
@@ -117,9 +125,11 @@ export async function GET(request: NextRequest) {
           visitas: agg.visitas,
           estudiantes: agg.estudiantes.size,
           reproducciones: agg.reproducciones,
+          porTipo: agg.porTipo,
+          consumo: total,
         };
       })
-      .sort((a, b) => b.visitas - a.visitas || b.reproducciones - a.reproducciones);
+      .sort((a, b) => b.consumo - a.consumo || b.visitas - a.visitas);
 
     // ── Contenido más popular ──
     const popCounts = new Map<string, number>();
