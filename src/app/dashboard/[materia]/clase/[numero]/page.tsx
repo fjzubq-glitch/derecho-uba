@@ -278,10 +278,18 @@ if (isTranscription(tipo)) {
           trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
       } else if (isEnlace(tipo)) {
-        if (archivo.youtube_url) window.open(archivo.youtube_url, "_blank");
+        if (archivo.youtube_url) {
+          window.open(archivo.youtube_url, "_blank");
+          trackActivity({ tipo: "enlace_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+        }
       } else if (tipo === "archivo") {
-       if (archivo.youtube_url) window.open(archivo.youtube_url, "_blank");
-       else if (archivo.storage_key) window.open(`/api/stream/${archivo.id}`, "_blank");
+       if (archivo.youtube_url) {
+         window.open(archivo.youtube_url, "_blank");
+         trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+       } else if (archivo.storage_key) {
+         window.open(`/api/stream/${archivo.id}`, "_blank");
+         trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+       }
 } else if (isAudioTipo(tipo)) {
        handleAudioAction(archivo);
      }
