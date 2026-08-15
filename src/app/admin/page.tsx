@@ -47,15 +47,26 @@ interface Estudiante {
   total: number;
 }
 
-interface EventoEstudiante {
+interface ElementoDia {
+  fecha: string;
+  veces: number;
+}
+
+interface ElementoEstudiante {
+  archivo_id: string;
+  nombre: string;
   tipo: string;
-  pagina: string | null;
-  materia_slug: string | null;
-  archivo_nombre: string | null;
-  materia: string | null;
   clase_numero: number | null;
   clase_titulo: string | null;
-  created_at: string | null;
+  total: number;
+  porDia: ElementoDia[];
+}
+
+interface MateriaEstudiante {
+  materia_slug: string;
+  materia_nombre: string;
+  visitas: number;
+  elementos: ElementoEstudiante[];
 }
 
 interface EstudianteDetalle {
@@ -64,7 +75,7 @@ interface EstudianteDetalle {
   reproducciones: number;
   completados: number;
   materiasUnicas: number;
-  eventos: EventoEstudiante[];
+  materias: MateriaEstudiante[];
 }
 
 interface MateriaStats {
@@ -210,15 +221,6 @@ export default function AdminPage() {
       setDetalleCargando(false);
     }
   }
-
-  const TIPO_LABELS: Record<string, string> = {
-    page_view: "Visita",
-    play_start: "Reproducción",
-    play_pause: "Pausa",
-    play_complete: "Completado",
-    youtube_open: "YouTube",
-    transcription_view: "Transcripción",
-  };
 
   async function handleUpload(
     materiaId: string,
@@ -1312,48 +1314,130 @@ export default function AdminPage() {
                                           </div>
                                         </div>
 
-                                        {detalleEstudiante.eventos.length === 0 ? (
+                                        {(!detalleEstudiante.materias || detalleEstudiante.materias.length === 0) ? (
                                           <p style={{ color: "var(--color-text-muted)", fontSize: "13px" }}>
                                             Sin actividad registrada.
                                           </p>
                                         ) : (
-                                          <div className="space-y-1" style={{ maxHeight: "300px", overflowY: "auto" }}>
-                                            {detalleEstudiante.eventos.map((ev, idx) => {
-                                              const esRep = ev.tipo === "play_start" || ev.tipo === "play_complete" || ev.tipo === "youtube_open";
+                                          <div className="space-y-5" style={{ maxHeight: "420px", overflowY: "auto", paddingRight: "4px" }}>
+                                            {detalleEstudiante.materias.map((mat, mi) => {
+                                              const totalMat = mat.elementos.reduce((s, e) => s + e.total, 0);
                                               return (
-                                                <div
-                                                  key={idx}
-                                                  className="flex items-center gap-3"
-                                                  style={{ padding: "7px 0", borderBottom: idx < detalleEstudiante.eventos.length - 1 ? "1px solid var(--color-line-soft)" : "none" }}
-                                                >
-                                                  <div
-                                                    style={{
-                                                      padding: "2px 8px",
-                                                      border: `1px solid ${esRep ? "var(--color-gold-dim)" : "var(--color-line)"}`,
-                                                      fontFamily: "var(--font-ibm-plex-mono)",
-                                                      fontSize: "9px",
-                                                      letterSpacing: "0.08em",
-                                                      textTransform: "uppercase",
-                                                      color: esRep ? "var(--color-gold)" : "var(--color-text-muted)",
-                                                      flexShrink: 0,
-                                                    }}
-                                                  >
-                                                    {TIPO_LABELS[ev.tipo] || ev.tipo}
-                                                  </div>
-                                                  <div className="flex-1 min-w-0">
-                                                    <p style={{ fontSize: "12px", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                                      {ev.archivo_nombre || ev.clase_titulo || ev.pagina || ev.tipo}
+                                                <div key={mat.materia_slug}>
+                                                  <div className="flex items-center justify-between gap-3 mb-2">
+                                                    <p
+                                                      style={{
+                                                        fontFamily: "var(--font-ibm-plex-mono)",
+                                                        fontSize: "10px",
+                                                        letterSpacing: "0.12em",
+                                                        textTransform: "uppercase",
+                                                        color: "var(--color-gold)",
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        whiteSpace: "nowrap",
+                                                      }}
+                                                    >
+                                                      {mat.materia_nombre}
                                                     </p>
-                                                    {ev.materia && (
-                                                      <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", color: "var(--color-text-faint)" }}>
-                                                        {ev.materia}
-                                                        {ev.clase_numero ? ` — Clase ${String(ev.clase_numero).padStart(2, "0")}` : ""}
-                                                      </p>
-                                                    )}
+                                                    <span
+                                                      style={{
+                                                        fontFamily: "var(--font-ibm-plex-mono)",
+                                                        fontSize: "10px",
+                                                        color: "var(--color-text-faint)",
+                                                        flexShrink: 0,
+                                                      }}
+                                                    >
+                                                      {mat.visitas > 0 ? `${mat.visitas} visitas · ` : ""}
+                                                      {totalMat} accesos
+                                                    </span>
                                                   </div>
-                                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", color: "var(--color-text-faint)", textAlign: "right", whiteSpace: "nowrap" }}>
-                                                    {ev.created_at ? new Date(ev.created_at).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" }) : "—"}
-                                                  </span>
+
+                                                  <div className="space-y-1">
+                                                    {mat.elementos.map((ele, ei) => (
+                                                      <div
+                                                        key={ele.archivo_id}
+                                                        style={{
+                                                          padding: "8px 0",
+                                                          borderBottom: ei < mat.elementos.length - 1 ? "1px solid var(--color-line-soft)" : "none",
+                                                        }}
+                                                      >
+                                                        <div className="flex items-center gap-3">
+                                                          <div
+                                                            style={{
+                                                              padding: "2px 8px",
+                                                              border: "1px solid var(--color-gold-dim)",
+                                                              fontFamily: "var(--font-ibm-plex-mono)",
+                                                              fontSize: "9px",
+                                                              letterSpacing: "0.08em",
+                                                              textTransform: "uppercase",
+                                                              color: "var(--color-gold)",
+                                                              flexShrink: 0,
+                                                            }}
+                                                          >
+                                                            {POR_TIPO_LABELS[ele.tipo] || ele.tipo.replace("_", " ")}
+                                                          </div>
+                                                          <div className="flex-1 min-w-0">
+                                                            <p
+                                                              style={{
+                                                                fontSize: "12px",
+                                                                color: "var(--color-text)",
+                                                                overflow: "hidden",
+                                                                textOverflow: "ellipsis",
+                                                                whiteSpace: "nowrap",
+                                                              }}
+                                                            >
+                                                              {ele.clase_titulo || ele.nombre}
+                                                            </p>
+                                                            {ele.clase_numero != null && (
+                                                              <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", color: "var(--color-text-faint)" }}>
+                                                                Clase {String(ele.clase_numero).padStart(2, "0")}
+                                                              </p>
+                                                            )}
+                                                          </div>
+                                                          <span
+                                                            style={{
+                                                              fontFamily: "var(--font-ibm-plex-mono)",
+                                                              fontSize: "12px",
+                                                              fontWeight: 500,
+                                                              color: "var(--color-text)",
+                                                              flexShrink: 0,
+                                                            }}
+                                                          >
+                                                            {ele.total} <span style={{ color: "var(--color-text-faint)", fontWeight: 400 }}>veces</span>
+                                                          </span>
+                                                        </div>
+                                                        <div className="flex flex-wrap items-center gap-1.5 mt-1.5" style={{ paddingLeft: "0px" }}>
+                                                          {ele.porDia.map((d) => (
+                                                            <span
+                                                              key={d.fecha}
+                                                              style={{
+                                                                padding: "2px 8px",
+                                                                background: "var(--color-card-hover)",
+                                                                border: "1px solid var(--color-line)",
+                                                                fontFamily: "var(--font-ibm-plex-mono)",
+                                                                fontSize: "9px",
+                                                                color: "var(--color-text-muted)",
+                                                                whiteSpace: "nowrap",
+                                                              }}
+                                                            >
+                                                              {d.fecha} · {d.veces}×
+                                                            </span>
+                                                          ))}
+                                                        </div>
+                                                      </div>
+                                                    ))}
+                                                  </div>
+
+                                                  {mi < detalleEstudiante.materias.length - 1 && (
+                                                    <div
+                                                      style={{
+                                                        height: "1px",
+                                                        background: "var(--color-gold-dim)",
+                                                        marginTop: "12px",
+                                                        opacity: 0.35,
+                                                      }}
+                                                    />
+                                                  )}
                                                 </div>
                                               );
                                             })}
