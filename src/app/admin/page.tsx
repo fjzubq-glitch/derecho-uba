@@ -361,6 +361,9 @@ export default function AdminPage() {
 
   const POR_TIPO_ORDER = ["audio_clase", "clase_youtube", "podcast", "transcripcion", "archivo", "enlace"];
 
+  const rankColor = (i: number) =>
+    i === 0 ? "var(--color-gold)" : i === 1 ? "var(--color-text)" : i === 2 ? "var(--color-text-muted)" : "var(--color-text-faint)";
+
   if (!authenticated) {
     return (
       <div
@@ -1095,8 +1098,8 @@ export default function AdminPage() {
                                   style={{
                                     fontFamily: "var(--font-ibm-plex-mono)",
                                     fontSize: "13px",
-                                    fontWeight: 500,
-                                    color: i === 0 ? "var(--color-gold)" : "var(--color-text-faint)",
+                                    fontWeight: 700,
+                                    color: rankColor(i),
                                     width: "28px",
                                     flexShrink: 0,
                                   }}
@@ -1108,7 +1111,7 @@ export default function AdminPage() {
                                     style={{
                                       fontSize: "14px",
                                       fontWeight: 500,
-                                      color: "var(--color-text)",
+                                      color: i === 0 ? "var(--color-gold)" : "var(--color-text)",
                                       overflow: "hidden",
                                       textOverflow: "ellipsis",
                                       whiteSpace: "nowrap",
@@ -1222,6 +1225,30 @@ export default function AdminPage() {
                           borderRadius: 0,
                         }}
                       />
+                      <div
+                        className="flex items-center gap-4"
+                        style={{
+                          padding: "8px 0",
+                          borderBottom: "1px solid var(--color-line)",
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "9px",
+                          letterSpacing: "0.12em",
+                          textTransform: "uppercase",
+                          color: "var(--color-text-faint)",
+                        }}
+                      >
+                        <span style={{ width: "28px", flexShrink: 0 }}>#</span>
+                        <span style={{ width: "32px", flexShrink: 0 }} />
+                        <span className="flex-1 min-w-0">Nombre</span>
+                        <span style={{ width: "44px", textAlign: "right" }}>Visitas</span>
+                        <span style={{ width: "36px", textAlign: "right" }}>Audio</span>
+                        <span style={{ width: "44px", textAlign: "right" }}>Video</span>
+                        <span style={{ width: "50px", textAlign: "right" }}>Podcast</span>
+                        <span style={{ width: "70px", textAlign: "right" }}>Transcrip.</span>
+                        <span style={{ width: "48px", textAlign: "right" }}>Punteos</span>
+                        <span style={{ width: "40px", textAlign: "right" }}>Total</span>
+                        <span style={{ width: "14px", flexShrink: 0 }} />
+                      </div>
                       <div className="space-y-1">
                         {estudiantes.filter((est) =>
                             est.nombre.toLowerCase().includes(busquedaEstudiante.trim().toLowerCase())
@@ -1257,20 +1284,35 @@ export default function AdminPage() {
                                   style={{
                                     fontFamily: "var(--font-ibm-plex-mono)",
                                     fontSize: "13px",
-                                    fontWeight: 500,
-                                    color: "var(--color-gold)",
+                                    fontWeight: 700,
+                                    color: rankColor(i),
                                     width: "28px",
                                     flexShrink: 0,
                                   }}
                                 >
                                   {String(i + 1).padStart(2, "0")}
                                 </span>
+                                <div
+                                  className="flex items-center justify-center flex-shrink-0"
+                                  style={{
+                                    width: "32px",
+                                    height: "32px",
+                                    borderRadius: "50%",
+                                    border: "1px solid var(--color-gold-dim)",
+                                    color: "var(--color-gold)",
+                                    fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                                    fontSize: "14px",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  {est.nombre.trim().charAt(0).toUpperCase()}
+                                </div>
                                 <div className="flex-1 min-w-0">
                                   <p
                                     style={{
                                       fontSize: "14px",
                                       fontWeight: 500,
-                                      color: "var(--color-text)",
+                                      color: i === 0 ? "var(--color-gold)" : "var(--color-text)",
                                       overflow: "hidden",
                                       textOverflow: "ellipsis",
                                       whiteSpace: "nowrap",
