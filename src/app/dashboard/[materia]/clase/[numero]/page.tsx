@@ -628,7 +628,9 @@ if (isTranscription(tipo)) {
     );
   }
 
-   const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "podcast", "archivo", "enlace"];
+   // Orden fijo de las cards en todas las clases:
+  // 1° audio o video de la clase, 2° podcast, 3° transcripción, 4° punteo, 5° resto
+  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "podcast", "transcripcion", "archivo", "enlace"];
 
   if (loading) {
     return (
