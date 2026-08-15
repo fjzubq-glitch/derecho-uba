@@ -6,7 +6,7 @@ import PortalFooter from "@/components/PortalFooter";
 import AdminUpload from "@/components/AdminUpload";
 import AdminManage from "@/components/AdminManage";
 import AdminMaterias from "@/components/AdminMaterias";
-import { ArrowLeft, BarChart3, Headphones, FileText, Shield } from "@/components/icons";
+import { ArrowLeft, BarChart3, Headphones, FileText, Shield, ChevronDown, Loader2 } from "@/components/icons";
 import { setAdminSession } from "@/lib/utils";
 
 interface Materia {
@@ -47,6 +47,26 @@ interface Estudiante {
   total: number;
 }
 
+interface EventoEstudiante {
+  tipo: string;
+  pagina: string | null;
+  materia_slug: string | null;
+  archivo_nombre: string | null;
+  materia: string | null;
+  clase_numero: number | null;
+  clase_titulo: string | null;
+  created_at: string | null;
+}
+
+interface EstudianteDetalle {
+  nombre: string;
+  total: number;
+  reproducciones: number;
+  completados: number;
+  materiasUnicas: number;
+  eventos: EventoEstudiante[];
+}
+
 interface MateriaStats {
   id: string;
   nombre: string;
@@ -84,6 +104,10 @@ export default function AdminPage() {
   const [contenidoPopular, setContenidoPopular] = useState<ContenidoPopular[]>([]);
   const [periodo, setPeriodo] = useState<Periodo>("7");
   const [busquedaEstudiante, setBusquedaEstudiante] = useState("");
+  const [estudianteSeleccionado, setEstudianteSeleccionado] = useState<string | null>(null);
+  const [detalleEstudiante, setDetalleEstudiante] = useState<EstudianteDetalle | null>(null);
+  const [detalleCargando, setDetalleCargando] = useState(false);
+  const [detalleError, setDetalleError] = useState(false);
 
   async function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -161,6 +185,40 @@ export default function AdminPage() {
     setPeriodo(p);
     loadAdminData(p);
   }
+
+  async function verEstudiante(nombre: string) {
+    if (estudianteSeleccionado === nombre) {
+      setEstudianteSeleccionado(null);
+      setDetalleEstudiante(null);
+      return;
+    }
+    setEstudianteSeleccionado(nombre);
+    setDetalleEstudiante(null);
+    setDetalleError(false);
+    setDetalleCargando(true);
+    try {
+      const res = await fetch(`/api/admin/estudiante?nombre=${encodeURIComponent(nombre)}`);
+      const data = await res.json();
+      if (data.error) {
+        setDetalleError(true);
+      } else {
+        setDetalleEstudiante(data);
+      }
+    } catch {
+      setDetalleError(true);
+    } finally {
+      setDetalleCargando(false);
+    }
+  }
+
+  const TIPO_LABELS: Record<string, string> = {
+    page_view: "Visita",
+    play_start: "Reproducción",
+    play_pause: "Pausa",
+    play_complete: "Completado",
+    youtube_open: "YouTube",
+    transcription_view: "Transcripción",
+  };
 
   async function handleUpload(
     materiaId: string,
@@ -1119,86 +1177,195 @@ export default function AdminPage() {
                             est.nombre.toLowerCase().includes(busquedaEstudiante.trim().toLowerCase())
                           )
                           .slice(0, 15)
-                          .map((est, i) => (
-                          <div
-                            key={est.nombre}
-                            className="flex items-center gap-4"
-                            style={{
-                              padding: "10px 0",
-                              borderBottom: i < Math.min(estudiantes.length, 15) - 1 ? "1px solid var(--color-line-soft)" : "none",
-                            }}
-                          >
-                            <span
-                              style={{
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "13px",
-                                fontWeight: 500,
-                                color: "var(--color-gold)",
-                                width: "28px",
-                                flexShrink: 0,
-                              }}
-                            >
-                              {String(i + 1).padStart(2, "0")}
-                            </span>
-                            <div className="flex-1 min-w-0">
-                              <p
+                          .map((est, i) => {
+                            const seleccionado = estudianteSeleccionado === est.nombre;
+                            return (
+                              <React.Fragment key={est.nombre}>
+                              <div
+                                onClick={() => verEstudiante(est.nombre)}
+                                className="flex items-center gap-4 cursor-pointer"
                                 style={{
-                                  fontSize: "14px",
-                                  fontWeight: 500,
-                                  color: "var(--color-text)",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
+                                  padding: "10px 0",
+                                  borderBottom: seleccionado
+                                    ? "1px solid var(--color-gold-dim)"
+                                    : i < Math.min(estudiantes.length, 15) - 1 ? "1px solid var(--color-line-soft)" : "none",
+                                  transition: "background 0.2s ease",
+                                  cursor: "pointer",
                                 }}
+                                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
+                                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                               >
-                                {est.nombre}
-                              </p>
-                              <p
-                                style={{
-                                  fontFamily: "var(--font-ibm-plex-mono)",
-                                  fontSize: "10px",
-                                  color: "var(--color-text-faint)",
-                                  marginTop: "2px",
-                                }}
-                              >
-                                Última actividad: {est.ultima_actividad ? new Date(est.ultima_actividad).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" }) : "—"}
-                              </p>
-                            </div>
-                            <div
-                              className="flex items-center gap-3 flex-shrink-0"
-                              style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px" }}
-                            >
-                              <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
-                                {est.visitas} <span style={{ color: "var(--color-text-faint)" }}>visitas</span>
-                              </span>
-                              <span style={{ color: "var(--color-text-muted)", minWidth: "36px", textAlign: "right" }}>
-                                {est.porTipo.audio_clase || 0} <span style={{ color: "var(--color-text-faint)" }}>audio</span>
-                              </span>
-                              <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
-                                {est.porTipo.clase_youtube || 0} <span style={{ color: "var(--color-text-faint)" }}>video</span>
-                              </span>
-                              <span style={{ color: "var(--color-text-muted)", minWidth: "50px", textAlign: "right" }}>
-                                {est.porTipo.podcast || 0} <span style={{ color: "var(--color-text-faint)" }}>podcast</span>
-                              </span>
-                              <span style={{ color: "var(--color-text-muted)", minWidth: "70px", textAlign: "right" }}>
-                                {est.porTipo.transcripcion || 0} <span style={{ color: "var(--color-text-faint)" }}>transcripción</span>
-                              </span>
-                              <span style={{ color: "var(--color-text-muted)", minWidth: "48px", textAlign: "right" }}>
-                                {est.porTipo.archivo || 0} <span style={{ color: "var(--color-text-faint)" }}>punteos</span>
-                              </span>
-                              <span
-                                style={{
-                                  color: "var(--color-gold)",
-                                  fontWeight: 500,
-                                  minWidth: "40px",
-                                  textAlign: "right",
-                                }}
-                              >
-                                {est.total}
-                              </span>
-                              </div>
-                            </div>
-                          ))
+                                <span
+                                  style={{
+                                    fontFamily: "var(--font-ibm-plex-mono)",
+                                    fontSize: "13px",
+                                    fontWeight: 500,
+                                    color: "var(--color-gold)",
+                                    width: "28px",
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  {String(i + 1).padStart(2, "0")}
+                                </span>
+                                <div className="flex-1 min-w-0">
+                                  <p
+                                    style={{
+                                      fontSize: "14px",
+                                      fontWeight: 500,
+                                      color: "var(--color-text)",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
+                                      textDecoration: seleccionado ? "underline" : "none",
+                                      textDecorationColor: "var(--color-gold-dim)",
+                                      textUnderlineOffset: "3px",
+                                    }}
+                                  >
+                                    {est.nombre}
+                                  </p>
+                                  <p
+                                    style={{
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "10px",
+                                      color: "var(--color-text-faint)",
+                                      marginTop: "2px",
+                                    }}
+                                  >
+                                    Última actividad: {est.ultima_actividad ? new Date(est.ultima_actividad).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" }) : "—"}
+                                  </p>
+                                </div>
+                                <div
+                                  className="flex items-center gap-3 flex-shrink-0"
+                                  style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px" }}
+                                >
+                                  <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
+                                    {est.visitas} <span style={{ color: "var(--color-text-faint)" }}>visitas</span>
+                                  </span>
+                                  <span style={{ color: "var(--color-text-muted)", minWidth: "36px", textAlign: "right" }}>
+                                    {est.porTipo.audio_clase || 0} <span style={{ color: "var(--color-text-faint)" }}>audio</span>
+                                  </span>
+                                  <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
+                                    {est.porTipo.clase_youtube || 0} <span style={{ color: "var(--color-text-faint)" }}>video</span>
+                                  </span>
+                                  <span style={{ color: "var(--color-text-muted)", minWidth: "50px", textAlign: "right" }}>
+                                    {est.porTipo.podcast || 0} <span style={{ color: "var(--color-text-faint)" }}>podcast</span>
+                                  </span>
+                                  <span style={{ color: "var(--color-text-muted)", minWidth: "70px", textAlign: "right" }}>
+                                    {est.porTipo.transcripcion || 0} <span style={{ color: "var(--color-text-faint)" }}>transcripción</span>
+                                  </span>
+                                  <span style={{ color: "var(--color-text-muted)", minWidth: "48px", textAlign: "right" }}>
+                                    {est.porTipo.archivo || 0} <span style={{ color: "var(--color-text-faint)" }}>punteos</span>
+                                  </span>
+                                  <span
+                                    style={{
+                                      color: "var(--color-gold)",
+                                      fontWeight: 500,
+                                      minWidth: "40px",
+                                      textAlign: "right",
+                                    }}
+                                  >
+                                    {est.total}
+                                  </span>
+                                  <ChevronDown
+                                    style={{
+                                      width: "14px",
+                                      height: "14px",
+                                      color: seleccionado ? "var(--color-gold)" : "var(--color-text-faint)",
+                                      transform: seleccionado ? "rotate(180deg)" : "none",
+                                      transition: "transform 0.2s ease",
+                                      flexShrink: 0,
+                                    }}
+                                  />
+                                  </div>
+                                </div>
+
+                                {seleccionado && (
+                                  <div
+                                    style={{
+                                      background: "var(--color-ink)",
+                                      border: "1px solid var(--color-gold-dim)",
+                                      padding: "20px 24px",
+                                      marginBottom: "12px",
+                                      borderRadius: 0,
+                                    }}
+                                  >
+                                    {detalleCargando ? (
+                                      <div className="flex items-center gap-3" style={{ color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px" }}>
+                                        <Loader2 style={{ width: "14px", height: "14px", color: "var(--color-gold)" }} />
+                                        Cargando actividad de {est.nombre}…
+                                      </div>
+                                    ) : detalleError ? (
+                                      <p style={{ color: "var(--color-danger, #c65a4f)", fontSize: "13px" }}>
+                                        No se pudo cargar la actividad de este alumno.
+                                      </p>
+                                    ) : detalleEstudiante ? (
+                                      <div>
+                                        <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+                                          <p style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontSize: "16px", color: "var(--color-text)" }}>
+                                            Actividad de {detalleEstudiante.nombre}
+                                          </p>
+                                          <div className="flex items-center gap-4" style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
+                                            <span>{detalleEstudiante.total} <span style={{ color: "var(--color-text-faint)" }}>eventos</span></span>
+                                            <span>{detalleEstudiante.reproducciones} <span style={{ color: "var(--color-text-faint)" }}>repros</span></span>
+                                            <span>{detalleEstudiante.completados} <span style={{ color: "var(--color-text-faint)" }}>completados</span></span>
+                                            <span>{detalleEstudiante.materiasUnicas} <span style={{ color: "var(--color-text-faint)" }}>materias</span></span>
+                                          </div>
+                                        </div>
+
+                                        {detalleEstudiante.eventos.length === 0 ? (
+                                          <p style={{ color: "var(--color-text-muted)", fontSize: "13px" }}>
+                                            Sin actividad registrada.
+                                          </p>
+                                        ) : (
+                                          <div className="space-y-1" style={{ maxHeight: "300px", overflowY: "auto" }}>
+                                            {detalleEstudiante.eventos.map((ev, idx) => {
+                                              const esRep = ev.tipo === "play_start" || ev.tipo === "play_complete" || ev.tipo === "youtube_open";
+                                              return (
+                                                <div
+                                                  key={idx}
+                                                  className="flex items-center gap-3"
+                                                  style={{ padding: "7px 0", borderBottom: idx < detalleEstudiante.eventos.length - 1 ? "1px solid var(--color-line-soft)" : "none" }}
+                                                >
+                                                  <div
+                                                    style={{
+                                                      padding: "2px 8px",
+                                                      border: `1px solid ${esRep ? "var(--color-gold-dim)" : "var(--color-line)"}`,
+                                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                                      fontSize: "9px",
+                                                      letterSpacing: "0.08em",
+                                                      textTransform: "uppercase",
+                                                      color: esRep ? "var(--color-gold)" : "var(--color-text-muted)",
+                                                      flexShrink: 0,
+                                                    }}
+                                                  >
+                                                    {TIPO_LABELS[ev.tipo] || ev.tipo}
+                                                  </div>
+                                                  <div className="flex-1 min-w-0">
+                                                    <p style={{ fontSize: "12px", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                      {ev.archivo_nombre || ev.clase_titulo || ev.pagina || ev.tipo}
+                                                    </p>
+                                                    {ev.materia && (
+                                                      <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", color: "var(--color-text-faint)" }}>
+                                                        {ev.materia}
+                                                        {ev.clase_numero ? ` — Clase ${String(ev.clase_numero).padStart(2, "0")}` : ""}
+                                                      </p>
+                                                    )}
+                                                  </div>
+                                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", color: "var(--color-text-faint)", textAlign: "right", whiteSpace: "nowrap" }}>
+                                                    {ev.created_at ? new Date(ev.created_at).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" }) : "—"}
+                                                  </span>
+                                                </div>
+                                              );
+                                            })}
+                                          </div>
+                                        )}
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                )}
+                              </React.Fragment>
+                            );
+                          })
                         )}
                       </div>
                     </article>
