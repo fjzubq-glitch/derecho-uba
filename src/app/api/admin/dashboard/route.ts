@@ -55,15 +55,41 @@ export async function GET(request: NextRequest) {
     const reproducciones = eventos.filter((e) => e.archivo_id && EVENTOS_REPRODUCCION.has(e.tipo || ""));
     const totalReproducciones = reproducciones.length;
 
-    // ── Contenido consumido por tipo ──
+    // ── Contenido consumido por tipo (con materia de cada elemento) ──
+    const materiaNombreMap = new Map(
+      ((materias || []) as Array<{ slug: string | null; nombre: string | null }>)
+        .filter((m) => m.slug)
+        .map((m) => [m.slug as string, m.nombre || ""]),
+    );
+
+    const tipoMateriaAgg: Record<string, Record<string, { accesos: number; personas: Set<string> }>> = {};
+    for (const e of eventos) {
+      if (!e.archivo_id) continue;
+      const t = tipoPorArchivo.get(e.archivo_id);
+      if (!t) continue;
+      const slug = e.materia_slug || "";
+      const agg = (tipoMateriaAgg[t] = tipoMateriaAgg[t] || {});
+      const m = (agg[slug] = agg[slug] || { accesos: 0, personas: new Set() });
+      m.accesos += 1;
+      if (e.nombre) m.personas.add(e.nombre);
+    }
+
     const CONTENIDO_TIPOS = ["audio_clase", "clase_youtube", "podcast", "transcripcion", "archivo", "enlace"];
     const contenidoPorTipo = CONTENIDO_TIPOS.map((tipo) => {
-      const evs = eventos.filter((e) => e.archivo_id && tipoPorArchivo.get(e.archivo_id) === tipo);
-      return {
-        tipo,
-        accesos: evs.length,
-        personas: new Set(evs.map((e) => e.nombre).filter(Boolean) as string[]).size,
-      };
+      const porMateria = Object.entries(tipoMateriaAgg[tipo] || {})
+        .map(([slug, agg]) => ({
+          slug,
+          materia: slug ? materiaNombreMap.get(slug) || "" : "",
+          accesos: agg.accesos,
+          personas: agg.personas.size,
+        }))
+        .filter((m) => m.materia)
+        .sort((a, b) => b.accesos - a.accesos);
+      const accesos = porMateria.reduce((a, m) => a + m.accesos, 0);
+      const personas = new Set(
+        Object.values(tipoMateriaAgg[tipo] || {}).flatMap((m) => [...m.personas]),
+      ).size;
+      return { tipo, accesos, personas, materias: porMateria };
     });
 
     // ── Por persona: qué miró y cuánto ──
@@ -148,10 +174,17 @@ export async function GET(request: NextRequest) {
       total_reproducciones: number;
     }> = [];
     if (popIds.length > 0) {
-      const [{ data: popArchivoRows }, { data: popClaseRowsSupabase }] = await Promise.all([
-        supabase.from("archivos").select("id, nombre_display, tipo, clase_id").in("id", popIds),
-        supabase.from("clases").select("id, numero, titulo, materias!inner(nombre)").in("id", popIds),
-      ]);
+      const { data: popArchivoRows } = await supabase
+        .from("archivos")
+        .select("id, nombre_display, tipo, clase_id")
+        .in("id", popIds);
+      const claseIdsPop = [...new Set((popArchivoRows || []).map((a) => a.clase_id).filter(Boolean) as string[])];
+      const { data: popClaseRowsSupabase } = claseIdsPop.length > 0
+        ? await supabase
+            .from("clases")
+            .select("id, numero, titulo, materias!inner(nombre)")
+            .in("id", claseIdsPop)
+        : { data: null };
       const popArchivoMap = new Map((popArchivoRows || []).map((a) => [a.id, a]));
       const popClaseMap = new Map((popClaseRowsSupabase || []).map((c) => [c.id, c]));
       contenidoPopular = popIds.map((id) => {

@@ -36,6 +36,7 @@ interface ContenidoPorTipo {
   tipo: string;
   accesos: number;
   personas: number;
+  materias: Array<{ slug: string; materia: string; accesos: number; personas: number }>;
 }
 
 interface Estudiante {
@@ -918,6 +919,8 @@ export default function AdminPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)" }}>
                       {POR_TIPO_ORDER.map((tipo) => {
                         const item = contenidoPorTipo.find((c) => c.tipo === tipo);
+                        const materiasVisibles = item?.materias.slice(0, 3) || [];
+                        const materiasRestantes = (item?.materias.length || 0) - materiasVisibles.length;
                         return (
                           <div key={tipo} style={{ background: "var(--color-card)", padding: "20px 24px" }}>
                             <p
@@ -953,6 +956,59 @@ export default function AdminPage() {
                             >
                               {item?.personas || 0} personas
                             </div>
+                            {materiasVisibles.length > 0 && (
+                              <div
+                                style={{
+                                  marginTop: "14px",
+                                  paddingTop: "12px",
+                                  borderTop: "1px solid var(--color-line-soft)",
+                                }}
+                              >
+                                {materiasVisibles.map((m) => (
+                                  <div
+                                    key={m.slug || m.materia}
+                                    className="flex items-center justify-between gap-2"
+                                    style={{ padding: "3px 0" }}
+                                  >
+                                    <span
+                                      style={{
+                                        fontSize: "12px",
+                                        color: "var(--color-text-muted)",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        whiteSpace: "nowrap",
+                                        minWidth: "0",
+                                      }}
+                                    >
+                                      {m.materia}
+                                    </span>
+                                    <span
+                                      style={{
+                                        fontFamily: "var(--font-ibm-plex-mono)",
+                                        fontSize: "11px",
+                                        fontWeight: 500,
+                                        color: "var(--color-text)",
+                                        flexShrink: 0,
+                                      }}
+                                    >
+                                      {m.accesos}
+                                    </span>
+                                  </div>
+                                ))}
+                                {materiasRestantes > 0 && (
+                                  <div
+                                    style={{
+                                      padding: "3px 0",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "10px",
+                                      color: "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    +{materiasRestantes} materias más
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
                         );
                       })}
