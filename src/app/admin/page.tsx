@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PortalFooter from "@/components/PortalFooter";
 import AdminUpload from "@/components/AdminUpload";
@@ -179,12 +179,6 @@ export default function AdminPage() {
     })();
   }, []);
 
-  useEffect(() => {
-    if (authenticated) {
-      loadAdminData();
-    }
-  }, [authenticated]);
-
   // Presencia en vivo: polling mientras esté en la pestaña Analytics
   useEffect(() => {
     if (!authenticated || activeTab !== "analytics") return;
@@ -208,7 +202,7 @@ export default function AdminPage() {
     };
   }, [authenticated, activeTab]);
 
-  async function loadAdminData(periodoActivo: Periodo = periodo) {
+  const loadAdminData = useCallback(async (periodoActivo: Periodo = periodo) => {
     try {
       setAnalyticsLoading(true);
       const res = await fetch(`/api/admin/dashboard?dias=${periodoActivo}`);
@@ -227,11 +221,16 @@ export default function AdminPage() {
       console.error("Error loading admin data:", e);
     }
     setAnalyticsLoading(false);
-  }
+  }, [periodo]);
+
+  useEffect(() => {
+    if (authenticated) {
+      loadAdminData();
+    }
+  }, [authenticated, loadAdminData]);
 
   function cambiarPeriodo(p: Periodo) {
     setPeriodo(p);
-    loadAdminData(p);
   }
 
   async function verEstudiante(nombre: string) {

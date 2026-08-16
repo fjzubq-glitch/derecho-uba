@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Volume2, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
@@ -447,9 +448,11 @@ if (isTranscription(tipo)) {
         {/* Thumbnail YouTube */}
         {youtubeThumb && (
           <div className="mt-4">
-            <img
+            <Image
               src={youtubeThumb}
               alt=""
+              width={320}
+              height={180}
               style={{
                 width: "100%",
                 height: "auto",
