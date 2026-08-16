@@ -99,6 +99,19 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
           Así podremos saludarte en cada visita.
         </p>
 
+        <p
+          style={{
+            fontSize: "11px",
+            lineHeight: 1.6,
+            color: "var(--color-text-faint)",
+            borderTop: "1px solid var(--color-line-soft)",
+            paddingTop: "12px",
+            marginBottom: "20px",
+          }}
+        >
+          Tu actividad en el portal ayuda a mejorar el contenido.
+        </p>
+
         <form onSubmit={handleSubmit}>
           <input
             type="text"
