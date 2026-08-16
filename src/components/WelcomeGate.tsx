@@ -109,7 +109,7 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
             marginBottom: "20px",
           }}
         >
-          Tu actividad en el portal ayuda a mejorar el contenido.
+          Tu actividad y sugerencias en el portal ayudan a mejorar el contenido.
         </p>
 
         <form onSubmit={handleSubmit}>
