@@ -85,7 +85,7 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
         >
           Bienvenido/a.
           <br />
-          ¿Cómo querés que te saludemos?
+          ¿Cómo querés que te llamemos?
         </h2>
 
         <p
@@ -120,8 +120,8 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
               setNombre(e.target.value);
               setError(null);
             }}
-            placeholder="Tu nombre"
-            aria-label="Tu nombre"
+            placeholder="Tu nombre o nick"
+            aria-label="Tu nombre o nick"
             autoFocus
             maxLength={40}
             style={{
