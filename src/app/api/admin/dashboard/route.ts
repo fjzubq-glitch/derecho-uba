@@ -38,9 +38,11 @@ export async function GET(request: NextRequest) {
     const tipoPorArchivo = new Map((archivos || []).map((a) => [a.id, a.tipo]));
 
     // Todos los eventos del período (visitas, reproducciones, aperturas)
+    // Los heartbeats (presencia) se excluyen: solo ensucian el volumen
     let eventsQuery = supabase
       .from("actividad")
       .select("tipo, archivo_id, nombre, materia_slug, created_at, ip_hash")
+      .neq("tipo", "heartbeat")
       .order("created_at", { ascending: false })
       .limit(100000);
     if (desdeISO) eventsQuery = eventsQuery.gte("created_at", desdeISO);
@@ -54,6 +56,10 @@ export async function GET(request: NextRequest) {
 
     const reproducciones = eventos.filter((e) => e.archivo_id && EVENTOS_REPRODUCCION.has(e.tipo || ""));
     const totalReproducciones = reproducciones.length;
+
+    const alumnosNuevos = new Set(
+      eventos.filter((e) => e.tipo === "usuario_registrado").map((e) => (e.nombre || "").trim()).filter(Boolean),
+    ).size;
 
     // ── Contenido consumido por tipo (con materia de cada elemento) ──
     const materiaNombreMap = new Map(
@@ -95,13 +101,14 @@ export async function GET(request: NextRequest) {
     // ── Por persona: qué miró y cuánto ──
     const personasMap: Record<
       string,
-      { nombre: string; visitas: number; materias: Set<string>; porTipo: Record<string, number>; ultima_actividad: string }
+      { nombre: string; visitas: number; clasesVistas: number; materias: Set<string>; porTipo: Record<string, number>; ultima_actividad: string }
     > = {};
     for (const e of eventos) {
       const n = (e.nombre || "").trim();
       if (!n) continue;
-      const p = personasMap[n] || (personasMap[n] = { nombre: n, visitas: 0, materias: new Set(), porTipo: {}, ultima_actividad: "" });
+      const p = personasMap[n] || (personasMap[n] = { nombre: n, visitas: 0, clasesVistas: 0, materias: new Set(), porTipo: {}, ultima_actividad: "" });
       if (e.tipo === "page_view") p.visitas += 1;
+      if (e.tipo === "class_view") p.clasesVistas += 1;
       if (e.materia_slug) p.materias.add(e.materia_slug);
       if (e.archivo_id) {
         const t = tipoPorArchivo.get(e.archivo_id);
@@ -114,6 +121,7 @@ export async function GET(request: NextRequest) {
       .map((p) => ({
         nombre: p.nombre,
         visitas: p.visitas,
+        clasesVistas: p.clasesVistas,
         materias: p.materias.size,
         porTipo: p.porTipo,
         total: Object.values(p.porTipo).reduce((a, b) => a + b, 0),
@@ -212,6 +220,7 @@ export async function GET(request: NextRequest) {
       visitantesUnicos,
       totalVisitas,
       alumnosActivos,
+      alumnosNuevos,
       estudiantes,
       contenidoPorTipo,
       materiasStats,

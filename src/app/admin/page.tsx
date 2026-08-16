@@ -42,6 +42,7 @@ interface ContenidoPorTipo {
 interface Estudiante {
   nombre: string;
   visitas: number;
+  clasesVistas: number;
   ultima_actividad: string;
   materias: number;
   porTipo: Record<string, number>;
@@ -118,6 +119,7 @@ export default function AdminPage() {
   const [visitantesUnicos, setVisitantesUnicos] = useState(0);
   const [totalVisitas, setTotalVisitas] = useState(0);
   const [alumnosActivos, setAlumnosActivos] = useState(0);
+  const [alumnosNuevos, setAlumnosNuevos] = useState(0);
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
   const [contenidoPorTipo, setContenidoPorTipo] = useState<ContenidoPorTipo[]>([]);
   const [materiasStats, setMateriasStats] = useState<MateriaStats[]>([]);
@@ -216,6 +218,7 @@ export default function AdminPage() {
       setVisitantesUnicos(data.visitantesUnicos || 0);
       setTotalVisitas(data.totalVisitas || 0);
       setAlumnosActivos(data.alumnosActivos || 0);
+      setAlumnosNuevos(data.alumnosNuevos || 0);
       if (data.contenidoPorTipo) setContenidoPorTipo(data.contenidoPorTipo);
       if (data.estudiantes) setEstudiantes(data.estudiantes);
       if (data.materiasStats) setMateriasStats(data.materiasStats);
@@ -805,7 +808,7 @@ export default function AdminPage() {
 
                   {/* Métricas generales */}
                   <div
-                    className="grid grid-cols-2 lg:grid-cols-4 overflow-hidden"
+                    className="grid grid-cols-2 lg:grid-cols-5 overflow-hidden"
                     style={{
                       background: "var(--color-line-soft)",
                       gap: "1px",
@@ -927,6 +930,35 @@ export default function AdminPage() {
                         Con nombre, de {estudiantes.length} que entraron
                       </p>
                     </div>
+
+                    <div style={{ background: "var(--color-card)", padding: "24px 26px" }}>
+                      <span
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "9px",
+                          letterSpacing: "0.14em",
+                          textTransform: "uppercase",
+                          color: "var(--color-text-faint)",
+                        }}
+                      >
+                        Alumnos nuevos
+                      </span>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "36px",
+                          fontWeight: 500,
+                          lineHeight: 1.1,
+                          color: "var(--color-text)",
+                          margin: "10px 0 6px",
+                        }}
+                      >
+                        {String(alumnosNuevos).padStart(2, "0")}
+                      </div>
+                      <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
+                        Que completaron el registro por primera vez
+                      </p>
+                    </div>
                   </div>
 
                   {/* En línea ahora */}
@@ -993,7 +1025,7 @@ export default function AdminPage() {
                       </p>
                     ) : enLinea.length === 0 ? (
                       <p style={{ color: "var(--color-text-muted)", fontSize: "13px", padding: "10px 0" }}>
-                        Nadie en línea ahora mismo. Aparecen aquí los alumnos con nombre que estuvieron activos en los últimos 90 segundos.
+                        Nadie en línea ahora mismo. Aparecen aquí los alumnos con nombre que estuvieron activos en los últimos 90 segundos. Tu sesión de administrador no cuenta.
                       </p>
                     ) : (
                       <div className="space-y-1">
@@ -1412,6 +1444,7 @@ export default function AdminPage() {
                         <span style={{ width: "32px", flexShrink: 0 }} />
                         <span className="flex-1 min-w-0">Nombre</span>
                         <span style={{ width: "44px", textAlign: "right" }}>Visitas</span>
+                        <span style={{ width: "44px", textAlign: "right" }}>Clases</span>
                         <span style={{ width: "36px", textAlign: "right" }}>Audio</span>
                         <span style={{ width: "44px", textAlign: "right" }}>Video</span>
                         <span style={{ width: "50px", textAlign: "right" }}>Podcast</span>
@@ -1511,6 +1544,9 @@ export default function AdminPage() {
                                 >
                                   <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
                                     {est.visitas} <span style={{ color: "var(--color-text-faint)" }}>visitas</span>
+                                  </span>
+                                  <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
+                                    {est.clasesVistas || 0} <span style={{ color: "var(--color-text-faint)" }}>clases</span>
                                   </span>
                                   <span style={{ color: "var(--color-text-muted)", minWidth: "36px", textAlign: "right" }}>
                                     {est.porTipo.audio_clase || 0} <span style={{ color: "var(--color-text-faint)" }}>audio</span>
