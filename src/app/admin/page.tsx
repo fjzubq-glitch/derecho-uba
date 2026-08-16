@@ -89,6 +89,14 @@ interface MateriaStats {
   porTipo: Record<string, number>;
 }
 
+interface EnLinea {
+  nombre: string;
+  materia_slug: string | null;
+  materia_nombre: string;
+  pagina: string | null;
+  ultimo: string;
+}
+
 type Periodo = "7" | "30" | "all";
 
 export default function AdminPage() {
@@ -116,6 +124,8 @@ export default function AdminPage() {
   const [contenidoPopular, setContenidoPopular] = useState<ContenidoPopular[]>([]);
   const [periodo, setPeriodo] = useState<Periodo>("7");
   const [busquedaEstudiante, setBusquedaEstudiante] = useState("");
+  const [enLinea, setEnLinea] = useState<EnLinea[]>([]);
+  const [enLineaCargando, setEnLineaCargando] = useState(true);
   const [estudianteSeleccionado, setEstudianteSeleccionado] = useState<string | null>(null);
   const [detalleEstudiante, setDetalleEstudiante] = useState<EstudianteDetalle | null>(null);
   const [detalleCargando, setDetalleCargando] = useState(false);
@@ -172,6 +182,29 @@ export default function AdminPage() {
       loadAdminData();
     }
   }, [authenticated]);
+
+  // Presencia en vivo: polling mientras esté en la pestaña Analytics
+  useEffect(() => {
+    if (!authenticated || activeTab !== "analytics") return;
+    let ok = true;
+    const cargarPresencia = async () => {
+      try {
+        const res = await fetch("/api/admin/presence");
+        const data = await res.json();
+        if (!ok) return;
+        if (data.enLinea) setEnLinea(data.enLinea);
+      } catch {
+        // Silencioso: no romper el panel
+      }
+      if (ok) setEnLineaCargando(false);
+    };
+    cargarPresencia();
+    const id = setInterval(cargarPresencia, 12000);
+    return () => {
+      ok = false;
+      clearInterval(id);
+    };
+  }, [authenticated, activeTab]);
 
   async function loadAdminData(periodoActivo: Periodo = periodo) {
     try {
@@ -895,6 +928,144 @@ export default function AdminPage() {
                       </p>
                     </div>
                   </div>
+
+                  {/* En línea ahora */}
+                  <article
+                    style={{
+                      background: "var(--color-card)",
+                      border: "1px solid var(--color-line-soft)",
+                      padding: "24px 30px",
+                      borderRadius: 0,
+                    }}
+                  >
+                    <div className="flex items-center justify-between flex-wrap gap-3" style={{ marginBottom: "12px" }}>
+                      <div className="flex items-center gap-3">
+                        <span
+                          style={{
+                            width: "10px",
+                            height: "10px",
+                            borderRadius: "50%",
+                            background: enLinea.length > 0 ? "#4ade80" : "var(--color-line)",
+                            boxShadow: enLinea.length > 0 ? "0 0 0 4px rgba(74, 222, 128, 0.15)" : "none",
+                            transition: "background 0.3s ease",
+                          }}
+                        />
+                        <h3
+                          style={{
+                            fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                            fontWeight: 400,
+                            fontSize: "18px",
+                            color: "var(--color-text)",
+                          }}
+                        >
+                          En línea ahora
+                        </h3>
+                        {enLinea.length > 0 && (
+                          <span
+                            style={{
+                              fontFamily: "var(--font-ibm-plex-mono)",
+                              fontSize: "10px",
+                              letterSpacing: "0.12em",
+                              textTransform: "uppercase",
+                              color: "#4ade80",
+                            }}
+                          >
+                            {enLinea.length} {enLinea.length === 1 ? "persona" : "personas"}
+                          </span>
+                        )}
+                      </div>
+                      <span
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "9px",
+                          letterSpacing: "0.12em",
+                          textTransform: "uppercase",
+                          color: "var(--color-text-faint)",
+                        }}
+                      >
+                        Actualiza cada 12 segundos
+                      </span>
+                    </div>
+
+                    {enLineaCargando ? (
+                      <p style={{ color: "var(--color-text-muted)", fontSize: "13px", padding: "10px 0" }}>
+                        Buscando quién está en línea…
+                      </p>
+                    ) : enLinea.length === 0 ? (
+                      <p style={{ color: "var(--color-text-muted)", fontSize: "13px", padding: "10px 0" }}>
+                        Nadie en línea ahora mismo. Aparecen aquí los alumnos con nombre que estuvieron activos en los últimos 90 segundos.
+                      </p>
+                    ) : (
+                      <div className="space-y-1">
+                        {enLinea.map((u) => {
+                          const segs = Math.max(0, Math.round((Date.now() - new Date(u.ultimo).getTime()) / 1000));
+                          const hace = segs <= 5 ? "ahora" : segs < 60 ? `hace ${segs}s` : `hace ${Math.floor(segs / 60)}m`;
+                          return (
+                            <div
+                              key={u.nombre}
+                              className="flex items-center gap-4"
+                              style={{
+                                padding: "9px 0",
+                                borderBottom: "1px solid var(--color-line-soft)",
+                              }}
+                            >
+                              <div
+                                className="flex items-center justify-center flex-shrink-0"
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                  borderRadius: "50%",
+                                  border: "1px solid var(--color-gold-dim)",
+                                  color: "var(--color-gold)",
+                                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                                  fontSize: "14px",
+                                  fontWeight: 500,
+                                }}
+                              >
+                                {u.nombre.trim().charAt(0).toUpperCase()}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: 500,
+                                    color: "var(--color-text)",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {u.nombre}
+                                </p>
+                                <p
+                                  style={{
+                                    fontFamily: "var(--font-ibm-plex-mono)",
+                                    fontSize: "10px",
+                                    color: "var(--color-text-faint)",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {u.materia_nombre || (u.pagina ? "En el inicio" : "Navegando")}
+                                </p>
+                              </div>
+                              <span
+                                style={{
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "10px",
+                                  color: "var(--color-gold)",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                ● {hace}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </article>
 
                   {/* Contenido consumido por tipo */}
                   <article

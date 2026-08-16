@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
 import AdminShortcut from "@/components/AdminShortcut";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import HeartbeatProvider from "@/components/HeartbeatProvider";
 import { AudioProvider } from "@/components/AudioProvider";
 import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
 import "./globals.css";
@@ -67,6 +68,7 @@ export default function RootLayout({
         <AudioProvider>
           <AdminShortcut />
           <ServiceWorkerRegister />
+          <HeartbeatProvider />
           {children}
           <GlobalAudioPlayer />
         </AudioProvider>
