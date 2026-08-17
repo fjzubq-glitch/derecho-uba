@@ -132,7 +132,7 @@ export default function HomePage() {
                   color: "var(--color-text-muted)",
                 }}
               >
-                Clases, transcripciones, podcasts y materiales de cursada, organizados por materia.
+                
               </p>
 
               {/* Anotación a máquina */}
@@ -170,7 +170,7 @@ export default function HomePage() {
             {[
               { num: "01", label: "Materias", sub: "El índice de tu legajo" },
               { num: "02", label: "Clases", sub: "Cada clase es un folio" },
-              { num: "03", label: "Materiales", sub: "Audio, video, apuntes y enlaces" },
+              { num: "03", label: "Materiales", sub: "" },
             ].map((f) => (
               <div key={f.num} style={{ background: "var(--color-card)", padding: "18px 24px" }}>
                 <div className="flex items-center gap-4">
