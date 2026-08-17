@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import { trackActivity } from "@/lib/tracking";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
-import { ArrowLeft, ArrowRight } from "@/components/icons";
+import { ArrowLeft } from "@/components/icons";
 
 interface Fecha {
   id: string;
@@ -13,11 +13,7 @@ interface Fecha {
   fecha: string;
 }
 
-const DIAS_SEMANA = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
-
 const pad = (n: number) => String(n).padStart(2, "0");
-
-const aISO = (y: number, m: number, d: number) => `${y}-${pad(m + 1)}-${pad(d)}`;
 
 export default function CalendarioPage() {
   const params = useParams();
@@ -26,10 +22,6 @@ export default function CalendarioPage() {
 
   const [materia, setMateria] = useState<{ id: string; nombre: string; estado?: string; fechas?: Fecha[] } | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const hoy = new Date();
-  const [year, setYear] = useState(hoy.getFullYear());
-  const [month, setMonth] = useState(hoy.getMonth());
 
   useEffect(() => {
     loadData();
@@ -48,48 +40,20 @@ export default function CalendarioPage() {
     setLoading(false);
   }
 
-  const go = (delta: number) => {
-    const d = new Date(year, month + delta, 1);
-    setYear(d.getFullYear());
-    setMonth(d.getMonth());
-  };
-
-  const irAHoy = () => {
-    const d = new Date();
-    setYear(d.getFullYear());
-    setMonth(d.getMonth());
-  };
-
   const fechas = useMemo(() => materia?.fechas ?? [], [materia]);
 
-  const fechasPorDia = useMemo(() => {
-    const mapa = new Map<string, Fecha[]>();
-    for (const f of fechas) {
-      const [y, m, d] = f.fecha.split("-").map(Number);
-      if (Number.isNaN(y) || Number.isNaN(m) || Number.isNaN(d)) continue;
-      const iso = aISO(y, m - 1, d);
-      if (!mapa.has(iso)) mapa.set(iso, []);
-      mapa.get(iso)!.push(f);
-    }
-    return mapa;
+  const ordenadas = useMemo(() => {
+    return [...fechas].sort((a, b) => {
+      const pa = diasHasta(a.fecha) < 0;
+      const pb = diasHasta(b.fecha) < 0;
+      if (pa && pb) return b.fecha.localeCompare(a.fecha);
+      if (pa !== pb) return pa ? 1 : -1;
+      return a.fecha.localeCompare(b.fecha);
+    });
   }, [fechas]);
 
-  const fechasDelMes = fechas
-    .filter((f) => {
-      const [y, m] = f.fecha.split("-").map(Number);
-      return y === year && m === month + 1;
-    })
-    .sort((a, b) => a.fecha.localeCompare(b.fecha));
-
-  const firstDay = new Date(year, month, 1);
-  const offset = firstDay.getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const totalCells = Math.ceil((offset + daysInMonth) / 7) * 7;
-
-  const hoyISO = aISO(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-
-  const nombreMes = `${firstDay.toLocaleDateString("es-AR", { month: "long", year: "numeric" })}`;
-  const nombreMesCap = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1);
+  const proximaId = fechas.find((f) => diasHasta(f.fecha) >= 0)?.id ?? null;
+  const totalProximas = fechas.filter((f) => diasHasta(f.fecha) >= 0).length;
 
   const splitName = (n: string) => {
     const p = n.split(",");
@@ -140,7 +104,7 @@ export default function CalendarioPage() {
             }}
           >
             <span style={{ width: "24px", height: "1px", background: "var(--color-gold-dim)" }} />
-            Calendario · {materiaTitle}
+            Expediente · {materiaTitle}
           </div>
           <div className="flex items-end justify-between gap-10 flex-wrap">
             <div>
@@ -177,7 +141,7 @@ export default function CalendarioPage() {
                 }}
               >
                 <span className="folio-num" style={{ color: "var(--color-stamp)" }}>{fechas.length}</span>{" "}
-                fechas en el expediente
+                fechas · <span style={{ color: totalProximas > 0 ? "var(--color-stamp)" : "var(--color-text-faint)" }}>{totalProximas}</span> pendientes
               </div>
             )}
           </div>
@@ -188,7 +152,7 @@ export default function CalendarioPage() {
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "32px 48px 80px" }}>
           {loading ? (
-            <div className="skeleton" style={{ height: "420px" }} />
+            <div className="skeleton" style={{ height: "320px" }} />
           ) : fechas.length === 0 ? (
             <div
               style={{
@@ -203,316 +167,124 @@ export default function CalendarioPage() {
               </p>
             </div>
           ) : (
-            <>
-              {/* Controles de mes */}
-              <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
-                <div className="flex items-center gap-4">
-                  <button
-                    type="button"
-                    aria-label="Mes anterior"
-                    onClick={() => go(-1)}
-                    className="flex items-center justify-center"
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      border: "1px solid var(--color-line-soft)",
-                      background: "none",
-                      cursor: "pointer",
-                      color: "var(--color-text-muted)",
-                      transition: "border-color 0.2s ease, color 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.color = "var(--color-gold)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-line-soft)"; e.currentTarget.style.color = "var(--color-text-muted)"; }}
-                  >
-                    <ArrowLeft style={{ width: "14px", height: "14px" }} />
-                  </button>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                      fontWeight: 500,
-                      fontSize: "22px",
-                      color: "var(--color-text)",
-                      minWidth: "150px",
-                      textAlign: "center",
-                    }}
-                  >
-                    {nombreMesCap}
-                  </p>
-                  <button
-                    type="button"
-                    aria-label="Mes siguiente"
-                    onClick={() => go(1)}
-                    className="flex items-center justify-center"
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      border: "1px solid var(--color-line-soft)",
-                      background: "none",
-                      cursor: "pointer",
-                      color: "var(--color-text-muted)",
-                      transition: "border-color 0.2s ease, color 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.color = "var(--color-gold)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-line-soft)"; e.currentTarget.style.color = "var(--color-text-muted)"; }}
-                  >
-                    <ArrowRight style={{ width: "14px", height: "14px" }} />
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  onClick={irAHoy}
-                  style={{
-                    padding: "6px 14px",
-                    border: "1px solid var(--color-line-soft)",
-                    background: "none",
-                    cursor: "pointer",
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "10px",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    color: "var(--color-text-muted)",
-                    transition: "border-color 0.2s ease, color 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.color = "var(--color-gold)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-line-soft)"; e.currentTarget.style.color = "var(--color-text-muted)"; }}
-                >
-                  Hoy
-                </button>
+            <div style={{ border: "1px solid var(--color-line-soft)" }}>
+              {/* Encabezado de columnas (desktop) */}
+              <div
+                className="hidden md:grid gap-x-4"
+                style={{
+                  gridTemplateColumns: "36px 1fr 130px 150px",
+                  padding: "10px 16px",
+                  borderBottom: "1px solid var(--color-line-soft)",
+                  background: "var(--color-card)",
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "9px",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--color-text-faint)",
+                }}
+              >
+                <span>N°</span>
+                <span>Fecha</span>
+                <span>Día</span>
+                <span>Restan</span>
               </div>
 
-              {/* Grilla del mes (estilo Google Calendar) */}
-              <div style={{ border: "1px solid var(--color-line-soft)" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))" }}>
-                  {DIAS_SEMANA.map((d) => (
-                    <div
-                      key={d}
+              {/* Filas */}
+              {ordenadas.map((f, i) => {
+                const dias = diasHasta(f.fecha);
+                const pasada = dias < 0;
+                const esProxima = f.id === proximaId;
+                return (
+                  <div
+                    key={f.id}
+                    className="grid grid-cols-[3px_28px_1fr] md:grid-cols-[3px_36px_1fr_130px_150px] gap-x-4"
+                    style={{
+                      padding: "13px 16px",
+                      borderBottom: "1px solid var(--color-line-soft)",
+                      background: pasada ? "transparent" : esProxima ? "var(--color-card-hover)" : "var(--color-card)",
+                    }}
+                  >
+                    {/* Marca de la próxima fecha */}
+                    <span style={{ background: esProxima ? "var(--color-stamp)" : "transparent", alignSelf: "stretch" }} />
+
+                    <span
                       style={{
-                        padding: "10px 8px",
                         fontFamily: "var(--font-ibm-plex-mono)",
-                        fontSize: "9px",
-                        letterSpacing: "0.14em",
-                        textTransform: "uppercase",
-                        color: "var(--color-text-faint)",
-                        textAlign: "center",
-                        background: "var(--color-card)",
-                        borderBottom: "1px solid var(--color-line-soft)",
+                        fontSize: "10px",
+                        letterSpacing: "0.1em",
+                        color: pasada ? "var(--color-text-faint)" : esProxima ? "var(--color-stamp)" : "var(--color-gold)",
+                        paddingTop: "1px",
                       }}
                     >
-                      <span className="hidden sm:inline">{d}</span>
-                      <span className="sm:hidden">{d.charAt(0)}</span>
-                    </div>
-                  ))}
-                </div>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(7, minmax(0, 1fr))",
-                    gap: "1px",
-                    background: "var(--color-line-soft)",
-                  }}
-                >
-                  {Array.from({ length: totalCells }, (_, i) => {
-                    const dayNum = i - offset + 1;
-                    if (dayNum < 1 || dayNum > daysInMonth) {
-                      return <div key={i} style={{ background: "var(--color-card)", minHeight: "92px" }} />;
-                    }
-                    const iso = aISO(year, month, dayNum);
-                    const delDia = fechasPorDia.get(iso) ?? [];
-                    const esHoy = iso === hoyISO;
-                    const esPasado = aISO(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()) > iso;
-                    return (
-                      <div
-                        key={iso}
+                      {pad(i + 1)}
+                    </span>
+
+                    <div className="min-w-0">
+                      <p
                         style={{
-                          background: "var(--color-card)",
-                          minHeight: "92px",
-                          padding: "7px 8px",
-                          display: "flex",
-                          flexDirection: "column",
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "11px",
+                          letterSpacing: "0.08em",
+                          textTransform: "uppercase",
+                          color: pasada ? "var(--color-text-faint)" : "var(--color-text)",
+                          textDecoration: pasada ? "line-through" : "none",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
                         }}
                       >
-                        <div className="flex items-center justify-end gap-1.5">
-                          {esHoy ? (
-                            <span
-                              className="flex items-center justify-center"
-                              style={{
-                                width: "22px",
-                                height: "22px",
-                                borderRadius: "50%",
-                                background: "var(--color-stamp)",
-                                color: "var(--color-ink)",
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "11px",
-                              }}
-                            >
-                              {dayNum}
-                            </span>
-                          ) : (
-                            <span
-                              style={{
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "11px",
-                                color: esPasado ? "var(--color-text-faint)" : "var(--color-text-muted)",
-                              }}
-                            >
-                              {dayNum}
-                            </span>
-                          )}
-                          {delDia.length > 0 && (
-                            <span
-                              style={{
-                                width: "5px",
-                                height: "5px",
-                                borderRadius: "50%",
-                                background: delDia.some((f) => diasHasta(f.fecha) >= 0 && diasHasta(f.fecha) <= 7)
-                                  ? "var(--color-stamp)"
-                                  : "var(--color-gold)",
-                                flexShrink: 0,
-                              }}
-                            />
-                          )}
-                        </div>
-                        <div className="hidden sm:flex flex-col gap-1 mt-2">
-                          {delDia.slice(0, 2).map((f) => {
-                            const dias = diasHasta(f.fecha);
-                            const pasada = dias < 0;
-                            return (
-                              <div
-                                key={f.id}
-                                style={{
-                                  padding: "2px 6px",
-                                  fontFamily: "var(--font-ibm-plex-mono)",
-                                  fontSize: "9px",
-                                  letterSpacing: "0.04em",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                  background: pasada
-                                    ? "var(--color-line-soft)"
-                                    : dias <= 7
-                                      ? "var(--color-stamp)"
-                                      : "var(--color-gold-dim)",
-                                  color: pasada
-                                    ? "var(--color-text-faint)"
-                                    : dias <= 7
-                                      ? "var(--color-ink)"
-                                      : "var(--color-gold)",
-                                  textDecoration: pasada ? "line-through" : "none",
-                                }}
-                              >
-                                {f.titulo}
-                              </div>
-                            );
-                          })}
-                          {delDia.length > 2 && (
-                            <div
-                              style={{
-                                padding: "2px 6px",
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "9px",
-                                border: "1px solid var(--color-line-soft)",
-                                color: "var(--color-text-faint)",
-                              }}
-                            >
-                              +{delDia.length - 2} más
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Hoja del mes: listado de fechas */}
-              <div className="mt-10">
-                <p
-                  style={{
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "10px",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "var(--color-text-faint)",
-                    marginBottom: "8px",
-                  }}
-                >
-                  <span className="folio-num" style={{ color: "var(--color-gold)" }}>
-                    {String(fechasDelMes.length).padStart(2, "0")}
-                  </span>{" "}
-                  fechas de {nombreMesCap}
-                </p>
-                {fechasDelMes.length === 0 ? (
-                  <div
-                    style={{
-                      padding: "28px 24px",
-                      border: "1px solid var(--color-line-soft)",
-                      background: "var(--color-card)",
-                    }}
-                  >
-                    <p style={{ color: "var(--color-text-faint)", fontSize: "13px" }}>
-                      No hay fechas pautadas en este mes.
-                    </p>
-                  </div>
-                ) : (
-                  <div>
-                    {fechasDelMes.map((f) => {
-                      const dias = diasHasta(f.fecha);
-                      const pasada = dias < 0;
-                      return (
-                        <div
-                          key={f.id}
-                          className="flex items-center justify-between gap-3"
+                        {f.titulo}
+                      </p>
+                      <p
+                        className="md:hidden mt-1"
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "10px",
+                          color: "var(--color-text-muted)",
+                          textDecoration: pasada ? "line-through" : "none",
+                        }}
+                      >
+                        {formatearFechaCorta(f.fecha, true)} ·{" "}
+                        <span
                           style={{
-                            padding: "11px 0",
-                            borderBottom: "1px solid var(--color-line-soft)",
-                            opacity: pasada ? 0.55 : 1,
+                            color: pasada ? "var(--color-text-faint)" : dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
                           }}
                         >
-                          <span
-                            style={{
-                              fontFamily: "var(--font-ibm-plex-mono)",
-                              fontSize: "10px",
-                              letterSpacing: "0.12em",
-                              textTransform: "uppercase",
-                              color: pasada ? "var(--color-text-faint)" : "var(--color-gold)",
-                              textDecoration: pasada ? "line-through" : "none",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            {f.titulo}
-                          </span>
-                          <span
-                            className="flex-shrink-0"
-                            style={{
-                              fontFamily: "var(--font-ibm-plex-mono)",
-                              fontSize: "11px",
-                              color: pasada ? "var(--color-text-faint)" : "var(--color-text-muted)",
-                              textDecoration: pasada ? "line-through" : "none",
-                            }}
-                          >
-                            {formatearFechaCorta(f.fecha, true)}
-                          </span>
-                          <span
-                            className="flex-shrink-0"
-                            style={{
-                              fontFamily: "var(--font-ibm-plex-mono)",
-                              fontSize: "10px",
-                              letterSpacing: "0.08em",
-                              textTransform: "uppercase",
-                              color: pasada ? "var(--color-text-faint)" : dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
-                            }}
-                          >
-                            {countdownLabel(dias)}
-                          </span>
-                        </div>
-                      );
-                    })}
+                          {countdownLabel(dias)}
+                        </span>
+                      </p>
+                    </div>
+
+                    <span
+                      className="hidden md:block"
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "12px",
+                        color: pasada ? "var(--color-text-faint)" : "var(--color-text-muted)",
+                        textDecoration: pasada ? "line-through" : "none",
+                        paddingTop: "1px",
+                      }}
+                    >
+                      {formatearFechaCorta(f.fecha, true)}
+                    </span>
+
+                    <span
+                      className="hidden md:block"
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "10px",
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        color: pasada ? "var(--color-text-faint)" : dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
+                        paddingTop: "2px",
+                      }}
+                    >
+                      {countdownLabel(dias)}
+                    </span>
                   </div>
-                )}
-              </div>
-            </>
+                );
+              })}
+            </div>
           )}
         </div>
       </main>
