@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
     const totalVisitas = visitas.length;
     const visitantesUnicos = new Set(visitas.map((v) => v.ip_hash).filter(Boolean) as string[]).size;
 
-        const reproducciones = eventos.filter((e) => e.archivo_id && EVENTOS_REPRODUCCION.has(e.tipo || ""));
+    const reproducciones = eventos.filter((e) => e.archivo_id && EVENTOS_REPRODUCCION.has(e.tipo || ""));
     const totalReproducciones = reproducciones.length;
 
     // Registros nuevos: consulta aparte (solo este tipo), sin que el límite
