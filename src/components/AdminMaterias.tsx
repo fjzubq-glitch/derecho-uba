@@ -14,6 +14,7 @@ interface Materia {
   anio: string | null;
   turno: string | null;
   descripcion: string | null;
+  fechas?: Array<{ id: string; titulo: string; fecha: string }>;
 }
 
 const labelStyle: React.CSSProperties = {
@@ -44,6 +45,9 @@ export default function AdminMaterias() {
   const [editing, setEditing] = useState<Materia | null>(null);
   const [processing, setProcessing] = useState(false);
   const [message, setMessage] = useState("");
+  const [nuevaFechaTitulo, setNuevaFechaTitulo] = useState("");
+  const [nuevaFechaValor, setNuevaFechaValor] = useState("");
+  const [guardandoFecha, setGuardandoFecha] = useState(false);
 
   useEscapeKey(!!editing, () => setEditing(null));
 
@@ -53,9 +57,65 @@ export default function AdminMaterias() {
 
   async function loadMaterias() {
     setLoading(true);
-    const { data } = await supabase.from("materias").select("*").order("nombre");
+    const { data } = await supabase.from("materias").select("*, materia_fechas(*)").order("nombre");
     if (data) setMaterias(data as Materia[]);
     setLoading(false);
+  }
+
+  async function refrescarFechas() {
+    const { data } = await supabase.from("materias").select("*, materia_fechas(*)").order("nombre");
+    if (data) {
+      const materiasActualizadas = data as Materia[];
+      setMaterias(materiasActualizadas);
+      setEditing((prev) => {
+        if (!prev) return prev;
+        const actualizada = materiasActualizadas.find((m) => m.id === prev.id);
+        return actualizada ? { ...prev, fechas: actualizada.fechas } : prev;
+      });
+    }
+  }
+
+  async function agregarFecha() {
+    if (!editing || !nuevaFechaTitulo.trim() || !nuevaFechaValor) return;
+    setGuardandoFecha(true);
+    setMessage("");
+    try {
+      const res = await fetch("/api/admin/fechas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ materia_id: editing.id, titulo: nuevaFechaTitulo.trim(), fecha: nuevaFechaValor }),
+      });
+      const data = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+      if (data.ok) {
+        setNuevaFechaTitulo("");
+        setNuevaFechaValor("");
+        await refrescarFechas();
+      } else {
+        setMessage("Error: " + (data.error || res.status));
+      }
+    } catch (err) {
+      setMessage("Error: " + String(err));
+    } finally {
+      setGuardandoFecha(false);
+    }
+  }
+
+  async function borrarFecha(id: string) {
+    setGuardandoFecha(true);
+    setMessage("");
+    try {
+      const res = await fetch(`/api/admin/fechas?id=${id}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+      if (data.ok) {
+        await refrescarFechas();
+      } else {
+        setMessage("Error: " + (data.error || res.status));
+      }
+    } catch (err) {
+      setMessage("Error: " + String(err));
+    } finally {
+      setGuardandoFecha(false);
+    }
   }
 
   async function handleSave() {
@@ -305,6 +365,96 @@ export default function AdminMaterias() {
                   placeholder="Notas o detalle de la materia..."
                   style={{ ...inputStyle, resize: "vertical", fontFamily: "var(--font-inter)" }}
                 />
+              </div>
+
+              <div>
+                <label style={labelStyle}>Fechas importantes (parciales, recuperatorios, finales)</label>
+                <div className="space-y-2 mb-3">
+                  {editing.fechas && editing.fechas.length > 0 ? (
+                    editing.fechas.map((f) => (
+                      <div
+                        key={f.id}
+                        className="flex items-center justify-between gap-3"
+                        style={{
+                          padding: "8px 12px",
+                          background: "var(--color-ink)",
+                          border: "1px solid var(--color-line-soft)",
+                          borderRadius: 0,
+                        }}
+                      >
+                        <div className="min-w-0">
+                          <p
+                            style={{
+                              fontSize: "13px",
+                              color: "var(--color-text)",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {f.titulo}
+                          </p>
+                          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)", marginTop: "2px" }}>
+                            {f.fecha}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => borrarFecha(f.id)}
+                          disabled={guardandoFecha}
+                          aria-label={`Borrar fecha ${f.titulo}`}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            color: "#E05555",
+                            padding: "4px",
+                            flexShrink: 0,
+                          }}
+                        >
+                          <X style={{ width: "14px", height: "14px" }} />
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <p style={{ fontSize: "12px", color: "var(--color-text-faint)" }}>Sin fechas cargadas.</p>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-end gap-2">
+                  <div className="flex-1 min-w-[140px]">
+                    <input
+                      value={nuevaFechaTitulo}
+                      onChange={(e) => setNuevaFechaTitulo(e.target.value)}
+                      placeholder="Ej: Parcial"
+                      aria-label="Título de la fecha"
+                      style={inputStyle}
+                    />
+                  </div>
+                  <input
+                    type="date"
+                    value={nuevaFechaValor}
+                    onChange={(e) => setNuevaFechaValor(e.target.value)}
+                    aria-label="Fecha"
+                    style={{ ...inputStyle, width: "150px" }}
+                  />
+                  <button
+                    onClick={agregarFecha}
+                    disabled={guardandoFecha || !nuevaFechaTitulo.trim() || !nuevaFechaValor}
+                    style={{
+                      padding: "11px 16px",
+                      fontSize: "11px",
+                      fontWeight: 500,
+                      fontFamily: "var(--font-inter)",
+                      background: "var(--color-gold)",
+                      color: "var(--color-ink)",
+                      border: "none",
+                      borderRadius: 0,
+                      cursor: guardandoFecha || !nuevaFechaTitulo.trim() || !nuevaFechaValor ? "not-allowed" : "pointer",
+                      opacity: guardandoFecha || !nuevaFechaTitulo.trim() || !nuevaFechaValor ? 0.5 : 1,
+                    }}
+                  >
+                    Agregar
+                  </button>
+                </div>
               </div>
             </div>
 

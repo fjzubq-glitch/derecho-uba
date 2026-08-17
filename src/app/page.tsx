@@ -5,8 +5,14 @@ import { useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
 import InkStamp from "@/components/InkStamp";
-import { Shield, ArrowRight } from "@/components/icons";
+import { Shield, ArrowRight, Calendar, Headphones, FileText, Play, Volume2 } from "@/components/icons";
+import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
 
+interface MateriaFecha {
+  id: string;
+  titulo: string;
+  fecha: string;
+}
 
 interface Materia {
   id: string;
@@ -18,12 +24,25 @@ interface Materia {
   turno: string | null;
   total_clases: number;
   clase_ids?: string[];
+  fechas?: MateriaFecha[];
+}
+
+interface ItemContinuar {
+  tipo: string;
+  archivo_id: string;
+  nombre_display: string;
+  clase_numero: number | null;
+  clase_titulo: string;
+  materia_slug: string;
+  materia_nombre: string;
+  created_at: string;
 }
 
 export default function HomePage() {
   const router = useRouter();
   const [materias, setMaterias] = useState<Materia[]>([]);
   const [loading, setLoading] = useState(true);
+  const [continuar, setContinuar] = useState<ItemContinuar[]>([]);
   const [stampTapped, setStampTapped] = useState<number | null>(null);
   const stampTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -53,6 +72,19 @@ export default function HomePage() {
     loadMaterias();
   }, []);
 
+  useEffect(() => {
+    async function loadContinuar() {
+      try {
+        const res = await fetch("/api/continuar");
+        const data = await res.json();
+        if (data.items) setContinuar(data.items);
+      } catch {
+        // Silencioso: no debe romper la home
+      }
+    }
+    loadContinuar();
+  }, []);
+
   async function loadMaterias() {
     try {
       const res = await fetch("/api/materias");
@@ -64,6 +96,28 @@ export default function HomePage() {
       console.error("Error loading materias:", e);
     }
     setLoading(false);
+  }
+
+  function proximaFecha(m: Materia): MateriaFecha | null {
+    if (!m.fechas || m.fechas.length === 0) return null;
+    return m.fechas.find((f) => diasHasta(f.fecha) >= 0) || null;
+  }
+
+  function iconoContinuar(tipo: string) {
+    if (tipo === "transcription_view") return <FileText style={{ width: "13px", height: "13px" }} />;
+    if (tipo === "youtube_open") return <Play style={{ width: "13px", height: "13px" }} />;
+    return <Headphones style={{ width: "13px", height: "13px" }} />;
+  }
+
+  function tiempoRelativo(iso: string) {
+    const diff = Date.now() - new Date(iso).getTime();
+    const min = Math.floor(diff / 60000);
+    if (min < 1) return "recién";
+    if (min < 60) return `hace ${min} min`;
+    const h = Math.floor(min / 60);
+    if (h < 24) return `hace ${h} h`;
+    const d = Math.floor(h / 24);
+    return d === 1 ? "ayer" : `hace ${d} días`;
   }
 
   return (
@@ -168,6 +222,103 @@ export default function HomePage() {
 
         </div>
       </section>
+
+      {/* ═══════════ CONTINUAR ESTUDIANDO ═══════════ */}
+      {continuar.length > 0 && (
+        <section>
+          <div className="pad-lateral" style={{ padding: "36px 48px 0" }}>
+            <div
+              style={{
+                background: "var(--color-card)",
+                border: "1px solid var(--color-line-soft)",
+                borderRadius: 0,
+                padding: "22px 26px",
+              }}
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <Volume2 style={{ width: "13px", height: "13px", color: "var(--color-gold)" }} />
+                <span
+                  style={{
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "10px",
+                    letterSpacing: "0.16em",
+                    textTransform: "uppercase",
+                    color: "var(--color-gold)",
+                  }}
+                >
+                  Continuar estudiando
+                </span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-1">
+                {continuar.map((item) => (
+                  <button
+                    key={item.archivo_id}
+                    onClick={() => {
+                      if (item.materia_slug && item.clase_numero != null) {
+                        router.push(`/dashboard/${item.materia_slug}/clase/${item.clase_numero}`);
+                      }
+                    }}
+                    className="flex items-center gap-3 text-left flex-1 min-w-0"
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: item.materia_slug && item.clase_numero != null ? "pointer" : "default",
+                      padding: "10px 14px",
+                      borderLeft: "1px solid var(--color-line-soft)",
+                      transition: "background 0.2s ease",
+                      flexBasis: item.materia_slug && item.clase_numero != null ? "46%" : "auto",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  >
+                    <span className="flex items-center justify-center flex-shrink-0" style={{ width: "30px", height: "30px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", color: "var(--color-gold)" }}>
+                      {iconoContinuar(item.tipo)}
+                    </span>
+                    <span className="min-w-0">
+                      <span
+                        className="block"
+                        style={{
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          color: "var(--color-text)",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {item.nombre_display}
+                      </span>
+                      <span
+                        className="block"
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "9px",
+                          letterSpacing: "0.08em",
+                          textTransform: "uppercase",
+                          color: "var(--color-text-faint)",
+                          marginTop: "2px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {item.materia_nombre}
+                        {item.clase_numero != null ? ` · Clase ${String(item.clase_numero).padStart(2, "0")}` : ""}
+                      </span>
+                    </span>
+                    <span
+                      className="ml-auto flex-shrink-0"
+                      style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)" }}
+                    >
+                      {tiempoRelativo(item.created_at)}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ═══════════ MATERIAS ═══════════ */}
       <section className="flex-1">
@@ -342,6 +493,45 @@ export default function HomePage() {
                     >
                       {metaLine || "Sin datos de cursada"}
                     </div>
+
+                    {/* Próxima fecha importante con countdown */}
+                    {!isEmpty &&
+                      (() => {
+                        const pf = proximaFecha(m);
+                        if (!pf) return null;
+                        const dias = diasHasta(pf.fecha);
+                        return (
+                          <div className="flex items-center gap-2 mb-3">
+                            <Calendar style={{ width: "11px", height: "11px", color: "var(--color-gold)", flexShrink: 0 }} />
+                            <span
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "10px",
+                                letterSpacing: "0.08em",
+                                textTransform: "uppercase",
+                                color: "var(--color-text-muted)",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {pf.titulo} · {formatearFechaCorta(pf.fecha)}
+                            </span>
+                            <span
+                              className="ml-auto flex-shrink-0"
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "10px",
+                                letterSpacing: "0.08em",
+                                textTransform: "uppercase",
+                                color: dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
+                              }}
+                            >
+                              {countdownLabel(dias)}
+                            </span>
+                          </div>
+                        );
+                      })()}
 
                     {/* CTA */}
                     <div

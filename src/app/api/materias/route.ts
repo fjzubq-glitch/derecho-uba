@@ -34,12 +34,19 @@ export async function GET() {
           totalRep = archivos?.reduce((sum, a) => sum + (a.play_count || 0), 0) || 0;
         }
 
+        const { data: fechas } = await supabase
+          .from("materia_fechas")
+          .select("id, titulo, fecha")
+          .eq("materia_id", m.id)
+          .order("fecha");
+
         return {
           ...m,
           total_clases: totalClases || 0,
           total_audios: totalAudios,
           total_reproducciones: totalRep,
           clase_ids: claseIds,
+          fechas: fechas || [],
         };
       })
     );

@@ -7,6 +7,7 @@ import WelcomeGate from "@/components/WelcomeGate";
 import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
 import { formatFechaLocal } from "@/lib/utils";
+import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
 import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2, Play } from "@/components/icons";
 
 interface Archivo {
@@ -32,7 +33,7 @@ export default function MateriaPage() {
   const router = useRouter();
   const slug = params.materia as string;
 
-  const [materia, setMateria] = useState<{ id: string; nombre: string; estado?: string } | null>(null);
+  const [materia, setMateria] = useState<{ id: string; nombre: string; estado?: string; fechas?: Array<{ id: string; titulo: string; fecha: string }> } | null>(null);
   const [clases, setClases] = useState<Clase[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -160,6 +161,60 @@ const enlaces = clases.flatMap((c) =>
                   <span style={{ color: materia?.estado === "finalizada" ? "var(--color-gold)" : "var(--color-text-muted)" }}>
                     {materia?.estado === "finalizada" ? "Finalizada" : "En curso"}
                   </span>
+                </div>
+              )}
+
+              {/* Fechas importantes con countdown */}
+              {materia?.fechas && materia.fechas.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 mt-6">
+                  {materia.fechas.map((f) => {
+                    const dias = diasHasta(f.fecha);
+                    const pasada = dias < 0;
+                    return (
+                      <div
+                        key={f.id}
+                        className="flex items-center gap-2"
+                        style={{
+                          border: "1px solid var(--color-line-soft)",
+                          padding: "8px 14px",
+                          background: "var(--color-card)",
+                          borderRadius: 0,
+                        }}
+                      >
+                        <Calendar
+                          style={{
+                            width: "12px",
+                            height: "12px",
+                            color: pasada ? "var(--color-text-faint)" : "var(--color-gold)",
+                            flexShrink: 0,
+                          }}
+                        />
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "10px",
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                            color: pasada ? "var(--color-text-faint)" : "var(--color-text-muted)",
+                            textDecoration: pasada ? "line-through" : "none",
+                          }}
+                        >
+                          {f.titulo} · {formatearFechaCorta(f.fecha, true)}
+                        </span>
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "10px",
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                            color: pasada ? "var(--color-text-faint)" : dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
+                          }}
+                        >
+                          {countdownLabel(dias)}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>

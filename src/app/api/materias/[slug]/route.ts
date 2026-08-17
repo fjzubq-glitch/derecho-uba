@@ -24,6 +24,12 @@ export async function GET(
     .eq("materia_id", materia.id)
     .order("numero");
 
+  const { data: fechas } = await supabase
+    .from("materia_fechas")
+    .select("id, titulo, fecha")
+    .eq("materia_id", materia.id)
+    .order("fecha");
+
   const clasesWithFiles = await Promise.all(
     (clases || []).map(async (c) => {
       const { data: archivos } = await supabase
@@ -36,5 +42,5 @@ export async function GET(
     })
   );
 
-  return NextResponse.json({ materia, clases: clasesWithFiles });
+  return NextResponse.json({ materia: { ...materia, fechas: fechas || [] }, clases: clasesWithFiles });
 }
