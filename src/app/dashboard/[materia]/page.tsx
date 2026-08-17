@@ -8,7 +8,7 @@ import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
 import { formatFechaLocal } from "@/lib/utils";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
-import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2, Play, ChevronDown, X } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2, Play } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -36,7 +36,6 @@ export default function MateriaPage() {
   const [materia, setMateria] = useState<{ id: string; nombre: string; estado?: string; fechas?: Array<{ id: string; titulo: string; fecha: string }> } | null>(null);
   const [clases, setClases] = useState<Clase[]>([]);
   const [loading, setLoading] = useState(true);
-  const [fechasAbiertas, setFechasAbiertas] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -203,214 +202,130 @@ const enlaces = clases.flatMap((c) =>
             <div className="mb-4">
               <div className="md:w-[calc((100%-16px)/2)] lg:w-[calc((100%-32px)/3)]">
                 <div
+                  role="link"
+                  tabIndex={0}
+                  onClick={() => router.push(`/dashboard/${slug}/calendario`)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      router.push(`/dashboard/${slug}/calendario`);
+                    }
+                  }}
+                  className="cursor-pointer"
                   style={{
                     background: "var(--color-card)",
                     border: "1px solid var(--color-line-soft)",
                     borderTop: "2px solid var(--color-gold-dim)",
                     borderRadius: 0,
-                    padding: "24px 26px 18px",
+                    padding: "24px 26px 20px",
+                    transition: "border-color 0.25s ease, background 0.25s ease",
                   }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-line-soft)"; e.currentTarget.style.background = "var(--color-card)"; }}
                 >
-                    {/* Header de la card */}
-                    <div className="flex items-center justify-between gap-4 mb-4">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <Calendar style={{ width: "14px", height: "14px", color: "var(--color-gold)", flexShrink: 0 }} />
-                        <p
-                          style={{
-                            fontFamily: "var(--font-ibm-plex-mono)",
-                            fontSize: "10px",
-                            letterSpacing: "0.16em",
-                            textTransform: "uppercase",
-                            color: "var(--color-gold)",
-                          }}
-                        >
-                          Fechas importantes
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {fechasAbiertas && (
-                          <button
-                            onClick={() => setFechasAbiertas(false)}
-                            aria-label="Cerrar calendario"
-                            className="flex items-center justify-center"
-                            style={{
-                              width: "26px",
-                              height: "26px",
-                              border: "1px solid var(--color-line-soft)",
-                              background: "none",
-                              cursor: "pointer",
-                              color: "var(--color-text-muted)",
-                              transition: "border-color 0.2s ease, color 0.2s ease",
-                            }}
-                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.color = "var(--color-gold)"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-line-soft)"; e.currentTarget.style.color = "var(--color-text-muted)"; }}
-                          >
-                            <X style={{ width: "12px", height: "12px" }} />
-                          </button>
-                        )}
-                        <span
-                          style={{
-                            fontFamily: "var(--font-ibm-plex-mono)",
-                            fontSize: "10px",
-                            letterSpacing: "0.1em",
-                            color: "var(--color-text-faint)",
-                          }}
-                        >
-                          <span className="folio-num">{String(materia.fechas.length).padStart(2, "0")}</span>{" "}
-                          FECHAS
-                        </span>
-                      </div>
-                    </div>
-
-                {/* Próxima fecha destacada */}
-                {(() => {
-                  const pf = materia.fechas!.find((f) => diasHasta(f.fecha) >= 0);
-                  if (!pf) return null;
-                  const dias = diasHasta(pf.fecha);
-                  return (
-                    <div className="pt-4" style={{ borderTop: "1px solid var(--color-line-soft)" }}>
+                  {/* Header de la card */}
+                  <div className="flex items-center justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <Calendar style={{ width: "14px", height: "14px", color: "var(--color-gold)", flexShrink: 0 }} />
                       <p
                         style={{
                           fontFamily: "var(--font-ibm-plex-mono)",
-                          fontSize: "9px",
+                          fontSize: "10px",
                           letterSpacing: "0.16em",
                           textTransform: "uppercase",
-                          color: "var(--color-stamp)",
+                          color: "var(--color-gold)",
                         }}
                       >
-                        Próxima fecha
+                        Fechas importantes
                       </p>
-                      <p
-                        style={{
-                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                          fontWeight: 500,
-                          fontSize: "19px",
-                          lineHeight: 1.25,
-                          color: "var(--color-text)",
-                          marginTop: "6px",
-                        }}
-                      >
-                        {pf.titulo}
-                      </p>
-                      <div className="flex items-center gap-3 mt-2.5 flex-wrap">
-                        <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px", color: "var(--color-text-muted)" }}>
-                          {formatearFechaCorta(pf.fecha, true)}
-                        </span>
-                        <span
+                    </div>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "10px",
+                        letterSpacing: "0.1em",
+                        color: "var(--color-text-faint)",
+                      }}
+                    >
+                      <span className="folio-num">{String(materia.fechas.length).padStart(2, "0")}</span>{" "}
+                      FECHAS
+                    </span>
+                  </div>
+
+                  {/* Próxima fecha destacada */}
+                  {(() => {
+                    const pf = materia.fechas!.find((f) => diasHasta(f.fecha) >= 0);
+                    if (!pf) return null;
+                    const dias = diasHasta(pf.fecha);
+                    return (
+                      <div className="pt-4" style={{ borderTop: "1px solid var(--color-line-soft)" }}>
+                        <p
                           style={{
-                            padding: "3px 10px",
-                            border: `1px solid ${dias <= 7 ? "var(--color-stamp)" : "var(--color-gold-dim)"}`,
                             fontFamily: "var(--font-ibm-plex-mono)",
-                            fontSize: "10px",
-                            letterSpacing: "0.1em",
+                            fontSize: "9px",
+                            letterSpacing: "0.16em",
                             textTransform: "uppercase",
-                            color: dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
+                            color: "var(--color-stamp)",
                           }}
                         >
-                          {countdownLabel(dias)}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                {/* Toggle de la lista completa */}
-                <button
-                  onClick={() => setFechasAbiertas((v) => !v)}
-                  className="flex items-center justify-center gap-2 w-full"
-                  style={{
-                    marginTop: "16px",
-                    padding: "10px 0",
-                    borderTop: "1px solid var(--color-line-soft)",
-                    borderLeft: "none",
-                    borderRight: "none",
-                    borderBottom: "none",
-                    background: "none",
-                    cursor: "pointer",
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "9px",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "var(--color-text-faint)",
-                    transition: "color 0.2s ease",
-                  }}
-                  aria-expanded={fechasAbiertas}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-faint)")}
-                >
-                  {fechasAbiertas ? "Ocultar calendario" : `Ver todas (${materia.fechas.length})`}
-                  <ChevronDown
-                    style={{
-                      width: "12px",
-                      height: "12px",
-                      flexShrink: 0,
-                      transform: fechasAbiertas ? "rotate(180deg)" : "none",
-                      transition: "transform 0.2s ease",
-                    }}
-                  />
-                </button>
-
-                {/* Lista completa */}
-                {fechasAbiertas && (
-                  <div className="pt-1">
-                    <div className="space-y-0.5">
-                      {materia.fechas.map((f) => {
-                        const dias = diasHasta(f.fecha);
-                        const pasada = dias < 0;
-                        return (
-                          <div
-                            key={f.id}
-                            className="flex items-center justify-between gap-3"
+                          Próxima fecha
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                            fontWeight: 500,
+                            fontSize: "19px",
+                            lineHeight: 1.25,
+                            color: "var(--color-text)",
+                            marginTop: "6px",
+                          }}
+                        >
+                          {pf.titulo}
+                        </p>
+                        <div className="flex items-center gap-3 mt-2.5 flex-wrap">
+                          <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px", color: "var(--color-text-muted)" }}>
+                            {formatearFechaCorta(pf.fecha, true)}
+                          </span>
+                          <span
                             style={{
-                              padding: "9px 0",
-                              borderBottom: "1px solid var(--color-line-soft)",
-                              opacity: pasada ? 0.55 : 1,
+                              padding: "3px 10px",
+                              border: `1px solid ${dias <= 7 ? "var(--color-stamp)" : "var(--color-gold-dim)"}`,
+                              fontFamily: "var(--font-ibm-plex-mono)",
+                              fontSize: "10px",
+                              letterSpacing: "0.1em",
+                              textTransform: "uppercase",
+                              color: dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
                             }}
                           >
-                            <span
-                              style={{
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "10px",
-                                letterSpacing: "0.12em",
-                                textTransform: "uppercase",
-                                color: pasada ? "var(--color-text-faint)" : "var(--color-gold)",
-                                textDecoration: pasada ? "line-through" : "none",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              {f.titulo}
-                            </span>
-                            <span
-                              className="flex-shrink-0"
-                              style={{
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "11px",
-                                color: pasada ? "var(--color-text-faint)" : "var(--color-text-muted)",
-                                textDecoration: pasada ? "line-through" : "none",
-                              }}
-                            >
-                              {formatearFechaCorta(f.fecha, true)}
-                            </span>
-                            <span
-                              className="flex-shrink-0"
-                              style={{
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "10px",
-                                letterSpacing: "0.08em",
-                                textTransform: "uppercase",
-                                color: pasada ? "var(--color-text-faint)" : dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
-                              }}
-                            >
-                              {countdownLabel(dias)}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                            {countdownLabel(dias)}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Botón al calendario */}
+                  <button
+                    type="button"
+                    className="flex items-center justify-center gap-2 w-full"
+                    style={{
+                      marginTop: "16px",
+                      padding: "10px 14px",
+                      border: "1px solid var(--color-stamp)",
+                      background: "none",
+                      cursor: "pointer",
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "10px",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: "var(--color-stamp)",
+                      transition: "background 0.2s ease, color 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-stamp)"; e.currentTarget.style.color = "var(--color-ink)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "var(--color-stamp)"; }}
+                  >
+                    Ver calendario ({materia.fechas.length})
+                  </button>
                 </div>
               </div>
               <div style={{ borderTop: "1px solid var(--color-line)", marginTop: "32px" }} />
