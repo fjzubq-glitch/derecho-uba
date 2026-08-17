@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
@@ -24,6 +24,30 @@ export default function HomePage() {
   const router = useRouter();
   const [materias, setMaterias] = useState<Materia[]>([]);
   const [loading, setLoading] = useState(true);
+  const [stampTapped, setStampTapped] = useState<number | null>(null);
+  const stampTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (stampTimer.current) clearTimeout(stampTimer.current);
+    };
+  }, []);
+
+  function isTouchDevice() {
+    return typeof window !== "undefined" && window.matchMedia("(hover: none)").matches;
+  }
+
+  function abrirMateria(m: Materia, index: number) {
+    if (isTouchDevice()) {
+      setStampTapped(index);
+      if (stampTimer.current) clearTimeout(stampTimer.current);
+      stampTimer.current = setTimeout(() => {
+        router.push(`/dashboard/${m.slug}`);
+      }, 450);
+    } else {
+      router.push(`/dashboard/${m.slug}`);
+    }
+  }
 
   useEffect(() => {
     loadMaterias();
@@ -208,8 +232,8 @@ export default function HomePage() {
                 return (
                   <article
                     key={m.id}
-                    onClick={() => router.push(`/dashboard/${m.slug}`)}
-                    className="group card-reveal card-hover card-stamp flex flex-col cursor-pointer"
+                    onClick={() => abrirMateria(m, i)}
+                    className={`group card-reveal card-hover card-stamp flex flex-col cursor-pointer${stampTapped === i ? " stamp-shown" : ""}`}
                     tabIndex={0}
                     onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") router.push(`/dashboard/${m.slug}`); }}
                     style={{

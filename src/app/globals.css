@@ -78,12 +78,10 @@ article {
   }
 }
 
-@media (hover: none) {
-  .card-stamp .stamp-reveal {
-    opacity: 1;
-    transform: scale(1);
-    transition: none;
-  }
+/* en touch: el sello se estampa al tocar la tarjeta (clase agregada por JS antes de navegar) */
+.card-stamp.stamp-shown .stamp-reveal {
+  opacity: 1;
+  transform: scale(1);
 }
 
 /* ── Folio de expediente ── */
