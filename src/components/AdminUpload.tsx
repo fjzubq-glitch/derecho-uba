@@ -378,7 +378,7 @@ const hasEnlace = enlaceUrl.trim() !== "";
       </h2>
 
       {/* Selector de modo */}
-      <div className="flex gap-4 mb-8">
+      <div className="flex flex-wrap gap-4 mb-8">
         <Radio checked={modo === "nueva"} onChange={() => setModo("nueva")} label="Clase nueva" />
         <Radio checked={modo === "existente"} onChange={() => setModo("existente")} label="Agregar a clase existente" />
       </div>
@@ -634,7 +634,7 @@ const hasEnlace = enlaceUrl.trim() !== "";
             Video / Audio de Clase
           </h3>
 
-          <div className="flex gap-4 mb-4">
+          <div className="flex flex-wrap gap-4 mb-4">
             <Radio checked={!useYoutube && !useCloudinary} onChange={() => { setUseYoutube(false); setUseCloudinary(false); }} label="Subir audio desde PC" />
             <Radio checked={useYoutube} onChange={() => { setUseYoutube(true); setUseCloudinary(false); }} label="Link de YouTube" />
             <Radio checked={useCloudinary} onChange={() => { setUseCloudinary(true); setUseYoutube(false); }} label="Link de Cloudinary" />
@@ -767,7 +767,7 @@ Clase Virtual
             Lexpodcast
           </h3>
 
-          <div className="flex gap-4 mb-4">
+          <div className="flex flex-wrap gap-4 mb-4">
             <Radio checked={!usePodcastCloudinary} onChange={() => setUsePodcastCloudinary(false)} label="Subir audio desde PC" />
             <Radio checked={usePodcastCloudinary} onChange={() => setUsePodcastCloudinary(true)} label="Link de Cloudinary" />
           </div>
@@ -830,7 +830,7 @@ Clase Virtual
             Transcripción
           </h3>
 
-          <div className="flex gap-4 mb-4">
+          <div className="flex flex-wrap gap-4 mb-4">
             <Radio checked={transcripcionMethod === "drive"} onChange={() => setTranscripcionMethod("drive")} label="Link de Google Drive" />
             <Radio checked={transcripcionMethod === "texto"} onChange={() => setTranscripcionMethod("texto")} label="Pegar texto" />
           </div>
@@ -872,7 +872,7 @@ Clase Virtual
             style={{ ...inputStyle, marginBottom: "16px" }}
           />
 
-          <div className="flex gap-4 mb-4">
+          <div className="flex flex-wrap gap-4 mb-4">
             <Radio checked={!archivoUseLink} onChange={() => setArchivoUseLink(false)} label="Subir archivo desde PC" />
             <Radio checked={archivoUseLink} onChange={() => setArchivoUseLink(true)} label="Link externo" />
           </div>

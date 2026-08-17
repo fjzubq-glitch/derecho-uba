@@ -160,6 +160,15 @@ article {
   }
 }
 
+/* ── Admin en celular: inputs legibles sin zoom automático ── */
+@media (max-width: 639px) {
+  .admin-page input,
+  .admin-page textarea,
+  .admin-page select {
+    font-size: 16px !important;
+  }
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
