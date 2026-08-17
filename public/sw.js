@@ -1,6 +1,6 @@
 /* Service worker minimal: network-first con fallback a cache para el shell offline.
    No toca las APIs (se manejan con IndexedDB en la app). */
-const CACHE = "derecho-uba-shell-v1";
+const CACHE = "derecho-uba-shell-v2";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
