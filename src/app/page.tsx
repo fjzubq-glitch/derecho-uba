@@ -136,8 +136,8 @@ export default function HomePage() {
               </p>
 
               {/* Anotación a máquina */}
-              <p className="annotation mt-6" style={{ maxWidth: "460px", lineHeight: 1.7 }}>
-                — Materiales del cuatrimestre en curso, <strong>foliados por materia</strong>. —
+<p className="annotation mt-8" style={{ maxWidth: "460px", lineHeight: 1.7 }}>
+— Materiales del cuatrimestre en curso, audios y videos de las clases, podcast, transcripciones y mas, foliados por materia. —
               </p>
             </div>
 
@@ -168,8 +168,8 @@ export default function HomePage() {
             }}
           >
             {[
-              { num: "01", label: "Materias", sub: "El índice de tu legajo" },
-              { num: "02", label: "Clases", sub: "Cada clase es un folio" },
+              { num: "01", label: "Materias", sub: "" },
+              { num: "02", label: "Clases", sub: "" },
               { num: "03", label: "Materiales", sub: "" },
             ].map((f) => (
               <div key={f.num} style={{ background: "var(--color-card)", padding: "18px 24px" }}>
