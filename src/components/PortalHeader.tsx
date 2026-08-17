@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Shield, BookOpen, X } from "@/components/icons";
@@ -54,6 +54,19 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
       .finally(() => window.location.reload());
   }
 
+  const logoTaps = useRef<number[]>([]);
+
+  function handleLogoClick(e: React.MouseEvent<HTMLAnchorElement>) {
+    const now = Date.now();
+    logoTaps.current = logoTaps.current.filter((t) => now - t < 2000);
+    logoTaps.current.push(now);
+    if (logoTaps.current.length >= 5) {
+      logoTaps.current = [];
+      e.preventDefault();
+      router.push("/admin");
+    }
+  }
+
   return (
     <header
       className="site-header border-b"
@@ -66,7 +79,7 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
         style={{ padding: "16px 22px" }}
       >
         {/* Logo + nombre */}
-        <Link href="/" className="flex items-center gap-3 sm:gap-4 min-w-0 flex-shrink-0" style={{ textDecoration: "none" }}>
+        <Link href="/" onClick={handleLogoClick} className="flex items-center gap-3 sm:gap-4 min-w-0 flex-shrink-0" style={{ textDecoration: "none" }}>
           <div
             className="flex items-center justify-center flex-shrink-0"
             style={{
