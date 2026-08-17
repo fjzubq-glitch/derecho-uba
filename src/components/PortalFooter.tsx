@@ -11,7 +11,7 @@ export default function PortalFooter() {
         className="footer-inner flex items-center justify-between gap-2 pad-lateral"
         style={{
           padding: "28px 48px",
-          fontFamily: "var(--font-ibm-plex-mono)",
+          fontFamily: "var(--font-special-elite), 'Courier New', monospace",
           fontSize: "10px",
           letterSpacing: "0.08em",
           color: "var(--color-text-faint)",
