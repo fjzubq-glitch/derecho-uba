@@ -200,18 +200,17 @@ const enlaces = clases.flatMap((c) =>
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
           {/* Fechas importantes */}
           {!loading && materia?.fechas && materia.fechas.length > 0 && (
-            <div className="mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <div
-                    style={{
-                      background: "var(--color-card)",
-                      border: "1px solid var(--color-line-soft)",
-                      borderTop: "2px solid var(--color-gold-dim)",
-                      borderRadius: 0,
-                      padding: "24px 26px 18px",
-                    }}
-                  >
+            <div className="mb-4">
+              <div className="md:w-[calc((100%-16px)/2)] lg:w-[calc((100%-32px)/3)]">
+                <div
+                  style={{
+                    background: "var(--color-card)",
+                    border: "1px solid var(--color-line-soft)",
+                    borderTop: "2px solid var(--color-gold-dim)",
+                    borderRadius: 0,
+                    padding: "24px 26px 18px",
+                  }}
+                >
                     {/* Header de la card */}
                     <div className="flex items-center justify-between gap-4 mb-4">
                       <div className="flex items-center gap-2.5 min-w-0">
@@ -414,8 +413,7 @@ const enlaces = clases.flatMap((c) =>
                 )}
                 </div>
               </div>
-              <div style={{ borderTop: "1px solid var(--color-line-soft)", marginTop: "28px" }} />
-            </div>
+              <div style={{ borderTop: "1px solid var(--color-line)", marginTop: "32px" }} />
             </div>
           )}
 
