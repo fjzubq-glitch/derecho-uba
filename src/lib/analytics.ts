@@ -18,6 +18,10 @@ export interface MateriaAnalitica {
 export const EVENTOS_REPRODUCCION = new Set(["play_start", "youtube_open"]);
 export const CONTENIDO_TIPOS = ["audio_clase", "clase_youtube", "podcast", "transcripcion", "archivo", "enlace"];
 
+export function normalizarNombre(n: string | null | undefined): string {
+  return (n || "").trim().toLowerCase();
+}
+
 export function calcularResumen(
   eventos: EventoAnalitico[],
   tipoPorArchivo: Map<string, string | null>,
@@ -26,7 +30,7 @@ export function calcularResumen(
   // ── Métricas generales ──
   const visitas = eventos.filter((e) => e.tipo === "page_view" && (e.nombre || "").trim().length > 0);
   const totalVisitas = visitas.length;
-  const visitantesUnicos = new Set(visitas.map((v) => (v.nombre || "").trim()).filter(Boolean)).size;
+  const visitantesUnicos = new Set(visitas.map((v) => normalizarNombre(v.nombre))).size;
 
   const reproducciones = eventos.filter((e) => e.archivo_id && EVENTOS_REPRODUCCION.has(e.tipo || ""));
   const totalReproducciones = reproducciones.length;
@@ -40,14 +44,16 @@ export function calcularResumen(
   // ── Contenido consumido por tipo (con materia de cada elemento) ──
   const tipoMateriaAgg: Record<string, Record<string, { accesos: number; personas: Set<string> }>> = {};
   for (const e of eventos) {
-    if (!e.archivo_id) continue;
-    const t = tipoPorArchivo.get(e.archivo_id);
-    if (!t) continue;
-    const slug = e.materia_slug || "";
-    const agg = (tipoMateriaAgg[t] = tipoMateriaAgg[t] || {});
-    const m = (agg[slug] = agg[slug] || { accesos: 0, personas: new Set() });
-    m.accesos += 1;
-    if (e.nombre) m.personas.add(e.nombre);
+    if (e.archivo_id) {
+      const t = tipoPorArchivo.get(e.archivo_id);
+      if (!t) continue;
+      const slug = e.materia_slug || "";
+      const agg = (tipoMateriaAgg[t] = tipoMateriaAgg[t] || {});
+      const m = (agg[slug] = agg[slug] || { accesos: 0, personas: new Set() });
+      m.accesos += 1;
+      const key = normalizarNombre(e.nombre);
+      if (key) m.personas.add(key);
+    }
   }
 
   const contenidoPorTipo = CONTENIDO_TIPOS.map((tipo) => {
@@ -73,9 +79,9 @@ export function calcularResumen(
     { nombre: string; visitas: number; clasesSet: Set<string>; materias: Set<string>; porTipo: Record<string, number>; ultima_actividad: string }
   > = {};
   for (const e of eventos) {
-    const n = (e.nombre || "").trim();
-    if (!n) continue;
-    const p = personasMap[n] || (personasMap[n] = { nombre: n, visitas: 0, clasesSet: new Set(), materias: new Set(), porTipo: {}, ultima_actividad: "" });
+    const key = normalizarNombre(e.nombre);
+    if (!key) continue;
+    const p = personasMap[key] || (personasMap[key] = { nombre: (e.nombre || "").trim(), visitas: 0, clasesSet: new Set(), materias: new Set(), porTipo: {}, ultima_actividad: "" });
     if (e.tipo === "page_view") p.visitas += 1;
     if (e.tipo === "class_view" && e.clase_id) p.clasesSet.add(e.clase_id);
     if (e.materia_slug) p.materias.add(e.materia_slug);
@@ -114,7 +120,7 @@ export function calcularResumen(
       const t = tipoPorArchivo.get(e.archivo_id);
       if (t) m.porTipo[t] = (m.porTipo[t] || 0) + 1;
     }
-    if (e.nombre) m.estudiantes.add(e.nombre);
+    if (e.nombre) m.estudiantes.add(normalizarNombre(e.nombre));
   }
 
   const materiasStats = materias

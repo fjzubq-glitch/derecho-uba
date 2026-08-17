@@ -13,12 +13,36 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
   const [open, setOpen] = useState(false);
   const [nombre, setNombre] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [sugerencias, setSugerencias] = useState<string[]>([]);
+  const [todasSugerencias, setTodasSugerencias] = useState<string[]>([]);
 
   useEffect(() => {
     const name = getPortalUserName();
-    if (!name) setOpen(true);
+    if (!name) {
+      setOpen(true);
+      fetch("/api/nombres")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.nombres) setTodasSugerencias(data.nombres);
+        })
+        .catch(() => {});
+    }
     setChecking(false);
   }, []);
+
+  function handleInputChange(val: string) {
+    setNombre(val);
+    setError(null);
+    const q = val.trim().toLowerCase();
+    if (q.length === 0) {
+      setSugerencias([]);
+      return;
+    }
+    const filtradas = todasSugerencias.filter(
+      (s) => s.toLowerCase().includes(q) && s.toLowerCase() !== q
+    );
+    setSugerencias(filtradas.slice(0, 5));
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -113,28 +137,73 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
         </p>
 
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={nombre}
-            onChange={(e) => {
-              setNombre(e.target.value);
-              setError(null);
-            }}
-            placeholder="Tu nombre o nick"
-            aria-label="Tu nombre o nick"
-            autoFocus
-            maxLength={40}
-            style={{
-              width: "100%",
-              background: "var(--color-ink)",
-              border: "1px solid var(--color-line)",
-              color: "var(--color-text)",
-              padding: "12px 14px",
-              fontSize: "15px",
-              outline: "none",
-              fontFamily: "var(--font-inter)",
-            }}
-          />
+          <div style={{ position: "relative" }}>
+            <input
+              type="text"
+              value={nombre}
+              onChange={(e) => handleInputChange(e.target.value)}
+              placeholder="Tu nombre o nick"
+              aria-label="Tu nombre o nick"
+              aria-autocomplete="list"
+              aria-controls="sugerencias-list"
+              autoFocus
+              maxLength={40}
+              style={{
+                width: "100%",
+                background: "var(--color-ink)",
+                border: "1px solid var(--color-line)",
+                color: "var(--color-text)",
+                padding: "12px 14px",
+                fontSize: "15px",
+                outline: "none",
+                fontFamily: "var(--font-inter)",
+              }}
+            />
+            {sugerencias.length > 0 && (
+              <ul
+                id="sugerencias-list"
+                role="listbox"
+                style={{
+                  position: "absolute",
+                  top: "100%",
+                  left: 0,
+                  right: 0,
+                  marginTop: "4px",
+                  background: "var(--color-ink-2)",
+                  border: "1px solid var(--color-line-soft)",
+                  borderRadius: "0 0 4px 4px",
+                  maxHeight: "160px",
+                  overflowY: "auto",
+                  padding: "4px 0",
+                  listStyle: "none",
+                  zIndex: 10,
+                }}
+              >
+                {sugerencias.map((s) => (
+                  <li
+                    key={s}
+                    role="option"
+                    aria-selected="false"
+                    onClick={() => {
+                      setNombre(s);
+                      setSugerencias([]);
+                    }}
+                    style={{
+                      padding: "10px 14px",
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      color: "var(--color-text)",
+                      fontFamily: "var(--font-inter)",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-line-soft)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  >
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           {error && (
             <p
               role="alert"
