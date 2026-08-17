@@ -823,7 +823,7 @@ export default function AdminPage() {
                           color: "var(--color-text-faint)",
                         }}
                       >
-                        Visitantes únicos
+                        Estudiantes únicos
                       </span>
                       <div
                         style={{
@@ -838,7 +838,7 @@ export default function AdminPage() {
                         {String(visitantesUnicos).padStart(2, "0")}
                       </div>
                       <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                        Personas distintas que entraron al portal
+                        Personas registradas que entraron al portal
                       </p>
                     </div>
 

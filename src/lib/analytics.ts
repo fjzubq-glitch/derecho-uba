@@ -26,7 +26,7 @@ export function calcularResumen(
   // ── Métricas generales ──
   const visitas = eventos.filter((e) => e.tipo === "page_view");
   const totalVisitas = visitas.length;
-  const visitantesUnicos = new Set(visitas.map((v) => v.ip_hash).filter(Boolean) as string[]).size;
+  const visitantesUnicos = new Set(visitas.map((v) => (v.nombre || "").trim()).filter(Boolean)).size;
 
   const reproducciones = eventos.filter((e) => e.archivo_id && EVENTOS_REPRODUCCION.has(e.tipo || ""));
   const totalReproducciones = reproducciones.length;

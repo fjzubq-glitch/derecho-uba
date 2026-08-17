@@ -29,14 +29,15 @@ function ev(partial: Partial<EventoAnalitico>): EventoAnalitico {
 }
 
 describe("calcularResumen", () => {
-  it("cuenta visitas y visitantes únicos por IP", () => {
+  it("cuenta visitantes únicos por persona registrada (nombre), no por IP", () => {
     const eventos = [
-      ev({ tipo: "page_view", ip_hash: "ip-a", materia_slug: "derecho-comercial" }),
-      ev({ tipo: "page_view", ip_hash: "ip-a", materia_slug: "derecho-comercial" }),
-      ev({ tipo: "page_view", ip_hash: "ip-b", materia_slug: "contratos-i" }),
+      ev({ tipo: "page_view", nombre: "Ana", materia_slug: "derecho-comercial", ip_hash: "ip-1" }),
+      ev({ tipo: "page_view", nombre: "Ana", materia_slug: "derecho-comercial", ip_hash: "ip-2" }),
+      ev({ tipo: "page_view", nombre: "Leo", materia_slug: "contratos-i", ip_hash: "ip-3" }),
+      ev({ tipo: "page_view", ip_hash: "ip-4", materia_slug: "contratos-i" }),
     ];
     const r = calcularResumen(eventos, tipoPorArchivo, materias);
-    expect(r.totalVisitas).toBe(3);
+    expect(r.totalVisitas).toBe(4);
     expect(r.visitantesUnicos).toBe(2);
   });
 
