@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "npx eslint src"
+    "lint": "npx eslint src",
+    "test": "vitest run"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
@@ -24,6 +25,7 @@
     "eslint": "^9.25.1",
     "eslint-config-next": "15.4.8",
     "tailwindcss": "^4.1.7",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.10"
   }
 }
