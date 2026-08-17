@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import PortalFooter from "@/components/PortalFooter";
 import AdminUpload from "@/components/AdminUpload";
 import AdminManage from "@/components/AdminManage";
 import AdminMaterias from "@/components/AdminMaterias";
@@ -1864,9 +1863,6 @@ export default function AdminPage() {
           )}
         </div>
       </main>
-
-      {/* ═══════════ FOOTER ═══════════ */}
-      <PortalFooter />
     </div>
   );
 }

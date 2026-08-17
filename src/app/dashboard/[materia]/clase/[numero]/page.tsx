@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import PortalFooter from "@/components/PortalFooter";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Volume2, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
 import { formatDuration, formatFechaLocal } from "@/lib/utils";
@@ -850,9 +849,6 @@ if (isTranscription(tipo)) {
           </div>
         </nav>
       )}
-
-      {/* ═══════════ FOOTER ═══════════ */}
-      <PortalFooter />
     </div>
   );
 }

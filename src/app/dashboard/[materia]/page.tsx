@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
-import PortalFooter from "@/components/PortalFooter";
 import WelcomeGate from "@/components/WelcomeGate";
 import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
@@ -385,8 +384,6 @@ const enlaces = clases.flatMap((c) =>
           )}
         </div>
       </main>
-
-      <PortalFooter />
     </div>
   );
 }
