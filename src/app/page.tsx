@@ -143,64 +143,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════ ÍNDICE DE FOLIOS ═══════════ */}
-      <section className="border-b" style={{ borderColor: "var(--color-line-soft)" }}>
-        <div className="pad-lateral" style={{ padding: "0 48px" }}>
-          <div
-            className="grid grid-cols-1 sm:grid-cols-3 overflow-hidden"
-            style={{
-              background: "var(--color-line-soft)",
-              gap: "1px",
-            }}
-          >
-            {[
-              { num: "01", label: "Materias", sub: "" },
-              { num: "02", label: "Clases", sub: "" },
-              { num: "03", label: "Materiales", sub: "" },
-            ].map((f) => (
-              <div key={f.num} style={{ background: "var(--color-card)", padding: "18px 24px" }}>
-                <div className="flex items-center gap-4">
-                  <span
-                    style={{
-                      fontFamily: "var(--font-ibm-plex-mono)",
-                      fontSize: "20px",
-                      fontWeight: 500,
-                      color: "var(--color-stamp)",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {f.num}
-                  </span>
-                  <div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-ibm-plex-mono)",
-                        fontSize: "10px",
-                        letterSpacing: "0.14em",
-                        textTransform: "uppercase",
-                        color: "var(--color-text)",
-                      }}
-                    >
-                      {f.label}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-special-elite), 'Courier New', monospace",
-                        fontSize: "12px",
-                        color: "var(--color-text-faint)",
-                        marginTop: "2px",
-                      }}
-                    >
-                      {f.sub}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ═══════════ MATERIAS ═══════════ */}
       <section className="flex-1">
         <div className="pad-lateral" style={{ padding: "48px 48px 80px" }}>
