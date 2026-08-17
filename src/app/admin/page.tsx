@@ -867,7 +867,7 @@ export default function AdminPage() {
                         {String(totalVisitas).padStart(2, "0")}
                       </div>
                       <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                        Entradas a páginas del portal
+                        Páginas vistas por estudiantes registrados
                       </p>
                     </div>
 

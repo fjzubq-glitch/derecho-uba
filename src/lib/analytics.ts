@@ -24,7 +24,7 @@ export function calcularResumen(
   materias: MateriaAnalitica[],
 ) {
   // ── Métricas generales ──
-  const visitas = eventos.filter((e) => e.tipo === "page_view");
+  const visitas = eventos.filter((e) => e.tipo === "page_view" && (e.nombre || "").trim().length > 0);
   const totalVisitas = visitas.length;
   const visitantesUnicos = new Set(visitas.map((v) => (v.nombre || "").trim()).filter(Boolean)).size;
 
