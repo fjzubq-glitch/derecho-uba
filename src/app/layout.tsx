@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://derecho-uba-orpin.vercel.app"),
   title: "Derecho UBA — Portal de cursada",
   description:
-    "Clases, transcripciones, podcasts y materiales organizados por materia. Contenido de cursada curado para estudiantes de Derecho UBA.",
+    "Clases, transcripciones, Lexpodcast y materiales organizados por materia. Contenido de cursada curado para estudiantes de Derecho UBA.",
   applicationName: "Derecho UBA",
   icons: {
     icon: "/icon",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Derecho UBA — Portal de cursada",
     description:
-      "Clases, transcripciones, podcasts y materiales organizados por materia. Contenido de cursada curado para estudiantes de Derecho UBA.",
+      "Clases, transcripciones, Lexpodcast y materiales organizados por materia. Contenido de cursada curado para estudiantes de Derecho UBA.",
     url: "https://derecho-uba-orpin.vercel.app",
     siteName: "Derecho UBA",
     type: "website",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Derecho UBA — Portal de cursada",
     description:
-      "Clases, transcripciones, podcasts y materiales organizados por materia. Contenido de cursada curado para estudiantes de Derecho UBA.",
+      "Clases, transcripciones, Lexpodcast y materiales organizados por materia. Contenido de cursada curado para estudiantes de Derecho UBA.",
     images: ["/opengraph-image"],
   },
 };

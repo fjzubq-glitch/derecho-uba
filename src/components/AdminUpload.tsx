@@ -207,9 +207,9 @@ const hasEnlace = enlaceUrl.trim() !== "";
     }
 
     if (usePodcastCloudinary && podcastCloudinaryUrl) {
-      items.push({ tipo: "podcast", nombre: podcastNombre || `LexPodcast Ep. ${claseNumero}`, cloudinaryUrl: podcastCloudinaryUrl });
+      items.push({ tipo: "podcast", nombre: podcastNombre || `Lexpodcast Ep. ${claseNumero}`, cloudinaryUrl: podcastCloudinaryUrl });
     } else if (podcastFile) {
-      items.push({ tipo: "podcast", nombre: podcastNombre || `LexPodcast Ep. ${claseNumero}`, archivo: podcastFile });
+      items.push({ tipo: "podcast", nombre: podcastNombre || `Lexpodcast Ep. ${claseNumero}`, archivo: podcastFile });
     }
 
     if (transcripcionMethod === "drive" && transcripcionDriveLink) {
@@ -557,7 +557,7 @@ const hasEnlace = enlaceUrl.trim() !== "";
           <div className="flex flex-wrap items-center gap-4">
             {["audio_clase", "clase_youtube", "podcast", "transcripcion"].map((tipo) => {
               const exist = (clasesExistentes.find((c) => c.id === claseSeleccionada)?.archivos || []).some((a) => a.tipo === tipo);
-              const label = tipo === "audio_clase" ? "Audio" : tipo === "clase_youtube" ? "Clase Virtual" : tipo === "podcast" ? "Podcast" : "Transcripción";
+              const label = tipo === "audio_clase" ? "Audio" : tipo === "clase_youtube" ? "Clase Virtual" : tipo === "podcast" ? "Lexpodcast" : "Transcripción";
               return (
                 <div key={tipo} className="flex items-center gap-2">
                   <div
@@ -764,7 +764,7 @@ Clase Virtual
         <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
           <h3 style={sectionHeaderStyle}>
             <Volume2 style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
-            LexPodcast
+            Lexpodcast
           </h3>
 
           <div className="flex gap-4 mb-4">
@@ -778,8 +778,8 @@ Clase Virtual
                 type="text"
                 value={podcastNombre}
                 onChange={(e) => setPodcastNombre(e.target.value)}
-                placeholder="Nombre del podcast"
-                aria-label="Nombre del podcast"
+                placeholder="Nombre del episodio de Lexpodcast"
+                aria-label="Nombre del episodio de Lexpodcast"
                 style={inputStyle}
               />
               <input
@@ -787,7 +787,7 @@ Clase Virtual
                 value={podcastCloudinaryUrl}
                 onChange={(e) => setPodcastCloudinaryUrl(e.target.value)}
                 placeholder="https://res.cloudinary.com/.../video/podcast.mp3"
-                aria-label="URL de Cloudinary del podcast"
+                aria-label="URL de Cloudinary del episodio de Lexpodcast"
                 style={inputStyle}
               />
             </div>
@@ -797,8 +797,8 @@ Clase Virtual
               type="text"
               value={podcastNombre}
               onChange={(e) => setPodcastNombre(e.target.value)}
-              placeholder="Nombre del podcast"
-              aria-label="Nombre del podcast"
+              placeholder="Nombre del episodio de Lexpodcast"
+              aria-label="Nombre del episodio de Lexpodcast"
               style={inputStyle}
             />
             <DropZone
@@ -956,7 +956,7 @@ Clase Virtual
           {[
             { label: "Audio", ready: hasAudio },
             { label: "Clase Virtual", ready: hasClaseYoutube },
-            { label: "Podcast", ready: hasPodcast },
+            { label: "Lexpodcast", ready: hasPodcast },
             { label: "Transcripción", ready: hasTranscripcion },
             { label: "Archivo", ready: hasArchivo },
             { label: "Enlace", ready: hasEnlace },

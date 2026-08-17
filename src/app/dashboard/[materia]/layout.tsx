@@ -20,7 +20,7 @@ export async function generateMetadata({
 
     return {
       title: `${materia.nombre} — Derecho UBA`,
-      description: `Clases, transcripciones, podcasts y materiales de ${materia.nombre}. Contenido de cursada para estudiantes de Derecho UBA.`,
+      description: `Clases, transcripciones, Lexpodcast y materiales de ${materia.nombre}. Contenido de cursada para estudiantes de Derecho UBA.`,
     };
   } catch {
     return { title: "Materia — Derecho UBA" };

@@ -61,7 +61,7 @@ const CARD_CONFIG: Record<CardTipo, {
   },
   podcast: {
     icon: <Volume2 style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
-    label: "PODCAST",
+    label: "LEXPODCAST",
     subtitle: () => "Disponible",
   },
   archivo: {

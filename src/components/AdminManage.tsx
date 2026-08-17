@@ -433,7 +433,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const TIPO_LABELS: Record<string, string> = {
     audio_clase: "Audio de clase",
     clase_youtube: "Clase Virtual",
-    podcast: "LexPodcast",
+    podcast: "Lexpodcast",
     transcripcion: "Transcripción",
     archivo: "Archivo adjunto",
     enlace: "Enlace útil",

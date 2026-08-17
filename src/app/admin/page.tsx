@@ -388,7 +388,7 @@ export default function AdminPage() {
   const POR_TIPO_LABELS: Record<string, string> = {
     audio_clase: "Audio de clase",
     clase_youtube: "Clase grabada (YouTube)",
-    podcast: "Podcast",
+    podcast: "Lexpodcast",
     transcripcion: "Transcripción",
     archivo: "Punteos / apuntes",
     enlace: "Enlaces",
@@ -897,7 +897,7 @@ export default function AdminPage() {
                         {String(stats.totalReproducciones).padStart(2, "0")}
                       </div>
                       <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                        Veces que se reprodujo audio, video o podcast
+                        Veces que se reprodujo audio, video o Lexpodcast
                       </p>
                     </div>
 
@@ -1272,7 +1272,7 @@ export default function AdminPage() {
                             <span style={{ width: "52px", textAlign: "right" }}>Alumnos</span>
                             <span style={{ width: "42px", textAlign: "right" }}>Audio</span>
                             <span style={{ width: "42px", textAlign: "right" }}>Video</span>
-                            <span style={{ width: "54px", textAlign: "right" }}>Podcast</span>
+                            <span style={{ width: "66px", textAlign: "right" }}>Lexpodcast</span>
                             <span style={{ width: "58px", textAlign: "right" }}>Transcrip.</span>
                             <span style={{ width: "50px", textAlign: "right" }}>Punteos</span>
                             <span style={{ width: "42px", textAlign: "right" }}>Enlaces</span>
@@ -1281,7 +1281,7 @@ export default function AdminPage() {
                             const MAT_TIPOS: Array<[string, number]> = [
                               ["audio_clase", 42],
                               ["clase_youtube", 42],
-                              ["podcast", 54],
+                              ["podcast", 66],
                               ["transcripcion", 58],
                               ["archivo", 50],
                               ["enlace", 42],
@@ -1446,7 +1446,7 @@ export default function AdminPage() {
                         <span style={{ width: "56px", textAlign: "right" }}>Clases</span>
                         <span style={{ width: "36px", textAlign: "right" }}>Audio</span>
                         <span style={{ width: "44px", textAlign: "right" }}>Video</span>
-                        <span style={{ width: "50px", textAlign: "right" }}>Podcast</span>
+                        <span style={{ width: "62px", textAlign: "right" }}>Lexpodcast</span>
                         <span style={{ width: "70px", textAlign: "right" }}>Transcrip.</span>
                         <span style={{ width: "48px", textAlign: "right" }}>Punteos</span>
                         <span style={{ width: "40px", textAlign: "right" }}>Total</span>
@@ -1553,8 +1553,8 @@ export default function AdminPage() {
                                   <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
                                     {est.porTipo.clase_youtube || 0} <span style={{ color: "var(--color-text-faint)" }}>video</span>
                                   </span>
-                                  <span style={{ color: "var(--color-text-muted)", minWidth: "50px", textAlign: "right" }}>
-                                    {est.porTipo.podcast || 0} <span style={{ color: "var(--color-text-faint)" }}>podcast</span>
+                                  <span style={{ color: "var(--color-text-muted)", minWidth: "62px", textAlign: "right" }}>
+                                    {est.porTipo.podcast || 0} <span style={{ color: "var(--color-text-faint)" }}>Lexpodcast</span>
                                   </span>
                                   <span style={{ color: "var(--color-text-muted)", minWidth: "70px", textAlign: "right" }}>
                                     {est.porTipo.transcripcion || 0} <span style={{ color: "var(--color-text-faint)" }}>transcripción</span>
