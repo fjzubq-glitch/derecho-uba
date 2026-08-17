@@ -200,60 +200,44 @@ const enlaces = clases.flatMap((c) =>
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
           {/* Fechas importantes */}
           {!loading && materia?.fechas && materia.fechas.length > 0 && (
-            <div className="mb-8">
+            <div className="mb-10">
               <div
+                className="w-full md:max-w-2xl"
                 style={{
                   background: "var(--color-card)",
-                  border: "1px solid var(--color-gold-dim)",
+                  border: "1px solid var(--color-line-soft)",
+                  borderTop: "2px solid var(--color-gold-dim)",
                   borderRadius: 0,
-                  padding: "28px 30px 20px",
+                  padding: "24px 26px 18px",
                 }}
               >
                 {/* Header de la card */}
-                <div className="flex items-center justify-between gap-4 mb-5">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span
-                      className="flex items-center justify-center flex-shrink-0"
+                <div className="flex items-center justify-between gap-4 mb-4">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <Calendar style={{ width: "14px", height: "14px", color: "var(--color-gold)", flexShrink: 0 }} />
+                    <p
                       style={{
-                        width: "40px",
-                        height: "40px",
-                        borderRadius: "50%",
-                        background: "var(--color-gold)",
-                        color: "var(--color-ink)",
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "10px",
+                        letterSpacing: "0.16em",
+                        textTransform: "uppercase",
+                        color: "var(--color-gold)",
                       }}
                     >
-                      <Calendar style={{ width: "17px", height: "17px" }} />
-                    </span>
-                    <div className="min-w-0">
-                      <p
-                        style={{
-                          fontFamily: "var(--font-ibm-plex-mono)",
-                          fontSize: "10px",
-                          letterSpacing: "0.16em",
-                          textTransform: "uppercase",
-                          color: "var(--color-gold)",
-                        }}
-                      >
-                        Fechas importantes
-                      </p>
-                      <p
-                        style={{
-                          fontFamily: "var(--font-ibm-plex-mono)",
-                          fontSize: "10px",
-                          color: "var(--color-text-faint)",
-                          marginTop: "3px",
-                        }}
-                      >
-                        Calendario de la cursada
-                      </p>
-                    </div>
+                      Fechas importantes
+                    </p>
                   </div>
                   <span
                     className="flex-shrink-0"
-                    style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", letterSpacing: "0.1em", color: "var(--color-text-muted)" }}
+                    style={{
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "10px",
+                      letterSpacing: "0.1em",
+                      color: "var(--color-text-faint)",
+                    }}
                   >
-                    <span className="folio-num" style={{ fontSize: "13px" }}>{String(materia.fechas.length).padStart(2, "0")}</span>{" "}
-                    fechas
+                    <span className="folio-num">{String(materia.fechas.length).padStart(2, "0")}</span>{" "}
+                    FECHAS
                   </span>
                 </div>
 
@@ -263,7 +247,7 @@ const enlaces = clases.flatMap((c) =>
                   if (!pf) return null;
                   const dias = diasHasta(pf.fecha);
                   return (
-                    <div className="pt-5" style={{ borderTop: "1px solid var(--color-line-soft)" }}>
+                    <div className="pt-4" style={{ borderTop: "1px solid var(--color-line-soft)" }}>
                       <p
                         style={{
                           fontFamily: "var(--font-ibm-plex-mono)",
@@ -279,21 +263,21 @@ const enlaces = clases.flatMap((c) =>
                         style={{
                           fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                           fontWeight: 500,
-                          fontSize: "21px",
+                          fontSize: "19px",
                           lineHeight: 1.25,
                           color: "var(--color-text)",
-                          marginTop: "8px",
+                          marginTop: "6px",
                         }}
                       >
                         {pf.titulo}
                       </p>
-                      <div className="flex items-center gap-3 mt-3 flex-wrap">
+                      <div className="flex items-center gap-3 mt-2.5 flex-wrap">
                         <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px", color: "var(--color-text-muted)" }}>
                           {formatearFechaCorta(pf.fecha, true)}
                         </span>
                         <span
                           style={{
-                            padding: "4px 12px",
+                            padding: "3px 10px",
                             border: `1px solid ${dias <= 7 ? "var(--color-stamp)" : "var(--color-gold-dim)"}`,
                             fontFamily: "var(--font-ibm-plex-mono)",
                             fontSize: "10px",
@@ -314,8 +298,8 @@ const enlaces = clases.flatMap((c) =>
                   onClick={() => setFechasAbiertas((v) => !v)}
                   className="flex items-center justify-center gap-2 w-full"
                   style={{
-                    marginTop: "18px",
-                    padding: "12px 0",
+                    marginTop: "16px",
+                    padding: "10px 0",
                     borderTop: "1px solid var(--color-line-soft)",
                     borderLeft: "none",
                     borderRight: "none",
@@ -323,21 +307,21 @@ const enlaces = clases.flatMap((c) =>
                     background: "none",
                     cursor: "pointer",
                     fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "10px",
+                    fontSize: "9px",
                     letterSpacing: "0.14em",
                     textTransform: "uppercase",
-                    color: "var(--color-text-muted)",
+                    color: "var(--color-text-faint)",
                     transition: "color 0.2s ease",
                   }}
                   aria-expanded={fechasAbiertas}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-faint)")}
                 >
                   {fechasAbiertas ? "Ocultar calendario" : `Ver todas (${materia.fechas.length})`}
                   <ChevronDown
                     style={{
-                      width: "13px",
-                      height: "13px",
+                      width: "12px",
+                      height: "12px",
                       flexShrink: 0,
                       transform: fechasAbiertas ? "rotate(180deg)" : "none",
                       transition: "transform 0.2s ease",
@@ -347,8 +331,8 @@ const enlaces = clases.flatMap((c) =>
 
                 {/* Lista completa */}
                 {fechasAbiertas && (
-                  <div className="pt-2">
-                    <div className="space-y-1">
+                  <div className="pt-1">
+                    <div className="space-y-0.5">
                       {materia.fechas.map((f) => {
                         const dias = diasHasta(f.fecha);
                         const pasada = dias < 0;
@@ -357,28 +341,26 @@ const enlaces = clases.flatMap((c) =>
                             key={f.id}
                             className="flex items-center justify-between gap-3"
                             style={{
-                              padding: "10px 0",
+                              padding: "9px 0",
                               borderBottom: "1px solid var(--color-line-soft)",
-                              opacity: pasada ? 0.6 : 1,
+                              opacity: pasada ? 0.55 : 1,
                             }}
                           >
-                            <div className="flex items-center gap-3 min-w-0">
-                              <span
-                                style={{
-                                  fontFamily: "var(--font-ibm-plex-mono)",
-                                  fontSize: "10px",
-                                  letterSpacing: "0.12em",
-                                  textTransform: "uppercase",
-                                  color: pasada ? "var(--color-text-faint)" : "var(--color-gold)",
-                                  textDecoration: pasada ? "line-through" : "none",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                }}
-                              >
-                                {f.titulo}
-                              </span>
-                            </div>
+                            <span
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "10px",
+                                letterSpacing: "0.12em",
+                                textTransform: "uppercase",
+                                color: pasada ? "var(--color-text-faint)" : "var(--color-gold)",
+                                textDecoration: pasada ? "line-through" : "none",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {f.titulo}
+                            </span>
                             <span
                               className="flex-shrink-0"
                               style={{
