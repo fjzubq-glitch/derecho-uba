@@ -121,23 +121,9 @@ export default function HomePage() {
                 en un <span style={{ fontStyle: "italic", color: "var(--color-gold)", fontWeight: 300 }}>solo lugar</span>.
               </h1>
 
-              {/* Description */}
-              <p
-                className="mt-8 hero-sub"
-                style={{
-                  maxWidth: "500px",
-                  fontSize: "15px",
-                  lineHeight: 1.8,
-                  letterSpacing: "0.01em",
-                  color: "var(--color-text-muted)",
-                }}
-              >
-                
-              </p>
-
               {/* Anotación a máquina */}
-<p className="annotation mt-8" style={{ maxWidth: "460px", lineHeight: 1.7 }}>
-— Materiales del cuatrimestre en curso, audios y videos de las clases, podcast, transcripciones y mas, foliados por materia. —
+              <p className="annotation mt-8" style={{ maxWidth: "460px", lineHeight: 1.7 }}>
+                — Materiales del cuatrimestre en curso, audios y videos de las clases, podcast, transcripciones y mas, <span style={{ color: "var(--color-stamp)" }}>foliados por materia.</span> —
               </p>
             </div>
 
