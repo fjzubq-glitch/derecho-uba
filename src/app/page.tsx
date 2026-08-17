@@ -77,6 +77,8 @@ export default function HomePage() {
 
           {/* Watermark — 420px, opacity 0.035, stroke-width 1.1 — Balanza de la justicia */}
           <svg
+            aria-hidden="true"
+            focusable="false"
             className="absolute pointer-events-none"
             style={{
               right: "-40px",
@@ -235,7 +237,12 @@ export default function HomePage() {
                     onClick={() => abrirMateria(m, i)}
                     className={`group card-reveal card-hover card-stamp flex flex-col cursor-pointer${stampTapped === i ? " stamp-shown" : ""}`}
                     tabIndex={0}
-                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") router.push(`/dashboard/${m.slug}`); }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        if (e.key === " ") e.preventDefault();
+                        abrirMateria(m, i);
+                      }
+                    }}
                     style={{
                       background: "var(--color-card)",
                       padding: "28px 26px",

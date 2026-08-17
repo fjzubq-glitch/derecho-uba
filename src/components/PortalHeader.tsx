@@ -55,17 +55,41 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
   }
 
   const logoTaps = useRef<number[]>([]);
+  const navHomeTimer = useRef<number | null>(null);
+
+  function clearNavHomeTimer() {
+    if (navHomeTimer.current !== null) {
+      window.clearTimeout(navHomeTimer.current);
+      navHomeTimer.current = null;
+    }
+  }
+
+  function resetLogoTaps() {
+    logoTaps.current = [];
+    clearNavHomeTimer();
+  }
 
   function handleLogoClick(e: React.MouseEvent<HTMLAnchorElement>) {
+    e.preventDefault();
     const now = Date.now();
     logoTaps.current = logoTaps.current.filter((t) => now - t < 2000);
     logoTaps.current.push(now);
     if (logoTaps.current.length >= 5) {
-      logoTaps.current = [];
-      e.preventDefault();
+      resetLogoTaps();
       router.push("/admin");
+      return;
     }
+    clearNavHomeTimer();
+    navHomeTimer.current = window.setTimeout(() => {
+      navHomeTimer.current = null;
+      logoTaps.current = [];
+      router.push("/");
+    }, 450);
   }
+
+  useEffect(() => () => {
+    clearNavHomeTimer();
+  }, []);
 
   return (
     <header
@@ -197,18 +221,18 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
                 onClick={handleLogoutAdmin}
                 title="Cerrar sesión de administrador"
                 className="flex items-center justify-center"
-style={{
-                    background: "none",
-                    border: "1px solid var(--color-gold-dim)",
-                    color: "var(--color-gold)",
-                    width: "28px",
-                    height: "28px",
-                    cursor: "pointer",
-                    padding: 0,
-                    transition: "background 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(var(--color-gold-rgb), 0.22)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
+                style={{
+                  background: "none",
+                  border: "1px solid var(--color-gold-dim)",
+                  color: "var(--color-gold)",
+                  width: "28px",
+                  height: "28px",
+                  cursor: "pointer",
+                  padding: 0,
+                  transition: "background 0.2s ease",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(var(--color-gold-rgb), 0.22)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
               >
                 <X style={{ width: "10px", height: "10px", opacity: 0.6 }} />
               </button>

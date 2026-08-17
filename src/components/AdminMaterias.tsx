@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useEscapeKey } from "@/lib/useEscapeKey";
 import { Edit3, Check, X, Loader2, BookOpen } from "@/components/icons";
 
 interface Materia {
@@ -43,6 +44,8 @@ export default function AdminMaterias() {
   const [editing, setEditing] = useState<Materia | null>(null);
   const [processing, setProcessing] = useState(false);
   const [message, setMessage] = useState("");
+
+  useEscapeKey(!!editing, () => setEditing(null));
 
   useEffect(() => {
     loadMaterias();
@@ -219,8 +222,9 @@ export default function AdminMaterias() {
 
       {/* Edit modal */}
       {editing && (
-        <div style={modalBackdrop}>
+        <div style={modalBackdrop} onClick={(e) => { if (e.target === e.currentTarget) { setEditing(null); setMessage(""); } }}>
           <div
+            onClick={(e) => e.stopPropagation()}
             style={{
               width: "100%",
               maxWidth: "460px",

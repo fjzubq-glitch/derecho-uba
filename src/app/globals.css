@@ -84,6 +84,12 @@ article {
   transform: scale(1);
 }
 
+/* ── Tarjetas: diferir render del sello fuera del viewport (móvil de gama baja) ── */
+.card-stamp {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
+}
+
 /* ── Folio de expediente ── */
 .folio {
   font-family: var(--font-ibm-plex-mono);
@@ -151,13 +157,6 @@ article {
 }
 .radio-tap > * {
   pointer-events: none;
-}
-
-/* ── Mobile input font-size ── */
-@media (max-width: 639px) {
-  .input-mobile {
-    font-size: 16px !important;
-  }
 }
 
 /* ── Admin en celular: inputs legibles sin zoom automático ── */

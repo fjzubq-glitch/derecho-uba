@@ -1415,7 +1415,6 @@ export default function AdminPage() {
                         onChange={(e) => setBusquedaEstudiante(e.target.value)}
                         placeholder="Buscar por nombre…"
                         aria-label="Buscar estudiante"
-                        className="input-mobile"
                         style={{
                           width: "100%",
                           background: "var(--color-ink)",
@@ -1444,13 +1443,13 @@ export default function AdminPage() {
                         <span style={{ width: "32px", flexShrink: 0 }} />
                         <span className="flex-1 min-w-0">Nombre</span>
                         <span style={{ width: "44px", textAlign: "right" }}>Visitas</span>
-                        <span className="hidden sm:block" style={{ width: "56px", textAlign: "right" }}>Clases</span>
-                        <span className="hidden lg:block" style={{ width: "36px", textAlign: "right" }}>Audio</span>
-                        <span className="hidden lg:block" style={{ width: "44px", textAlign: "right" }}>Video</span>
-                        <span className="hidden lg:block" style={{ width: "62px", textAlign: "right" }}>Lexpodcast</span>
-                        <span className="hidden lg:block" style={{ width: "70px", textAlign: "right" }}>Transcrip.</span>
-                        <span className="hidden lg:block" style={{ width: "48px", textAlign: "right" }}>Punteos</span>
-                        <span className="hidden lg:block" style={{ width: "40px", textAlign: "right" }}>Total</span>
+                        <span className="sr-only sm:not-sr-only" style={{ width: "56px", textAlign: "right" }}>Clases</span>
+                        <span className="sr-only lg:not-sr-only" style={{ width: "36px", textAlign: "right" }}>Audio</span>
+                        <span className="sr-only lg:not-sr-only" style={{ width: "44px", textAlign: "right" }}>Video</span>
+                        <span className="sr-only lg:not-sr-only" style={{ width: "62px", textAlign: "right" }}>Lexpodcast</span>
+                        <span className="sr-only lg:not-sr-only" style={{ width: "70px", textAlign: "right" }}>Transcrip.</span>
+                        <span className="sr-only lg:not-sr-only" style={{ width: "48px", textAlign: "right" }}>Punteos</span>
+                        <span style={{ width: "40px", textAlign: "right" }}>Total</span>
                         <span style={{ width: "14px", flexShrink: 0 }} />
                       </div>
                       <div className="space-y-1">
@@ -1545,26 +1544,25 @@ export default function AdminPage() {
                                   <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
                                     {est.visitas} <span style={{ color: "var(--color-text-faint)" }}>visitas</span>
                                   </span>
-                                  <span className="hidden sm:block" style={{ color: "var(--color-text-muted)", minWidth: "56px", textAlign: "right" }}>
+                                  <span className="sr-only sm:not-sr-only" style={{ color: "var(--color-text-muted)", minWidth: "56px", textAlign: "right" }}>
                                     {est.clasesVistas || 0} <span style={{ color: "var(--color-text-faint)" }}>clases</span>
                                   </span>
-                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "36px", textAlign: "right" }}>
+                                  <span className="sr-only lg:not-sr-only" style={{ color: "var(--color-text-muted)", minWidth: "36px", textAlign: "right" }}>
                                     {est.porTipo.audio_clase || 0} <span style={{ color: "var(--color-text-faint)" }}>audio</span>
                                   </span>
-                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
+                                  <span className="sr-only lg:not-sr-only" style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
                                     {est.porTipo.clase_youtube || 0} <span style={{ color: "var(--color-text-faint)" }}>video</span>
                                   </span>
-                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "62px", textAlign: "right" }}>
+                                  <span className="sr-only lg:not-sr-only" style={{ color: "var(--color-text-muted)", minWidth: "62px", textAlign: "right" }}>
                                     {est.porTipo.podcast || 0} <span style={{ color: "var(--color-text-faint)" }}>Lexpodcast</span>
                                   </span>
-                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "70px", textAlign: "right" }}>
+                                  <span className="sr-only lg:not-sr-only" style={{ color: "var(--color-text-muted)", minWidth: "70px", textAlign: "right" }}>
                                     {est.porTipo.transcripcion || 0} <span style={{ color: "var(--color-text-faint)" }}>transcripción</span>
                                   </span>
-                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "48px", textAlign: "right" }}>
+                                  <span className="sr-only lg:not-sr-only" style={{ color: "var(--color-text-muted)", minWidth: "48px", textAlign: "right" }}>
                                     {est.porTipo.archivo || 0} <span style={{ color: "var(--color-text-faint)" }}>punteos</span>
                                   </span>
                                   <span
-                                    className="hidden lg:block"
                                     style={{
                                       color: "var(--color-gold)",
                                       fontWeight: 500,

@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatFechaLocal } from "@/lib/utils";
+import { useEscapeKey } from "@/lib/useEscapeKey";
 import { Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical, Link2, ChevronUp, ChevronDown } from "@/components/icons";
 
 interface Archivo {
@@ -80,6 +81,18 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const [message, setMessage] = useState("");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [filtroMateria, setFiltroMateria] = useState("todas");
+
+  const cerrarReplace = () => {
+    setReplacing(null);
+    setNewFile(null);
+    setNewDriveLink("");
+    setNewYoutubeUrl("");
+    setNewCloudinaryUrl("");
+  };
+
+  useEscapeKey(!!editing, () => setEditing(null));
+  useEscapeKey(!!deleting, () => setDeleting(null));
+  useEscapeKey(!!replacing, cerrarReplace);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -991,8 +1004,8 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
 
       {/* Edit Modal */}
       {editing && (
-        <div style={modalBackdrop}>
-          <div style={modalCard}>
+        <div style={modalBackdrop} onClick={(e) => { if (e.target === e.currentTarget) setEditing(null); }}>
+          <div style={modalCard} onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
               <h3
                 style={{
@@ -1119,8 +1132,8 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
 
       {/* Delete Modal */}
       {deleting && (
-        <div style={modalBackdrop}>
-          <div style={modalCard}>
+        <div style={modalBackdrop} onClick={(e) => { if (e.target === e.currentTarget) setDeleting(null); }}>
+          <div style={modalCard} onClick={(e) => e.stopPropagation()}>
             <div className="text-center">
               <div
                 className="flex items-center justify-center mx-auto mb-4"
@@ -1196,8 +1209,8 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
 
       {/* Replace Modal */}
       {replacing && (
-        <div style={modalBackdrop}>
-          <div style={modalCard}>
+        <div style={modalBackdrop} onClick={(e) => { if (e.target === e.currentTarget) cerrarReplace(); }}>
+          <div style={modalCard} onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
               <h3
                 style={{
@@ -1210,7 +1223,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 Reemplazar Archivo
               </h3>
               <button
-                onClick={() => { setReplacing(null); setNewFile(null); setNewDriveLink(""); setNewYoutubeUrl(""); setNewCloudinaryUrl(""); }}
+                onClick={cerrarReplace}
                 style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)" }}
               >
                 <X style={{ width: "18px", height: "18px" }} />
@@ -1366,7 +1379,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
 
             <div className="flex justify-end gap-3 mt-6">
               <button
-                onClick={() => { setReplacing(null); setNewFile(null); setNewDriveLink(""); setNewYoutubeUrl(""); setNewCloudinaryUrl(""); }}
+                onClick={cerrarReplace}
                 style={{ ...actionBtnStyle, padding: "10px 20px" }}
               >
                 Cancelar
