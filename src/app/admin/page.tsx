@@ -202,10 +202,10 @@ export default function AdminPage() {
     };
   }, [authenticated, activeTab]);
 
-  const loadAdminData = useCallback(async (periodoActivo: Periodo = periodo) => {
+  const loadAdminData = useCallback(async () => {
     try {
       setAnalyticsLoading(true);
-      const res = await fetch(`/api/admin/dashboard?dias=${periodoActivo}`);
+      const res = await fetch(`/api/admin/dashboard?dias=${periodo}`);
       const data = await res.json();
       if (data.materias) setMaterias(data.materias);
       if (data.stats) setStats(data.stats);
@@ -1443,7 +1443,7 @@ export default function AdminPage() {
                         <span style={{ width: "32px", flexShrink: 0 }} />
                         <span className="flex-1 min-w-0">Nombre</span>
                         <span style={{ width: "44px", textAlign: "right" }}>Visitas</span>
-                        <span style={{ width: "44px", textAlign: "right" }}>Clases</span>
+                        <span style={{ width: "56px", textAlign: "right" }}>Clases</span>
                         <span style={{ width: "36px", textAlign: "right" }}>Audio</span>
                         <span style={{ width: "44px", textAlign: "right" }}>Video</span>
                         <span style={{ width: "50px", textAlign: "right" }}>Podcast</span>
@@ -1544,7 +1544,7 @@ export default function AdminPage() {
                                   <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
                                     {est.visitas} <span style={{ color: "var(--color-text-faint)" }}>visitas</span>
                                   </span>
-                                  <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
+                                  <span style={{ color: "var(--color-text-muted)", minWidth: "56px", textAlign: "right" }}>
                                     {est.clasesVistas || 0} <span style={{ color: "var(--color-text-faint)" }}>clases</span>
                                   </span>
                                   <span style={{ color: "var(--color-text-muted)", minWidth: "36px", textAlign: "right" }}>

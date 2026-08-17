@@ -5,6 +5,7 @@ import { isAdminRequest } from "@/lib/auth";
 interface Evento {
   tipo: string | null;
   archivo_id: string | null;
+  clase_id: string | null;
   nombre: string | null;
   materia_slug: string | null;
   created_at: string | null;
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest) {
     // Los heartbeats (presencia) se excluyen: solo ensucian el volumen
     let eventsQuery = supabase
       .from("actividad")
-      .select("tipo, archivo_id, nombre, materia_slug, created_at, ip_hash")
+      .select("tipo, archivo_id, clase_id, nombre, materia_slug, created_at, ip_hash")
       .neq("tipo", "heartbeat")
       .order("created_at", { ascending: false })
       .limit(100000);
@@ -54,11 +55,20 @@ export async function GET(request: NextRequest) {
     const totalVisitas = visitas.length;
     const visitantesUnicos = new Set(visitas.map((v) => v.ip_hash).filter(Boolean) as string[]).size;
 
-    const reproducciones = eventos.filter((e) => e.archivo_id && EVENTOS_REPRODUCCION.has(e.tipo || ""));
+        const reproducciones = eventos.filter((e) => e.archivo_id && EVENTOS_REPRODUCCION.has(e.tipo || ""));
     const totalReproducciones = reproducciones.length;
 
+    // Registros nuevos: consulta aparte (solo este tipo), sin que el límite
+    // de 100k del query general trunque los eventos más viejos
+    let nuevosQuery = supabase
+      .from("actividad")
+      .select("nombre")
+      .eq("tipo", "usuario_registrado")
+      .limit(100000);
+    if (desdeISO) nuevosQuery = nuevosQuery.gte("created_at", desdeISO);
+    const { data: registrosNuevos } = await nuevosQuery;
     const alumnosNuevos = new Set(
-      eventos.filter((e) => e.tipo === "usuario_registrado").map((e) => (e.nombre || "").trim()).filter(Boolean),
+      (registrosNuevos || []).map((r) => (r.nombre || "").trim()).filter(Boolean),
     ).size;
 
     // ── Contenido consumido por tipo (con materia de cada elemento) ──
@@ -101,14 +111,14 @@ export async function GET(request: NextRequest) {
     // ── Por persona: qué miró y cuánto ──
     const personasMap: Record<
       string,
-      { nombre: string; visitas: number; clasesVistas: number; materias: Set<string>; porTipo: Record<string, number>; ultima_actividad: string }
+      { nombre: string; visitas: number; clasesSet: Set<string>; materias: Set<string>; porTipo: Record<string, number>; ultima_actividad: string }
     > = {};
     for (const e of eventos) {
       const n = (e.nombre || "").trim();
       if (!n) continue;
-      const p = personasMap[n] || (personasMap[n] = { nombre: n, visitas: 0, clasesVistas: 0, materias: new Set(), porTipo: {}, ultima_actividad: "" });
+      const p = personasMap[n] || (personasMap[n] = { nombre: n, visitas: 0, clasesSet: new Set(), materias: new Set(), porTipo: {}, ultima_actividad: "" });
       if (e.tipo === "page_view") p.visitas += 1;
-      if (e.tipo === "class_view") p.clasesVistas += 1;
+      if (e.tipo === "class_view" && e.clase_id) p.clasesSet.add(e.clase_id);
       if (e.materia_slug) p.materias.add(e.materia_slug);
       if (e.archivo_id) {
         const t = tipoPorArchivo.get(e.archivo_id);
@@ -121,7 +131,7 @@ export async function GET(request: NextRequest) {
       .map((p) => ({
         nombre: p.nombre,
         visitas: p.visitas,
-        clasesVistas: p.clasesVistas,
+        clasesVistas: p.clasesSet.size,
         materias: p.materias.size,
         porTipo: p.porTipo,
         total: Object.values(p.porTipo).reduce((a, b) => a + b, 0),
