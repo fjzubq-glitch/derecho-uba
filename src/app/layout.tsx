@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
+import { Fraunces, Inter, IBM_Plex_Mono, Special_Elite } from "next/font/google";
 import AdminShortcut from "@/components/AdminShortcut";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import HeartbeatProvider from "@/components/HeartbeatProvider";
@@ -23,6 +23,12 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
+});
+
+const specialElite = Special_Elite({
+  variable: "--font-special-elite",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -62,7 +68,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${fraunces.variable} ${inter.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${inter.variable} ${ibmPlexMono.variable} ${specialElite.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
         <AudioProvider>

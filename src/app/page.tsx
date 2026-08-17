@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
+import InkStamp from "@/components/InkStamp";
 import { Shield, ArrowRight } from "@/components/icons";
 
 
@@ -102,36 +103,115 @@ export default function HomePage() {
             Biblioteca de cursada
           </div>
 
-          {/* Title */}
-          <h1
+          {/* Carátula: título a la izquierda, sello a la derecha */}
+          <div className="flex items-start justify-between gap-10">
+            <div>
+              <h1
+                style={{
+                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                  fontWeight: 400,
+                  fontSize: "var(--text-display)",
+                  lineHeight: 1.06,
+                  letterSpacing: "-0.02em",
+                  maxWidth: "720px",
+                }}
+              >
+                Todo el material de clase,{" "}
+                <br className="hidden sm:block" />
+                en un <span style={{ fontStyle: "italic", color: "var(--color-gold)", fontWeight: 300 }}>solo lugar</span>.
+              </h1>
+
+              {/* Description */}
+              <p
+                className="mt-8 hero-sub"
+                style={{
+                  maxWidth: "500px",
+                  fontSize: "15px",
+                  lineHeight: 1.8,
+                  letterSpacing: "0.01em",
+                  color: "var(--color-text-muted)",
+                }}
+              >
+                Clases, transcripciones, podcasts y materiales de cursada, organizados por materia.
+              </p>
+
+              {/* Anotación a máquina */}
+              <p className="annotation mt-6" style={{ maxWidth: "460px", lineHeight: 1.7 }}>
+                — Materiales del cuatrimestre en curso, <strong>foliados por materia</strong>. —
+              </p>
+            </div>
+
+            {/* Sello de la carátula */}
+            <div className="hidden md:block flex-shrink-0" style={{ paddingTop: "6px" }}>
+              <div className="hero-stamp">
+                <InkStamp
+                  size={200}
+                  titulo="BIBLIOTECA DE CURSADA"
+                  subtitulo="FACULTAD DE DERECHO · UBA"
+                  rotate={-9}
+                />
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════ ÍNDICE DE FOLIOS ═══════════ */}
+      <section className="border-b" style={{ borderColor: "var(--color-line-soft)" }}>
+        <div className="pad-lateral" style={{ padding: "0 48px" }}>
+          <div
+            className="grid grid-cols-1 sm:grid-cols-3 overflow-hidden"
             style={{
-              fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-              fontWeight: 400,
-              fontSize: "var(--text-display)",
-              lineHeight: 1.06,
-              letterSpacing: "-0.02em",
-              maxWidth: "720px",
+              background: "var(--color-line-soft)",
+              gap: "1px",
             }}
           >
-            Todo el material de clase,{" "}
-            <br className="hidden sm:block" />
-            en un <span style={{ fontStyle: "italic", color: "var(--color-gold)", fontWeight: 300 }}>solo lugar</span>.
-          </h1>
-
-          {/* Description */}
-          <p
-            className="mt-8 hero-sub"
-            style={{
-              maxWidth: "500px",
-              fontSize: "15px",
-              lineHeight: 1.8,
-              letterSpacing: "0.01em",
-              color: "var(--color-text-muted)",
-            }}
-          >
-            Clases, transcripciones, podcasts y materiales de cursada, organizados por materia.
-          </p>
-
+            {[
+              { num: "01", label: "Materias", sub: "El índice de tu legajo" },
+              { num: "02", label: "Clases", sub: "Cada clase es un folio" },
+              { num: "03", label: "Materiales", sub: "Audio, video, apuntes y enlaces" },
+            ].map((f) => (
+              <div key={f.num} style={{ background: "var(--color-card)", padding: "18px 24px" }}>
+                <div className="flex items-center gap-4">
+                  <span
+                    style={{
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "20px",
+                      fontWeight: 500,
+                      color: "var(--color-stamp)",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {f.num}
+                  </span>
+                  <div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "10px",
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        color: "var(--color-text)",
+                      }}
+                    >
+                      {f.label}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-special-elite), 'Courier New', monospace",
+                        fontSize: "12px",
+                        color: "var(--color-text-faint)",
+                        marginTop: "2px",
+                      }}
+                    >
+                      {f.sub}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -201,7 +281,7 @@ export default function HomePage() {
                   <article
                     key={m.id}
                     onClick={() => router.push(`/dashboard/${m.slug}`)}
-                    className="group card-reveal card-hover flex flex-col cursor-pointer"
+                    className="group card-reveal card-hover card-stamp flex flex-col cursor-pointer"
                     tabIndex={0}
                     onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") router.push(`/dashboard/${m.slug}`); }}
                     style={{
@@ -214,26 +294,34 @@ export default function HomePage() {
                     onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
                   >
-                    {/* Top: icon + count */}
+                    {/* Top: icon + folio + count */}
                     <div className="flex items-start justify-between mb-4">
-                      <div
-                        className="flex items-center justify-center"
-                        style={{
-                          width: "38px",
-                          height: "38px",
-                          borderRadius: "50%",
-                          border: `1px solid ${isEmpty ? "var(--color-line)" : "var(--color-gold-dim)"}`,
-                          transition: "border-color 0.25s ease",
-                        }}
-                      >
-                        <Shield
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="flex items-center justify-center"
                           style={{
-                            width: "17px",
-                            height: "17px",
-                            color: "var(--color-gold)",
-                            opacity: isEmpty ? 0.3 : 0.75,
+                            width: "38px",
+                            height: "38px",
+                            borderRadius: "50%",
+                            border: `1px solid ${isEmpty ? "var(--color-line)" : "var(--color-gold-dim)"}`,
+                            transition: "border-color 0.25s ease",
                           }}
-                        />
+                        >
+                          <Shield
+                            style={{
+                              width: "17px",
+                              height: "17px",
+                              color: "var(--color-gold)",
+                              opacity: isEmpty ? 0.3 : 0.75,
+                            }}
+                          />
+                        </div>
+                        <span className="folio">
+                          Folio{" "}
+                          <span className="folio-num">
+                            {String(i + 1).padStart(2, "0")}/{String(materias.length).padStart(2, "0")}
+                          </span>
+                        </span>
                       </div>
                       <div className="text-right">
                         <div
@@ -309,6 +397,17 @@ export default function HomePage() {
                           transition: "transform 0.2s ease",
                         }}
                         className="group-hover:translate-x-[3px]"
+                      />
+                    </div>
+
+                    {/* Sello que se estampa al hover */}
+                    <div className="stamp-reveal">
+                      <InkStamp
+                        size={96}
+                        titulo="MATERIAL"
+                        subtitulo="DE CURSADA"
+                        rotate={-12}
+                        style={{ mixBlendMode: "screen" }}
                       />
                     </div>
                   </article>

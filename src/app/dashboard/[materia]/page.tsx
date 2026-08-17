@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
 import WelcomeGate from "@/components/WelcomeGate";
+import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
 import { formatFechaLocal } from "@/lib/utils";
 import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2, Play } from "@/components/icons";
@@ -98,65 +99,98 @@ const enlaces = clases.flatMap((c) =>
         }
       />
 
-      {/* ═══════════ HEADER MATERIA ═══════════ */}
+      {/* ═══════════ HEADER MATERIA (carátula) ═══════════ */}
       <section className="relative overflow-hidden border-b" style={{ borderColor: "var(--color-line-soft)" }}>
         <div className="relative z-10 pad-lateral" style={{ padding: "40px 48px 36px" }}>
-          <div
-            className="flex items-center gap-3 mb-6"
-            style={{
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "11px",
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "var(--color-gold)",
-            }}
-          >
-            <span style={{ width: "24px", height: "1px", background: "var(--color-gold-dim)" }} />
-            Materia
-          </div>
-          <h1
-            style={{
-              fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-              fontWeight: 400,
-              fontSize: "clamp(34px, 4.5vw, 52px)",
-              lineHeight: 1.08,
-              letterSpacing: "-0.02em",
-              maxWidth: "760px",
-              overflowWrap: "break-word",
-            }}
-          >
-            {materiaTitle}
-          </h1>
-          {materiaMeta && (
-            <p
-              className="mt-4"
-              style={{
-                fontFamily: "var(--font-ibm-plex-mono)",
-                fontSize: "12px",
-                color: "var(--color-text-muted)",
-                overflowWrap: "break-word",
-              }}
-            >
-              {materiaMeta}
-            </p>
-          )}
-          {!loading && clases.length > 0 && (
-            <div
-              className="flex items-center gap-3 mt-6"
-              style={{
-                fontFamily: "var(--font-ibm-plex-mono)",
-                fontSize: "11px",
-                letterSpacing: "0.08em",
-                color: "var(--color-text-faint)",
-              }}
-            >
-              <span>{clases.length} clases</span>
-              <span style={{ color: "var(--color-line)" }}>·</span>
-              <span style={{ color: materia?.estado === "finalizada" ? "var(--color-gold)" : "var(--color-text-muted)" }}>
-                {materia?.estado === "finalizada" ? "Finalizada" : "En curso"}
-              </span>
+          <div className="flex items-start justify-between gap-10">
+            <div>
+              <div
+                className="flex items-center gap-3 mb-6"
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "11px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "var(--color-gold)",
+                }}
+              >
+                <span style={{ width: "24px", height: "1px", background: "var(--color-gold-dim)" }} />
+                Materia
+              </div>
+              <h1
+                style={{
+                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                  fontWeight: 400,
+                  fontSize: "clamp(34px, 4.5vw, 52px)",
+                  lineHeight: 1.08,
+                  letterSpacing: "-0.02em",
+                  maxWidth: "760px",
+                  overflowWrap: "break-word",
+                }}
+              >
+                {materiaTitle}
+              </h1>
+              {materiaMeta && (
+                <p
+                  className="mt-4"
+                  style={{
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "12px",
+                    color: "var(--color-text-muted)",
+                    overflowWrap: "break-word",
+                  }}
+                >
+                  {materiaMeta}
+                </p>
+              )}
+              {!loading && clases.length > 0 && (
+                <div
+                  className="flex items-center gap-3 mt-6"
+                  style={{
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "11px",
+                    letterSpacing: "0.08em",
+                    color: "var(--color-text-faint)",
+                  }}
+                >
+                  <span>
+                    <span className="folio-num" style={{ color: "var(--color-stamp)" }}>{clases.length}</span>{" "}
+                    folios
+                  </span>
+                  <span style={{ color: "var(--color-line)" }}>·</span>
+                  <span style={{ color: materia?.estado === "finalizada" ? "var(--color-gold)" : "var(--color-text-muted)" }}>
+                    {materia?.estado === "finalizada" ? "Finalizada" : "En curso"}
+                  </span>
+                </div>
+              )}
             </div>
-          )}
+
+            {/* Sello de la carátula: iniciales de la materia */}
+            {materiaTitle && (
+              <div className="hidden md:block flex-shrink-0">
+                <div className="hero-stamp">
+                  <InkStamp
+                    size={150}
+                    titulo="EXPEDIENTE"
+                    subtitulo="UBA · DERECHO"
+                    rotate={-8}
+                  >
+                    <text
+                      x="50"
+                      y="82"
+                      textAnchor="middle"
+                      fontFamily="var(--font-special-elite), 'Courier New', monospace"
+                      fontSize="9"
+                      fill="var(--color-stamp)"
+                      stroke="none"
+                    >
+                      {materiaTitle.split(" ").slice(0, 2).map((w) => w.charAt(0)).join(".").toUpperCase()}
+                    </text>
+                  </InkStamp>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 

@@ -14,6 +14,8 @@
   --color-text-faint: #8A8578;
   --color-gold-rgb: 185, 154, 98;
   --color-gold-soft: rgba(185, 154, 98, 0.12);
+  --color-stamp: #A63A2B;
+  --color-stamp-soft: rgba(166, 58, 43, 0.1);
   --color-danger: #C65A4F;
   --text-display: clamp(40px, 5vw, 62px);
   --text-title: clamp(24px, 3.2vw, 28px);
@@ -48,6 +50,58 @@ h1, h2, h3, .section-title, .word {
 /* ── Cards sin border-radius ── */
 article {
   border-radius: 0 !important;
+}
+
+/* ── Sello: se estampa al cargar (hero) ── */
+@keyframes stampIn {
+  from { opacity: 0; transform: scale(1.6) rotate(-14deg); }
+  to { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.hero-stamp {
+  animation: stampIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+/* ── Sello en tarjetas: se estampa al hover ── */
+.stamp-reveal {
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  opacity: 0;
+  transform: scale(1.45);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .card-stamp:hover .stamp-reveal {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── Folio de expediente ── */
+.folio {
+  font-family: var(--font-ibm-plex-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  white-space: nowrap;
+}
+.folio .folio-num {
+  color: var(--color-stamp);
+  font-weight: 500;
+}
+
+/* ── Anotaciones a máquina ── */
+.annotation {
+  font-family: var(--font-special-elite), 'Courier New', monospace;
+  font-size: 14px;
+  color: var(--color-text-faint);
+  letter-spacing: 0.01em;
+}
+.annotation strong {
+  color: var(--color-stamp);
+  font-weight: 400;
 }
 
 /* ── Colores forzados ── */

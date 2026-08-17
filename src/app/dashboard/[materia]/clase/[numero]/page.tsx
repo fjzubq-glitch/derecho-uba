@@ -716,20 +716,25 @@ if (isTranscription(tipo)) {
 
           {/* Page title */}
           <div style={{ marginBottom: "40px" }}>
-            {clase.tema && (
-              <div
-                style={{
-                  fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "10px",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "var(--color-gold)",
-                  marginBottom: "10px",
-                }}
-              >
-                {clase.tema}
-              </div>
-            )}
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              {clase.tema && (
+                <div
+                  style={{
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "10px",
+                    letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    color: "var(--color-gold)",
+                  }}
+                >
+                  {clase.tema}
+                </div>
+              )}
+              <span className="folio">
+                Folio{" "}
+                <span className="folio-num">Nº {String(clase.numero).padStart(2, "0")}</span>
+              </span>
+            </div>
             <h2
               style={{
                 fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
