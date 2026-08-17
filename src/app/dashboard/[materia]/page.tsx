@@ -8,7 +8,7 @@ import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
 import { formatFechaLocal } from "@/lib/utils";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
-import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2, Play } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2, Play, ChevronDown } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -36,6 +36,7 @@ export default function MateriaPage() {
   const [materia, setMateria] = useState<{ id: string; nombre: string; estado?: string; fechas?: Array<{ id: string; titulo: string; fecha: string }> } | null>(null);
   const [clases, setClases] = useState<Clase[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fechasAbiertas, setFechasAbiertas] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -161,61 +162,7 @@ const enlaces = clases.flatMap((c) =>
                   <span style={{ color: materia?.estado === "finalizada" ? "var(--color-gold)" : "var(--color-text-muted)" }}>
                     {materia?.estado === "finalizada" ? "Finalizada" : "En curso"}
                   </span>
-                </div>
-              )}
-
-              {/* Fechas importantes con countdown */}
-              {materia?.fechas && materia.fechas.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2 mt-6">
-                  {materia.fechas.map((f) => {
-                    const dias = diasHasta(f.fecha);
-                    const pasada = dias < 0;
-                    return (
-                      <div
-                        key={f.id}
-                        className="flex items-center gap-2"
-                        style={{
-                          border: "1px solid var(--color-line-soft)",
-                          padding: "8px 14px",
-                          background: "var(--color-card)",
-                          borderRadius: 0,
-                        }}
-                      >
-                        <Calendar
-                          style={{
-                            width: "12px",
-                            height: "12px",
-                            color: pasada ? "var(--color-text-faint)" : "var(--color-gold)",
-                            flexShrink: 0,
-                          }}
-                        />
-                        <span
-                          style={{
-                            fontFamily: "var(--font-ibm-plex-mono)",
-                            fontSize: "10px",
-                            letterSpacing: "0.08em",
-                            textTransform: "uppercase",
-                            color: pasada ? "var(--color-text-faint)" : "var(--color-text-muted)",
-                            textDecoration: pasada ? "line-through" : "none",
-                          }}
-                        >
-                          {f.titulo} · {formatearFechaCorta(f.fecha, true)}
-                        </span>
-                        <span
-                          style={{
-                            fontFamily: "var(--font-ibm-plex-mono)",
-                            fontSize: "10px",
-                            letterSpacing: "0.08em",
-                            textTransform: "uppercase",
-                            color: pasada ? "var(--color-text-faint)" : dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
-                          }}
-                        >
-                          {countdownLabel(dias)}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+</div>
               )}
             </div>
 
@@ -251,6 +198,159 @@ const enlaces = clases.flatMap((c) =>
       {/* ═══════════ MAIN ═══════════ */}
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
+          {/* Fechas importantes */}
+          {!loading && materia?.fechas && materia.fechas.length > 0 && (
+            <div className="mb-5">
+              <button
+                onClick={() => setFechasAbiertas((v) => !v)}
+                className="flex items-center justify-between w-full text-left"
+                style={{
+                  background: "var(--color-card)",
+                  border: "1px solid var(--color-line-soft)",
+                  borderRadius: 0,
+                  padding: "20px 26px",
+                  cursor: "pointer",
+                  transition: "background 0.25s ease, border-color 0.25s ease",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+                aria-expanded={fechasAbiertas}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span
+                    className="flex items-center justify-center flex-shrink-0"
+                    style={{
+                      width: "38px",
+                      height: "38px",
+                      borderRadius: "50%",
+                      border: "1px solid var(--color-gold-dim)",
+                      color: "var(--color-gold)",
+                    }}
+                  >
+                    <Calendar style={{ width: "15px", height: "15px" }} />
+                  </span>
+                  <span className="min-w-0">
+                    <span
+                      className="block"
+                      style={{
+                        fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                        fontWeight: 500,
+                        fontSize: "17px",
+                        color: "var(--color-text)",
+                      }}
+                    >
+                      Fechas importantes
+                    </span>
+                    {(() => {
+                      const pf = materia.fechas!.find((f) => diasHasta(f.fecha) >= 0);
+                      if (!pf) return null;
+                      const dias = diasHasta(pf.fecha);
+                      return (
+                        <span
+                          className="block"
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "10px",
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                            color: dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
+                            marginTop: "3px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {pf.titulo} · {formatearFechaCorta(pf.fecha)} · {countdownLabel(dias)}
+                        </span>
+                      );
+                    })()}
+                  </span>
+                </div>
+                <ChevronDown
+                  style={{
+                    width: "16px",
+                    height: "16px",
+                    color: "var(--color-text-faint)",
+                    flexShrink: 0,
+                    transform: fechasAbiertas ? "rotate(180deg)" : "none",
+                    transition: "transform 0.2s ease",
+                  }}
+                />
+              </button>
+
+              {fechasAbiertas && (
+                <div
+                  style={{
+                    background: "var(--color-card)",
+                    border: "1px solid var(--color-line-soft)",
+                    borderTop: "none",
+                    borderRadius: 0,
+                    padding: "6px 26px 20px",
+                  }}
+                >
+                  <div className="space-y-1">
+                    {materia.fechas.map((f) => {
+                      const dias = diasHasta(f.fecha);
+                      const pasada = dias < 0;
+                      return (
+                        <div
+                          key={f.id}
+                          className="flex items-center justify-between gap-3"
+                          style={{
+                            padding: "10px 0",
+                            borderBottom: "1px solid var(--color-line-soft)",
+                            opacity: pasada ? 0.6 : 1,
+                          }}
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "10px",
+                                letterSpacing: "0.12em",
+                                textTransform: "uppercase",
+                                color: pasada ? "var(--color-text-faint)" : "var(--color-gold)",
+                                textDecoration: pasada ? "line-through" : "none",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {f.titulo}
+                            </span>
+                          </div>
+                          <span
+                            className="flex-shrink-0"
+                            style={{
+                              fontFamily: "var(--font-ibm-plex-mono)",
+                              fontSize: "11px",
+                              color: pasada ? "var(--color-text-faint)" : "var(--color-text-muted)",
+                              textDecoration: pasada ? "line-through" : "none",
+                            }}
+                          >
+                            {formatearFechaCorta(f.fecha, true)}
+                          </span>
+                          <span
+                            className="flex-shrink-0"
+                            style={{
+                              fontFamily: "var(--font-ibm-plex-mono)",
+                              fontSize: "10px",
+                              letterSpacing: "0.08em",
+                              textTransform: "uppercase",
+                              color: pasada ? "var(--color-text-faint)" : dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
+                            }}
+                          >
+                            {countdownLabel(dias)}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Clases */}
           {loading ? (
             <div

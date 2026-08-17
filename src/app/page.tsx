@@ -5,14 +5,7 @@ import { useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import PortalFooter from "@/components/PortalFooter";
 import InkStamp from "@/components/InkStamp";
-import { Shield, ArrowRight, Calendar, Headphones, FileText, Play, Volume2 } from "@/components/icons";
-import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
-
-interface MateriaFecha {
-  id: string;
-  titulo: string;
-  fecha: string;
-}
+import { Shield, ArrowRight, Headphones, FileText, Play, Volume2 } from "@/components/icons";
 
 interface Materia {
   id: string;
@@ -24,7 +17,6 @@ interface Materia {
   turno: string | null;
   total_clases: number;
   clase_ids?: string[];
-  fechas?: MateriaFecha[];
 }
 
 interface ItemContinuar {
@@ -96,11 +88,6 @@ export default function HomePage() {
       console.error("Error loading materias:", e);
     }
     setLoading(false);
-  }
-
-  function proximaFecha(m: Materia): MateriaFecha | null {
-    if (!m.fechas || m.fechas.length === 0) return null;
-    return m.fechas.find((f) => diasHasta(f.fecha) >= 0) || null;
   }
 
   function iconoContinuar(tipo: string) {
@@ -493,45 +480,6 @@ export default function HomePage() {
                     >
                       {metaLine || "Sin datos de cursada"}
                     </div>
-
-                    {/* Próxima fecha importante con countdown */}
-                    {!isEmpty &&
-                      (() => {
-                        const pf = proximaFecha(m);
-                        if (!pf) return null;
-                        const dias = diasHasta(pf.fecha);
-                        return (
-                          <div className="flex items-center gap-2 mb-3">
-                            <Calendar style={{ width: "11px", height: "11px", color: "var(--color-gold)", flexShrink: 0 }} />
-                            <span
-                              style={{
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "10px",
-                                letterSpacing: "0.08em",
-                                textTransform: "uppercase",
-                                color: "var(--color-text-muted)",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              {pf.titulo} · {formatearFechaCorta(pf.fecha)}
-                            </span>
-                            <span
-                              className="ml-auto flex-shrink-0"
-                              style={{
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "10px",
-                                letterSpacing: "0.08em",
-                                textTransform: "uppercase",
-                                color: dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
-                              }}
-                            >
-                              {countdownLabel(dias)}
-                            </span>
-                          </div>
-                        );
-                      })()}
 
                     {/* CTA */}
                     <div
