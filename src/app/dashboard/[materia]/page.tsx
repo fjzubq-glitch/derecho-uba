@@ -8,7 +8,7 @@ import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
 import { formatFechaLocal } from "@/lib/utils";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
-import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2, Play, ChevronDown } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2, Play, ChevronDown, X } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -200,46 +200,68 @@ const enlaces = clases.flatMap((c) =>
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
           {/* Fechas importantes */}
           {!loading && materia?.fechas && materia.fechas.length > 0 && (
-            <div className="mb-10">
-              <div
-                className="w-full md:max-w-2xl"
-                style={{
-                  background: "var(--color-card)",
-                  border: "1px solid var(--color-line-soft)",
-                  borderTop: "2px solid var(--color-gold-dim)",
-                  borderRadius: 0,
-                  padding: "24px 26px 18px",
-                }}
-              >
-                {/* Header de la card */}
-                <div className="flex items-center justify-between gap-4 mb-4">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <Calendar style={{ width: "14px", height: "14px", color: "var(--color-gold)", flexShrink: 0 }} />
-                    <p
-                      style={{
-                        fontFamily: "var(--font-ibm-plex-mono)",
-                        fontSize: "10px",
-                        letterSpacing: "0.16em",
-                        textTransform: "uppercase",
-                        color: "var(--color-gold)",
-                      }}
-                    >
-                      Fechas importantes
-                    </p>
-                  </div>
-                  <span
-                    className="flex-shrink-0"
+            <div className="mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <div
                     style={{
-                      fontFamily: "var(--font-ibm-plex-mono)",
-                      fontSize: "10px",
-                      letterSpacing: "0.1em",
-                      color: "var(--color-text-faint)",
+                      background: "var(--color-card)",
+                      border: "1px solid var(--color-line-soft)",
+                      borderTop: "2px solid var(--color-gold-dim)",
+                      borderRadius: 0,
+                      padding: "24px 26px 18px",
                     }}
                   >
-                    <span className="folio-num">{String(materia.fechas.length).padStart(2, "0")}</span>{" "}
-                    FECHAS
-                  </span>
-                </div>
+                    {/* Header de la card */}
+                    <div className="flex items-center justify-between gap-4 mb-4">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <Calendar style={{ width: "14px", height: "14px", color: "var(--color-gold)", flexShrink: 0 }} />
+                        <p
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "10px",
+                            letterSpacing: "0.16em",
+                            textTransform: "uppercase",
+                            color: "var(--color-gold)",
+                          }}
+                        >
+                          Fechas importantes
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {fechasAbiertas && (
+                          <button
+                            onClick={() => setFechasAbiertas(false)}
+                            aria-label="Cerrar calendario"
+                            className="flex items-center justify-center"
+                            style={{
+                              width: "26px",
+                              height: "26px",
+                              border: "1px solid var(--color-line-soft)",
+                              background: "none",
+                              cursor: "pointer",
+                              color: "var(--color-text-muted)",
+                              transition: "border-color 0.2s ease, color 0.2s ease",
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.color = "var(--color-gold)"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-line-soft)"; e.currentTarget.style.color = "var(--color-text-muted)"; }}
+                          >
+                            <X style={{ width: "12px", height: "12px" }} />
+                          </button>
+                        )}
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "10px",
+                            letterSpacing: "0.1em",
+                            color: "var(--color-text-faint)",
+                          }}
+                        >
+                          <span className="folio-num">{String(materia.fechas.length).padStart(2, "0")}</span>{" "}
+                          FECHAS
+                        </span>
+                      </div>
+                    </div>
 
                 {/* Próxima fecha destacada */}
                 {(() => {
@@ -390,7 +412,10 @@ const enlaces = clases.flatMap((c) =>
                     </div>
                   </div>
                 )}
+                </div>
               </div>
+              <div style={{ borderTop: "1px solid var(--color-line-soft)", marginTop: "28px" }} />
+            </div>
             </div>
           )}
 
