@@ -1427,7 +1427,7 @@ export default function AdminPage() {
                         }}
                       />
                       <div
-                        className="flex items-center gap-4"
+                        className="flex items-center gap-2 sm:gap-4"
                         style={{
                           padding: "8px 0",
                           borderBottom: "1px solid var(--color-line)",
@@ -1441,14 +1441,14 @@ export default function AdminPage() {
                         <span style={{ width: "28px", flexShrink: 0 }}>#</span>
                         <span style={{ width: "32px", flexShrink: 0 }} />
                         <span className="flex-1 min-w-0">Nombre</span>
-                        <span style={{ width: "44px", textAlign: "right" }}>Visitas</span>
-                        <span className="sr-only sm:not-sr-only" style={{ width: "56px", textAlign: "right" }}>Clases</span>
-                        <span className="sr-only lg:not-sr-only" style={{ width: "36px", textAlign: "right" }}>Audio</span>
-                        <span className="sr-only lg:not-sr-only" style={{ width: "44px", textAlign: "right" }}>Video</span>
-                        <span className="sr-only lg:not-sr-only" style={{ width: "62px", textAlign: "right" }}>Lexpodcast</span>
-                        <span className="sr-only lg:not-sr-only" style={{ width: "70px", textAlign: "right" }}>Transcrip.</span>
-                        <span className="sr-only lg:not-sr-only" style={{ width: "48px", textAlign: "right" }}>Punteos</span>
-                        <span style={{ width: "40px", textAlign: "right" }}>Total</span>
+                        <span style={{ width: "44px", textAlign: "right", flexShrink: 0 }}>Visitas</span>
+                        <span className="hidden sm:block" style={{ width: "56px", textAlign: "right", flexShrink: 0 }}>Clases</span>
+                        <span className="hidden lg:block" style={{ width: "36px", textAlign: "right", flexShrink: 0 }}>Audio</span>
+                        <span className="hidden lg:block" style={{ width: "44px", textAlign: "right", flexShrink: 0 }}>Video</span>
+                        <span className="hidden lg:block" style={{ width: "62px", textAlign: "right", flexShrink: 0 }}>Lexpodcast</span>
+                        <span className="hidden lg:block" style={{ width: "70px", textAlign: "right", flexShrink: 0 }}>Transcrip.</span>
+                        <span className="hidden lg:block" style={{ width: "48px", textAlign: "right", flexShrink: 0 }}>Punteos</span>
+                        <span style={{ width: "40px", textAlign: "right", flexShrink: 0 }}>Total</span>
                         <span style={{ width: "14px", flexShrink: 0 }} />
                       </div>
                       <div className="space-y-1">
@@ -1470,7 +1470,7 @@ export default function AdminPage() {
                               <React.Fragment key={est.nombre}>
                               <div
                                 onClick={() => verEstudiante(est.nombre)}
-                                className="flex items-center gap-4 cursor-pointer"
+                                className="flex items-center gap-2 sm:gap-4 cursor-pointer"
                                 style={{
                                   padding: "10px 0",
                                   borderBottom: seleccionado
@@ -1540,25 +1540,25 @@ export default function AdminPage() {
                                   className="flex items-center gap-3 flex-shrink-0"
                                   style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px" }}
                                 >
-                                  <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
+                                  <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right", flexShrink: 0 }}>
                                     {est.visitas} <span style={{ color: "var(--color-text-faint)" }}>visitas</span>
                                   </span>
-                                  <span className="sr-only sm:not-sr-only" style={{ color: "var(--color-text-muted)", minWidth: "56px", textAlign: "right" }}>
+                                  <span className="hidden sm:block" style={{ color: "var(--color-text-muted)", minWidth: "56px", textAlign: "right", flexShrink: 0 }}>
                                     {est.clasesVistas || 0} <span style={{ color: "var(--color-text-faint)" }}>clases</span>
                                   </span>
-                                  <span className="sr-only lg:not-sr-only" style={{ color: "var(--color-text-muted)", minWidth: "36px", textAlign: "right" }}>
+                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "36px", textAlign: "right", flexShrink: 0 }}>
                                     {est.porTipo.audio_clase || 0} <span style={{ color: "var(--color-text-faint)" }}>audio</span>
                                   </span>
-                                  <span className="sr-only lg:not-sr-only" style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right" }}>
+                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right", flexShrink: 0 }}>
                                     {est.porTipo.clase_youtube || 0} <span style={{ color: "var(--color-text-faint)" }}>video</span>
                                   </span>
-                                  <span className="sr-only lg:not-sr-only" style={{ color: "var(--color-text-muted)", minWidth: "62px", textAlign: "right" }}>
+                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "62px", textAlign: "right", flexShrink: 0 }}>
                                     {est.porTipo.podcast || 0} <span style={{ color: "var(--color-text-faint)" }}>Lexpodcast</span>
                                   </span>
-                                  <span className="sr-only lg:not-sr-only" style={{ color: "var(--color-text-muted)", minWidth: "70px", textAlign: "right" }}>
+                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "70px", textAlign: "right", flexShrink: 0 }}>
                                     {est.porTipo.transcripcion || 0} <span style={{ color: "var(--color-text-faint)" }}>transcripción</span>
                                   </span>
-                                  <span className="sr-only lg:not-sr-only" style={{ color: "var(--color-text-muted)", minWidth: "48px", textAlign: "right" }}>
+                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "48px", textAlign: "right", flexShrink: 0 }}>
                                     {est.porTipo.archivo || 0} <span style={{ color: "var(--color-text-faint)" }}>punteos</span>
                                   </span>
                                   <span
@@ -1567,6 +1567,7 @@ export default function AdminPage() {
                                       fontWeight: 500,
                                       minWidth: "40px",
                                       textAlign: "right",
+                                      flexShrink: 0,
                                     }}
                                   >
                                     {est.total}
@@ -1609,7 +1610,7 @@ export default function AdminPage() {
                                           <p style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontSize: "16px", color: "var(--color-text)" }}>
                                             Actividad de {detalleEstudiante.nombre}
                                           </p>
-                                          <div className="flex items-center gap-4" style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
+                                          <div className="flex flex-wrap items-center gap-4" style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
                                             <span>{detalleEstudiante.total} <span style={{ color: "var(--color-text-faint)" }}>eventos</span></span>
                                             <span>{detalleEstudiante.reproducciones} <span style={{ color: "var(--color-text-faint)" }}>repros</span></span>
                                             <span>{detalleEstudiante.completados} <span style={{ color: "var(--color-text-faint)" }}>completados</span></span>
