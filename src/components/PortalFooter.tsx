@@ -15,7 +15,6 @@ export default function PortalFooter() {
           color: "var(--color-text-faint)",
         }}
       >
-        <span>Derecho UBA — Material de cursada organizado por materia</span>
         <span>© 2026 — Designed & developed by <span style={{ color: "var(--color-gold)" }}>Franklin</span></span>
       </div>
     </footer>
