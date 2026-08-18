@@ -154,7 +154,7 @@ const enlaces = clases.flatMap((c) =>
                   }}
                 >
                   <span>
-                    <span className="folio-num" style={{ color: "var(--color-stamp)" }}>{clases.length}</span>{" "}
+                    <span className="clase-num" style={{ color: "var(--color-stamp)" }}>{clases.length}</span>{" "}
                     clases
                   </span>
                   <span style={{ color: "var(--color-line)" }}>·</span>
@@ -247,7 +247,7 @@ const enlaces = clases.flatMap((c) =>
                         color: "var(--color-text-faint)",
                       }}
                     >
-                      <span className="folio-num">{String(materia.fechas.length).padStart(2, "0")}</span>{" "}
+                      <span className="clase-num">{String(materia.fechas.length).padStart(2, "0")}</span>{" "}
                       FECHAS
                     </span>
                   </div>

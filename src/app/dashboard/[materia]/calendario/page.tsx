@@ -140,7 +140,7 @@ export default function CalendarioPage() {
                   paddingBottom: "4px",
                 }}
               >
-                <span className="folio-num" style={{ color: "var(--color-stamp)" }}>{fechas.length}</span>{" "}
+                <span className="clase-num" style={{ color: "var(--color-stamp)" }}>{fechas.length}</span>{" "}
                 fechas · <span style={{ color: totalProximas > 0 ? "var(--color-stamp)" : "var(--color-text-faint)" }}>{totalProximas}</span> pendientes
               </div>
             )}

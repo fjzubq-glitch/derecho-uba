@@ -729,9 +729,9 @@ if (isTranscription(tipo)) {
                   {clase.tema}
                 </div>
               )}
-              <span className="folio">
+              <span className="clase">
                 Clase{" "}
-                <span className="folio-num">Nº {String(clase.numero).padStart(2, "0")}</span>
+                <span className="clase-num">Nº {String(clase.numero).padStart(2, "0")}</span>
               </span>
             </div>
             <h2

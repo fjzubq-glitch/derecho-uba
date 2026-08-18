@@ -391,7 +391,7 @@ export default function HomePage() {
                     onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
                   >
-                    {/* Top: icon + folio + count */}
+                    {/* Top: icon + clase + count */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div
@@ -413,9 +413,9 @@ export default function HomePage() {
                             }}
                           />
                         </div>
-                        <span className="folio">
+                        <span className="clase">
                           Clase{" "}
-                          <span className="folio-num">
+                          <span className="clase-num">
                             {String(i + 1).padStart(2, "0")}/{String(materias.length).padStart(2, "0")}
                           </span>
                         </span>

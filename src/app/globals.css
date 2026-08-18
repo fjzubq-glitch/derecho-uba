@@ -11,7 +11,7 @@
   --color-gold-dim: #7C6A47;
   --color-text: #ECE9E1;
   --color-text-muted: #9C9689;
-  --color-text-faint: #8A8578;
+  --color-text-faint: #A29B8C;
   --color-gold-rgb: 185, 154, 98;
   --color-gold-soft: rgba(185, 154, 98, 0.12);
   --color-stamp: #A63A2B;
@@ -26,6 +26,10 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  color-scheme: dark;
+}
 
 html { scroll-behavior: smooth; }
 
@@ -90,8 +94,8 @@ article {
   contain-intrinsic-size: auto 300px;
 }
 
-/* ── Folio de expediente ── */
-.folio {
+/* ── Clase de expediente ── */
+.clase {
   font-family: var(--font-ibm-plex-mono);
   font-size: 9px;
   letter-spacing: 0.14em;
@@ -99,7 +103,7 @@ article {
   color: var(--color-text-faint);
   white-space: nowrap;
 }
-.folio .folio-num {
+.clase .clase-num {
   color: var(--color-stamp);
   font-weight: 500;
 }
