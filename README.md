@@ -25,6 +25,8 @@ R2_BUCKET_NAME=derecho-uba-audios
 R2_PUBLIC_URL=tu_r2_public_url
 
 ADMIN_PASSWORD=tu_password_admin
+ADMIN_NOMBRE=tu_nombre_de_admin   # Server-only: excluye al admin de las estadísticas
+NEXT_PUBLIC_ADMIN_NOMBRE=tu_nombre_de_admin  # Cliente: mismo valor para el filtro en tracking
 ```
 
 ### 2. Base de datos

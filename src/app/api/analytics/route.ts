@@ -7,7 +7,8 @@ const RATE_KEY = "analytics";
 const RATE_MAX = 30;
 const RATE_WINDOW_MS = 60 * 1000;
 
-const ADMIN_NOMBRE = (process.env.NEXT_PUBLIC_ADMIN_NOMBRE || process.env.ADMIN_NOMBRE || "").trim().toLowerCase();
+// Server-only: se prefiere ADMIN_NOMBRE (privada) y se cae a la pública por compatibilidad.
+const ADMIN_NOMBRE = (process.env.ADMIN_NOMBRE || process.env.NEXT_PUBLIC_ADMIN_NOMBRE || "").trim().toLowerCase();
 
 export async function POST(request: NextRequest) {
   try {

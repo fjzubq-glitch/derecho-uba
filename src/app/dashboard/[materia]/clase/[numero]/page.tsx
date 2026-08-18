@@ -730,7 +730,7 @@ if (isTranscription(tipo)) {
                 </div>
               )}
               <span className="folio">
-                Folio{" "}
+                Clase{" "}
                 <span className="folio-num">Nº {String(clase.numero).padStart(2, "0")}</span>
               </span>
             </div>

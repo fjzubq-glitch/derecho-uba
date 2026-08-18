@@ -6,8 +6,8 @@ const RATE_KEY = "nombres";
 const RATE_MAX = 60;
 const RATE_WINDOW_MS = 60 * 1000;
 
-// Unificamos la variable: server y cliente usan la misma (la pública).
-const ADMIN_NOMBRE = (process.env.NEXT_PUBLIC_ADMIN_NOMBRE || process.env.ADMIN_NOMBRE || "").trim().toLowerCase();
+// Server-only: se prefiere ADMIN_NOMBRE (privada) y se cae a la pública por compatibilidad.
+const ADMIN_NOMBRE = (process.env.ADMIN_NOMBRE || process.env.NEXT_PUBLIC_ADMIN_NOMBRE || "").trim().toLowerCase();
 
 export async function GET(request: NextRequest) {
   if (isRateLimited(`${RATE_KEY}:${ipFromRequest(request)}`, RATE_MAX, RATE_WINDOW_MS)) {

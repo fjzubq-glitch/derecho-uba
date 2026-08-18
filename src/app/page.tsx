@@ -414,7 +414,7 @@ export default function HomePage() {
                           />
                         </div>
                         <span className="folio">
-                          Folio{" "}
+                          Clase{" "}
                           <span className="folio-num">
                             {String(i + 1).padStart(2, "0")}/{String(materias.length).padStart(2, "0")}
                           </span>
