@@ -753,7 +753,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 outline: "none",
                 borderRadius: 0,
                 cursor: "pointer",
-                minWidth: "220px",
+                width: "min(220px, 100%)",
               }}
             >
               <option value="todas">Todas las materias</option>

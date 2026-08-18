@@ -87,6 +87,7 @@ interface MateriaStats {
   estudiantes: number;
   reproducciones: number;
   porTipo: Record<string, number>;
+  consumo: number;
 }
 
 interface EnLinea {
@@ -605,7 +606,7 @@ export default function AdminPage() {
 
           {/* Tabs */}
           <div
-            className="flex w-full sm:w-auto"
+            className="flex flex-col sm:flex-row w-full sm:w-auto"
             style={{
               border: "1px solid var(--color-line-soft)",
               borderRadius: 0,
@@ -617,13 +618,14 @@ export default function AdminPage() {
                 onClick={() => setActiveTab(tab)}
                 style={{
                   flex: 1,
-                  padding: "10px 16px",
+                  padding: "10px 12px",
                   fontSize: "12px",
                   fontWeight: 500,
                   fontFamily: "var(--font-inter)",
                   cursor: "pointer",
                   border: "none",
                   borderRight: tab !== "analytics" ? "1px solid var(--color-line-soft)" : "none",
+                  borderBottom: "none",
                   background: activeTab === tab ? "var(--color-gold)" : "transparent",
                   color: activeTab === tab ? "var(--color-ink)" : "var(--color-text-muted)",
                   transition: "color 0.2s ease, background 0.2s ease",
@@ -636,7 +638,8 @@ export default function AdminPage() {
                   if (activeTab !== tab) e.currentTarget.style.color = "var(--color-text-muted)";
                 }}
               >
-                {TAB_LABELS[tab]}
+                <span className="sm:hidden">{tab === "upload" ? "Subir" : tab === "manage" ? "Gestionar" : "Analytics"}</span>
+                <span className="hidden sm:inline">{TAB_LABELS[tab]}</span>
               </button>
             ))}
           </div>
@@ -1250,7 +1253,7 @@ export default function AdminPage() {
                       >
                         Lo que se consumió en cada materia, ordenado por uso total.
                       </p>
-                      <div style={{ overflowX: "auto" }}>
+                      <div className="hidden sm:block" style={{ overflowX: "auto" }}>
                         <div style={{ minWidth: "860px" }}>
                           {/* Encabezado */}
                           <div
@@ -1371,6 +1374,86 @@ export default function AdminPage() {
                             );
                           })}
                         </div>
+                      </div>
+                      {/* Vista móvil: materia como fila compacta */}
+                      <div className="sm:hidden">
+                        {materiasStats.map((mat, i) => (
+                          <div
+                            key={mat.id}
+                            style={{
+                              padding: "12px 0",
+                              borderBottom: i < materiasStats.length - 1 ? "1px solid var(--color-line-soft)" : "none",
+                            }}
+                          >
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                <span
+                                  style={{
+                                    fontFamily: "var(--font-ibm-plex-mono)",
+                                    fontSize: "12px",
+                                    fontWeight: 700,
+                                    color: rankColor(i),
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  {String(i + 1).padStart(2, "0")}
+                                </span>
+                                <p
+                                  style={{
+                                    flex: 1,
+                                    minWidth: 0,
+                                    fontSize: "13px",
+                                    fontWeight: 500,
+                                    color: i === 0 ? "var(--color-gold)" : "var(--color-text)",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {mat.nombre}
+                                </p>
+                              </div>
+                              <span
+                                style={{
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "13px",
+                                  fontWeight: 500,
+                                  color: "var(--color-gold)",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                {mat.consumo}
+                              </span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-1.5 mt-2" style={{ paddingLeft: "28px" }}>
+                              {[
+                                [`${mat.visitas} visitas`, mat.visitas > 0],
+                                [`${mat.estudiantes} alumnos`, mat.estudiantes > 0],
+                                [`${mat.porTipo.audio_clase || 0} audio`, (mat.porTipo.audio_clase || 0) > 0],
+                                [`${mat.porTipo.clase_youtube || 0} video`, (mat.porTipo.clase_youtube || 0) > 0],
+                                [`${mat.porTipo.podcast || 0} Lexpodcast`, (mat.porTipo.podcast || 0) > 0],
+                                [`${mat.porTipo.transcripcion || 0} transcrip.`, (mat.porTipo.transcripcion || 0) > 0],
+                                [`${mat.porTipo.archivo || 0} punteos`, (mat.porTipo.archivo || 0) > 0],
+                                [`${mat.porTipo.enlace || 0} enlaces`, (mat.porTipo.enlace || 0) > 0],
+                              ].map(([label, activo]) => (
+                                <span
+                                  key={label as string}
+                                  style={{
+                                    padding: "2px 8px",
+                                    background: "var(--color-card-hover)",
+                                    border: "1px solid var(--color-line)",
+                                    fontFamily: "var(--font-ibm-plex-mono)",
+                                    fontSize: "9px",
+                                    color: activo ? "var(--color-text-muted)" : "var(--color-text-faint)",
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {label as string}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </article>
                   )}
