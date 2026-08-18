@@ -1535,15 +1535,33 @@ export default function AdminPage() {
                                   >
                                     Última actividad: {est.ultima_actividad ? new Date(est.ultima_actividad).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" }) : "—"}
                                   </p>
+                                  <p
+                                    className="sm:hidden"
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "6px",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "10px",
+                                      color: "var(--color-text-muted)",
+                                      marginTop: "3px",
+                                      overflow: "hidden",
+                                      whiteSpace: "nowrap",
+                                    }}
+                                  >
+                                    <span className="flex-shrink-0">{est.visitas} visitas</span>
+                                    <span className="flex-shrink-0" style={{ color: "var(--color-text-faint)" }}>·</span>
+                                    <span className="flex-shrink-0">{est.total} materiales</span>
+                                  </p>
                                 </div>
                                 <div
-                                  className="flex items-center gap-3 flex-shrink-0"
+                                  className="hidden sm:flex items-center gap-3 flex-shrink-0"
                                   style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px" }}
                                 >
                                   <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right", flexShrink: 0 }}>
                                     {est.visitas} <span style={{ color: "var(--color-text-faint)" }}>visitas</span>
                                   </span>
-                                  <span className="hidden sm:block" style={{ color: "var(--color-text-muted)", minWidth: "56px", textAlign: "right", flexShrink: 0 }}>
+                                  <span className="hidden md:block" style={{ color: "var(--color-text-muted)", minWidth: "56px", textAlign: "right", flexShrink: 0 }}>
                                     {est.clasesVistas || 0} <span style={{ color: "var(--color-text-faint)" }}>clases</span>
                                   </span>
                                   <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "36px", textAlign: "right", flexShrink: 0 }}>
@@ -1572,17 +1590,17 @@ export default function AdminPage() {
                                   >
                                     {est.total}
                                   </span>
-                                  <ChevronDown
-                                    style={{
-                                      width: "14px",
-                                      height: "14px",
-                                      color: seleccionado ? "var(--color-gold)" : "var(--color-text-faint)",
-                                      transform: seleccionado ? "rotate(180deg)" : "none",
-                                      transition: "transform 0.2s ease",
-                                      flexShrink: 0,
-                                    }}
-                                  />
-                                  </div>
+                                </div>
+                                <ChevronDown
+                                  style={{
+                                    width: "14px",
+                                    height: "14px",
+                                    color: seleccionado ? "var(--color-gold)" : "var(--color-text-faint)",
+                                    transform: seleccionado ? "rotate(180deg)" : "none",
+                                    transition: "transform 0.2s ease",
+                                    flexShrink: 0,
+                                  }}
+                                />
                                 </div>
 
                                 {seleccionado && (
