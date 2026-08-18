@@ -114,7 +114,7 @@ export function calcularResumen(
   for (const e of eventos) {
     if (!e.materia_slug) continue;
     const m = materiaAgg[e.materia_slug] || (materiaAgg[e.materia_slug] = { visitas: 0, estudiantes: new Set(), reproducciones: 0, porTipo: {} });
-    if (e.tipo === "page_view") m.visitas += 1;
+    if (e.tipo === "page_view" && (e.nombre || "").trim().length > 0) m.visitas += 1;
     if (e.archivo_id && EVENTOS_REPRODUCCION.has(e.tipo || "")) m.reproducciones += 1;
     if (e.archivo_id) {
       const t = tipoPorArchivo.get(e.archivo_id);

@@ -1,11 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { ipFromRequest, isRateLimited } from "@/lib/simpleRateLimit";
 
-const ADMIN_NOMBRE = process.env.ADMIN_NOMBRE?.trim().toLowerCase();
+const RATE_KEY = "nombres";
+const RATE_MAX = 60;
+const RATE_WINDOW_MS = 60 * 1000;
 
-export const revalidate = 60;
+// Unificamos la variable: server y cliente usan la misma (la pública).
+const ADMIN_NOMBRE = (process.env.NEXT_PUBLIC_ADMIN_NOMBRE || process.env.ADMIN_NOMBRE || "").trim().toLowerCase();
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  if (isRateLimited(`${RATE_KEY}:${ipFromRequest(request)}`, RATE_MAX, RATE_WINDOW_MS)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   try {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase

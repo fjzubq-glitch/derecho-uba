@@ -7,7 +7,7 @@ const RATE_KEY = "track";
 const RATE_MAX = 120;
 const RATE_WINDOW_MS = 60 * 1000;
 
-const ADMIN_NOMBRE = process.env.ADMIN_NOMBRE?.trim().toLowerCase();
+const ADMIN_NOMBRE = (process.env.NEXT_PUBLIC_ADMIN_NOMBRE || process.env.ADMIN_NOMBRE || "").trim().toLowerCase();
 
 export async function POST(request: NextRequest) {
   try {

@@ -15,6 +15,7 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
   const [error, setError] = useState<string | null>(null);
   const [sugerencias, setSugerencias] = useState<string[]>([]);
   const [todasSugerencias, setTodasSugerencias] = useState<string[]>([]);
+  const [activeIndex, setActiveIndex] = useState(-1);
 
   useEffect(() => {
     const name = getPortalUserName();
@@ -36,12 +37,42 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
     const q = val.trim().toLowerCase();
     if (q.length === 0) {
       setSugerencias([]);
+      setActiveIndex(-1);
       return;
     }
     const filtradas = todasSugerencias.filter(
       (s) => s.toLowerCase().includes(q) && s.toLowerCase() !== q
     );
     setSugerencias(filtradas.slice(0, 5));
+    setActiveIndex(-1);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (sugerencias.length === 0) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((i) => (i >= sugerencias.length - 1 ? 0 : i + 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((i) => (i <= 0 ? sugerencias.length - 1 : i - 1));
+    } else if (e.key === "Escape") {
+      setSugerencias([]);
+      setActiveIndex(-1);
+    } else if (e.key === "Enter" && activeIndex >= 0) {
+      e.preventDefault();
+      const sel = sugerencias[activeIndex];
+      if (sel) {
+        setNombre(sel);
+        setSugerencias([]);
+        setActiveIndex(-1);
+      }
+    }
+  }
+
+  function handleSelectSugerencia(s: string) {
+    setNombre(s);
+    setSugerencias([]);
+    setActiveIndex(-1);
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -145,7 +176,9 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
               placeholder="Tu nombre o nick"
               aria-label="Tu nombre o nick"
               aria-autocomplete="list"
-              aria-controls="sugerencias-list"
+              aria-controls={sugerencias.length > 0 ? "sugerencias-list" : undefined}
+              aria-activedescendant={activeIndex >= 0 ? `sugerencia-${activeIndex}` : undefined}
+              onKeyDown={handleKeyDown}
               autoFocus
               maxLength={40}
               style={{
@@ -179,24 +212,22 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
                   zIndex: 10,
                 }}
               >
-                {sugerencias.map((s) => (
+                {sugerencias.map((s, index) => (
                   <li
                     key={s}
+                    id={`sugerencia-${index}`}
                     role="option"
-                    aria-selected="false"
-                    onClick={() => {
-                      setNombre(s);
-                      setSugerencias([]);
-                    }}
+                    aria-selected={index === activeIndex}
+                    onMouseEnter={() => setActiveIndex(index)}
+                    onClick={() => handleSelectSugerencia(s)}
                     style={{
                       padding: "10px 14px",
                       cursor: "pointer",
                       fontSize: "14px",
                       color: "var(--color-text)",
                       fontFamily: "var(--font-inter)",
+                      background: index === activeIndex ? "var(--color-line-soft)" : "transparent",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-line-soft)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                   >
                     {s}
                   </li>
