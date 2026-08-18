@@ -209,8 +209,10 @@ article {
 .card-hover:hover::before {
   transform: scaleY(1);
 }
-.card-hover:hover {
-  transform: translateY(-3px);
+@media (hover: hover) {
+  .card-hover:hover {
+    transform: translateY(-3px);
+  }
 }
 
 /* ── Header sticky con blur ── */
@@ -249,6 +251,14 @@ article {
   border: 1px solid var(--color-line-soft);
   border-radius: 0;
   animation: skPulse 1.8s ease-in-out infinite;
+}
+
+/* ── Móvil: menos movimiento para que cargue y scrollee más liviano ── */
+@media (max-width: 767px) {
+  html { scroll-behavior: auto; }
+  .card-reveal { animation: none; }
+  .skeleton { animation: none; opacity: 0.7; }
+  .hero-stamp { animation-duration: 0.4s; animation-delay: 0.1s; }
 }
 
 /* ── Hide scrollbar (filter chips on mobile) ── */
