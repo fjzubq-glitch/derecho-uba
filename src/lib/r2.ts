@@ -1,10 +1,26 @@
 import { createHash, createHmac } from "crypto";
 
-export const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL!.trim();
-const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID!.trim();
-const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID!.trim();
-const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY!.trim();
-const R2_BUCKET = process.env.R2_BUCKET_NAME!.trim();
+interface R2Config {
+  publicUrl: string;
+  accountId: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucket: string;
+}
+
+function getR2Config(): R2Config {
+  const publicUrl = (process.env.R2_PUBLIC_URL || "").trim();
+  const accountId = (process.env.R2_ACCOUNT_ID || "").trim();
+  const accessKeyId = (process.env.R2_ACCESS_KEY_ID || "").trim();
+  const secretAccessKey = (process.env.R2_SECRET_ACCESS_KEY || "").trim();
+  const bucket = (process.env.R2_BUCKET_NAME || "").trim();
+
+  if (!publicUrl || !accountId || !accessKeyId || !secretAccessKey || !bucket) {
+    throw new Error("Faltan variables de entorno de R2 (R2_PUBLIC_URL, R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME)");
+  }
+
+  return { publicUrl, accountId, accessKeyId, secretAccessKey, bucket };
+}
 
 const REGION = "auto";
 const SERVICE = "s3";
@@ -25,6 +41,7 @@ function nowAmzDate(): string {
 }
 
 function signV4(
+  config: R2Config,
   method: string,
   path: string,
   queryString: string,
@@ -33,7 +50,7 @@ function signV4(
   amzDate: string
 ): string {
   const dateStr = amzDate.slice(0, 8);
-  const host = `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+  const host = `${config.accountId}.r2.cloudflarestorage.com`;
 
   const allHeaders: Record<string, string> = {
     host,
@@ -56,20 +73,20 @@ function signV4(
   const stringToSign =
     ALGORITHM + "\n" + amzDate + "\n" + credentialScope + "\n" + sha256(canonicalRequest);
 
-  const kDate = hmacSha256("AWS4" + R2_SECRET_ACCESS_KEY, dateStr);
+  const kDate = hmacSha256("AWS4" + config.secretAccessKey, dateStr);
   const kRegion = hmacSha256(kDate, REGION);
   const kService = hmacSha256(kRegion, SERVICE);
   const kSigning = hmacSha256(kService, "aws4_request");
   const signature = hmacSha256(kSigning, stringToSign).toString("hex");
 
-  return `${ALGORITHM} Credential=${R2_ACCESS_KEY_ID}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+  return `${ALGORITHM} Credential=${config.accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
 }
 
 export function getAudioPublicUrl(key: string): string {
-  return `${R2_PUBLIC_URL}/${key}`;
+  return `${getR2Config().publicUrl}/${key}`;
 }
 
-const host = () => `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+const host = (config: R2Config) => `${config.accountId}.r2.cloudflarestorage.com`;
 
 function encodePath(p: string): string {
   return p.split("/").map(seg => encodeURIComponent(seg)).join("/");
@@ -80,7 +97,8 @@ async function r2Request(
   key: string,
   options?: { body?: Buffer; contentType?: string; queryString?: string }
 ): Promise<Response> {
-  const path = "/" + encodePath(R2_BUCKET) + "/" + encodePath(key);
+  const config = getR2Config();
+  const path = "/" + encodePath(config.bucket) + "/" + encodePath(key);
   const qs = options?.queryString || "";
   const amzDate = nowAmzDate();
   const payloadHash = options?.body
@@ -90,7 +108,7 @@ async function r2Request(
   const extraHeaders: Record<string, string> = {};
   if (options?.contentType) extraHeaders["content-type"] = options.contentType;
 
-  const auth = signV4(method, path, qs, extraHeaders, payloadHash, amzDate);
+  const auth = signV4(config, method, path, qs, extraHeaders, payloadHash, amzDate);
 
   const fetchHeaders: Record<string, string> = {
     "x-amz-content-sha256": payloadHash,
@@ -99,7 +117,7 @@ async function r2Request(
   };
   if (options?.contentType) fetchHeaders["Content-Type"] = options.contentType;
 
-  const url = `https://${host()}${path}${qs ? "?" + qs : ""}`;
+  const url = `https://${host(config)}${path}${qs ? "?" + qs : ""}`;
   return fetch(url, {
     method,
     headers: fetchHeaders,
@@ -131,14 +149,15 @@ export async function getObjectBuffer(key: string): Promise<Buffer> {
 }
 
 export async function getObjectStream(key: string, range?: string): Promise<Response> {
+  const config = getR2Config();
   const extraHeaders: Record<string, string> = {};
   if (range) extraHeaders["range"] = range;
 
-  const path = "/" + encodePath(R2_BUCKET) + "/" + encodePath(key);
+  const path = "/" + encodePath(config.bucket) + "/" + encodePath(key);
   const amzDate = nowAmzDate();
   const payloadHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
-  const auth = signV4("GET", path, "", extraHeaders, payloadHash, amzDate);
+  const auth = signV4(config, "GET", path, "", extraHeaders, payloadHash, amzDate);
 
   const fetchHeaders: Record<string, string> = {
     "x-amz-content-sha256": payloadHash,
@@ -147,7 +166,7 @@ export async function getObjectStream(key: string, range?: string): Promise<Resp
   };
   if (range) fetchHeaders["Range"] = range;
 
-  const url = `https://${host()}${path}`;
+  const url = `https://${host(config)}${path}`;
   const res = await fetch(url, { method: "GET", headers: fetchHeaders });
   if (!res.ok) throw new Error(`R2 get failed: ${res.status} ${await res.text()}`);
   return res;
