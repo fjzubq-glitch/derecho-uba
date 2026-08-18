@@ -33,6 +33,11 @@
 
 html { scroll-behavior: smooth; }
 
+html, body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 body {
   background: var(--color-ink);
   color: var(--color-text);
@@ -278,6 +283,7 @@ input[type="range"] {
   height: 4px;
   border-radius: 2px;
   background: var(--color-line);
+  min-width: 0;
 }
 
 input[type="range"]::-webkit-slider-thumb {

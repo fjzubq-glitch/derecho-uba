@@ -665,10 +665,10 @@ if (isTranscription(tipo)) {
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "60px 48px 120px" }}>
           {/* Breadcrumb */}
-          <div className="flex items-center gap-3" style={{ marginBottom: "32px" }}>
+          <div className="flex items-center gap-3 min-w-0" style={{ marginBottom: "32px" }}>
             <button
               onClick={() => router.push(`/dashboard/${materiaSlug}`)}
-              className="flex items-center justify-center"
+              className="flex items-center justify-center flex-shrink-0"
               style={{
                 width: "34px",
                 height: "34px",
@@ -683,12 +683,16 @@ if (isTranscription(tipo)) {
               <ArrowLeft style={{ width: "15px", height: "15px" }} />
             </button>
             <span
+              className="min-w-0"
               style={{
                 fontFamily: "var(--font-ibm-plex-mono)",
                 fontSize: "10px",
                 letterSpacing: "0.08em",
                 color: "var(--color-text-faint)",
                 textTransform: "uppercase",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}
             >
               {materiaTitle}

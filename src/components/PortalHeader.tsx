@@ -103,7 +103,7 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
         style={{ padding: "16px 22px" }}
       >
         {/* Logo + nombre */}
-        <Link href="/" onClick={handleLogoClick} className="flex items-center gap-3 sm:gap-4 min-w-0 flex-shrink-0" style={{ textDecoration: "none" }}>
+        <Link href="/" onClick={handleLogoClick} className="flex items-center gap-3 sm:gap-4 min-w-0" style={{ textDecoration: "none" }}>
           <div
             className="flex items-center justify-center flex-shrink-0"
             style={{
@@ -124,6 +124,8 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
                 lineHeight: 1.2,
                 color: "var(--color-text)",
                 whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
               Derecho <span style={{ color: "var(--color-gold)" }}>UBA</span>
@@ -145,11 +147,11 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
           </div>
         </Link>
 
-        {/* Derecha: saludo, nav contextual, CTA única, admin badge o Planificador */}
-        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+        {/* Derecha: nav contextual, CTA única, admin badge o Planificador */}
+        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0 min-w-0">
           {userName && (
             <div
-              className="flex items-center gap-2 max-w-[80px] sm:max-w-[200px] min-w-0"
+              className="hidden sm:flex items-center gap-2 max-w-[200px] min-w-0"
               title={`Sesión de ${userName}`}
               style={{
                 fontFamily: "var(--font-ibm-plex-mono)",
@@ -159,8 +161,7 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
                 flexShrink: 0,
               }}
             >
-              <span className="truncate sm:hidden">{userName}</span>
-              <span className="hidden sm:inline truncate">Hola {userName}</span>
+              <span className="truncate">Hola {userName}</span>
             </div>
           )}
 
@@ -191,42 +192,50 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
             </Link>
           )}
 
-          {adminActive && (
-            <div className="flex items-center" style={{ gap: "4px" }}>
-              <button
-                onClick={handleGoAdmin}
-                className="flex items-center gap-1.5"
-                title="Ir al panel de administración"
+          {/* LED de administrador: verde = sesión activa, rojo = cerrada */}
+          <div className="flex items-center" style={{ gap: "6px" }}>
+            <button
+              onClick={handleGoAdmin}
+              aria-label={adminActive ? "Panel de administración (sesión activa)" : "Panel de administración (sesión cerrada)"}
+              title={adminActive ? "Admin activo — abrir panel" : "Admin: sesión cerrada — abrir panel"}
+              className="flex items-center justify-center"
+              style={{
+                width: "32px",
+                height: "32px",
+                borderRadius: "50%",
+                background: "none",
+                border: adminActive ? "1px solid rgba(111, 160, 107, 0.45)" : "1px solid var(--color-line)",
+                cursor: "pointer",
+                padding: 0,
+                transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                boxShadow: adminActive ? "0 0 10px rgba(111, 160, 107, 0.25)" : "none",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = adminActive ? "rgba(111, 160, 107, 0.45)" : "var(--color-line)")}
+            >
+              <span
                 style={{
-                  background: "var(--color-gold-soft)",
-                  border: "1px solid var(--color-gold-dim)",
-                  color: "var(--color-gold)",
-                  padding: "6px 10px",
-                  cursor: "pointer",
-                  fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "10px",
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  lineHeight: 1,
-                  transition: "background 0.2s ease",
-                  whiteSpace: "nowrap",
+                  width: "10px",
+                  height: "10px",
+                  borderRadius: "50%",
+                  background: adminActive ? "#6FA06B" : "var(--color-danger)",
+                  boxShadow: adminActive ? "0 0 6px rgba(111, 160, 107, 0.9)" : "none",
+                  transition: "background 0.3s ease",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(var(--color-gold-rgb), 0.22)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-gold-soft)")}
-              >
-                <Shield style={{ width: "11px", height: "11px" }} />
-                <span className="hidden sm:inline">Admin</span>
-              </button>
+              />
+            </button>
+            {adminActive && (
               <button
                 onClick={handleLogoutAdmin}
                 title="Cerrar sesión de administrador"
+                aria-label="Cerrar sesión de administrador"
                 className="flex items-center justify-center"
                 style={{
                   background: "none",
                   border: "1px solid var(--color-gold-dim)",
                   color: "var(--color-gold)",
-                  width: "28px",
-                  height: "28px",
+                  width: "32px",
+                  height: "32px",
                   cursor: "pointer",
                   padding: 0,
                   transition: "background 0.2s ease",
@@ -236,8 +245,8 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
               >
                 <X style={{ width: "10px", height: "10px", opacity: 0.6 }} />
               </button>
-            </div>
-          )}
+            )}
+          </div>
 
           <a
             href={PLANIFICADOR_URL}

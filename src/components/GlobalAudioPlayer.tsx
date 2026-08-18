@@ -115,7 +115,7 @@ export default function GlobalAudioPlayer() {
         </div>
 
         {/* Barra de progreso */}
-        <div className="flex items-center gap-2 flex-1 min-w-[160px]" style={{ minWidth: "160px" }}>
+        <div className="flex items-center gap-2 flex-1 min-w-0 sm:min-w-[160px]">
           <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)" }}>
             {formatDuration(currentTime)}
           </span>
