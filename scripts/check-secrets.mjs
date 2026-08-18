@@ -9,7 +9,6 @@ const PATTERNS = [
   { name: "GitHub token", regex: /ghp_[A-Za-z0-9]{36}/ },
   { name: "Slack token", regex: /xox[baprs]-[A-Za-z0-9-]{10,}/ },
   { name: "Stripe secret key", regex: /sk_live_[0-9a-zA-Z]{24,}/ },
-  { name: "Variable de entorno con valor (posible secret)", regex: /^[A-Z][A-Z0-9_]*=\S+$/m },
 ];
 
 const staged = execSync("git diff --cached --name-only --diff-filter=ACM", {
@@ -33,6 +32,10 @@ for (const file of staged) {
       problemas.push(`  ${file} -> ${p.name}`);
     }
   }
+  // Variables de entorno con valor: solo en archivos .env* (evita falsos positivos en docs con placeholders)
+  if (/\.env[^/]*$/.test(file) && /^[A-Z][A-Z0-9_]*=\S+$/m.test(content)) {
+    problemas.push(`  ${file} -> Variable de entorno con valor (posible secret)`);
+  }
 }
 
 if (problemas.length > 0) {
@@ -40,3 +43,4 @@ if (problemas.length > 0) {
   console.error("\nCommit cancelado. Revisá esos archivos: si son de entorno, agregalos al .gitignore.");
   process.exit(1);
 }
+

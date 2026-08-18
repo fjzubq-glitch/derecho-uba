@@ -175,7 +175,10 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
               onChange={(e) => handleInputChange(e.target.value)}
               placeholder="Tu nombre o nick"
               aria-label="Tu nombre o nick"
+              role="combobox"
               aria-autocomplete="list"
+              aria-expanded={sugerencias.length > 0}
+              aria-haspopup="listbox"
               aria-controls={sugerencias.length > 0 ? "sugerencias-list" : undefined}
               aria-activedescendant={activeIndex >= 0 ? `sugerencia-${activeIndex}` : undefined}
               onKeyDown={handleKeyDown}
@@ -262,9 +265,12 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
               fontSize: "14px",
               fontWeight: 600,
               transition: "background 0.2s ease",
+              outline: "none",
             }}
             onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-gold-dim)")}
             onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-gold)")}
+            onFocus={(e) => (e.currentTarget.style.outline = "2px solid var(--color-gold-dim)")}
+            onBlur={(e) => (e.currentTarget.style.outline = "none")}
           >
             Entrar al portal
           </button>

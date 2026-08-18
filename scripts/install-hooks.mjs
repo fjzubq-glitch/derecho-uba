@@ -20,3 +20,4 @@ exec node "${root.replace(/\\/g, "/")}/scripts/check-secrets.mjs"
 
 writeFileSync(preCommitPath, hook, "utf8");
 console.log("Hook pre-commit instalado.");
+
