@@ -143,6 +143,11 @@ article {
     gap: 6px !important;
     text-align: center !important;
   }
+  .footer-text {
+    white-space: nowrap;
+    font-size: 11px;
+    letter-spacing: 0.005em;
+  }
 }
 
 /* ── Admin button icon-only on mobile ── */
