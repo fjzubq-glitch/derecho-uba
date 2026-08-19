@@ -387,7 +387,7 @@ if (isTranscription(tipo)) {
                 overflowWrap: "break-word",
               }}
             >
-              {archivo.nombre_display}
+              {tipo === "podcast" ? `Episodio ${String(clase?.numero ?? 0).padStart(2, "0")}` : archivo.nombre_display}
             </p>
             <div
               style={{

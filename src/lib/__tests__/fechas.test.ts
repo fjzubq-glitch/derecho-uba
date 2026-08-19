@@ -1,24 +1,27 @@
 import { describe, expect, it } from "vitest";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "../fechas";
 
+/** Fecha local "YYYY-MM-DD" desplazada n días desde hoy (determinística sin importar la zona horaria). */
+function fechaLocalDiasDesdeHoy(n: number): string {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + n);
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
 describe("diasHasta", () => {
   it("calcula días relativos a hoy de forma determinística", () => {
-    const hoy = new Date();
-    const maniana = new Date(hoy.getTime() + 3 * 24 * 60 * 60 * 1000);
-    const iso = maniana.toISOString().slice(0, 10);
-    expect(diasHasta(iso)).toBe(3);
+    expect(diasHasta(fechaLocalDiasDesdeHoy(3))).toBe(3);
   });
 
   it("da 0 para hoy", () => {
-    const hoy = new Date();
-    const iso = hoy.toISOString().slice(0, 10);
-    expect(diasHasta(iso)).toBe(0);
+    expect(diasHasta(fechaLocalDiasDesdeHoy(0))).toBe(0);
   });
 
   it("da negativo para fechas pasadas", () => {
-    const antes = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
-    const iso = antes.toISOString().slice(0, 10);
-    expect(diasHasta(iso)).toBe(-5);
+    expect(diasHasta(fechaLocalDiasDesdeHoy(-5))).toBe(-5);
   });
 });
 
