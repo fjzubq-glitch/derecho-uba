@@ -15,7 +15,7 @@ export default function PortalFooter() {
           color: "var(--color-text-faint)",
         }}
       >
-        <span>© 2026 — Designed & developed by <span style={{ color: "var(--color-gold)" }}>Franklin</span></span>
+        <span>© 2026 — Designed & developed by <span style={{ color: "var(--color-gold)" }}>Franklin Zaldaña</span></span>
       </div>
     </footer>
   );
