@@ -360,13 +360,16 @@ if (isTranscription(tipo)) {
                 color: "var(--color-gold)",
                 marginBottom: "6px",
                 display: "flex",
+                flexWrap: "wrap",
                 alignItems: "center",
-                gap: "8px",
+                columnGap: "6px",
+                rowGap: "2px",
+                lineHeight: 1.4,
               }}
             >
               {config.label}
               {tipo === "podcast" && (
-                <span style={{ color: "var(--color-text-faint)", textTransform: "none" }}>
+                <span style={{ color: "var(--color-text-faint)", textTransform: "none", letterSpacing: "0.06em", whiteSpace: "nowrap" }}>
                   — Episodio No. {String(clase?.numero ?? 0).padStart(2, "0")}
                 </span>
               )}
@@ -392,7 +395,7 @@ if (isTranscription(tipo)) {
                 overflowWrap: "break-word",
               }}
             >
-                            {archivo.nombre_display}
+              {archivo.nombre_display}
             </p>
             <div
               style={{
