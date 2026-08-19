@@ -365,6 +365,11 @@ if (isTranscription(tipo)) {
               }}
             >
               {config.label}
+              {tipo === "podcast" && (
+                <span style={{ color: "var(--color-text-faint)", textTransform: "none" }}>
+                  — Episodio No. {String(clase?.numero ?? 0).padStart(2, "0")}
+                </span>
+              )}
               <div
                 className="flex items-end"
                 style={{ gap: "2px", height: "10px", opacity: isThisPlaying ? 1 : 0, transition: "opacity 0.2s ease" }}
@@ -387,7 +392,7 @@ if (isTranscription(tipo)) {
                 overflowWrap: "break-word",
               }}
             >
-              {tipo === "podcast" ? `Episodio ${String(clase?.numero ?? 0).padStart(2, "0")}` : archivo.nombre_display}
+                            {archivo.nombre_display}
             </p>
             <div
               style={{
