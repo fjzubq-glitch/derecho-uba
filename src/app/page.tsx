@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
-import PortalFooter from "@/components/PortalFooter";
 import InkStamp from "@/components/InkStamp";
 import { Shield, ArrowRight, Headphones, FileText, Play, Volume2 } from "@/components/icons";
 
@@ -514,8 +513,6 @@ export default function HomePage() {
           )}
         </div>
       </section>
-
-      <PortalFooter />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import React from "react";
 
 export default function PortalFooter() {
   return (
-    <footer className="border-t" style={{ borderColor: "var(--color-line-soft)" }}>
+    <footer className="border-t mt-auto" style={{ borderColor: "var(--color-line-soft)" }}>
       <div
         className="footer-inner flex items-center justify-end gap-2 pad-lateral"
         style={{

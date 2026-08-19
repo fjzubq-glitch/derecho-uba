@@ -5,6 +5,7 @@ import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import HeartbeatProvider from "@/components/HeartbeatProvider";
 import { AudioProvider } from "@/components/AudioProvider";
 import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
+import PortalFooter from "@/components/PortalFooter";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -76,6 +77,7 @@ export default function RootLayout({
           <ServiceWorkerRegister />
           <HeartbeatProvider />
           {children}
+          <PortalFooter />
           <GlobalAudioPlayer />
         </AudioProvider>
       </body>
