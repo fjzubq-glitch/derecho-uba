@@ -126,6 +126,7 @@ export default function AdminPage() {
   const [contenidoPopular, setContenidoPopular] = useState<ContenidoPopular[]>([]);
   const [periodo, setPeriodo] = useState<Periodo>("7");
   const [busquedaEstudiante, setBusquedaEstudiante] = useState("");
+  const [estudiantesAbiertos, setEstudiantesAbiertos] = useState(false);
   const [enLinea, setEnLinea] = useState<EnLinea[]>([]);
   const [enLineaCargando, setEnLineaCargando] = useState(true);
   const [estudianteSeleccionado, setEstudianteSeleccionado] = useState<string | null>(null);
@@ -1472,29 +1473,67 @@ export default function AdminPage() {
                         borderRadius: 0,
                       }}
                     >
-                      <h3
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEstudiantesAbiertos((v) => {
+                            if (v) setBusquedaEstudiante("");
+                            return !v;
+                          });
+                        }}
+                        aria-expanded={estudiantesAbiertos}
                         style={{
-                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                          fontWeight: 400,
-                          fontSize: "20px",
-                          color: "var(--color-text)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          width: "100%",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          padding: 0,
+                          textAlign: "left",
                           marginBottom: "20px",
                         }}
                       >
-                        Estudiantes registrados
+                        <h3
+                          style={{
+                            fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                            fontWeight: 400,
+                            fontSize: "20px",
+                            color: "var(--color-text)",
+                            margin: 0,
+                          }}
+                        >
+                          Estudiantes registrados
+                          <span
+                            style={{
+                              fontFamily: "var(--font-ibm-plex-mono)",
+                              fontSize: "10px",
+                              letterSpacing: "0.12em",
+                              textTransform: "uppercase",
+                              color: "var(--color-text-faint)",
+                              marginLeft: "12px",
+                            }}
+                          >
+                            {estudiantes.length} personas
+                          </span>
+                        </h3>
                         <span
                           style={{
                             fontFamily: "var(--font-ibm-plex-mono)",
-                            fontSize: "10px",
+                            fontSize: "11px",
                             letterSpacing: "0.12em",
                             textTransform: "uppercase",
-                            color: "var(--color-text-faint)",
-                            marginLeft: "12px",
+                            color: "var(--color-gold)",
+                            transition: "transform 0.2s ease",
+                            transform: estudiantesAbiertos ? "rotate(180deg)" : "none",
                           }}
                         >
-                          {estudiantes.length} personas
+                          ▼
                         </span>
-                      </h3>
+                      </button>
+                      {estudiantesAbiertos && (
+                      <>
                       <input
                         type="search"
                         value={busquedaEstudiante}
@@ -1855,6 +1894,8 @@ export default function AdminPage() {
                           })
                         )}
                       </div>
+                      </>
+                      )}
                     </article>
                     );
                   })()}
