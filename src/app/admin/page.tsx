@@ -1459,7 +1459,11 @@ export default function AdminPage() {
                   )}
 
                   {/* Estudiantes registrados */}
-                  {estudiantes.length > 0 && (
+                  {estudiantes.length > 0 && (() => {
+                    const estudiantesFiltrados = estudiantes.filter((est) =>
+                      est.nombre.toLowerCase().includes(busquedaEstudiante.trim().toLowerCase())
+                    );
+                    return (
                     <article
                       style={{
                         background: "var(--color-card)",
@@ -1535,18 +1539,12 @@ export default function AdminPage() {
                         <span style={{ width: "14px", flexShrink: 0 }} />
                       </div>
                       <div className="space-y-1">
-                        {estudiantes.filter((est) =>
-                            est.nombre.toLowerCase().includes(busquedaEstudiante.trim().toLowerCase())
-                          ).length === 0 ? (
+                        {estudiantesFiltrados.length === 0 ? (
                           <p style={{ color: "var(--color-text-muted)", fontSize: "13px", padding: "16px 0" }}>
                             No se encontró ningún estudiante con ese nombre.
                           </p>
                         ) : (
-                        estudiantes
-                          .filter((est) =>
-                            est.nombre.toLowerCase().includes(busquedaEstudiante.trim().toLowerCase())
-                          )
-                          .slice(0, 15)
+                        estudiantesFiltrados
                           .map((est, i) => {
                             const seleccionado = estudianteSeleccionado === est.nombre;
                             return (
@@ -1558,7 +1556,7 @@ export default function AdminPage() {
                                   padding: "10px 0",
                                   borderBottom: seleccionado
                                     ? "1px solid var(--color-gold-dim)"
-                                    : i < Math.min(estudiantes.length, 15) - 1 ? "1px solid var(--color-line-soft)" : "none",
+                                    : i < estudiantesFiltrados.length - 1 ? "1px solid var(--color-line-soft)" : "none",
                                   transition: "background 0.2s ease",
                                   cursor: "pointer",
                                 }}
@@ -1858,7 +1856,8 @@ export default function AdminPage() {
                         )}
                       </div>
                     </article>
-                  )}
+                    );
+                  })()}
 
                   {/* Contenido más popular */}
                   {contenidoPopular.length > 0 && (
