@@ -60,8 +60,8 @@ const CARD_CONFIG: Record<CardTipo, {
   },
   archivo: {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
-    label: "ARCHIVO",
-    subtitle: () => "Abrir material",
+    label: "PUNTEO DE CLASE",
+    subtitle: () => "Abrir punteo",
   },
   enlace: {
     icon: <Link2 style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
