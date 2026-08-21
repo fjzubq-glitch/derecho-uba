@@ -36,7 +36,7 @@ interface MateriaData {
   nombre: string;
 }
 
-type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace";
+type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "punteo_clase" | "archivo" | "enlace";
 
 const CARD_CONFIG: Record<CardTipo, {
   icon: React.ReactNode;
@@ -58,10 +58,15 @@ const CARD_CONFIG: Record<CardTipo, {
     label: "TRANSCRIPCIÓN",
     subtitle: () => "Ver documento completo",
   },
-  archivo: {
+  punteo_clase: {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "PUNTEO DE CLASE",
     subtitle: () => "Abrir punteo",
+  },
+  archivo: {
+    icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
+    label: "ARCHIVO",
+    subtitle: () => "Abrir material",
   },
   enlace: {
     icon: <Link2 style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
@@ -277,7 +282,7 @@ if (isTranscription(tipo)) {
           window.open(archivo.youtube_url, "_blank");
           trackActivity({ tipo: "enlace_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
-      } else if (tipo === "archivo") {
+      } else if (tipo === "archivo" || tipo === "punteo_clase") {
        if (archivo.youtube_url) {
          window.open(archivo.youtube_url, "_blank");
          trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
@@ -410,7 +415,7 @@ if (isTranscription(tipo)) {
               </p>
             )}
           </div>
-          {tipo === "archivo" && archivo.storage_key ? (
+          {(tipo === "archivo" || tipo === "punteo_clase") && archivo.storage_key ? (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -630,7 +635,7 @@ if (isTranscription(tipo)) {
 
    // Orden fijo de las cards en todas las clases:
   // 1° audio o video de la clase, 2° transcripción, 3° punteo, 4° resto
-  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace"];
+  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "punteo_clase", "archivo", "enlace"];
 
   if (loading) {
     return (
