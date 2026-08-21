@@ -189,7 +189,7 @@ export default function HomePage() {
 
               {/* Anotación a máquina */}
               <p className="annotation mt-8" style={{ maxWidth: "460px", lineHeight: 1.7 }}>
-                — Materiales del cuatrimestre en curso, audio y video de las clases, Lexpodcast, transcripciones y más, <span style={{ color: "var(--color-stamp)" }}>foliados por materia.</span> —
+                — Materiales del cuatrimestre en curso, audio y video de las clases, transcripciones y más, <span style={{ color: "var(--color-stamp)" }}>foliados por materia.</span> —
               </p>
             </div>
 

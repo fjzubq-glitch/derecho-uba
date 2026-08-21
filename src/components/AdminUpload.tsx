@@ -3,10 +3,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatFechaLocal } from "@/lib/utils";
-import { Upload, FileText, X, Check, Loader2, Headphones, Volume2, Link2, Play } from "@/components/icons";
+import { Upload, FileText, X, Check, Loader2, Headphones, Link2, Play } from "@/components/icons";
 
 interface UploadItem {
-  tipo: "audio_clase" | "clase_youtube" | "podcast" | "transcripcion" | "archivo" | "enlace";
+  tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace";
   nombre: string;
   archivo?: File;
   driveLink?: string;
@@ -75,10 +75,6 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const audioInputRef = useRef<HTMLInputElement>(null);
 
-  const [podcastNombre, setPodcastNombre] = useState("");
-  const [podcastFile, setPodcastFile] = useState<File | null>(null);
-  const podcastInputRef = useRef<HTMLInputElement>(null);
-
   const [transcripcionDriveLink, setTranscripcionDriveLink] = useState("");
   const [transcripcionTexto, setTranscripcionTexto] = useState("");
 
@@ -100,16 +96,12 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
 
   const [cloudinaryUrl, setCloudinaryUrl] = useState("");
   const [useCloudinary, setUseCloudinary] = useState(false);
-  const [podcastCloudinaryUrl, setPodcastCloudinaryUrl] = useState("");
-  const [usePodcastCloudinary, setUsePodcastCloudinary] = useState(false);
 
   const [audioDropHover, setAudioDropHover] = useState(false);
-  const [podcastDropHover, setPodcastDropHover] = useState(false);
   const [resultMsg, setResultMsg] = useState<{ text: string; isError: boolean } | null>(null);
   const [errores, setErrores] = useState<Record<string, string>>({});
 
   const hasAudio = audioFile !== null || (useYoutube && youtubeUrl.trim() !== "") || (useCloudinary && cloudinaryUrl.trim() !== "");
-  const hasPodcast = podcastFile !== null || (usePodcastCloudinary && podcastCloudinaryUrl.trim() !== "");
   const hasTranscripcion =
     (transcripcionMethod === "drive" && transcripcionDriveLink.trim() !== "") ||
     (transcripcionMethod === "texto" && transcripcionTexto.trim() !== "");
@@ -117,7 +109,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
 const hasEnlace = enlaceUrl.trim() !== "";
   const hasClaseYoutube = claseYoutubeItems.some((i) => i.url.trim() !== "");
 
-  const loadedCount = [hasAudio, hasPodcast, hasTranscripcion, hasArchivo, hasEnlace, hasClaseYoutube].filter(Boolean).length;
+  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasEnlace, hasClaseYoutube].filter(Boolean).length;
   useEffect(() => {
     if (materias.length > 0 && !materiaId) {
       setMateriaId(materias[0].id);
@@ -206,12 +198,6 @@ const hasEnlace = enlaceUrl.trim() !== "";
       items.push({ tipo: "audio_clase", nombre: `Clase ${claseNumero}`, archivo: audioFile });
     }
 
-    if (usePodcastCloudinary && podcastCloudinaryUrl) {
-      items.push({ tipo: "podcast", nombre: podcastNombre || `Lexpodcast Ep. ${claseNumero}`, cloudinaryUrl: podcastCloudinaryUrl });
-    } else if (podcastFile) {
-      items.push({ tipo: "podcast", nombre: podcastNombre || `Lexpodcast Ep. ${claseNumero}`, archivo: podcastFile });
-    }
-
     if (transcripcionMethod === "drive" && transcripcionDriveLink) {
       items.push({ tipo: "transcripcion", nombre: `Clase ${claseNumero}`, driveLink: transcripcionDriveLink });
     } else if (transcripcionMethod === "texto" && transcripcionTexto) {
@@ -262,8 +248,6 @@ const hasEnlace = enlaceUrl.trim() !== "";
     setClaseFecha("");
     setClaseSeleccionada("");
     setAudioFile(null);
-    setPodcastNombre("");
-    setPodcastFile(null);
     setTranscripcionDriveLink("");
     setTranscripcionTexto("");
     setYoutubeUrl("");
@@ -271,8 +255,6 @@ const hasEnlace = enlaceUrl.trim() !== "";
     setUseYoutube(false);
     setCloudinaryUrl("");
     setUseCloudinary(false);
-    setPodcastCloudinaryUrl("");
-    setUsePodcastCloudinary(false);
     setArchivoNombre("");
     setArchivoFile(null);
     setArchivoLink("");
@@ -555,9 +537,9 @@ const hasEnlace = enlaceUrl.trim() !== "";
           }}
         >
           <div className="flex flex-wrap items-center gap-4">
-            {["audio_clase", "clase_youtube", "podcast", "transcripcion"].map((tipo) => {
+            {["audio_clase", "clase_youtube", "transcripcion"].map((tipo) => {
               const exist = (clasesExistentes.find((c) => c.id === claseSeleccionada)?.archivos || []).some((a) => a.tipo === tipo);
-              const label = tipo === "audio_clase" ? "Audio" : tipo === "clase_youtube" ? "Clase Virtual" : tipo === "podcast" ? "Lexpodcast" : "Transcripción";
+              const label = tipo === "audio_clase" ? "Audio" : tipo === "clase_youtube" ? "Clase Virtual" : "Transcripción";
               return (
                 <div key={tipo} className="flex items-center gap-2">
                   <div
@@ -760,69 +742,6 @@ Clase Virtual
           </div>
         </div>
 
-        {/* Podcast */}
-        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
-          <h3 style={sectionHeaderStyle}>
-            <Volume2 style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
-            Lexpodcast
-          </h3>
-
-          <div className="flex flex-wrap gap-4 mb-4">
-            <Radio checked={!usePodcastCloudinary} onChange={() => setUsePodcastCloudinary(false)} label="Subir audio desde PC" />
-            <Radio checked={usePodcastCloudinary} onChange={() => setUsePodcastCloudinary(true)} label="Link de Cloudinary" />
-          </div>
-
-          {usePodcastCloudinary ? (
-            <div className="space-y-3">
-              <input
-                type="text"
-                value={podcastNombre}
-                onChange={(e) => setPodcastNombre(e.target.value)}
-                placeholder="Nombre del episodio de Lexpodcast"
-                aria-label="Nombre del episodio de Lexpodcast"
-                style={inputStyle}
-              />
-              <input
-                type="url"
-                value={podcastCloudinaryUrl}
-                onChange={(e) => setPodcastCloudinaryUrl(e.target.value)}
-                placeholder="https://res.cloudinary.com/.../video/podcast.mp3"
-                aria-label="URL de Cloudinary del episodio de Lexpodcast"
-                style={inputStyle}
-              />
-            </div>
-          ) : (
-          <div className="space-y-3">
-            <input
-              type="text"
-              value={podcastNombre}
-              onChange={(e) => setPodcastNombre(e.target.value)}
-              placeholder="Nombre del episodio de Lexpodcast"
-              aria-label="Nombre del episodio de Lexpodcast"
-              style={inputStyle}
-            />
-            <DropZone
-              file={podcastFile}
-              onFile={(f) => setPodcastFile(f)}
-              onClear={() => setPodcastFile(null)}
-              hover={podcastDropHover}
-              onHover={setPodcastDropHover}
-              inputRef={podcastInputRef}
-            />
-            <input
-              ref={podcastInputRef}
-              type="file"
-              accept="audio/*"
-              onChange={(e) => {
-                const f = e.target.files?.[0] || null;
-                if (f) setPodcastFile(f);
-              }}
-              style={{ display: "none" }}
-            />
-          </div>
-          )}
-        </div>
-
         {/* Transcripción */}
         <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
           <h3 style={sectionHeaderStyle}>
@@ -856,11 +775,11 @@ Clase Virtual
           )}
         </div>
 
-        {/* Archivo adjunto */}
+        {/* Punteo de clase */}
         <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
           <h3 style={sectionHeaderStyle}>
             <FileText style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
-            Archivo adjunto
+            Punteo de clase
           </h3>
 
           <input
@@ -956,9 +875,8 @@ Clase Virtual
           {[
             { label: "Audio", ready: hasAudio },
             { label: "Clase Virtual", ready: hasClaseYoutube },
-            { label: "Lexpodcast", ready: hasPodcast },
             { label: "Transcripción", ready: hasTranscripcion },
-            { label: "Archivo", ready: hasArchivo },
+            { label: "Punteo de clase", ready: hasArchivo },
             { label: "Enlace", ready: hasEnlace },
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-2">

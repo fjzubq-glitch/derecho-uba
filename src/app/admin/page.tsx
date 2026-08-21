@@ -265,7 +265,7 @@ export default function AdminPage() {
     claseTitulo: string,
     claseFecha: string,
     items: Array<{
-      tipo: "audio_clase" | "clase_youtube" | "podcast" | "transcripcion" | "archivo" | "enlace";
+      tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace";
       nombre: string;
       archivo?: File;
       driveLink?: string;
@@ -389,13 +389,12 @@ export default function AdminPage() {
   const POR_TIPO_LABELS: Record<string, string> = {
     audio_clase: "Audio de clase",
     clase_youtube: "Clase grabada (YouTube)",
-    podcast: "Lexpodcast",
     transcripcion: "Transcripción",
-    archivo: "Punteos / apuntes",
+    archivo: "Punteo de clase",
     enlace: "Enlaces",
   };
 
-  const POR_TIPO_ORDER = ["audio_clase", "clase_youtube", "podcast", "transcripcion", "archivo", "enlace"];
+  const POR_TIPO_ORDER = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace"];
 
   const rankColor = (i: number) =>
     i === 0 ? "var(--color-gold)" : i === 1 ? "var(--color-text)" : i === 2 ? "var(--color-text-muted)" : "var(--color-text-faint)";
@@ -899,7 +898,7 @@ export default function AdminPage() {
                         {String(stats.totalReproducciones).padStart(2, "0")}
                       </div>
                       <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                        Veces que se reprodujo audio, video o Lexpodcast
+                        Veces que se reprodujo audio o video
                       </p>
                     </div>
 
@@ -1272,22 +1271,20 @@ export default function AdminPage() {
                             <span className="flex-1 min-w-0">Materia</span>
                             <span style={{ width: "56px", textAlign: "right" }}>Visitas</span>
                             <span style={{ width: "52px", textAlign: "right" }}>Alumnos</span>
-                            <span style={{ width: "42px", textAlign: "right" }}>Audio</span>
-                            <span style={{ width: "42px", textAlign: "right" }}>Video</span>
-                            <span style={{ width: "66px", textAlign: "right" }}>Lexpodcast</span>
-                            <span style={{ width: "58px", textAlign: "right" }}>Transcrip.</span>
-                            <span style={{ width: "50px", textAlign: "right" }}>Punteos</span>
-                            <span style={{ width: "42px", textAlign: "right" }}>Enlaces</span>
+                             <span style={{ width: "42px", textAlign: "right" }}>Audio</span>
+                             <span style={{ width: "42px", textAlign: "right" }}>Video</span>
+                             <span style={{ width: "58px", textAlign: "right" }}>Transcrip.</span>
+                             <span style={{ width: "50px", textAlign: "right" }}>Punteo</span>
+                             <span style={{ width: "42px", textAlign: "right" }}>Enlaces</span>
                           </div>
                           {materiasStats.map((mat, i) => {
-                            const MAT_TIPOS: Array<[string, number]> = [
-                              ["audio_clase", 42],
-                              ["clase_youtube", 42],
-                              ["podcast", 66],
-                              ["transcripcion", 58],
-                              ["archivo", 50],
-                              ["enlace", 42],
-                            ];
+                              const MAT_TIPOS: Array<[string, number]> = [
+                                ["audio_clase", 42],
+                                ["clase_youtube", 42],
+                                ["transcripcion", 58],
+                                ["archivo", 50],
+                                ["enlace", 42],
+                              ];
                             return (
                               <div
                                 key={mat.id}
@@ -1431,9 +1428,8 @@ export default function AdminPage() {
                                 [`${mat.estudiantes} alumnos`, mat.estudiantes > 0],
                                 [`${mat.porTipo.audio_clase || 0} audio`, (mat.porTipo.audio_clase || 0) > 0],
                                 [`${mat.porTipo.clase_youtube || 0} video`, (mat.porTipo.clase_youtube || 0) > 0],
-                                [`${mat.porTipo.podcast || 0} Lexpodcast`, (mat.porTipo.podcast || 0) > 0],
                                 [`${mat.porTipo.transcripcion || 0} transcrip.`, (mat.porTipo.transcripcion || 0) > 0],
-                                [`${mat.porTipo.archivo || 0} punteos`, (mat.porTipo.archivo || 0) > 0],
+                                [`${mat.porTipo.archivo || 0} punteo`, (mat.porTipo.archivo || 0) > 0],
                                 [`${mat.porTipo.enlace || 0} enlaces`, (mat.porTipo.enlace || 0) > 0],
                               ].map(([label, activo]) => (
                                 <span
@@ -1570,9 +1566,8 @@ export default function AdminPage() {
                         <span className="hidden sm:block" style={{ width: "56px", textAlign: "right", flexShrink: 0 }}>Clases</span>
                         <span className="hidden lg:block" style={{ width: "36px", textAlign: "right", flexShrink: 0 }}>Audio</span>
                         <span className="hidden lg:block" style={{ width: "44px", textAlign: "right", flexShrink: 0 }}>Video</span>
-                        <span className="hidden lg:block" style={{ width: "62px", textAlign: "right", flexShrink: 0 }}>Lexpodcast</span>
                         <span className="hidden lg:block" style={{ width: "70px", textAlign: "right", flexShrink: 0 }}>Transcrip.</span>
-                        <span className="hidden lg:block" style={{ width: "48px", textAlign: "right", flexShrink: 0 }}>Punteos</span>
+                        <span className="hidden lg:block" style={{ width: "48px", textAlign: "right", flexShrink: 0 }}>Punteo</span>
                         <span style={{ width: "40px", textAlign: "right", flexShrink: 0 }}>Total</span>
                         <span style={{ width: "14px", flexShrink: 0 }} />
                       </div>
@@ -1689,14 +1684,11 @@ export default function AdminPage() {
                                   <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right", flexShrink: 0 }}>
                                     {est.porTipo.clase_youtube || 0} <span style={{ color: "var(--color-text-faint)" }}>video</span>
                                   </span>
-                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "62px", textAlign: "right", flexShrink: 0 }}>
-                                    {est.porTipo.podcast || 0} <span style={{ color: "var(--color-text-faint)" }}>Lexpodcast</span>
-                                  </span>
                                   <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "70px", textAlign: "right", flexShrink: 0 }}>
                                     {est.porTipo.transcripcion || 0} <span style={{ color: "var(--color-text-faint)" }}>transcripción</span>
                                   </span>
                                   <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "48px", textAlign: "right", flexShrink: 0 }}>
-                                    {est.porTipo.archivo || 0} <span style={{ color: "var(--color-text-faint)" }}>punteos</span>
+                                    {est.porTipo.archivo || 0} <span style={{ color: "var(--color-text-faint)" }}>punteo</span>
                                   </span>
                                   <span
                                     style={{

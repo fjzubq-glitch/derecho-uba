@@ -250,7 +250,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     setProcessing(true);
 
     try {
-      if (replacing.tipo === "audio_clase" || replacing.tipo === "podcast") {
+      if (replacing.tipo === "audio_clase") {
         if (newCloudinaryUrl) {
           const res = await fetch("/api/admin", {
             method: "PUT",
@@ -436,7 +436,6 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const TIPO_ICONS: Record<string, React.ReactNode> = {
     audio_clase: <Headphones style={{ width: "14px", height: "14px" }} />,
     clase_youtube: <Play style={{ width: "14px", height: "14px" }} />,
-    podcast: <Play style={{ width: "14px", height: "14px" }} />,
     transcripcion: <FileText style={{ width: "14px", height: "14px" }} />,
     archivo: <FileText style={{ width: "14px", height: "14px" }} />,
     enlace: <Link2 style={{ width: "14px", height: "14px" }} />,
@@ -446,14 +445,13 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const TIPO_LABELS: Record<string, string> = {
     audio_clase: "Audio de clase",
     clase_youtube: "Clase Virtual",
-    podcast: "Lexpodcast",
     transcripcion: "Transcripción",
-    archivo: "Archivo adjunto",
+    archivo: "Punteo de clase",
     enlace: "Enlace útil",
     youtube: "YouTube",
   };
 
-  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "podcast" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo";
+  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo";
 
   const actionBtnStyle: React.CSSProperties = {
     padding: "6px 12px",
@@ -868,7 +866,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
 
               {clase.archivos.length > 0 ? (
                 <div className="space-y-2">
-                  {clase.archivos.map((archivo, idx) => (
+                  {clase.archivos.filter((a) => a.tipo !== "podcast").map((archivo, idx) => (
                     <div
                       key={archivo.id}
                       className="flex items-center gap-3"
@@ -1246,7 +1244,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 />
               </div>
 
-              {(replacing.tipo === "audio_clase" || replacing.tipo === "podcast") && (
+              {(replacing.tipo === "audio_clase") && (
                 <>
                   <div>
                     <label htmlFor="replace-cloudinary" style={labelStyle}>Link de Cloudinary (opcional)</label>

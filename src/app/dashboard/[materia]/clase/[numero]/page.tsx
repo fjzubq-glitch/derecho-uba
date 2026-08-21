@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { trackActivity } from "@/lib/tracking";
-import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Volume2, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
 import { formatDuration, formatFechaLocal } from "@/lib/utils";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
 import { useAudio } from "@/components/AudioProvider";
@@ -36,7 +36,7 @@ interface MateriaData {
   nombre: string;
 }
 
-type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "podcast" | "archivo" | "enlace";
+type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace";
 
 const CARD_CONFIG: Record<CardTipo, {
   icon: React.ReactNode;
@@ -57,11 +57,6 @@ const CARD_CONFIG: Record<CardTipo, {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "TRANSCRIPCIÓN",
     subtitle: () => "Ver documento completo",
-  },
-  podcast: {
-    icon: <Volume2 style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
-    label: "LEXPODCAST",
-    subtitle: () => "Disponible",
   },
   archivo: {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
@@ -112,7 +107,7 @@ export default function ClaseNumeroPage() {
 
   useEffect(() => {
     if (!clase) return;
-    const audios = clase.archivos.filter((a) => a.tipo === "audio_clase" || a.tipo === "podcast");
+    const audios = clase.archivos.filter((a) => a.tipo === "audio_clase");
     audios.forEach((a) => {
       isAudioOffline(a.id).then((saved) => {
         if (saved) {
@@ -199,7 +194,7 @@ function getArchivos(tipo: CardTipo): Archivo[] {
   }
 
     function isAudioTipo(tipo: CardTipo) {
-      return tipo === "audio_clase" || tipo === "podcast";
+      return tipo === "audio_clase";
     }
 
     function isTranscription(tipo: CardTipo) {
@@ -368,11 +363,6 @@ if (isTranscription(tipo)) {
               }}
             >
               {config.label}
-              {tipo === "podcast" && (
-                <span style={{ color: "var(--color-text-faint)", textTransform: "none", letterSpacing: "0.06em", whiteSpace: "nowrap" }}>
-                  — Episodio No. {String(clase?.numero ?? 0).padStart(2, "0")}
-                </span>
-              )}
               <div
                 className="flex items-end"
                 style={{ gap: "2px", height: "10px", opacity: isThisPlaying ? 1 : 0, transition: "opacity 0.2s ease" }}
@@ -639,8 +629,8 @@ if (isTranscription(tipo)) {
   }
 
    // Orden fijo de las cards en todas las clases:
-  // 1° audio o video de la clase, 2° podcast, 3° transcripción, 4° punteo, 5° resto
-  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "podcast", "transcripcion", "archivo", "enlace"];
+  // 1° audio o video de la clase, 2° transcripción, 3° punteo, 4° resto
+  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace"];
 
   if (loading) {
     return (

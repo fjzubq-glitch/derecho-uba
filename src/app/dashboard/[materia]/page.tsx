@@ -8,7 +8,7 @@ import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
 import { formatFechaLocal } from "@/lib/utils";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
-import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Volume2, Link2, Play } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Play } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -450,7 +450,6 @@ const enlaces = clases.flatMap((c) =>
                           {tieneRecurso(clase, "audio_clase") && <Headphones style={{ width: "12px", height: "12px" }} />}
                           {tieneRecurso(clase, "clase_youtube") && <Play style={{ width: "12px", height: "12px" }} />}
                           {tieneRecurso(clase, "transcripcion") && <FileText style={{ width: "12px", height: "12px" }} />}
-                          {tieneRecurso(clase, "podcast") && <Volume2 style={{ width: "12px", height: "12px" }} />}
                           {(tieneRecurso(clase, "archivo") || tieneRecurso(clase, "enlace")) && (
                             <Link2 style={{ width: "12px", height: "12px" }} />
                           )}
