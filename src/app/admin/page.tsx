@@ -617,6 +617,7 @@ export default function AdminPage() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
+                className={tab !== "analytics" ? "border-b sm:border-b-0 sm:border-r" : "border-0"}
                 style={{
                   flex: 1,
                   padding: "10px 12px",
@@ -624,9 +625,7 @@ export default function AdminPage() {
                   fontWeight: 500,
                   fontFamily: "var(--font-inter)",
                   cursor: "pointer",
-                  border: "none",
-                  borderRight: tab !== "analytics" ? "1px solid var(--color-line-soft)" : "none",
-                  borderBottom: "none",
+                  borderColor: "var(--color-line-soft)",
                   background: activeTab === tab ? "var(--color-gold)" : "transparent",
                   color: activeTab === tab ? "var(--color-ink)" : "var(--color-text-muted)",
                   transition: "color 0.2s ease, background 0.2s ease",
