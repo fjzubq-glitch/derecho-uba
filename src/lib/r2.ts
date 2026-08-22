@@ -135,6 +135,8 @@ export async function uploadToR2(key: string, file: Buffer, contentType: string)
 }
 
 export async function deleteFromR2(key: string): Promise<void> {
+  const hasR2 = (process.env.R2_ACCOUNT_ID || "").trim() && (process.env.R2_ACCESS_KEY_ID || "").trim();
+  if (!hasR2) return;
   const res = await r2Request("DELETE", key);
   if (!res.ok && res.status !== 404) {
     throw new Error(`R2 delete failed: ${res.status} ${await res.text()}`);
