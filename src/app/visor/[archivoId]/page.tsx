@@ -44,8 +44,6 @@ export default async function VisorPage({
             textTransform: "uppercase",
             color: "var(--color-gold)",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
         >
           <ArrowLeft style={{ width: "16px", height: "16px" }} />
           Volver a la clase
