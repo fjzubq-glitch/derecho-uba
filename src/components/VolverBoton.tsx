@@ -10,31 +10,28 @@ export default function VolverBoton() {
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: "8px",
-        background: "var(--color-gold)",
-        border: "1px solid var(--color-gold)",
+        gap: "7px",
+        background: "transparent",
+        border: "1px solid var(--color-gold-dim)",
         cursor: "pointer",
-        textDecoration: "none",
         fontFamily: "var(--font-ibm-plex-mono)",
-        fontSize: "12px",
-        fontWeight: 600,
+        fontSize: "11px",
         letterSpacing: "0.12em",
         textTransform: "uppercase",
-        color: "var(--color-ink)",
-        padding: "11px 20px",
-        boxShadow: "0 0 0 3px rgba(185, 154, 98, 0.25)",
-        transition: "background 0.2s ease, box-shadow 0.2s ease",
+        color: "var(--color-gold)",
+        padding: "8px 16px",
+        transition: "background 0.2s ease, border-color 0.2s ease, color 0.2s ease",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.background = "var(--color-gold-dim)";
-        e.currentTarget.style.boxShadow = "0 0 0 5px rgba(185, 154, 98, 0.35)";
+        e.currentTarget.style.background = "rgba(185, 154, 98, 0.12)";
+        e.currentTarget.style.borderColor = "var(--color-gold)";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.background = "var(--color-gold)";
-        e.currentTarget.style.boxShadow = "0 0 0 3px rgba(185, 154, 98, 0.25)";
+        e.currentTarget.style.background = "transparent";
+        e.currentTarget.style.borderColor = "var(--color-gold-dim)";
       }}
     >
-      <ArrowLeft style={{ width: "16px", height: "16px" }} />
+      <ArrowLeft style={{ width: "15px", height: "15px" }} />
       Volver a la clase
     </button>
   );

@@ -2,13 +2,10 @@ import VolverBoton from "@/components/VolverBoton";
 
 export default async function VisorPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ archivoId: string }>;
-  searchParams: Promise<{ back?: string; nombre?: string }>;
 }) {
   const { archivoId } = await params;
-  const { nombre } = await searchParams;
 
   return (
     <div
@@ -32,22 +29,6 @@ export default async function VisorPage({
         }}
       >
         <VolverBoton />
-        {nombre ? (
-          <span
-            style={{
-              marginLeft: "auto",
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "12px",
-              letterSpacing: "0.08em",
-              color: "var(--color-text-muted)",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {nombre}
-          </span>
-        ) : null}
       </div>
       <div
         style={{
@@ -58,7 +39,7 @@ export default async function VisorPage({
       >
         <iframe
           src={`/api/stream/${archivoId}`}
-          title={nombre || "Web interactiva"}
+          title="Web interactiva"
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
           style={{
             width: "100%",
