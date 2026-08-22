@@ -15,17 +15,18 @@ export default async function VisorPage({
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "100vh",
+        height: "100dvh",
         background: "var(--color-ink)",
+        overflow: "hidden",
       }}
     >
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "12px",
-          padding: "12px 16px",
-          borderBottom: "1px solid var(--color-line-soft)",
+          gap: "16px",
+          padding: "14px 20px",
+          borderBottom: "1px solid var(--color-gold-dim)",
           flexShrink: 0,
           background: "var(--color-card)",
         }}
@@ -36,8 +37,9 @@ export default async function VisorPage({
             style={{
               marginLeft: "auto",
               fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "11px",
-              color: "var(--color-text-faint)",
+              fontSize: "12px",
+              letterSpacing: "0.08em",
+              color: "var(--color-text-muted)",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -47,17 +49,26 @@ export default async function VisorPage({
           </span>
         ) : null}
       </div>
-      <iframe
-        src={`/api/stream/${archivoId}`}
-        title={nombre || "Web interactiva"}
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+      <div
         style={{
-          width: "100%",
           flex: 1,
-          border: "none",
+          minHeight: 0,
           background: "#ffffff",
         }}
-      />
+      >
+        <iframe
+          src={`/api/stream/${archivoId}`}
+          title={nombre || "Web interactiva"}
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+          style={{
+            width: "100%",
+            height: "100%",
+            border: "none",
+            display: "block",
+            background: "#ffffff",
+          }}
+        />
+      </div>
     </div>
   );
 }
