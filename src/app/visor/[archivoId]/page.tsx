@@ -1,4 +1,4 @@
-import { ArrowLeft } from "@/components/icons";
+import VolverBoton from "@/components/VolverBoton";
 
 export default async function VisorPage({
   params,
@@ -8,8 +8,7 @@ export default async function VisorPage({
   searchParams: Promise<{ back?: string; nombre?: string }>;
 }) {
   const { archivoId } = await params;
-  const { back, nombre } = await searchParams;
-  const backUrl = back || "/";
+  const { nombre } = await searchParams;
 
   return (
     <div
@@ -31,23 +30,7 @@ export default async function VisorPage({
           background: "var(--color-card)",
         }}
       >
-        <a
-          href={backUrl}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            textDecoration: "none",
-            fontFamily: "var(--font-ibm-plex-mono)",
-            fontSize: "11px",
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: "var(--color-gold)",
-          }}
-        >
-          <ArrowLeft style={{ width: "16px", height: "16px" }} />
-          Volver a la clase
-        </a>
+        <VolverBoton />
         {nombre ? (
           <span
             style={{
