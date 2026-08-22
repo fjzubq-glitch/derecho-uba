@@ -43,6 +43,20 @@ function isHtmlArchivo(a: Archivo | null): boolean {
   return /\.html?$/i.test(a.storage_key);
 }
 
+function descargarTexto(archivo: Archivo) {
+  const contenido = archivo.contenido_texto || "";
+  const blob = new Blob([contenido], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const base = (archivo.nombre_display || "transcripcion").replace(/[^\wÁÉÍÓÚáéíóúñÑ -]/g, "").trim() || "transcripcion";
+  a.href = url;
+  a.download = `${base}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 const CARD_CONFIG: Record<CardTipo, {
   icon: React.ReactNode;
   label: string;
@@ -428,15 +442,20 @@ if (isTranscription(tipo)) {
               </p>
             )}
           </div>
-          {(tipo === "archivo" || tipo === "punteo_clase") && archivo.storage_key ? (
+          {(tipo === "archivo" && archivo.storage_key) || (isTranscription(tipo) && (archivo.storage_key || archivo.contenido_texto)) ? (
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                window.open(`/api/stream/${archivo.id}?download=1`, "_blank");
-                trackActivity({ tipo: "file_download", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+                if (archivo.storage_key) {
+                  window.open(`/api/stream/${archivo.id}?download=1`, "_blank");
+                  trackActivity({ tipo: "file_download", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+                } else if (archivo.contenido_texto) {
+                  descargarTexto(archivo);
+                  trackActivity({ tipo: "transcription_download", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+                }
               }}
               className="flex items-center gap-1.5"
-              title="Descargar material"
+              title={isTranscription(tipo) ? "Descargar transcripción" : "Descargar material"}
               style={{
                 background: "none",
                 border: "none",
