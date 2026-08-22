@@ -38,6 +38,11 @@ interface MateriaData {
 
 type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "punteo_clase" | "archivo" | "enlace";
 
+function isHtmlArchivo(a: Archivo | null): boolean {
+  if (!a || !a.storage_key) return false;
+  return /\.html?$/i.test(a.storage_key);
+}
+
 const CARD_CONFIG: Record<CardTipo, {
   icon: React.ReactNode;
   label: string;
@@ -61,12 +66,12 @@ const CARD_CONFIG: Record<CardTipo, {
   punteo_clase: {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "PUNTEO DE CLASE",
-    subtitle: () => "Abrir punteo",
+    subtitle: (a) => (isHtmlArchivo(a) ? "Ver web interactiva" : "Abrir punteo"),
   },
   archivo: {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "ARCHIVO",
-    subtitle: () => "Abrir material",
+    subtitle: (a) => (isHtmlArchivo(a) ? "Ver web interactiva" : "Abrir material"),
   },
   enlace: {
     icon: <Link2 style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
@@ -97,6 +102,9 @@ export default function ClaseNumeroPage() {
   const [offlineProgress, setOfflineProgress] = useState<Record<string, number>>({});
   const [offlineError, setOfflineError] = useState<string | null>(null);
   const [offlineMode, setOfflineMode] = useState(false);
+
+  // Visor de HTML interactivo (punteos/archivos subidos como .html)
+  const [htmlViewer, setHtmlViewer] = useState<Archivo | null>(null);
 
   // Transcription expand
   const [openTranscripcion, setOpenTranscripcion] = useState(false);
@@ -282,15 +290,20 @@ if (isTranscription(tipo)) {
           window.open(archivo.youtube_url, "_blank");
           trackActivity({ tipo: "enlace_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
-      } else if (tipo === "archivo" || tipo === "punteo_clase") {
-       if (archivo.youtube_url) {
-         window.open(archivo.youtube_url, "_blank");
-         trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
-       } else if (archivo.storage_key) {
-         window.open(`/api/stream/${archivo.id}`, "_blank");
-         trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
-       }
-} else if (isAudioTipo(tipo)) {
+  } else if (tipo === "archivo" || tipo === "punteo_clase") {
+        if (archivo.youtube_url) {
+          window.open(archivo.youtube_url, "_blank");
+          trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+        } else if (archivo.storage_key) {
+          if (isHtmlArchivo(archivo)) {
+            setHtmlViewer(archivo);
+            trackActivity({ tipo: "html_view", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+          } else {
+            window.open(`/api/stream/${archivo.id}`, "_blank");
+            trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+          }
+        }
+ } else if (isAudioTipo(tipo)) {
        handleAudioAction(archivo);
      }
    }
@@ -855,6 +868,115 @@ if (isTranscription(tipo)) {
             )}
           </div>
         </nav>
+      )}
+
+      {/* ═══════════ VISOR DE HTML INTERACTIVO ═══════════ */}
+      {htmlViewer && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Visor de web interactiva"
+          onClick={() => setHtmlViewer(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "rgba(0,0,0,0.82)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "24px",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: "1200px",
+              height: "88vh",
+              background: "var(--color-card)",
+              border: "1px solid var(--color-gold-dim)",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "12px",
+                padding: "12px 16px",
+                borderBottom: "1px solid var(--color-line-soft)",
+                flexShrink: 0,
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "11px",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "var(--color-gold)",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {htmlViewer.nombre_display}
+              </span>
+              <div style={{ display: "flex", alignItems: "center", gap: "16px", flexShrink: 0 }}>
+                <button
+                  onClick={() => window.open(`/api/stream/${htmlViewer.id}`, "_blank")}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "10px",
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "var(--color-text-muted)",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+                >
+                  Abrir en pestaña
+                </button>
+                <button
+                  onClick={() => setHtmlViewer(null)}
+                  aria-label="Cerrar visor"
+                  style={{
+                    background: "none",
+                    border: "1px solid var(--color-line)",
+                    cursor: "pointer",
+                    color: "var(--color-text-muted)",
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "50%",
+                    fontSize: "16px",
+                    lineHeight: 1,
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.color = "var(--color-gold)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-line)"; e.currentTarget.style.color = "var(--color-text-muted)"; }}
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+            <iframe
+              src={`/api/stream/${htmlViewer.id}`}
+              title={htmlViewer.nombre_display}
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+              style={{
+                width: "100%",
+                flex: 1,
+                border: "none",
+                background: "#ffffff",
+              }}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
