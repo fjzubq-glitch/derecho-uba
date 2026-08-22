@@ -150,7 +150,7 @@ export async function DELETE(request: NextRequest) {
       if (archivos) {
         for (const arch of archivos) {
           if (arch.storage_key) {
-            await deleteFromR2(arch.storage_key);
+            try { await deleteFromR2(arch.storage_key); } catch { /* best-effort */ }
           }
         }
       }
@@ -168,7 +168,7 @@ export async function DELETE(request: NextRequest) {
         .single();
 
       if (archivo?.storage_key) {
-        await deleteFromR2(archivo.storage_key);
+        try { await deleteFromR2(archivo.storage_key); } catch { /* best-effort */ }
       }
 
       const { error } = await getSupabaseAdmin().from("archivos").delete().eq("id", id);
