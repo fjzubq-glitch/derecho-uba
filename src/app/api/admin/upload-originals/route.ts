@@ -4,13 +4,10 @@ import path from "path";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { uploadToR2 } from "@/lib/r2";
 
-function slugify(s: string): string {
-  return s
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
+const SLUG_MAP: Record<string, string> = {
+  "contratos-ii": "contratos",
+  "derecho-comercial": "comercial",
+};
 
 export async function POST() {
   try {
@@ -38,11 +35,7 @@ export async function POST() {
     const files = await fs.readdir(originalsDir);
     const notionFiles = files.filter((f) => f.endsWith("-notion.html"));
 
-    const fileSlugs: Record<string, string> = {};
-    for (const f of notionFiles) {
-      const slug = slugify(f.replace("-notion.html", ""));
-      fileSlugs[slug] = f;
-    }
+    const fileSet = new Set(notionFiles.map((f) => f.replace("-notion.html", "")));
 
     let uploaded = 0;
     const results: Array<{ nombre: string; key: string; file: string; status: string; size?: number; error?: string }> = [];
@@ -59,8 +52,9 @@ export async function POST() {
         continue;
       }
 
-      const expectedSlug = `${info.slug}-clase${info.numero}`;
-      const matchedFile = fileSlugs[expectedSlug];
+      const mappedSlug = SLUG_MAP[info.slug] || info.slug;
+      const expectedFileName = `${mappedSlug}-clase${info.numero}-notion.html`;
+      const matchedFile = fileSet.has(`${mappedSlug}-clase${info.numero}`) ? expectedFileName : "";
 
       if (!matchedFile) {
         results.push({
@@ -68,7 +62,7 @@ export async function POST() {
           key: archivo.storage_key,
           file: "",
           status: "skipped",
-          error: `No file for "${expectedSlug}"`,
+          error: `No file for "${mappedSlug}-clase${info.numero}" (db_slug="${info.slug}")`,
         });
         continue;
       }
