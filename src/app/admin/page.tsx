@@ -445,7 +445,7 @@ export default function AdminPage() {
       const res = await fetch("/api/admin/regenerate", { method: "POST" });
       const data = await res.json();
       if (data.ok) {
-        setRegenResult(`Regenerados: ${data.regenerated} cuestionarios` + (data.errors ? ` (${data.errors.length} errores)` : ""));
+        setRegenResult(`Regenerados: ${data.regenerated} cuestionarios` + (data.skipped ? ` (${data.skipped} sin contenido)` : "") + (data.errors ? ` (${data.errors.length} errores)` : ""));
       } else {
         setRegenResult("Error: " + data.error);
       }
