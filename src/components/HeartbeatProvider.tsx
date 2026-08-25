@@ -16,11 +16,12 @@ function paginaYSlug(): { pagina: string; materia_slug?: string } {
 export default function HeartbeatProvider() {
   useEffect(() => {
     const latido = () => {
+      if (document.hidden) return;
       const { pagina, materia_slug } = paginaYSlug();
       trackActivity({ tipo: "heartbeat", pagina, materia_slug });
     };
     const inicial = setTimeout(latido, 3000);
-    const interval = setInterval(latido, 30000);
+    const interval = setInterval(latido, 60000);
     const onVisible = () => {
       if (!document.hidden) latido();
     };

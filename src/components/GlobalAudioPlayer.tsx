@@ -5,60 +5,98 @@ import { useAudio } from "./AudioProvider";
 import { Play, Pause, X, RotateCcw } from "@/components/icons";
 import { formatDuration } from "@/lib/utils";
 
+const playerBarStyle: React.CSSProperties = {
+  position: "fixed",
+  bottom: 0,
+  left: 0,
+  right: 0,
+  zIndex: 100,
+  background: "var(--color-ink)",
+  borderTop: "1px solid var(--color-line-soft)",
+  padding: "10px 20px",
+};
+
+const innerStyle: React.CSSProperties = {
+  maxWidth: "1100px",
+  margin: "0 auto",
+  display: "flex",
+  alignItems: "center",
+  gap: "14px",
+  flexWrap: "wrap",
+};
+
+const roundBtnStyle: React.CSSProperties = {
+  background: "transparent",
+  border: "1px solid var(--color-gold)",
+  color: "var(--color-gold)",
+  borderRadius: "50%",
+  width: "36px",
+  height: "36px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+  flexShrink: 0,
+  transition: "background 0.25s ease",
+};
+
+const iconBtn: React.CSSProperties = {
+  background: "none",
+  border: "none",
+  color: "var(--color-text-muted)",
+  cursor: "pointer",
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "4px",
+  padding: "4px",
+  fontFamily: "var(--font-ibm-plex-mono)",
+  fontSize: "10px",
+  whiteSpace: "nowrap",
+  transition: "color 0.2s ease",
+};
+
+const trackTitleStyle: React.CSSProperties = {
+  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+  fontWeight: 500,
+  fontSize: "13px",
+  color: "var(--color-text)",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  margin: 0,
+};
+
+const trackMetaStyle: React.CSSProperties = {
+  fontFamily: "var(--font-ibm-plex-mono)",
+  fontSize: "9px",
+  color: "var(--color-gold)",
+  margin: "2px 0 0",
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
+};
+
+const timeSpanStyle: React.CSSProperties = {
+  fontFamily: "var(--font-ibm-plex-mono)",
+  fontSize: "10px",
+  color: "var(--color-text-faint)",
+};
+
+const speedBtnStyle: React.CSSProperties = {
+  background: "none",
+  border: "1px solid var(--color-line)",
+  color: "var(--color-text-faint)",
+  padding: "4px 9px",
+  cursor: "pointer",
+  fontFamily: "var(--font-ibm-plex-mono)",
+  fontSize: "10px",
+  whiteSpace: "nowrap",
+  transition: "border-color 0.2s ease, color 0.2s ease",
+};
+
 export default function GlobalAudioPlayer() {
   const { currentTrack, isPlaying, currentTime, duration, playbackRate, togglePlay, seek, cycleSpeed, restart, stop } = useAudio();
 
   if (!currentTrack) return null;
-
-  const playerBarStyle: React.CSSProperties = {
-    position: "fixed",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 100,
-    background: "var(--color-ink)",
-    borderTop: "1px solid var(--color-line-soft)",
-    padding: "10px 20px",
-  };
-
-  const innerStyle: React.CSSProperties = {
-    maxWidth: "1100px",
-    margin: "0 auto",
-    display: "flex",
-    alignItems: "center",
-    gap: "14px",
-    flexWrap: "wrap",
-  };
-
-  const roundBtnStyle: React.CSSProperties = {
-    background: "transparent",
-    border: "1px solid var(--color-gold)",
-    color: "var(--color-gold)",
-    borderRadius: "50%",
-    width: "36px",
-    height: "36px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    cursor: "pointer",
-    flexShrink: 0,
-    transition: "background 0.25s ease",
-  };
-
-  const iconBtn: React.CSSProperties = {
-    background: "none",
-    border: "none",
-    color: "var(--color-text-muted)",
-    cursor: "pointer",
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "4px",
-    padding: "4px",
-    fontFamily: "var(--font-ibm-plex-mono)",
-    fontSize: "10px",
-    whiteSpace: "nowrap",
-    transition: "color 0.2s ease",
-  };
 
   return (
     <div style={playerBarStyle} className="global-player" aria-label="Reproductor de audio">
@@ -86,37 +124,17 @@ export default function GlobalAudioPlayer() {
 
         {/* Info del track */}
         <div className="flex-1 min-w-0">
-          <p
-            style={{
-              fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-              fontWeight: 500,
-              fontSize: "13px",
-              color: "var(--color-text)",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              margin: 0,
-            }}
-          >
+          <p style={trackTitleStyle}>
             {currentTrack.nombre}
           </p>
-          <p
-            style={{
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "9px",
-              color: "var(--color-gold)",
-              margin: "2px 0 0",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-            }}
-          >
+          <p style={trackMetaStyle}>
             Clase {String(currentTrack.claseNumero).padStart(2, "0")}
           </p>
         </div>
 
         {/* Barra de progreso */}
         <div className="flex items-center gap-2 flex-1 min-w-0 sm:min-w-[160px]">
-          <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)" }}>
+          <span style={timeSpanStyle}>
             {formatDuration(currentTime)}
           </span>
           <input
@@ -128,7 +146,7 @@ export default function GlobalAudioPlayer() {
             style={{ flex: 1 }}
             aria-label="Progreso del audio"
           />
-          <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)" }}>
+          <span style={timeSpanStyle}>
             {formatDuration(duration)}
           </span>
         </div>
@@ -136,17 +154,7 @@ export default function GlobalAudioPlayer() {
         {/* Velocidad */}
         <button
           onClick={cycleSpeed}
-          style={{
-            background: "none",
-            border: "1px solid var(--color-line)",
-            color: playbackRate === 1 ? "var(--color-text-faint)" : "var(--color-gold)",
-            padding: "4px 9px",
-            cursor: "pointer",
-            fontFamily: "var(--font-ibm-plex-mono)",
-            fontSize: "10px",
-            whiteSpace: "nowrap",
-            transition: "border-color 0.2s ease, color 0.2s ease",
-          }}
+          style={{ ...speedBtnStyle, color: playbackRate === 1 ? "var(--color-text-faint)" : "var(--color-gold)" }}
           title="Velocidad de reproducción"
         >
           {playbackRate}×

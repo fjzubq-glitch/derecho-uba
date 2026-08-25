@@ -21,9 +21,10 @@ export async function trackActivity(data: {
   if (isAdminUser()) return;
   const usuario = getPortalUserName();
   try {
-    await fetch("/api/track", {
+    void fetch("/api/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      keepalive: true,
       body: JSON.stringify({
         ...data,
         usuario,

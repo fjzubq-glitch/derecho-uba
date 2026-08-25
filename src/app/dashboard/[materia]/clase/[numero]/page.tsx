@@ -99,6 +99,8 @@ const CARD_CONFIG: Record<CardTipo, {
   },
 };
 
+const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "punteo_clase", "archivo", "enlace", "cuestionario"];
+
 export default function ClaseNumeroPage() {
   const params = useParams();
   const router = useRouter();
@@ -126,7 +128,6 @@ export default function ClaseNumeroPage() {
   const [openTranscripcion, setOpenTranscripcion] = useState(false);
   // Solo el admin ve las cards de cuestionario
   const [esAdmin, setEsAdmin] = useState(false);
-  let cardIndex = 0;
 
   useEffect(() => {
     fetch("/api/admin/session")
@@ -182,34 +183,29 @@ async function eliminarOffline(archivo: Archivo) {
 
 async function loadData() {
     const cacheKey = `materia:${materiaSlug}:clase:${numero}`;
-    const setAdjacent = (clases: Clase[]) => {
-      const sorted = [...clases].sort((a, b) => a.numero - b.numero);
-      const idx = sorted.findIndex((c) => c.numero === parseInt(numero));
-      setPrevClase(idx > 0 ? sorted[idx - 1] : null);
-      setNextClase(idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null);
-    };
+    const num = parseInt(numero);
     try {
-      const res = await fetch(`/api/materias/${materiaSlug}`);
+      const res = await fetch(`/api/materias/${materiaSlug}/clases/${numero}`);
       const data = await res.json();
       if (data.materia) setMateria(data.materia);
-      if (data.clases) {
-        const found = data.clases.find((c: Clase) => c.numero === parseInt(numero));
-        if (found) {
-          setClase(found);
-          saveClaseOffline(cacheKey, data);
-        }
-        setAdjacent(data.clases);
+      if (data.clase) {
+        setClase(data.clase);
+        saveClaseOffline(cacheKey, data);
       }
+      const adj = (data.adjacentes || []) as Clase[];
+      setPrevClase(adj.find((c) => c.numero === num) || null);
+      setNextClase(adj.find((c) => c.numero === num) || null);
     } catch (e) {
       console.error("Error loading clase, intentando offline:", e);
       setOfflineMode(true);
       const cached = await getClaseOffline(cacheKey);
       if (cached) {
-        const anyData = cached as { materia?: MateriaData; clases?: Clase[] };
+        const anyData = cached as { materia?: MateriaData; clase?: Clase; adjacentes?: Clase[] };
         if (anyData.materia) setMateria(anyData.materia);
-        const found = (anyData.clases || []).find((c) => c.numero === parseInt(numero));
-        if (found) setClase(found);
-        setAdjacent(anyData.clases || []);
+        if (anyData.clase) setClase(anyData.clase);
+        const adj = anyData.adjacentes || [];
+        setPrevClase(adj.find((c) => c.numero === num) || null);
+        setNextClase(adj.find((c) => c.numero === num) || null);
       }
     }
     setLoading(false);
@@ -358,7 +354,8 @@ if (isTranscription(tipo)) {
       return [];
     }
 
-    return archivos.map((archivo) => renderArchivoCard(tipo, archivo, isThisPlaying, cardIndex++));
+    const base = TIPOS_ORDEN.slice(0, TIPOS_ORDEN.indexOf(tipo)).reduce((s, t) => s + getArchivos(t).length, 0);
+    return archivos.map((archivo, i) => renderArchivoCard(tipo, archivo, isThisPlaying, base + i));
   }
 
   function renderArchivoCard(tipo: CardTipo, archivo: Archivo, isThisPlaying: boolean, cardIndex: number) {

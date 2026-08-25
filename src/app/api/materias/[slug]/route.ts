@@ -33,18 +33,28 @@ export async function GET(
     .eq("materia_id", materia.id)
     .order("fecha");
 
-  const clasesWithFiles = await Promise.all(
-    (clases || []).map(async (c) => {
-      const { data: archivos } = await supabase
+  const claseIds = (clases || []).map((c) => c.id);
+  const { data: archivos } = claseIds.length
+    ? await supabase
         .from("archivos")
-        .select("*")
-        .eq("clase_id", c.id)
+        .select("id, clase_id, tipo, nombre_display, storage_key, youtube_url, duration_seconds, orden, created_at")
+        .in("clase_id", claseIds)
         .order("orden")
-        .order("created_at");
-      const visibles = (archivos || []).filter((a) => esAdmin || a.tipo !== "cuestionario");
-      return { ...c, archivos: visibles };
-    })
-  );
+        .order("created_at")
+    : { data: [] };
+
+  const porClase = new Map<string, typeof archivos>();
+  for (const a of archivos || []) {
+    const list = porClase.get(a.clase_id) || [];
+    list.push(a);
+    porClase.set(a.clase_id, list);
+  }
+
+  const clasesWithFiles = (clases || []).map((c) => {
+    const archivosDeClase = porClase.get(c.id) || [];
+    const visibles = archivosDeClase.filter((a) => esAdmin || a.tipo !== "cuestionario");
+    return { ...c, archivos: visibles };
+  });
 
   return NextResponse.json({ materia: { ...materia, fechas: fechas || [] }, clases: clasesWithFiles });
 }

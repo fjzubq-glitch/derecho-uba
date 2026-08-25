@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import WelcomeGate from "@/components/WelcomeGate";
@@ -64,9 +64,11 @@ export default function MateriaPage() {
 
   const tieneRecurso = (c: Clase, tipo: string) => c.archivos.some((a) => a.tipo === tipo);
 // enlaces de toda la materia
-const enlaces = clases.flatMap((c) =>
-  c.archivos.filter((a) => a.tipo === "enlace").map((a) => ({ ...a, clase: c }))
-);
+const enlaces = useMemo(() =>
+  clases.flatMap((c) =>
+    c.archivos.filter((a) => a.tipo === "enlace").map((a) => ({ ...a, clase: c }))
+  ),
+[clases]);
 
   const claseHref = (numero: number) => `/dashboard/${slug}/clase/${numero}`;
 

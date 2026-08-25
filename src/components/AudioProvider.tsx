@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { saveResumeTime, getResumeTime, clearResumeTime } from "@/lib/utils";
 import { trackActivity, isAdminUser } from "@/lib/tracking";
 import { getPortalUserName } from "@/lib/portalUser";
@@ -221,19 +221,22 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     if (audioRef.current) audioRef.current.playbackRate = playbackRate;
   }, [playbackRate]);
 
-  const value: AudioContextValue = {
-    currentTrack,
-    isPlaying,
-    currentTime,
-    duration,
-    playbackRate,
-    play,
-    togglePlay,
-    seek,
-    cycleSpeed,
-    restart,
-    stop,
-  };
+  const value: AudioContextValue = useMemo(
+    () => ({
+      currentTrack,
+      isPlaying,
+      currentTime,
+      duration,
+      playbackRate,
+      play,
+      togglePlay,
+      seek,
+      cycleSpeed,
+      restart,
+      stop,
+    }),
+    [currentTrack, isPlaying, currentTime, duration, playbackRate, play, togglePlay, seek, cycleSpeed, restart, stop]
+  );
 
   return (
     <AudioContext.Provider value={value}>
