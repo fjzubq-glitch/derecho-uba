@@ -8,8 +8,34 @@ const root = path.join(__dirname, "..");
 const esc = (s = "") => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const inline = (s = "") => esc(s).replace(/\*(.+?)\*/g, "<b>$1</b>");
 const hasHtml = (s = "") => /<[a-z][\s\S]*>/i.test(s);
-const paragraphs = (s = "") =>
-  s.split(/\n\n+/).map((p) => p.trim()).filter(Boolean).map((p) => `<p>${inline(p).replace(/\n/g, "<br>")}</p>`).join("");
+
+const renderNumberedItems = (s) => {
+  const re = /\((\d+|[a-z])\)\s*/g;
+  const firstMatch = re.exec(s);
+  if (!firstMatch) return "";
+  const intro = s.slice(0, firstMatch.index).trim();
+  const rest = s.slice(firstMatch.index);
+  const items = [];
+  let last = 0;
+  let m;
+  re.lastIndex = 0;
+  while ((m = re.exec(rest))) {
+    if (m.index > last) items.push(rest.slice(last, m.index).trim());
+    last = re.lastIndex;
+  }
+  if (last < rest.length) items.push(rest.slice(last).trim());
+  if (items.length < 2) return "";
+  const isAlpha = /[a-z]/.test(firstMatch[1]);
+  const typeAttr = isAlpha ? ' type="a"' : "";
+  const introHtml = intro ? `<p>${inline(intro)}</p>` : "";
+  return `${introHtml}<ol${typeAttr}>${items.map((item) => `<li>${inline(item)}</li>`).join("")}</ol>`;
+};
+
+const paragraphs = (s = "") => {
+  const listHtml = renderNumberedItems(s);
+  if (listHtml) return listHtml;
+  return s.split(/\n\n+/).map((p) => p.trim()).filter(Boolean).map((p) => `<p>${inline(p).replace(/\n/g, "<br>")}</p>`).join("");
+};
 
 function renderMaterial(material = []) {
   return material
