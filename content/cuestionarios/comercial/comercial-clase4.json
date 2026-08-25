@@ -1,0 +1,434 @@
+{
+  "header": {
+    "title": "Comercial · Clase 4",
+    "sub": "Marcas, Ley 22.362 y procedimiento de registro",
+    "meta": "14 ítems · 8 preguntas + 3 integradoras + 3 casos"
+  },
+  "storageKey": "comercial_clase4_progress",
+  "questions": [
+    {
+      "id": "P1",
+      "topic": "Definición doctrinaria de marca y art. 1",
+      "priority": "alto",
+      "enunciado": "¿Por qué se afirma que la definición de marca es doctrinaria y no legal, y qué es lo que efectivamente regula el artículo 1 de la Ley 22.362?",
+      "pista": "El art. 1 no define marca, solo enumera signos registrables. La definición es doctrinaria: signo con capacidad distintiva.",
+      "respuestaLibre": "El art. 1 de la Ley 22.362 no define qué es una marca. Se limita a enumerar los signos que pueden registrarse como marca para distinguir productos y servicios (palabras, dibujos, emblemas, combinaciones de colores aplicadas en un lugar determinado, frases publicitarias, relieves, y 'todo otro signo' con capacidad distintiva). La enumeración es amplia y abierta, no taxativa. La definición de marca es una construcción doctrinaria: todo signo con capacidad distintiva que permite identificar y diferenciar productos y servicios entre sí.",
+      "opciones": [
+        "El art. 1 define legalmente qué es una marca como 'todo signo susceptible de representación gráfica'.",
+        "El art. 1 no define marca, solo enumera signos registrables con capacidad distintiva; la definición es doctrinaria.",
+        "El art. 1 define marca como 'nombre comercial registrado ante el INPI'.",
+        "El art. 1 establece que marca es sinónimo de designación comercial."
+      ],
+      "correcta": 1,
+      "explicacion": "El art. 1 no define marca, solo enumera signos registrables. La definición es doctrinaria: todo signo con capacidad distintiva que permite identificar y diferenciar productos y servicios.",
+      "errorTipico": "Citar el art. 1 como si contuviera una definición legal de marca, o responder 'marca es...' atribuyendo la definición directamente al texto de la ley."
+    },
+    {
+      "id": "P2",
+      "topic": "Art. 2 vs. Art. 3 Ley 22.362",
+      "priority": "critico",
+      "enunciado": "¿Cuál es la diferencia de fundamento entre el rechazo de un registro por el art. 2 y el rechazo por el art. 3 de la Ley 22.362?",
+      "pista": "Art. 2: falta capacidad distintiva. Art. 3: prohibición legal directa, aunque el signo sea distintivo.",
+      "respuestaLibre": "El art. 2 rechaza signos que carecen de capacidad distintiva (ej. palabra 'queso' para vender queso, color natural). El art. 3 rechaza signos que pueden tener capacidad distintiva pero están prohibidos por ley por razones de orden público, competencia desleal o protección del consumidor (ej. marca idéntica o similar a otra registrada, símbolos patrios).",
+      "opciones": [
+        "Ambos artículos regulan la misma causal: falta de capacidad distintiva.",
+        "El art. 2 rechaza por falta de capacidad distintiva; el art. 3 prohíbe signos distintivos por razones de orden público, competencia desleal o protección del consumidor.",
+        "El art. 2 protege al consumidor; el art. 3 protege la función distintiva.",
+        "El art. 2 es para marcas denominativas; el art. 3 es para marcas figurativas."
+      ],
+      "correcta": 1,
+      "explicacion": "El art. 2 rechaza por falta de capacidad distintiva; el art. 3 prohíbe signos distintivos por razones de orden público, competencia desleal o protección del consumidor.",
+      "errorTipico": "Tratar ambos artículos como si regularan la misma causal de rechazo, sin advertir que en el art. 3 el signo podría ser perfectamente distintivo."
+    },
+    {
+      "id": "P3",
+      "topic": "Fallo Horizonte: legitimación para oponerse",
+      "priority": "critico",
+      "enunciado": "Según el Fallo Horizonte, ¿quién está legitimado para oponerse al registro de una marca?",
+      "pista": "Solo el titular de marca registrada. Una solicitud en trámite no basta.",
+      "respuestaLibre": "Solo puede ejercer válidamente el derecho de oposición quien ya es titular de una marca registrada. La mera presentación de una solicitud propia en trámite no configura, por sí sola, un interés legítimo suficiente.",
+      "opciones": [
+        "Cualquier persona que considere que la marca podría afectarle.",
+        "Solo quien ya es titular de una marca registrada.",
+        "Cualquier solicitante con una marca en trámite.",
+        "Solo el INPI de oficio."
+      ],
+      "correcta": 1,
+      "explicacion": "Solo puede ejercer válidamente el derecho de oposición quien ya es titular de una marca registrada. La mera presentación de una solicitud propia en trámite no configura interés legítimo suficiente.",
+      "errorTipico": "Creer que basta con tener una solicitud de marca en trámite (sin registro firme) para poder oponerse válidamente a la de un tercero."
+    },
+    {
+      "id": "P4",
+      "topic": "Sistema atributivo y efecto de la solicitud",
+      "priority": "critico",
+      "enunciado": "¿En qué momento se adquiere el derecho de propiedad sobre una marca en el sistema argentino, y qué efecto produce la sola presentación de la solicitud?",
+      "pista": "Sistema atributivo: propiedad recién con el registro. La solicitud solo genera prelación.",
+      "respuestaLibre": "El derecho de propiedad sobre la marca se adquiere recién cuando el INPI otorga el registro (sistema atributivo). La presentación de la solicitud no otorga propiedad ni exclusividad, solo genera una prelación (derecho de preferencia) frente a solicitudes posteriores. Superado el control del INPI, la solicitud se publica en el Boletín de Marcas (los miércoles), y desde el día siguiente corren 30 días corridos para oposiciones.",
+      "opciones": [
+        "La propiedad se adquiere con la presentación de la solicitud, que otorga exclusividad inmediata.",
+        "La propiedad se adquiere cuando el INPI otorga el registro; la solicitud solo genera prelación frente a solicitudes posteriores.",
+        "La propiedad se adquiere con el primer uso público de la marca.",
+        "La propiedad se adquiere automáticamente a los 30 días de presentada la solicitud."
+      ],
+      "correcta": 1,
+      "explicacion": "El derecho de propiedad se adquiere cuando el INPI otorga el registro (sistema atributivo). La solicitud solo genera prelación frente a solicitudes posteriores.",
+      "errorTipico": "Sostener que presentar el trámite ya genera el derecho de propiedad sobre la marca, o confundir el Boletín de Marcas con el Boletín Oficial."
+    },
+    {
+      "id": "P5",
+      "topic": "Renovación de marca registrada",
+      "priority": "alto",
+      "enunciado": "¿Cómo se renueva una marca registrada y qué debe acreditarse para lograrlo?",
+      "pista": "Registro por 10 años, renovable. No es automática. Se acredita uso con declaración jurada, no con facturas.",
+      "respuestaLibre": "El registro se otorga por diez años, renovable indefinidamente. La renovación no es automática: debe solicitarse proactivamente antes del vencimiento. Debe acreditarse el uso de la marca durante los cinco años previos al vencimiento, mediante declaración jurada del titular o de su representante, sin necesidad de facturas ni otra documentación adicional. Si no se renueva en término, el derecho caduca.",
+      "opciones": [
+        "La renovación es automática cada 10 años sin trámite.",
+        "Debe solicitarse proactivamente antes del vencimiento, acreditando uso con declaración jurada de los últimos 5 años.",
+        "Debe acreditarse uso con facturas y comprobantes de venta de los últimos 10 años.",
+        "La marca se renueva solo si no hubo oposiciones durante su vigencia."
+      ],
+      "correcta": 1,
+      "explicacion": "La renovación debe solicitarse proactivamente antes del vencimiento, acreditando uso con declaración jurada de los últimos 5 años, sin necesidad de facturas.",
+      "errorTipico": "Creer que la renovación opera de manera automática, o que requiere prueba documental (facturas, capturas de pantalla) en lugar de una declaración jurada."
+    },
+    {
+      "id": "P6",
+      "topic": "Clasificación de Niza y protección por clase",
+      "priority": "alto",
+      "enunciado": "¿Por qué es relevante la clasificación de Niza al momento de registrar una marca, y qué implica que la protección se otorgue 'por clase'?",
+      "pista": "45 clases (1-34 productos, 35-45 servicios). Protección solo en la clase registrada.",
+      "respuestaLibre": "La clasificación de Niza contiene 45 clases: de la 1 a la 34, productos; de la 35 a la 45, servicios. El derecho de propiedad y exclusividad se otorga únicamente respecto de la clase en la que se registró la marca. Por eso una misma expresión puede estar registrada por titulares distintos en clases distintas.",
+      "opciones": [
+        "La clasificación de Niza es opcional y solo orientativa.",
+        "Contiene 45 clases y la protección se otorga solo en la clase registrada; una misma expresión puede estar registrada por distintos titulares en clases distintas.",
+        "La protección se otorga automáticamente en todas las clases al registrar una marca.",
+        "Solo existen 10 clases principales de productos y servicios."
+      ],
+      "correcta": 1,
+      "explicacion": "La clasificación de Niza contiene 45 clases y la protección se otorga solo en la clase registrada; una misma expresión puede estar registrada por distintos titulares en clases distintas.",
+      "errorTipico": "Creer que registrar una marca la protege automáticamente en todos los rubros, sin necesidad de identificar y registrar en las clases correspondientes."
+    },
+    {
+      "id": "P7",
+      "topic": "Marca registrada vs. designación comercial",
+      "priority": "alto",
+      "enunciado": "¿Cuál es la diferencia entre una marca registrada y una designación comercial?",
+      "pista": "Designación: nombre de fantasía, se adquiere con el uso, sin exclusividad. Marca: requiere registro ante INPI, otorga exclusividad.",
+      "respuestaLibre": "La designación comercial es un nombre de fantasía asociado a una actividad comercial (ej. 'La Vaca Lola'), se adquiere con el mero uso sin trámite ni registro, y no otorga exclusividad. La marca registrada requiere trámite ante el INPI y, una vez obtenido el registro, otorga derecho de propiedad y exclusividad dentro del rubro correspondiente. La marca tampoco debe confundirse con la razón social.",
+      "opciones": [
+        "Son sinónimos: ambos se adquieren con el uso y otorgan exclusividad.",
+        "La designación comercial se adquiere con el uso sin exclusividad; la marca requiere registro ante INPI y otorga exclusividad.",
+        "La designación comercial requiere registro; la marca se adquiere con el uso.",
+        "Ambas requieren registro ante el INPI para tener validez."
+      ],
+      "correcta": 1,
+      "explicacion": "La designación comercial se adquiere con el uso sin exclusividad; la marca requiere registro ante INPI y otorga exclusividad.",
+      "errorTipico": "Creer que usar un nombre de fantasía para un local ya constituye una marca, o que ese uso por sí solo impide que un tercero use el mismo nombre."
+    },
+    {
+      "id": "P8",
+      "topic": "Extinción vs. nulidad (arts. 23 y 24)",
+      "priority": "alto",
+      "enunciado": "¿Cuál es la diferencia entre la extinción y la nulidad de una marca según los arts. 23 y 24 de la Ley 22.362?",
+      "pista": "Extinción: por vencimiento o renuncia. Nulidad: por vicio en el origen del registro (mala fe, conocimiento de marca ajena).",
+      "respuestaLibre": "La extinción (art. 23) opera por renuncia del titular o por vencimiento del plazo de diez años sin renovación. La nulidad (art. 24) procede cuando la marca fue registrada en violación de la ley: (1) el solicitante conocía o debía conocer que la marca pertenecía a un tercero, o (2) quien registra marcas como actividad habitual con el único fin de comercializarlas.",
+      "opciones": [
+        "Son sinónimos: ambas causales extinguen la marca por vencimiento del plazo.",
+        "Extinción: por vencimiento o renuncia del titular. Nulidad: por vicio en el origen del registro (mala fe, conocimiento de marca ajena).",
+        "La extinción solo procede por decisión judicial; la nulidad es administrativa.",
+        "La nulidad solo aplica a marcas no registradas, mientras que la extinción aplica a las registradas."
+      ],
+      "correcta": 1,
+      "explicacion": "Extinción (art. 23): por renuncia o vencimiento del plazo sin renovación. Nulidad (art. 24): por vicio en el origen del registro, cuando el solicitante conocía o debía conocer que la marca pertenecía a un tercero, o cuando se registran marcas como actividad habitual con fines de comercialización.",
+      "errorTipico": "Usar 'extinción' y 'nulidad' como sinónimos, sin distinguir que la primera opera por el mero transcurso del tiempo o renuncia, y la segunda requiere un vicio en el origen del registro."
+    },
+    {
+      "id": "INT-a",
+      "topic": "Integradora · Color como marca",
+      "priority": "critico",
+      "contexto": "Rodrigo, que trabaja en ilustración y tiene una pequeña empresa de contenido, decide formalizar la protección de su marca personal 'Ilustra Rodrigo' como marca denominativa en la clase 41 (servicios de educación y publicación). Antes de presentar la solicitud, también evalúa si podría registrar en exclusiva el color celeste que usa en todo su packaging, ya que lo considera parte central de su identidad de marca.",
+      "enunciado": "(a) ¿Podría Rodrigo registrar el color celeste en forma exclusiva para identificar el packaging de sus productos?",
+      "pista": "El color natural o intrínseco de un producto, así como un solo color aplicado sobre él, no puede registrarse como marca conforme al art. 2 de la Ley 22.362.",
+      "respuestaLibre": "No. El color natural o intrínseco de un producto, así como un solo color aplicado sobre él, no puede registrarse como marca conforme al art. 2 de la Ley 22.362, por carecer de capacidad distintiva y por generar, además, un monopolio contrario a la libre competencia (igual criterio que impide registrar el color rojo para identificar baldes).",
+      "opciones": [
+        "Sí, porque el color celeste es distintivo de su marca y genera reconocimiento.",
+        "No. El color natural o intrínseco de un producto, así como un solo color aplicado sobre él, no puede registrarse como marca conforme al art. 2.",
+        "Sí, pero solo si presenta facturas que acrediten su uso prolongado.",
+        "No, porque los colores no son registrables bajo ninguna circunstancia."
+      ],
+      "correcta": 1,
+      "explicacion": "No. El color natural o intrínseco de un producto, así como un solo color aplicado sobre él, no puede registrarse como marca conforme al art. 2 de la Ley 22.362, por carecer de capacidad distintiva y por generar un monopolio contrario a la libre competencia.",
+      "errorTipico": "Creer que el uso prolongado y el reconocimiento efectivo del color por parte del público alcanzan para registrarlo, sin advertir que el art. 2 lo excluye expresamente por vía normativa, independientemente del uso de hecho."
+    },
+    {
+      "id": "INT-b",
+      "topic": "Integradora · Prelación entre solicitudes",
+      "priority": "critico",
+      "contexto": "Presenta finalmente la solicitud de 'Ilustra Rodrigo' un lunes. El martes siguiente, otra persona presenta ante el INPI una solicitud idéntica para la misma clase.",
+      "enunciado": "(b) Entre Rodrigo y la persona que presentó la solicitud idéntica un día después, ¿quién tiene mejor derecho sobre 'Ilustra Rodrigo', y en qué se funda esa preferencia?",
+      "pista": "El sistema argentino es atributivo: el derecho de propiedad recién se adquiere cuando el INPI otorga el registro, pero la fecha de presentación otorga una prelación o derecho de preferencia frente a solicitudes posteriores por el mismo signo.",
+      "respuestaLibre": "Rodrigo tiene mejor derecho, en tanto presentó su solicitud primero. El sistema argentino es atributivo: el derecho de propiedad recién se adquiere cuando el INPI otorga el registro, pero la fecha de presentación otorga una prelación o derecho de preferencia frente a solicitudes posteriores por el mismo signo. Ninguno de los dos es aún propietario de la marca hasta que el INPI resuelva.",
+      "opciones": [
+        "La persona que presentó después, porque el INPI favorece siempre al segundo solicitante.",
+        "Rodrigo, porque presentó primero y la fecha de presentación otorga prelación frente a solicitudes posteriores.",
+        "Ninguno tiene mejor derecho; el INPI decide por sorteo.",
+        "Ambos tienen los mismos derechos y deben llegar a un acuerdo privado."
+      ],
+      "correcta": 1,
+      "explicacion": "Rodrigo tiene mejor derecho porque presentó primero. La fecha de presentación otorga prelación frente a solicitudes posteriores por el mismo signo. Ninguno es propietario hasta que el INPI resuelva.",
+      "errorTipico": "Asumir que con presentar la solicitud ya se es propietario de la marca, o confundir la prelación con propiedad definitiva."
+    },
+    {
+      "id": "INT-c",
+      "topic": "Integradora · Oposición sin registro",
+      "priority": "critico",
+      "contexto": "Además, un estudio de diseño que tiene una solicitud propia en trámite (no registrada) para una marca que considera fonéticamente similar pretende oponerse al registro de Rodrigo.",
+      "enunciado": "(c) ¿Puede el estudio de diseño oponerse válidamente al registro de Rodrigo invocando su propia solicitud en trámite?",
+      "pista": "Conforme al Fallo Horizonte, solo puede oponerse válidamente quien ya es titular de una marca registrada.",
+      "respuestaLibre": "No. Conforme al Fallo Horizonte, solo puede oponerse válidamente quien ya es titular de una marca registrada. La mera existencia de una solicitud propia en trámite, sin registro firme, no configura por sí sola interés legítimo para oponerse al registro de un tercero.",
+      "opciones": [
+        "Sí, porque tiene una solicitud en trámite que demuestra su interés.",
+        "No. Conforme al Fallo Horizonte, solo puede oponerse válidamente quien ya es titular de una marca registrada.",
+        "Sí, pero solo si la solicitud fue presentada antes que la de Rodrigo.",
+        "No, porque el INPI no acepta oposiciones de terceros."
+      ],
+      "correcta": 1,
+      "explicacion": "No. Conforme al Fallo Horizonte, solo puede oponerse válidamente quien ya es titular de una marca registrada. La mera existencia de una solicitud propia en trámite no configura interés legítimo.",
+      "errorTipico": "Un alumno que estudió cada concepto por separado puede responder correctamente (a) y (b), pero fallar en (c) al asumir —por analogía con la prelación de (b)— que cualquier solicitante en trámite tiene automáticamente derecho a oponerse, sin advertir que ese estándar (interés legítimo para oponerse) es distinto del estándar de prelación entre solicitudes."
+    },
+    {
+      "id": "C1",
+      "topic": "Caso 1 · El color como marca",
+      "priority": "alto",
+      "contexto": "Camila fabrica accesorios de cuero y utiliza, hace tres años, el color celeste en todos sus productos y en el packaging. Considera que ese color ya es reconocido por sus clientas y quiere presentar ante el INPI una solicitud para registrar el color celeste, en exclusiva, como marca aplicable a toda su línea de accesorios.",
+      "enunciado": "¿Puede Camila registrar el color celeste en forma exclusiva como marca?",
+      "pista": "El art. 2 excluye expresamente el color natural del producto y también un solo color aplicado sobre él, aun cuando el consumidor lo asocie de hecho a la marca.",
+      "respuestaLibre": "Camila no puede registrar el color celeste en forma exclusiva y aislada. Podría, en cambio, intentar registrar una combinación de colores aplicada en un lugar determinado del producto o envase, que sí encuadra dentro de los signos registrables del art. 1.",
+      "opciones": [
+        "Sí, porque el uso prolongado genera derechos sobre el color.",
+        "No. El art. 2 excluye expresamente un solo color aplicado sobre el producto. Podría registrar una combinación de colores aplicada en un lugar determinado.",
+        "Sí, pero solo si el color no es natural del producto.",
+        "No, porque los colores nunca son registrables."
+      ],
+      "correcta": 1,
+      "explicacion": "Camila no puede registrar el color celeste en forma exclusiva y aislada. Podría registrar una combinación de colores aplicada en un lugar determinado del producto o envase.",
+      "errorTipico": "Creer que el uso prolongado y el reconocimiento efectivo del color por parte del público alcanzan para registrarlo, sin advertir que el art. 2 lo excluye expresamente por vía normativa, independientemente del uso de hecho."
+    },
+    {
+      "id": "C2",
+      "topic": "Caso 2 · La trampa de creerse protegido en todos los rubros",
+      "priority": "alto",
+      "contexto": "Bruno registró hace dos años la marca denominativa 'Estrella' en la clase 25 (indumentaria) para su marca de ropa. El año pasado abrió, además, un restaurante y decidió llamarlo también 'Estrella', asumiendo que, como ya era titular de esa marca, nadie más podía usar ese nombre para ningún otro rubro. Al intentar registrar 'Estrella' en la clase 43 (servicios de restauración), descubre que ya existe una marca 'Estrella' registrada en esa clase por un tercero ajeno a su empresa, que además se opone a su solicitud.",
+      "enunciado": "¿Puede Bruno usar 'Estrella' para su restaurante invocando su registro en indumentaria?",
+      "pista": "La protección que otorga el registro de una marca alcanza únicamente a la clase en la que fue registrada, conforme a la clasificación de Niza.",
+      "respuestaLibre": "El registro de Bruno en la clase 25 no le da ningún derecho sobre la clase 43. La oposición del tercero registrado en esa clase está bien fundada, y Bruno debería optar por otro nombre para su restaurante o negociar con el titular de la marca ya registrada.",
+      "opciones": [
+        "Sí, porque ser titular de una marca en cualquier clase otorga protección genérica sobre el nombre en cualquier rubro.",
+        "No. El registro de Bruno en la clase 25 no le da ningún derecho sobre la clase 43. La oposición del tercero registrado en esa clase está bien fundada.",
+        "Sí, pero solo si Bruno demuestra que su marca es notoria.",
+        "No, porque la marca 'Estrella' no puede registrarse en ninguna clase."
+      ],
+      "correcta": 1,
+      "explicacion": "El registro de Bruno en la clase 25 no le da ningún derecho sobre la clase 43. La protección se otorga solo en la clase registrada.",
+      "errorTipico": "Asumir que ser titular de una marca en cualquier clase otorga protección genérica sobre el nombre en cualquier rubro, sin verificar la clase específica en la que se solicita cada nuevo registro."
+    },
+    {
+      "id": "C3",
+      "topic": "Caso 3 · Oposición fonética y negociación ante el INPI",
+      "priority": "alto",
+      "contexto": "El laboratorio 'NeuroVida' presenta ante el INPI la solicitud de registro de esa marca denominativa para productos vinculados a la prevención de enfermedades neurodegenerativas. Publicada la solicitud en el Boletín de Marcas, dentro de los 30 días corridos siguientes, el laboratorio 'NeuroVita' —titular de una marca ya registrada en la misma clase de productos— presenta oposición fundada, alegando similitud fonética entre ambos nombres y riesgo de confusión para el consumidor.",
+      "enunciado": "¿Qué ocurre con la oposición de 'NeuroVita' y cuál es el procedimiento ante el INPI?",
+      "pista": "Presentada la oposición dentro del plazo de 30 días corridos desde la publicación, el INPI otorga un plazo de 90 días para que las partes negocien. Si no se alcanza un acuerdo, resuelve la Dirección de Marcas del INPI.",
+      "respuestaLibre": "Si no se alcanza un acuerdo dentro de los 90 días, resuelve la Dirección de Marcas del INPI, haciendo lugar o no al planteo de alguna de las partes. Contra esa resolución procede recurso ante la Justicia Civil y Comercial dentro de los 30 días hábiles siguientes. Si la oposición prospera, 'NeuroVida' debe volver a presentar su solicitud con otro nombre o sonido.",
+      "opciones": [
+        "La oposición se rechaza automáticamente porque 'NeuroVida' y 'NeuroVita' son nombres distintos.",
+        "Si no se alcanza un acuerdo dentro de los 90 días, resuelve la Dirección de Marcas del INPI. Contra esa resolución procede recurso ante la Justicia Civil y Comercial dentro de los 30 días hábiles.",
+        "El INPI registra ambas marcas porque no son idénticas.",
+        "La oposición solo puede ser presentada por el INPI de oficio."
+      ],
+      "correcta": 1,
+      "explicacion": "Si no se alcanza un acuerdo dentro de los 90 días, resuelve la Dirección de Marcas del INPI. Contra esa resolución procede recurso ante la Justicia Civil y Comercial dentro de los 30 días hábiles.",
+      "errorTipico": "Creer que toda oposición fundada en similitud fonética implica automáticamente el rechazo del registro, sin considerar que el trámite prevé una instancia de negociación entre partes y, eventualmente, resolución administrativa fundada."
+    }
+  ],
+  "material": [
+    {
+      "id": "mat-p1",
+      "title": "1. Definición doctrinaria de marca y art. 1 Ley 22.362",
+      "badges": [
+        { "text": "A1", "kind": "fuente" },
+        { "text": "Pareto", "kind": "pareto" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "¿Por qué se afirma que la definición de marca es doctrinaria y no legal, y qué es lo que efectivamente regula el artículo 1 de la Ley 22.362?",
+      "respuesta": "<p><b>El art. 1 no define marca, solo enumera signos registrables.</b></p><p>La definición de marca es una construcción doctrinaria: todo signo con capacidad distintiva que permite identificar y diferenciar productos y servicios entre sí.</p><p><b>Signos enumerados en el art. 1 (no taxativos):</b></p><ol><li>Palabras</li><li>Dibujos</li><li>Emblemas</li><li>Combinaciones de colores aplicadas en un lugar determinado</li><li>Frases publicitarias</li><li>Relieves</li><li><i>Todo otro signo</i> con capacidad distintiva</li></ol><p>La enumeración es amplia y abierta, lo que evidencia que no se trata de una definición sino de un listado orientativo de signos susceptibles de registro.</p>",
+      "errorTipico": "Citar el art. 1 como si contuviera una definición legal de marca, o responder 'marca es...' atribuyendo la definición directamente al texto de la ley."
+    },
+    {
+      "id": "mat-p2",
+      "title": "2. Diferencia de fundamento entre art. 2 y art. 3",
+      "badges": [
+        { "text": "A2, A3", "kind": "fuente" },
+        { "text": "Cae siempre", "kind": "cae" },
+        { "text": "Pareto", "kind": "pareto" }
+      ],
+      "enunciado": "¿Cuál es la diferencia de fundamento entre el rechazo de un registro por el art. 2 y el rechazo por el art. 3 de la Ley 22.362?",
+      "respuesta": "<p><b>Art. 2 — Falta de capacidad distintiva:</b></p><p>Rechaza signos que carecen de capacidad distintiva por naturaleza, aun cuando no estén expresamente prohibidos. Ejemplos: la palabra «queso» para vender queso, el color natural de un producto, un solo color aplicado sobre él.</p><p><b>Art. 3 — Prohibiciones legales directas:</b></p><p>Rechaza signos que pueden tener capacidad distintiva pero están prohibidos por ley por razones de orden público, competencia desleal o protección del consumidor. Ejemplos: marca idéntica o similar a otra registrada, símbolos patrios, nombres geográficos, contradicciones con el orden público.</p><table><thead><tr><th>Criterio</th><th>Art. 2</th><th>Art. 3</th></tr></thead><tbody><tr><td>Causal</td><td>Falta de capacidad distintiva</td><td>Prohibición legal (orden público, competencia desleal, protección del consumidor)</td></tr><tr><td>El signo puede ser distintivo</td><td>No</td><td>Sí, pero está prohibido</td></tr><tr><td>Ejemplo</td><td>Palabra «queso» para queso</td><td>Marca idéntica a otra registrada</td></tr></tbody></table>",
+      "errorTipico": "Tratar ambos artículos como si regularan la misma causal de rechazo, sin advertir que en el art. 3 el signo podría ser perfectamente distintivo."
+    },
+    {
+      "id": "mat-p3",
+      "title": "3. Fallo Horizonte: legitimación para oponerse",
+      "badges": [
+        { "text": "F1", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "Según el Fallo Horizonte, ¿quién está legitimado para oponerse al registro de una marca?",
+      "respuesta": "<p><b>Solo puede ejercer válidamente el derecho de oposición quien ya es titular de una marca registrada.</b></p><p>La mera presentación de una solicitud propia en trámite no configura, por sí sola, un interés legítimo suficiente para oponerse al registro de un tercero.</p><p><b>Implicancias prácticas:</b></p><ol><li>El titular de marca registrada tiene interés legítimo para oponerse.</li><li>Un solicitante con solicitud en trámite (sin registro firme) NO está legitimado para oponerse.</li><li>El estándar de legitimación para oponerse es distinto del estándar de prelación entre solicitudes.</li></ol>",
+      "errorTipico": "Creer que basta con tener una solicitud de marca en trámite (sin registro firme) para poder oponerse válidamente a la de un tercero."
+    },
+    {
+      "id": "mat-p4",
+      "title": "4. Sistema atributivo y efecto de la solicitud",
+      "badges": [
+        { "text": "O3", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" },
+        { "text": "Pareto", "kind": "pareto" }
+      ],
+      "enunciado": "¿En qué momento se adquiere el derecho de propiedad sobre una marca en el sistema argentino, y qué efecto produce la sola presentación de la solicitud?",
+      "respuesta": "<p><b>Sistema atributivo:</b> el derecho de propiedad sobre la marca se adquiere recién cuando el INPI otorga el registro.</p><p><b>Efecto de la solicitud:</b> la presentación de la solicitud no otorga propiedad ni exclusividad, solo genera una <b>prelación</b> (derecho de preferencia) frente a solicitudes posteriores.</p><p><b>Procedimiento tras la solicitud:</b></p><ol><li>La solicitud supera el control del INPI.</li><li>Se publica en el Boletín de Marcas (los miércoles).</li><li>Desde el día siguiente corren <b>30 días corridos</b> para oposiciones.</li><li>Si no hay oposición, el INPI resuelve el registro.</li></ol>",
+      "errorTipico": "Sostener que presentar el trámite ya genera el derecho de propiedad sobre la marca, o confundir el Boletín de Marcas con el Boletín Oficial."
+    },
+    {
+      "id": "mat-p5",
+      "title": "5. Renovación de marca registrada",
+      "badges": [
+        { "text": "A4", "kind": "fuente" },
+        { "text": "Pareto", "kind": "pareto" }
+      ],
+      "enunciado": "¿Cómo se renueva una marca registrada y qué debe acreditarse para lograrlo?",
+      "respuesta": "<p><b>Vigencia:</b> el registro se otorga por <b>diez años</b>, renovable indefinidamente.</p><p><b>Renovación no es automática:</b> debe solicitarse proactivamente antes del vencimiento.</p><p><b>Acreditación del uso:</b></p><ol><li>Debe acreditarse el uso de la marca durante los <b>cinco años previos</b> al vencimiento.</li><li>Se acredita con <b>declaración jurada</b> del titular o de su representante.</li><li>No se requieren facturas ni otra documentación adicional.</li></ol><p><b>Consecuencia del no uso:</b> si no se renueva en término, el derecho caduca.</p>",
+      "errorTipico": "Creer que la renovación opera de manera automática, o que requiere prueba documental (facturas, capturas de pantalla) en lugar de una declaración jurada."
+    },
+    {
+      "id": "mat-p6",
+      "title": "6. Clasificación de Niza y protección por clase",
+      "badges": [
+        { "text": "O3", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "¿Por qué es relevante la clasificación de Niza al momento de registrar una marca, y qué implica que la protección se otorgue 'por clase'?",
+      "respuesta": "<p><b>Clasificación de Niza:</b> contiene 45 clases.</p><ul><li>Clases 1 a 34: <b>productos</b></li><li>Clases 35 a 45: <b>servicios</b></li></ul><p><b>Protección por clase:</b> el derecho de propiedad y exclusividad se otorga únicamente respecto de la clase en la que se registró la marca.</p><p><b>Consecuencia:</b> una misma expresión puede estar registrada por titulares distintos en clases distintas (ej. «Estrella» en indumentaria y en restauración, por personas diferentes).</p>",
+      "errorTipico": "Creer que registrar una marca la protege automáticamente en todos los rubros, sin necesidad de identificar y registrar en las clases correspondientes."
+    },
+    {
+      "id": "mat-p7",
+      "title": "7. Marca registrada vs. designación comercial",
+      "badges": [
+        { "text": "S1", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "¿Cuál es la diferencia entre una marca registrada y una designación comercial?",
+      "respuesta": "<p><b>Designación comercial:</b></p><ul><li>Nombre de fantasía asociado a una actividad comercial (ej. «La Vaca Lola»)</li><li>Se adquiere con el <b>mero uso</b>, sin trámite ni registro</li><li><b>No otorga exclusividad</b></li><li>No debe confundirse con la razón social</li></ul><p><b>Marca registrada:</b></p><ul><li>Requiere <b>trámite ante el INPI</b></li><li>Otorga <b>derecho de propiedad y exclusividad</b> dentro del rubro correspondiente</li><li>Protege frente a terceros que usen signos idénticos o similares</li></ul>",
+      "errorTipico": "Creer que usar un nombre de fantasía para un local ya constituye una marca, o que ese uso por sí solo impide que un tercero use el mismo nombre."
+    },
+    {
+      "id": "mat-p8",
+      "title": "8. Extinción vs. nulidad (arts. 23 y 24)",
+      "badges": [
+        { "text": "A4", "kind": "fuente" },
+        { "text": "Pareto", "kind": "pareto" }
+      ],
+      "enunciado": "¿Cuál es la diferencia entre la extinción y la nulidad de una marca según los arts. 23 y 24 de la Ley 22.362?",
+      "respuesta": "<p><b>Extinción (art. 23):</b></p><p>Opera por:</p><ol><li><b>Renuncia</b> del titular.</li><li><b>Vencimiento</b> del plazo de diez años sin renovación.</li></ol><p><b>Nulidad (art. 24):</b></p><p>Procede cuando la marca fue registrada en violación de la ley:</p><ol><li>El solicitante <b>conocía o debía conocer</b> que la marca pertenecía a un tercero.</li><li>Quien registra marcas como <b>actividad habitual</b> con el único fin de <b>comercializarlas</b>.</li></ol>",
+      "errorTipico": "Usar 'extinción' y 'nulidad' como sinónimos, sin distinguir que la primera opera por el mero transcurso del tiempo o renuncia, y la segunda requiere un vicio en el origen del registro."
+    },
+    {
+      "id": "mat-int",
+      "title": "Integradora · Rodrigo y 'Ilustra Rodrigo'",
+      "badges": [
+        { "text": "Cae siempre", "kind": "cae" }
+      ],
+      "contexto": "Rodrigo, que trabaja en ilustración y tiene una pequeña empresa de contenido, decide formalizar la protección de su marca personal 'Ilustra Rodrigo' como marca denominativa en la clase 41 (servicios de educación y publicación). Antes de presentar la solicitud, también evalúa si podría registrar en exclusiva el color celeste que usa en todo su packaging, ya que lo considera parte central de su identidad de marca. Presenta finalmente la solicitud de 'Ilustra Rodrigo' un lunes. El martes siguiente, otra persona presenta ante el INPI una solicitud idéntica para la misma clase. Además, un estudio de diseño que tiene una solicitud propia en trámite (no registrada) para una marca que considera fonéticamente similar pretende oponerse al registro de Rodrigo.",
+      "enunciado": "(a) ¿Podría registrar el color celeste? (b) ¿Quién tiene mejor derecho entre los dos solicitantes? (c) ¿Puede oponerse el estudio de diseño?",
+      "respuesta": "<p><b>(a) Color como marca:</b></p><p>No. El color natural o intrínseco de un producto, así como un solo color aplicado sobre él, no puede registrarse como marca conforme al art. 2 de la Ley 22.362, por carecer de capacidad distintiva y por generar, además, un monopolio contrario a la libre competencia.</p><p><b>(b) Prelación entre solicitudes:</b></p><p>Rodrigo tiene mejor derecho, en tanto presentó su solicitud primero. El sistema argentino es atributivo: el derecho de propiedad recién se adquiere cuando el INPI otorga el registro, pero la fecha de presentación otorga una prelación o derecho de preferencia frente a solicitudes posteriores por el mismo signo. Ninguno de los dos es aún propietario de la marca hasta que el INPI resuelva.</p><p><b>(c) Oposición sin registro:</b></p><p>No. Conforme al Fallo Horizonte, solo puede oponerse válidamente quien ya es titular de una marca registrada. La mera existencia de una solicitud propia en trámite, sin registro firme, no configura por sí sola interés legítimo para oponerse al registro de un tercero.</p>",
+      "errorTipico": "Un alumno que estudió cada concepto por separado puede responder correctamente (a) y (b), pero fallar en (c) al asumir —por analogía con la prelación de (b)— que cualquier solicitante en trámite tiene automáticamente derecho a oponerse, sin advertir que ese estándar (interés legítimo para oponerse) es distinto del estándar de prelación entre solicitudes."
+    },
+    {
+      "id": "mat-c1",
+      "title": "Caso 1 · El color como marca",
+      "badges": [
+        { "text": "Simple", "kind": "fuente" },
+        { "text": "O1, O2", "kind": "fuente" },
+        { "text": "A1, A2", "kind": "fuente" }
+      ],
+      "contexto": "Camila fabrica accesorios de cuero y utiliza, hace tres años, el color celeste en todos sus productos y en el packaging. Considera que ese color ya es reconocido por sus clientas y quiere presentar ante el INPI una solicitud para registrar el color celeste, en exclusiva, como marca aplicable a toda su línea de accesorios.",
+      "respuesta": "<p><b>Figura jurídica:</b> Signos excluidos del registro (art. 2, Ley 22.362) y capacidad distintiva.</p><p><b>Razonamiento:</b></p><ol><li>El art. 2 excluye expresamente del registro el color natural del producto y también un solo color aplicado sobre él, aun cuando el consumidor lo asocie de hecho a la marca.</li><li>Camila podría, en cambio, intentar registrar una <b>combinación de colores aplicada en un lugar determinado</b> del producto o envase, que sí encuadra dentro de los signos registrables del art. 1.</li></ol><p><b>Respuesta:</b> Camila no puede registrar el color celeste en forma exclusiva y aislada. Podría registrar una combinación de colores aplicada en un lugar determinado del producto o envase.</p>",
+      "errorTipico": "Creer que el uso prolongado y el reconocimiento efectivo del color por parte del público alcanzan para registrarlo, sin advertir que el art. 2 lo excluye expresamente por vía normativa, independientemente del uso de hecho.",
+      "linkRel": "Relacionado con P1 y P2 del cuestionario."
+    },
+    {
+      "id": "mat-c2",
+      "title": "Caso 2 · La trampa de creerse protegido en todos los rubros",
+      "badges": [
+        { "text": "Trampa (T7)", "kind": "trampa" },
+        { "text": "O3, T7", "kind": "fuente" },
+        { "text": "A1", "kind": "fuente" }
+      ],
+      "contexto": "Bruno registró hace dos años la marca denominativa 'Estrella' en la clase 25 (indumentaria) para su marca de ropa. El año pasado abrió, además, un restaurante y decidió llamarlo también 'Estrella', asumiendo que, como ya era titular de esa marca, nadie más podía usar ese nombre para ningún otro rubro. Al intentar registrar 'Estrella' en la clase 43 (servicios de restauración), descubre que ya existe una marca 'Estrella' registrada en esa clase por un tercero ajeno a su empresa, que además se opone a su solicitud.",
+      "respuesta": "<p><b>Figura jurídica:</b> Protección por clase (clasificación de Niza, art. 1, Ley 22.362) y derecho de oposición (art. 24, Ley 22.362).</p><p><b>Razonamiento:</b></p><ol><li>El registro de Bruno en la clase 25 (indumentaria) no le da ningún derecho sobre la clase 43 (servicios de restauración).</li><li>La oposición del tercero registrado en la clase 43 está bien fundada.</li><li>Bruno debería optar por otro nombre para su restaurante o negociar con el titular de la marca ya registrada.</li></ol><p><b>Respuesta:</b> El registro de Bruno en la clase 25 no le da ningún derecho sobre la clase 43. La oposición del tercero registrado en esa clase está bien fundada.</p>",
+      "errorTipico": "Asumir que ser titular de una marca en cualquier clase otorga protección genérica sobre el nombre en cualquier rubro, sin verificar la clase específica en la que se solicita cada nuevo registro.",
+      "linkRel": "Relacionado con P6 del cuestionario."
+    },
+    {
+      "id": "mat-c3",
+      "title": "Caso 3 · Oposición fonética y negociación ante el INPI",
+      "badges": [
+        { "text": "Complejo", "kind": "fuente" },
+        { "text": "O2, O3, O4, F1", "kind": "fuente" },
+        { "text": "A1, A2, A3, F1", "kind": "fuente" }
+      ],
+      "contexto": "El laboratorio 'NeuroVida' presenta ante el INPI la solicitud de registro de esa marca denominativa para productos vinculados a la prevención de enfermedades neurodegenerativas. Publicada la solicitud en el Boletín de Marcas, dentro de los 30 días corridos siguientes, el laboratorio 'NeuroVita' —titular de una marca ya registrada en la misma clase de productos— presenta oposición fundada, alegando similitud fonética entre ambos nombres y riesgo de confusión para el consumidor.",
+      "respuesta": "<p><b>Figura jurídica:</b> Procedimiento de oposición y registro de marcas (Ley 22.362), legitimación para oponerse (Fallo Horizonte), y negociación ante el INPI.</p><p><b>Razonamiento:</b></p><ol><li>La oposición de 'NeuroVita' es <b>válida en cuanto al fondo</b>: está fundada en similitud fonética entre ambos nombres y riesgo de confusión para el consumidor, y fue presentada dentro del plazo de 30 días corridos desde la publicación.</li><li>Presentada la oposición, el INPI otorga un plazo de <b>90 días</b> para que las partes negocien.</li><li>Si no se alcanza un acuerdo dentro de los 90 días, <b>resuelve la Dirección de Marcas del INPI</b>, haciendo lugar o no al planteo de alguna de las partes.</li><li>Contra esa resolución procede recurso ante la <b>Justicia Civil y Comercial</b> dentro de los <b>30 días hábiles</b> siguientes.</li><li>Si la oposición prospera, 'NeuroVida' debe volver a presentar su solicitud con otro nombre o sonido.</li></ol><p><b>Respuesta:</b> Si no se alcanza un acuerdo dentro de los 90 días, resuelve la Dirección de Marcas del INPI. Contra esa resolución procede recurso ante la Justicia Civil y Comercial dentro de los 30 días hábiles.</p>",
+      "errorTipico": "Creer que toda oposición fundada en similitud fonética implica automáticamente el rechazo del registro, sin considerar que el trámite prevé una instancia de negociación entre partes y, eventualmente, resolución administrativa fundada.",
+      "linkRel": "Relacionado con P2, P3 y P4 del cuestionario.",
+      "contrafactico": "¿Qué hubiera ocurrido si, en lugar de 'NeuroVita' (marca ya registrada), quien se hubiera opuesto fuera un tercer laboratorio, 'NeuroPlus', que solo tenía una solicitud propia en trámite —sin registro firme— para un nombre que también consideraba fonéticamente similar? Conforme a la doctrina del Fallo Horizonte, 'NeuroPlus' no estaría legitimado para oponerse válidamente, ya que solo puede ejercer el derecho de oposición quien ya es titular de una marca registrada."
+    },
+    {
+      "id": "mat-pareto",
+      "title": "Top Pareto",
+      "badges": [],
+      "respuesta": "Preguntas críticas que caen SIEMPRE en examen: P2 (art. 2 vs. art. 3), P3 (Fallo Horizonte), P4 (sistema atributivo), Integradora (color + prelación + oposición). Preguntas de alto nivel: P1 (definición doctrinaria), P5 (renovación), P6 (clasificación de Niza), P7 (marca vs. designación comercial), P8 (extinción vs. nulidad).",
+      "table": {
+        "headers": ["Prioridad", "Pregunta", "Concepto clave"],
+        "rows": [
+          ["Crítico", "P2", "Art. 2 vs. Art. 3 (capacidad distintiva vs. prohibiciones)"],
+          ["Crítico", "P3", "Fallo Horizonte: legitimación para oponerse"],
+          ["Crítico", "P4", "Sistema atributivo y prelación de la solicitud"],
+          ["Crítico", "Integradora", "Color + prelación + oposición sin registro"],
+          ["Alto", "P1", "Definición doctrinaria de marca y art. 1"],
+          ["Alto", "P5", "Renovación de marca registrada"],
+          ["Alto", "P6", "Clasificación de Niza y protección por clase"],
+          ["Alto", "P7", "Marca registrada vs. designación comercial"],
+          ["Alto", "P8", "Extinción vs. nulidad (arts. 23 y 24)"]
+        ]
+      }
+    },
+    {
+      "id": "mat-fuentes",
+      "title": "Fuentes clave",
+      "badges": [],
+      "respuesta": "Ley 22.362: régimen de marcas y signos distintivos. Art. 1: signos registrables. Art. 2: falta de capacidad distintiva. Art. 3: prohibiciones legales. Art. 23: extinción. Art. 24: nulidad. Fallo Horizonte: legitimación para oponerse. Clasificación de Niza: 45 clases de productos y servicios.",
+      "table": {
+        "headers": ["Fuente", "Qué establece", "Por qué importa en examen"],
+        "rows": [
+          ["Ley 22.362, art. 1", "Enumera signos registrables (no define marca)", "Fuente normativa central de la clase; el art. 1 es abierto, no taxativo"],
+          ["Ley 22.362, art. 2", "Rechaza signos sin capacidad distintiva", "Trampa: se confunde con el art. 3, pero el art. 2 se refiere a la naturaleza del signo"],
+          ["Ley 22.362, art. 3", "Prohibiciones legales (orden público, competencia desleal)", "El signo puede ser distintivo pero estar prohibido por ley"],
+          ["Fallo Horizonte", "Solo puede oponerse quien tiene marca registrada", "Trampa recurrente: se confunde con la prelación entre solicitudes"],
+          ["Clasificación de Niza", "45 clases (1-34 productos, 35-45 servicios)", "Protección solo en la clase registrada; alta probabilidad de pregunta aplicada"]
+        ]
+      }
+    }
+  ]
+}
