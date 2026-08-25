@@ -193,8 +193,8 @@ async function loadData() {
         saveClaseOffline(cacheKey, data);
       }
       const adj = (data.adjacentes || []) as Clase[];
-      setPrevClase(adj.find((c) => c.numero === num) || null);
-      setNextClase(adj.find((c) => c.numero === num) || null);
+      setPrevClase(adj.find((c) => c.numero === num - 1) || null);
+      setNextClase(adj.find((c) => c.numero === num + 1) || null);
     } catch (e) {
       console.error("Error loading clase, intentando offline:", e);
       setOfflineMode(true);
@@ -204,8 +204,8 @@ async function loadData() {
         if (anyData.materia) setMateria(anyData.materia);
         if (anyData.clase) setClase(anyData.clase);
         const adj = anyData.adjacentes || [];
-        setPrevClase(adj.find((c) => c.numero === num) || null);
-        setNextClase(adj.find((c) => c.numero === num) || null);
+        setPrevClase(adj.find((c) => c.numero === num - 1) || null);
+        setNextClase(adj.find((c) => c.numero === num + 1) || null);
       }
     }
     setLoading(false);
