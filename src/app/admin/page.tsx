@@ -302,6 +302,7 @@ export default function AdminPage() {
       cloudinaryUrl?: string;
       textoContenido?: string;
       contenido?: string;
+      html?: string;
     }>,
     claseId?: string
   ): Promise<{ ok: boolean; error?: string }> {
@@ -375,6 +376,8 @@ export default function AdminPage() {
           processedItems.push({ tipo: item.tipo, nombre: item.nombre, storageKey: up.storageKey, fileSize: up.fileSize });
         } else if (item.contenido) {
           processedItems.push({ tipo: item.tipo, nombre: item.nombre, contenido: item.contenido });
+        } else if (item.html) {
+          processedItems.push({ tipo: item.tipo, nombre: item.nombre, html: item.html });
         } else if (item.driveLink) {
           processedItems.push({
             tipo: item.tipo,

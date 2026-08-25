@@ -13,6 +13,7 @@ interface UploadItem {
   cloudinaryUrl?: string;
   textoContenido?: string;
   contenido?: string;
+  html?: string;
 }
 
 interface ClaseExistente {
@@ -62,46 +63,6 @@ const sectionHeaderStyle: React.CSSProperties = {
   gap: "10px",
 };
 
-const CUESTIONARIO_EJEMPLO = JSON.stringify(
-  {
-    header: {
-      title: "Contratos · Clase 1",
-      sub: "CCC — Unidad 1 · Relación y contrato de consumo",
-      meta: "8 ítems · 3 casos · Pareto +80%",
-    },
-    storageKey: "contratos_clase1_progress",
-    questions: [
-      {
-        id: "p1",
-        topic: "O1 · art. 1092 CCC",
-        priority: "critico",
-        enunciado: "¿Qué significa que un consumidor sea destinatario final?",
-        pista: "Pensá en si el bien reingresa al mercado.",
-        respuestaLibre: "Adquiere el bien para consumo propio, sin reinsertarlo en la cadena.",
-        opciones: [
-          "Es destinatario final si lo usa para consumo propio, sin volver al mercado.",
-          "Lo es aunque el bien reingrese transformado a la cadena.",
-        ],
-        correcta: 0,
-        explicacion: "El destinatario final no reinserta el bien al mercado.",
-        errorTipico: "Creer que basta con pagar para ser consumidor.",
-        contexto: "",
-      },
-    ],
-    material: [
-      {
-        id: "mat-p1",
-        title: "1. Destinatario final (art. 1092 CCC)",
-        badges: [{ text: "O1", kind: "fuente" }, { text: "Pareto", kind: "pareto" }],
-        enunciado: "El consumidor adquiere el bien para consumo propio.",
-        respuesta: "Ser destinatario final implica consumo propio, familiar o social, sin volver al mercado.",
-        errorTipico: "Dar por sentada la calidad de consumidor por solo haber pagado.",
-      },
-    ],
-  },
-  null,
-  2
-);
 
 export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminUploadProps) {
   const [modo, setModo] = useState<"nueva" | "existente">("nueva");
@@ -137,7 +98,9 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const [cuestionarioNombre, setCuestionarioNombre] = useState("");
   const [cuestionarioContenido, setCuestionarioContenido] = useState("");
   const [cuestionarioError, setCuestionarioError] = useState("");
+  const [cuestionarioModo, setCuestionarioModo] = useState<"json" | "html">("json");
   const jsonUploadInputRef = useRef<HTMLInputElement>(null);
+  const htmlUploadInputRef = useRef<HTMLInputElement>(null);
 
   const [enlaceNombre, setEnlaceNombre] = useState("");
   const [enlaceUrl, setEnlaceUrl] = useState("");
@@ -245,14 +208,20 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     setUploading(true);
 
     if (hasCuestionario) {
-      try {
-        const d = JSON.parse(cuestionarioContenido);
-        if (!d || !Array.isArray(d.questions) || d.questions.length === 0) {
-          throw new Error("El contenido debe tener questions[] con al menos una pregunta");
+      if (cuestionarioModo === "json") {
+        try {
+          const d = JSON.parse(cuestionarioContenido);
+          if (!d || !Array.isArray(d.questions) || d.questions.length === 0) {
+            throw new Error("El contenido debe tener questions[] con al menos una pregunta");
+          }
+        } catch (err) {
+          setUploading(false);
+          setResultMsg({ text: "Cuestionario: JSON inválido — " + (err as Error).message, isError: true });
+          return;
         }
-      } catch (err) {
+      } else if (!/^\s*<!doctype\s+html/i.test(cuestionarioContenido) && !/^\s*<html/i.test(cuestionarioContenido)) {
         setUploading(false);
-        setResultMsg({ text: "Cuestionario: JSON inválido — " + (err as Error).message, isError: true });
+        setResultMsg({ text: "Cuestionario: el contenido no parece HTML válido", isError: true });
         return;
       }
     }
@@ -290,7 +259,11 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     }
 
     if (hasCuestionario) {
-      items.push({ tipo: "cuestionario", nombre: cuestionarioNombre || `Cuestionario Clase ${claseNumero}`, contenido: cuestionarioContenido });
+      if (cuestionarioModo === "html") {
+        items.push({ tipo: "cuestionario", nombre: cuestionarioNombre || `Cuestionario Clase ${claseNumero}`, html: cuestionarioContenido });
+      } else {
+        items.push({ tipo: "cuestionario", nombre: cuestionarioNombre || `Cuestionario Clase ${claseNumero}`, contenido: cuestionarioContenido });
+      }
     }
 
     if (hasEnlace) {
@@ -347,6 +320,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     setCuestionarioNombre("");
     setCuestionarioContenido("");
     setCuestionarioError("");
+    setCuestionarioModo("json");
     setEnlaceNombre("");
     setEnlaceUrl("");
     setClaseYoutubeItems([{ nombre: "", url: "" }]);
@@ -989,37 +963,77 @@ Clase Virtual
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => jsonUploadInputRef.current?.click()}
-                style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-gold)", padding: "9px 14px", cursor: "pointer", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" }}
+                onClick={() => setCuestionarioModo("json")}
+                style={{
+                  background: cuestionarioModo === "json" ? "var(--color-gold)" : "none",
+                  border: "1px solid var(--color-line)",
+                  color: cuestionarioModo === "json" ? "var(--color-ink)" : "var(--color-gold)",
+                  padding: "9px 14px",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "11px",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                }}
               >
-                Cargar archivo
+                PEGAR JSON
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setCuestionarioContenido(CUESTIONARIO_EJEMPLO);
-                  setCuestionarioError("");
+                onClick={() => setCuestionarioModo("html")}
+                style={{
+                  background: cuestionarioModo === "html" ? "var(--color-gold)" : "none",
+                  border: "1px solid var(--color-line)",
+                  color: cuestionarioModo === "html" ? "var(--color-ink)" : "var(--color-gold)",
+                  padding: "9px 14px",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "11px",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
                 }}
-                style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-gold)", padding: "9px 14px", cursor: "pointer", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" }}
               >
-                Cargar ejemplo
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  try {
-                    const d = JSON.parse(cuestionarioContenido);
-                    if (!d.questions || !Array.isArray(d.questions)) throw new Error("Falta questions[]");
-                    setCuestionarioError("");
-                  } catch (err) {
-                    setCuestionarioError("JSON inválido: " + (err as Error).message);
-                  }
-                }}
-                style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", padding: "9px 14px", cursor: "pointer", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" }}
-              >
-                Validar
+                SUBIR HTML DIRECTO
               </button>
             </div>
+
+            {cuestionarioModo === "html" && (
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => htmlUploadInputRef.current?.click()}
+                  style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-gold)", padding: "9px 14px", cursor: "pointer", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" }}
+                >
+                  Elegir archivo .html
+                </button>
+                {cuestionarioContenido && (
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
+                    {cuestionarioContenido.length.toLocaleString()} caracteres listos
+                  </span>
+                )}
+              </div>
+            )}
+            <input
+              ref={htmlUploadInputRef}
+              type="file"
+              accept=".html,.htm,text/html"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    const text = ev.target?.result;
+                    if (typeof text === "string") {
+                      setCuestionarioContenido(text);
+                      setCuestionarioError("");
+                    }
+                  };
+                  reader.readAsText(file);
+                }
+                e.target.value = "";
+              }}
+            />
             <input
               ref={jsonUploadInputRef}
               type="file"
@@ -1052,8 +1066,8 @@ Clase Virtual
             <textarea
               value={cuestionarioContenido}
               onChange={(e) => setCuestionarioContenido(e.target.value)}
-              placeholder='Pegá el contenido del cuestionario en formato JSON: { "header": {...}, "questions": [...], "material": [...] }'
-              aria-label="Contenido del cuestionario en JSON"
+              placeholder={cuestionarioModo === "html" ? 'Subí un archivo .html o pegá el HTML completo del cuestionario (fiel al original). El visor lo muestra tal cual.' : 'Pegá el contenido del cuestionario en formato JSON: { "header": {...}, "questions": [...], "material": [...] }'}
+              aria-label="Contenido del cuestionario"
               rows={10}
               spellCheck={false}
               style={{ ...inputStyle, resize: "vertical", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px", lineHeight: 1.5 }}
@@ -1062,7 +1076,9 @@ Clase Virtual
               <p style={{ fontSize: "11px", color: "#E05555", fontFamily: "var(--font-inter)" }}>{cuestionarioError}</p>
             )}
             <p style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
-              Solo visible para el administrador. El HTML se genera automáticamente desde este contenido y se puede editar campo por campo después.
+              {cuestionarioModo === "html"
+                ? "Solo visible para el administrador. El HTML se sube tal cual, sin regenerar ni cambiar su estructura. Editalo luego en &ldquo;Gestionar contenido&rdquo;."
+                : "Solo visible para el administrador. El HTML se genera automáticamente desde este contenido JSON."}
             </p>
           </div>
         </div>

@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { formatFechaLocal } from "@/lib/utils";
 import { useEscapeKey } from "@/lib/useEscapeKey";
 import { Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical, Link2, ChevronUp, ChevronDown } from "@/components/icons";
-import CuestionarioEditor from "@/components/CuestionarioEditor";
+import HtmlEditor from "@/components/HtmlEditor";
 import type { CuestionarioData } from "@/lib/cuestionario";
 
 interface Archivo {
@@ -19,6 +19,7 @@ interface Archivo {
   nota: string | null;
   orden: number;
   contenido?: CuestionarioData | null;
+  contenido_texto?: string | null;
 }
 
 interface Materia {
@@ -84,10 +85,8 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const [message, setMessage] = useState("");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [filtroMateria, setFiltroMateria] = useState("todas");
-  const [editandoCuestionario, setEditandoCuestionario] = useState<{ archivoId: string; nombre: string; contenido: CuestionarioData } | null>(null);
+  const [editandoCuestionario, setEditandoCuestionario] = useState<{ archivoId: string; nombre: string; html: string } | null>(null);
   const [cuestionarioSaving, setCuestionarioSaving] = useState(false);
-  const jsonFileInputRef = useRef<HTMLInputElement>(null);
-  const [jsonTargetArchivoId, setJsonTargetArchivoId] = useState<string | null>(null);
 
   const cerrarReplace = () => {
     setReplacing(null);
@@ -411,14 +410,14 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     }
   }
 
-  async function handleGuardarCuestionario(contenido: CuestionarioData) {
+  async function handleGuardarCuestionario(html: string) {
     if (!editandoCuestionario) return;
     setCuestionarioSaving(true);
     try {
       const res = await fetch(`/api/admin/cuestionario/${editandoCuestionario.archivoId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contenido }),
+        body: JSON.stringify({ html }),
       });
       const data = await res.json();
       if (data.ok) {
@@ -437,39 +436,26 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
 
   async function abrirEditorCuestionario(archivo: Archivo) {
     setMessage("");
-    let contenido = archivo.contenido;
-    if (!contenido || !Array.isArray(contenido.questions)) {
-      const { data } = await supabase.from("archivos").select("contenido").eq("id", archivo.id).single();
-      contenido = data?.contenido;
-    }
-    if (!contenido || !Array.isArray(contenido.questions)) {
-      setJsonTargetArchivoId(archivo.id);
-      setTimeout(() => jsonFileInputRef.current?.click(), 0);
-      setMessage("Este cuestionario fue subido sin JSON editable. Elegí el archivo .json para poder editarlo.");
-      return;
-    }
-    setEditandoCuestionario({ archivoId: archivo.id, nombre: archivo.nombre_display, contenido });
-  }
-
-  async function handleAdjuntarJson(file: File) {
-    if (!jsonTargetArchivoId) return;
+    setCuestionarioSaving(true);
     try {
-      const text = await file.text();
-      const contenido = JSON.parse(text) as CuestionarioData;
-      if (!contenido.header || !Array.isArray(contenido.questions)) {
-        setMessage("Error: el archivo no tiene el formato correcto (falta header o questions).");
+      if (archivo.storage_key) {
+        const res = await fetch(`/api/stream/${archivo.id}`);
+        if (res.ok) {
+          const html = await res.text();
+          setEditandoCuestionario({ archivoId: archivo.id, nombre: archivo.nombre_display, html });
+          return;
+        }
+      }
+      if (archivo.contenido_texto) {
+        setEditandoCuestionario({ archivoId: archivo.id, nombre: archivo.nombre_display, html: archivo.contenido_texto });
         return;
       }
-      const archivo = clases.flatMap((c) => c.archivos).find((a) => a.id === jsonTargetArchivoId);
-      setEditandoCuestionario({
-        archivoId: jsonTargetArchivoId,
-        nombre: archivo?.nombre_display || file.name,
-        contenido,
-      });
-    } catch {
-      setMessage("Error: no se pudo leer el archivo JSON. Asegurate de que sea un JSON válido.");
+      setMessage("Este cuestionario no tiene HTML en R2 para editar.");
+    } catch (e) {
+      setMessage("Error al abrir el editor: " + String(e));
+    } finally {
+      setCuestionarioSaving(false);
     }
-    setJsonTargetArchivoId(null);
   }
 
   async function handleReorder(archivos: Archivo[], index: number, direction: "up" | "down") {
@@ -1048,15 +1034,6 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                               }
                             },
                           },
-                          ...(archivo.tipo === "cuestionario"
-                            ? [{
-                                label: "Adjuntar JSON",
-                                onClick: () => {
-                                  setJsonTargetArchivoId(archivo.id);
-                                  setTimeout(() => jsonFileInputRef.current?.click(), 0);
-                                },
-                              }]
-                            : []),
                           {
                             label: "Borrar",
                             danger: true,
@@ -1103,8 +1080,8 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
               </button>
             </div>
             <div style={{ flex: 1, minHeight: 0 }}>
-              <CuestionarioEditor
-                contenido={editandoCuestionario.contenido}
+              <HtmlEditor
+                html={editandoCuestionario.html}
                 onSave={handleGuardarCuestionario}
                 onCancel={() => setEditandoCuestionario(null)}
                 saving={cuestionarioSaving}
@@ -1517,18 +1494,6 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
           </div>
         </div>
       )}
-
-      <input
-        ref={jsonFileInputRef}
-        type="file"
-        accept=".json,application/json"
-        style={{ display: "none" }}
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) handleAdjuntarJson(file);
-          e.target.value = "";
-        }}
-      />
     </div>
   );
 }

@@ -13,10 +13,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   try {
     const { id } = await params;
     const body = await request.json();
-    const contenido = body.contenido as CuestionarioData | undefined;
-    if (!contenido || !contenido.questions || !Array.isArray(contenido.questions)) {
-      return NextResponse.json({ error: "contenido inválido" }, { status: 400 });
-    }
 
     const { data: archivo, error: loadErr } = await getSupabaseAdmin()
       .from("archivos")
@@ -28,6 +24,25 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
     if (archivo.tipo !== "cuestionario" || !archivo.storage_key) {
       return NextResponse.json({ error: "El archivo no es un cuestionario válido" }, { status: 400 });
+    }
+
+    // Modo HTML crudo: se guarda tal cual, sin regenerar su estructura.
+    if (typeof body.html === "string" && body.html.trim() !== "") {
+      await uploadToR2(archivo.storage_key, Buffer.from(body.html, "utf-8"), "text/html; charset=utf-8");
+      const { error: updErr } = await getSupabaseAdmin()
+        .from("archivos")
+        .update({ contenido_texto: body.html, contenido: null })
+        .eq("id", id);
+      if (updErr) {
+        return NextResponse.json({ error: "Error al guardar: " + updErr.message }, { status: 500 });
+      }
+      return NextResponse.json({ ok: true, modo: "html" });
+    }
+
+    // Modo JSON (legacy): regenera el HTML desde el contenido.
+    const contenido = body.contenido as CuestionarioData | undefined;
+    if (!contenido || !contenido.questions || !Array.isArray(contenido.questions)) {
+      return NextResponse.json({ error: "contenido inválido" }, { status: 400 });
     }
 
     const plantillaPath = path.join(process.cwd(), "public", "plantilla-cuestionario.html");
@@ -44,7 +59,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Error al guardar: " + updErr.message }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, modo: "json" });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json({ error: msg }, { status: 500 });

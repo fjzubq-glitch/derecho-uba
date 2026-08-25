@@ -7,6 +7,12 @@ import { isAdminRequest } from "@/lib/auth";
 import { validateAudioFile, validateDocumentFile } from "@/lib/fileValidation";
 import { CuestionarioData, generarCuestionarioHTML } from "@/lib/cuestionario";
 
+// Cuando el cuestionario se sube como HTML crudo (fiel al original), se guarda
+// directo en R2 sin pasar por el generador que resintetiza contenido desde JSON.
+function esHtml(raw: string): boolean {
+  return /^\s*<!doctype\s+html/i.test(raw) || /^\s*<html/i.test(raw);
+}
+
 export async function POST(request: NextRequest) {
   if (!isAdminRequest(request.headers.get("cookie"))) {
     return NextResponse.json({ ok: false, error: "No autorizado" }, { status: 401 });
@@ -82,9 +88,22 @@ export async function POST(request: NextRequest) {
     for (const item of items) {
       let storageKey = item.storageKey || null;
       let contenido: CuestionarioData | string | null = item.contenido || null;
+      let contenidoTexto: string | null = item.contenidoTexto || null;
       let fileSize = item.fileSize || null;
 
-      if (item.tipo === "cuestionario" && contenido) {
+      // HTML crudo de cuestionario: se sube tal cual, sin regenerar.
+      if (item.tipo === "cuestionario" && item.html && esHtml(item.html)) {
+        storageKey = `uploads/${Date.now()}-cuestionario-html-${Date.now()}.html`;
+        fileSize = Buffer.byteLength(item.html, "utf-8");
+        contenidoTexto = item.html;
+        contenido = null;
+        try {
+          await uploadToR2(storageKey, Buffer.from(item.html, "utf-8"), "text/html; charset=utf-8");
+        } catch (e) {
+          insertErrors.push(`"${item.nombre}": error al subir HTML — ${e instanceof Error ? e.message : String(e)}`);
+          continue;
+        }
+      } else if (item.tipo === "cuestionario" && contenido) {
         const parsed = typeof contenido === "string" ? JSON.parse(contenido) : contenido;
         if (!parsed || !Array.isArray(parsed.questions)) {
           insertErrors.push(`"${item.nombre}": contenido de cuestionario inválido (sin questions[])`);
@@ -123,7 +142,7 @@ export async function POST(request: NextRequest) {
         storage_key: storageKey,
         youtube_url: item.youtubeUrl || null,
         cloudinary_url: item.cloudinaryUrl || null,
-        contenido_texto: item.contenidoTexto || null,
+        contenido_texto: contenidoTexto,
         contenido,
         file_size: fileSize,
         duration_seconds: item.durationSeconds || null,
