@@ -7,6 +7,7 @@ const root = path.join(__dirname, "..");
 
 const esc = (s = "") => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const inline = (s = "") => esc(s).replace(/\*(.+?)\*/g, "<b>$1</b>");
+const hasHtml = (s = "") => /<[a-z][\s\S]*>/i.test(s);
 const paragraphs = (s = "") =>
   s.split(/\n\n+/).map((p) => p.trim()).filter(Boolean).map((p) => `<p>${inline(p).replace(/\n/g, "<br>")}</p>`).join("");
 
@@ -30,13 +31,15 @@ function renderMaterial(material = []) {
             .map((r) => `<tr>${r.map((c) => `<td>${inline(c)}</td>`).join("")}</tr>`)
             .join("")}</tbody></table>`
         : "";
-      const resp = m.respuesta ? `<details><summary>Ver resolución</summary><div class="detail-content">${paragraphs(m.respuesta)}</div></details>` : "";
+      const resp = m.respuesta
+        ? `<details><summary>Ver resolución</summary><div class="detail-content">${m.table ? tbl : hasHtml(m.respuesta) ? m.respuesta : paragraphs(m.respuesta)}</div></details>`
+        : "";
       const err = m.errorTipico ? `<details class="error-detail"><summary>Ver error típico</summary><div class="detail-content"><b>❌ Error típico:</b> ${inline(m.errorTipico)}</div></details>` : "";
       const contra = m.contrafactual ? `<div class="contrafactico"><b>Sub-escenario contrafáctico:</b> ${inline(m.contrafactual)}</div>` : "";
       const link = m.linkRel ? `<p class="link-rel">🔗 ${esc(m.linkRel)}</p>` : "";
       return `<div class="mat-section" id="${esc(m.id)}">
         <div class="section-head"><h3>${esc(m.title)}</h3><div class="badges">${badges}</div></div>
-        ${enun}${ctx}${resp}${tbl}${err}${contra}${link}
+        ${enun}${ctx}${resp}${err}${contra}${link}
       </div>`;
     })
     .join("\n");

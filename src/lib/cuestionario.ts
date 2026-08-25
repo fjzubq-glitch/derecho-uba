@@ -40,6 +40,8 @@ const esc = (s: string = "") =>
 const inline = (s: string = "") =>
   esc(s).replace(/\*(.+?)\*/g, "<b>$1</b>");
 
+const hasHtml = (s: string = "") => /<[a-z][\s\S]*>/i.test(s);
+
 const paragraphs = (s: string = "") =>
   s
     .split(/\n\n+/)
@@ -76,7 +78,7 @@ export function renderMaterial(material: MaterialSection[]): string {
             .join("")}</tbody></table>`
         : "";
       const resp = m.respuesta
-        ? `<details><summary>Ver resolución</summary><div class="detail-content">${m.table ? tbl : paragraphs(m.respuesta)}</div></details>`
+        ? `<details><summary>Ver resolución</summary><div class="detail-content">${m.table ? tbl : hasHtml(m.respuesta) ? m.respuesta : paragraphs(m.respuesta)}</div></details>`
         : "";
       const err = m.errorTipico
         ? `<details class="error-detail"><summary>Ver error típico</summary><div class="detail-content"><b>❌ Error típico:</b> ${inline(m.errorTipico)}</div></details>`
