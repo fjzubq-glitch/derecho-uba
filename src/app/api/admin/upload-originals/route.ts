@@ -17,13 +17,22 @@ export async function POST() {
     const supabase = getSupabaseAdmin();
     const { data: archivos, error } = await supabase
       .from("archivos")
-      .select("id, storage_key, nombre_display")
+      .select("id, storage_key, nombre_display, clase_id")
       .eq("tipo", "cuestionario");
 
     if (error) throw new Error(error.message);
     if (!archivos || archivos.length === 0) {
       return NextResponse.json({ ok: true, uploaded: 0, message: "No hay cuestionarios" });
     }
+
+    const claseIds = [...new Set(archivos.map((a) => a.clase_id).filter(Boolean))];
+    const { data: clases } = claseIds.length > 0
+      ? await supabase.from("clases").select("id, numero, materias!inner(slug)").in("id", claseIds)
+      : { data: [] };
+
+    const claseMap = new Map(
+      (clases || []).map((c: any) => [c.id, { slug: c.materias?.slug || "", numero: c.numero }])
+    );
 
     const originalsDir = path.join(process.cwd(), "content", "cuestionarios");
     const files = await fs.readdir(originalsDir);
@@ -44,8 +53,14 @@ export async function POST() {
         continue;
       }
 
-      const keySlug = slugify(archivo.storage_key);
-      const matchedFile = fileSlugs[keySlug];
+      const info = claseMap.get(archivo.clase_id || "");
+      if (!info) {
+        results.push({ nombre: archivo.nombre_display, key: archivo.storage_key, file: "", status: "skipped", error: "No clase info" });
+        continue;
+      }
+
+      const expectedSlug = `${info.slug}-clase${info.numero}`;
+      const matchedFile = fileSlugs[expectedSlug];
 
       if (!matchedFile) {
         results.push({
@@ -53,7 +68,7 @@ export async function POST() {
           key: archivo.storage_key,
           file: "",
           status: "skipped",
-          error: `No match for key_slug "${keySlug}"`,
+          error: `No file for "${expectedSlug}"`,
         });
         continue;
       }
@@ -75,7 +90,7 @@ export async function POST() {
       }
     }
 
-    return NextResponse.json({ ok: true, uploaded, total: archivos.length, notion_files: notionFiles.length, file_slugs: Object.keys(fileSlugs), results });
+    return NextResponse.json({ ok: true, uploaded, total: archivos.length, notion_files: notionFiles.length, results });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json({ ok: false, error: msg }, { status: 500 });
