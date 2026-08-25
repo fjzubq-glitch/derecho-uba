@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contratos · Clase 3</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #191919;
+    --bg-2: #232323;
+    --bg-3: #2d2d2d;
+    --accent: #e0e0e0;
+    --accent-soft: #ffffff;
+    --accent-bg: rgba(107,155,209,0.10);
+    --border: #333333;
+    --border-2: #2a2a2a;
+    --text: #ebebeb;
+    --text-2: #cccccc;
+    --text-dim: #888888;
+    --ok: #5fb88a;
+    --ok-bg: rgba(95,184,138,0.12);
+    --err: #e07a75;
+    --err-bg: rgba(224,122,117,0.12);
+    --warn: #e6b87b;
+    --warn-bg: rgba(230,184,123,0.12);
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+    --shadow-lg: 0 2px 8px rgba(0,0,0,0.35), 0 12px 32px rgba(0,0,0,0.25);
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    padding: 28px 24px 80px;
+    background:
+      radial-gradient(ellipse at top, #222222 0%, var(--bg) 55%),
+      var(--bg);
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  header.expediente {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header.expediente .brand { display: flex; align-items: center; gap: 14px; }
+  header.expediente .logo {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #999999);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 600; font-size: 18px;
+    font-family: Georgia, serif;
+    box-shadow: 0 2px 10px rgba(255,255,255,0.1);
+  }
+  header.expediente h1 { font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+  header.expediente .sub { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+  header.expediente .meta { font-size: 12px; color: var(--text-dim); text-align: right; letter-spacing: 0.3px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fade .3s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  .card {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 820px) { .intro-grid { grid-template-columns: 1fr; } }
+
+  .intro h2 { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 12px; letter-spacing: -0.2px; }
+  .intro p { color: var(--text-2); margin-bottom: 10px; font-size: 14.5px; }
+  .intro ul { list-style: none; padding: 0; }
+  .intro li {
+    padding: 10px 0 10px 28px;
+    position: relative;
+    font-size: 14px;
+    color: var(--text-2);
+    border-bottom: 1px solid var(--border-2);
+    line-height: 1.55;
+  }
+  .intro li:last-child { border-bottom: none; }
+  .intro li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 16px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent-bg);
+    border: 1.5px solid var(--accent);
+  }
+  .intro li b { color: var(--text); font-weight: 600; }
+
+  .stat-row { display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
+  .stat-pill {
+    flex: 1; min-width: 110px;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .stat-pill .num { font-size: 22px; font-weight: 600; color: var(--accent); font-family: Georgia, serif; }
+  .stat-pill .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #191919;
+    border: 1px solid var(--accent);
+    padding: 11px 22px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: 0.2px;
+  }
+  .btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(255,255,255,0.1); }
+  .btn.secondary { background: var(--bg-3); color: var(--text-2); border-color: var(--border); font-weight: 500; }
+  .btn.secondary:hover { background: var(--border); color: var(--text); box-shadow: none; transform: none; }
+  .btn.ghost { background: transparent; color: var(--text-dim); border-color: transparent; padding: 8px 12px; font-size: 13px; font-weight: 500; }
+  .btn.ghost:hover { background: var(--bg-3); color: var(--text); box-shadow: none; transform: none; }
+  .btn.ok { background: var(--ok); border-color: var(--ok); color: #191919; }
+  .btn.ok:hover { background: #6fc99a; border-color: #6fc99a; }
+  .btn.err { background: var(--err); border-color: var(--err); color: #191919; }
+  .btn.err:hover { background: #e88a85; border-color: #e88a85; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+
+  .progress-bar {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    box-shadow: var(--shadow);
+  }
+  .progress-bar .track { flex: 1; min-width: 160px; height: 6px; background: var(--bg-3); border-radius: 3px; overflow: hidden; }
+  .progress-bar .fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-soft)); border-radius: 3px; transition: width .4s; }
+  .progress-bar .stats { font-size: 13px; color: var(--text-2); font-weight: 500; }
+  .progress-bar .stats b { color: var(--accent); font-weight: 600; }
+
+  .card .tag-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .card .tag { font-size: 11px; letter-spacing: 0.8px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; }
+  .card .priority { display: inline-block; font-size: 10.5px; padding: 3px 9px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .priority.critico { background: var(--err-bg); color: var(--err); }
+  .priority.alto { background: var(--warn-bg); color: var(--warn); }
+  .priority.medio { background: var(--bg-3); color: var(--text-dim); }
+
+  .card h3 { font-size: 19px; color: var(--text); font-weight: 600; line-height: 1.45; margin-bottom: 14px; letter-spacing: -0.2px; }
+  .card .contexto {
+    font-size: 14px; color: var(--text-2); font-style: italic; margin-bottom: 14px;
+    padding: 12px 14px; border-left: 3px solid var(--accent); background: var(--accent-bg);
+    border-radius: 0 8px 8px 0; line-height: 1.6;
+  }
+
+  .recall-area textarea {
+    width: 100%; min-height: 110px;
+    background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 14px; font-family: inherit; font-size: 14.5px;
+    resize: vertical; line-height: 1.55; transition: border-color .15s;
+  }
+  .recall-area textarea:focus { outline: none; border-color: var(--accent); background: var(--bg-3); }
+  .recall-area textarea::placeholder { color: var(--text-dim); }
+  .recall-hint {
+    font-size: 13px; color: var(--text-2); margin-top: 10px;
+    padding: 10px 12px; background: var(--bg-3); border: 1px solid var(--border);
+    border-radius: 8px; line-height: 1.5;
+  }
+  .recall-hint b { color: var(--accent); font-style: normal; }
+
+  .options { list-style: none; }
+  .options li {
+    background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 13px 15px; margin-bottom: 9px; cursor: pointer; transition: all .15s;
+    font-size: 14.5px; line-height: 1.55;
+  }
+  .options li:hover { border-color: var(--accent); background: var(--accent-bg); }
+  .options li.correct { border-color: var(--ok); background: var(--ok-bg); }
+  .options li.wrong { border-color: var(--err); background: var(--err-bg); }
+  .options li.disabled { cursor: default; }
+  .options li.disabled:hover { background: var(--bg); border-color: var(--border); }
+  .options li.correct.disabled:hover { background: var(--ok-bg); border-color: var(--ok); }
+  .options li.wrong.disabled:hover { background: var(--err-bg); border-color: var(--err); }
+  .options li .letter {
+    display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center;
+    border-radius: 6px; background: var(--bg-3); color: var(--accent); margin-right: 10px;
+    font-weight: 600; font-size: 12px; font-family: Georgia, serif;
+  }
+  .options li.correct .letter { background: var(--ok); color: #191919; }
+  .options li.wrong .letter { background: var(--err); color: #191919; }
+
+  .feedback {
+    margin-top: 18px; padding: 18px; border-radius: 10px;
+    border-left: 3px solid var(--accent); background: var(--accent-bg);
+  }
+  .feedback.ok { border-left-color: var(--ok); background: var(--ok-bg); }
+  .feedback.err { border-left-color: var(--err); background: var(--err-bg); }
+  .feedback .veredicto { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+  .feedback.ok .veredicto { color: var(--ok); }
+  .feedback.err .veredicto { color: var(--err); }
+  .feedback h4 { font-size: 11.5px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin: 14px 0 6px; font-weight: 600; }
+  .feedback h4:first-child { margin-top: 0; }
+  .feedback p, .feedback .bloque { font-size: 14.5px; color: var(--text); line-height: 1.65; }
+  .feedback .error-tipico {
+    background: rgba(224,122,117,0.08); border-left: 2px solid var(--err);
+    padding: 10px 12px; border-radius: 0 6px 6px 0;
+    font-size: 13.5px; line-height: 1.6; color: var(--text-2);
+  }
+  .feedback .error-tipico b { color: var(--err); }
+
+  .resumen h2 { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 18px; letter-spacing: -0.3px; }
+  .resumen .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .resumen .stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; }
+  .resumen .stat-box .num { font-size: 30px; font-weight: 600; color: var(--accent); font-family: Georgia, serif; }
+  .resumen .stat-box .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px; }
+  .debil-list { list-style: none; }
+  .debil-list li {
+    padding: 11px 14px; border-left: 3px solid var(--err); background: var(--err-bg);
+    border-radius: 0 8px 8px 0; margin-bottom: 8px; font-size: 14px; line-height: 1.5;
+  }
+  .debil-list li .q-id {
+    display: inline-block; background: var(--bg-2); color: var(--err);
+    padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;
+    margin-right: 8px; font-family: Georgia, serif;
+  }
+  .dominadas li { border-left-color: var(--ok); background: var(--ok-bg); }
+  .dominadas li .q-id { color: var(--ok); }
+
+  .section-title {
+    font-size: 14px; font-weight: 600; margin: 22px 0 10px;
+    letter-spacing: 0.3px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-title.err { color: var(--err); }
+  .section-title.ok { color: var(--ok); }
+  .section-title::before { content: ""; width: 18px; height: 2px; background: currentColor; border-radius: 1px; }
+
+  .material-wrap { display: grid; grid-template-columns: 240px 1fr; gap: 22px; align-items: start; }
+  @media (max-width: 900px) { .material-wrap { grid-template-columns: 1fr; } }
+
+  .toc-toggle {
+    display: none; width: 100%;
+    background: var(--bg-2); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 16px; font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-bottom: 12px; text-align: left;
+    transition: all .15s; align-items: center; justify-content: space-between;
+  }
+  .toc-toggle:hover { background: var(--bg-3); }
+  .toc-toggle .chevron { transition: transform .2s; font-size: 12px; }
+  .toc-toggle.open .chevron { transform: rotate(180deg); }
+
+  @media (max-width: 900px) {
+    .toc-toggle { display: flex; }
+    .material-toc { display: none; position: static; max-height: none; }
+    .material-toc.open { display: block; }
+  }
+
+  .material-toc {
+    position: sticky; top: 14px;
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; font-size: 13px;
+    max-height: calc(100vh - 28px); overflow-y: auto; box-shadow: var(--shadow);
+  }
+  @media (max-width: 900px) { .material-toc { position: static; max-height: none; } }
+  .material-toc h4 { font-size: 11px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+  .material-toc .toc-group { margin-bottom: 14px; }
+  .material-toc .toc-group-title {
+    color: var(--accent); font-size: 10.5px; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 6px; padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-2); font-weight: 600;
+  }
+  .material-toc a {
+    display: block; color: var(--text-2); text-decoration: none;
+    padding: 5px 8px; border-radius: 6px; transition: all .15s;
+    font-size: 12.5px; line-height: 1.4; margin-bottom: 1px;
+  }
+  .material-toc a:hover { color: var(--accent); background: var(--accent-bg); }
+
+  .material-body { min-width: 0; }
+
+  .material-hero {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 26px; margin-bottom: 20px; box-shadow: var(--shadow);
+  }
+  .material-hero h2 { font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; margin-bottom: 6px; }
+  .material-hero p { color: var(--text-dim); font-size: 14px; }
+
+  .mat-section {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px 24px; margin-bottom: 14px;
+    box-shadow: var(--shadow); scroll-margin-top: 14px;
+  }
+  .mat-section .section-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
+  }
+  .mat-section h3 {
+    font-size: 16.5px; color: var(--text); font-weight: 600;
+    letter-spacing: -0.2px; line-height: 1.4; flex: 1; min-width: 200px;
+  }
+  .mat-section .badges { display: flex; gap: 5px; flex-wrap: wrap; }
+  .mat-section .badge {
+    font-size: 10px; padding: 3px 8px; border-radius: 20px;
+    font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; white-space: nowrap;
+  }
+  .badge.pareto { background: var(--warn-bg); color: var(--warn); }
+  .badge.trampa { background: var(--err-bg); color: var(--err); }
+  .badge.cae { background: var(--ok-bg); color: var(--ok); }
+  .badge.fuente { background: var(--bg-3); color: var(--text-dim); border: 1px solid var(--border); }
+
+  .mat-section .enunciado-q { font-size: 15px; color: var(--text); line-height: 1.6; margin-bottom: 14px; font-weight: 500; }
+
+  .mat-section details {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 10px; overflow: hidden; transition: all .2s;
+  }
+  .mat-section details[open] { border-color: var(--accent); box-shadow: 0 2px 12px rgba(107,155,209,0.15); }
+  .mat-section details summary {
+    padding: 12px 16px; cursor: pointer; font-size: 13.5px;
+    font-weight: 600; color: var(--accent); list-style: none;
+    display: flex; align-items: center; justify-content: space-between;
+    user-select: none; transition: background .15s;
+  }
+  .mat-section details summary:hover { background: var(--accent-bg); }
+  .mat-section details summary::-webkit-details-marker { display: none; }
+  .mat-section details summary::after {
+    content: "+"; font-size: 18px; font-weight: 300; color: var(--accent);
+    transition: transform .2s; line-height: 1;
+  }
+  .mat-section details[open] summary::after { content: "−"; }
+  .mat-section details[open] summary { border-bottom: 1px solid var(--border); background: var(--accent-bg); }
+  .mat-section details .detail-content { padding: 16px; font-size: 14px; line-height: 1.65; color: var(--text-2); }
+  .mat-section details.error-detail summary { color: var(--err); }
+  .mat-section details.error-detail summary::after { color: var(--err); }
+  .mat-section details.error-detail[open] summary { background: var(--err-bg); border-bottom-color: rgba(224,122,117,0.25); }
+  .mat-section details.error-detail summary:hover { background: var(--err-bg); }
+  .mat-section details.error-detail .detail-content { background: var(--err-bg); color: var(--text-2); }
+  .mat-section details.error-detail .detail-content b { color: var(--err); }
+
+  .mat-section .contexto-caso {
+    background: var(--accent-bg); border-left: 3px solid var(--accent);
+    padding: 12px 14px; border-radius: 0 8px 8px 0;
+    font-size: 14px; color: var(--text-2); margin-bottom: 14px; line-height: 1.6;
+  }
+
+  .mat-section table {
+    width: 100%; border-collapse: collapse; font-size: 13.5px;
+    margin: 8px 0; border-radius: 8px; overflow: hidden;
+  }
+  .mat-section th {
+    background: var(--bg-3); color: var(--text); text-align: left;
+    padding: 10px 12px; font-weight: 600; font-size: 11.5px;
+    text-transform: uppercase; letter-spacing: 0.6px; border-bottom: 1px solid var(--border);
+  }
+  .mat-section td { padding: 10px 12px; border-bottom: 1px solid var(--border-2); color: var(--text-2); line-height: 1.5; vertical-align: top; }
+  .mat-section tr:last-child td { border-bottom: none; }
+  .mat-section ol { padding-left: 20px; margin: 6px 0; }
+  .mat-section ol li { margin-bottom: 4px; }
+
+  .contrafactico {
+    background: var(--warn-bg); border-left: 3px solid var(--warn);
+    padding: 12px 14px; border-radius: 0 8px 8px 0; margin-top: 12px;
+    font-size: 13.5px; line-height: 1.6; color: var(--text-2);
+  }
+  .contrafactico b { color: var(--warn); }
+  .link-rel { font-size: 12.5px; color: var(--text-dim); margin-top: 10px; font-style: italic; }
+
+  .flashcard-wrap { max-width: 760px; margin: 0 auto; }
+  .flashcard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .flashcard-header .counter { font-size: 13px; color: var(--text-2); font-weight: 500; }
+  .flashcard-header .counter b { color: var(--accent); }
+  .flashcard-progress-mini { display: flex; gap: 4px; flex-wrap: wrap; }
+  .flashcard-progress-mini .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--bg-3); border: 1px solid var(--border); transition: all .2s;
+  }
+  .flashcard-progress-mini .dot.current { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+  .flashcard-progress-mini .dot.mastered { background: var(--ok); border-color: var(--ok); }
+  .flashcard-progress-mini .dot.weak { background: var(--err); border-color: var(--err); }
+
+  .flashcard {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 30px; min-height: 320px;
+    box-shadow: var(--shadow); display: flex; flex-direction: column; transition: all .3s;
+  }
+  .flashcard .fc-tag { font-size: 11px; letter-spacing: 0.8px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; margin-bottom: 10px; }
+  .flashcard .fc-context {
+    font-size: 14px; color: var(--text-2); font-style: italic; margin-bottom: 14px;
+    padding: 10px 12px; border-left: 3px solid var(--accent); background: var(--accent-bg);
+    border-radius: 0 8px 8px 0; line-height: 1.6;
+  }
+  .flashcard .fc-question { font-size: 18px; color: var(--text); font-weight: 600; line-height: 1.5; letter-spacing: -0.2px; flex: 1; margin-bottom: 18px; }
+  .flashcard .fc-status { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 14px; }
+  .flashcard .fc-status.mastered { background: var(--ok-bg); color: var(--ok); }
+  .flashcard .fc-status.weak { background: var(--err-bg); color: var(--err); }
+  .flashcard .fc-answer { border-top: 1px solid var(--border); padding-top: 18px; margin-top: 8px; animation: fade .3s ease; }
+  .flashcard-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; gap: 10px; }
+  .fc-self-eval { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .fc-self-eval .btn { flex: 1; justify-content: center; min-width: 140px; }
+
+  @media (max-width: 640px) {
+    body { padding: 14px 10px 60px; }
+    header.expediente { padding: 16px 18px; }
+    header.expediente h1 { font-size: 17px; }
+    .card, .mat-section { padding: 18px; }
+    .card h3 { font-size: 17px; }
+    .btn { padding: 10px 16px; font-size: 13.5px; }
+    .material-hero h2 { font-size: 20px; }
+    .mat-section h3 { font-size: 15px; }
+    .flashcard { padding: 20px; min-height: 280px; }
+    .flashcard .fc-question { font-size: 16px; }
+  }
+
+  .hidden { display: none !important; }
+
+  .phase-label {
+    display: inline-block; font-size: 11px; padding: 4px 11px;
+    background: var(--accent-bg); color: var(--accent);
+    border-radius: 20px; font-weight: 600; letter-spacing: 0.6px;
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+
+  .counter-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; padding: 3px 9px; background: var(--bg-3);
+    border-radius: 20px; color: var(--text-dim); font-weight: 600;
+  }
+  .counter-badge.ok { background: var(--ok-bg); color: var(--ok); }
+  .counter-badge.err { background: var(--err-bg); color: var(--err); }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="expediente">
+    <div class="brand">
+      <div class="logo">C3</div>
+      <div>
+        <h1>Contratos · Clase 3</h1>
+        <div class="sub">Leasing, corretaje, concesión y distribución</div>
+      </div>
+    </div>
+    <div class="meta">11 ítems · 8 preguntas + 3 integradoras + 3 casos</div>
+  </header>
+
+  <section id="screen-home" class="screen active">
+    <div class="intro-grid">
+      <div class="card intro">
+        <h2>Cómo funciona esta sesión</h2>
+        <p>Diseñada para fijar el contenido en la memoria, no para recorrerlo una sola vez.</p>
+        <ul>
+          <li><b>Lectura del material:</b> leé el cuestionario y los casos completos antes de ejercitar.</li>
+          <li><b>Recall libre:</b> intentás recordar la respuesta sin pistas.</li>
+          <li><b>Respuesta modelo:</b> leés la explicación completa y el <em>error típico</em>.</li>
+          <li><b>Refuerzo con opciones:</b> elegís entre alternativas para consolidar.</li>
+          <li><b>Dominio:</b> dos aciertos seguidos marcan la pregunta como dominada; si fallás, vuelve a aparecer más adelante.</li>
+        </ul>
+      </div>
+      <div class="card intro">
+        <h2>Contenido</h2>
+        <div class="stat-row">
+          <div class="stat-pill"><div class="num">11</div><div class="lbl">Ítems</div></div>
+          <div class="stat-pill"><div class="num">3</div><div class="lbl">Casos</div></div>
+        </div>
+        <p style="font-size:13.5px; color:var(--text-dim); font-style:italic; margin-top:10px;">"La interactividad es el medio; lo que importa es que el diseño ayude a fijar el contenido en la memoria."</p>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn secondary" id="btn-material">📖 Leer material de estudio</button>
+      <button class="btn" id="btn-start">▶ Iniciar sesión de estudio</button>
+      <button class="btn secondary" id="btn-flashcards">🗂️ Modo fichas rápidas</button>
+      <button class="btn secondary hidden" id="btn-review-only">Repasar sólo temas débiles</button>
+    </div>
+  </section>
+
+  <section id="screen-material" class="screen">
+    <button class="toc-toggle" id="toc-toggle">
+      <span>📑 Ver índice</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="material-wrap">
+      <aside class="material-toc" id="material-toc">
+        <h4>Índice</h4>
+        <div class="toc-group">
+          <div class="toc-group-title">Cuestionario</div>
+          <a href="#mat-p1">1 · Leasing financiero vs. operativo</a>
+          <a href="#mat-p2">2 · Mora en leasing inmobiliario</a>
+          <a href="#mat-p3">3 · Comisión del corredor</a>
+          <a href="#mat-p4">4 · Confidencialidad del corredor</a>
+          <a href="#mat-p5">5 · Exclusividad en concesión</a>
+          <a href="#mat-p6">6 · Retribución del concesionario</a>
+          <a href="#mat-p7">7 · Concesión vs. distribución</a>
+          <a href="#mat-p8">8 · Leasing y concurso preventivo</a>
+          <a href="#mat-int">Integradora · Ferretti</a>
+        </div>
+        <div class="toc-group">
+          <div class="toc-group-title">Casos</div>
+          <a href="#mat-c1">Caso 1 · El galgo que volvió</a>
+          <a href="#mat-c2">Caso 2 · Comisión de AutoValle</a>
+          <a href="#mat-c3">Caso 3 · Galpón Herrajes del Sur</a>
+        </div>
+        <div class="toc-group">
+          <div class="toc-group-title">Mapas</div>
+          <a href="#mat-pareto">Top Pareto</a>
+          <a href="#mat-fuentes">Fuentes clave</a>
+        </div>
+        <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-2);">
+          <button class="btn ghost" id="btn-back-home" style="width:100%; justify-content:center;">← Volver al inicio</button>
+        </div>
+      </aside>
+
+      <div class="material-body">
+        <div class="material-hero">
+          <h2>Cuestionario y casos · Clase 3</h2>
+          <p>Leé todo el material antes de iniciar la sesión. Las respuestas están ocultas: hacé clic para desplegarlas cuando quieras revisarlas.</p>
+        </div>
+
+        <div class="mat-section" id="mat-p1">
+          <div class="section-head">
+            <h3>1. Leasing financiero, operativo y leaseback</h3>
+            <div class="badges">
+              <span class="badge fuente">O1</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Qué distingue al leasing financiero del leasing operativo, y dónde encaja el leaseback en esa clasificación?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Leasing financiero (art. 1231 incs. a, b y c CCCN):</b></p>
+              <p>El dador adquiere el bien de un tercero por indicación, especificación o sustitución del tomador en una compraventa que este ya había celebrado.</p>
+              <p style="margin-top:10px;"><b>(b) Leasing operativo (art. 1231 inc. d):</b></p>
+              <p>El bien ya es propiedad del dador antes de vincularse con el tomador: no hay ninguna gestión de compra a un tercero.</p>
+              <p style="margin-top:10px;"><b>(c) Leaseback (art. 1231 inc. e):</b></p>
+              <p>Es un tercer género: el tomador vende su propio bien al dador, que se lo entrega nuevamente en leasing — funciona como mecanismo de autofinanciamiento, no de adquisición de un bien nuevo.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Tratar al leaseback como una simple compraventa, sin advertir que el vendedor conserva el uso del bien como tomador.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p2">
+          <div class="section-head">
+            <h3>2. Mora y desalojo en leasing inmobiliario</h3>
+            <div class="badges">
+              <span class="badge fuente">S3</span>
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <p class="enunciado-q">Si un tomador de leasing sobre un inmueble adeuda un cuarto o más pero menos de tres cuartas partes del canon pactado, ¿qué procedimiento debe seguir el dador antes de poder pedir el desalojo?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a)</b> La mora es automática, sin necesidad de interpelación previa para que se produzca.</p>
+              <p style="margin-top:10px;"><b>(b)</b> El dador debe intimar al tomador al pago de los períodos adeudados con más sus intereses, otorgándole un plazo <b>no menor a 60 días</b> desde la notificación.</p>
+              <p style="margin-top:10px;"><b>(c)</b> Vencido ese plazo sin que se verifique el pago, recién ahí el dador puede demandar el desalojo, dando previamente vista al tomador por 5 días.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Aplicar directamente el tramo de "menos de un cuarto" (vista de 5 días sin intimación previa de 60 días) a un tomador que ya pagó más de un cuarto del canon.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p3">
+          <div class="section-head">
+            <h3>3. Determinación de la comisión del corredor</h3>
+            <div class="badges">
+              <span class="badge fuente">O2</span>
+            </div>
+          </div>
+          <p class="enunciado-q">Si las partes no pactaron el monto de la comisión del corredor, ¿cómo se determina?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p>Se aplica el <b>uso del lugar de celebración del contrato</b>; en su defecto, el <b>uso del lugar donde el corredor principalmente realizó su cometido</b>; y si tampoco existe un uso determinado, la fija el <b>juez</b>.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que, a falta de pacto, el corredor no tiene derecho a cobrar nada.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p4">
+          <div class="section-head">
+            <h3>4. Confidencialidad del corredor</h3>
+            <div class="badges">
+              <span class="badge fuente">S4</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Por qué el incumplimiento del deber de confidencialidad del corredor genera responsabilidad objetiva, y no exige probar culpa o dolo?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p>No revelar información confidencial conocida por su intervención es una <b>obligación de no hacer</b>, y el régimen de las obligaciones de no hacer responde a un <b>factor de atribución objetivo</b>. Basta con que el corredor haya revelado o usado indebidamente la información para que responda, sin necesidad de indagar su intención.</p>
+              <p style="margin-top:10px;"><b>Nota de corrección:</b> El deber está regulado en el <b>art. 992 CCCN</b> (no en los arts. 1391/1392 como aparecía en la transcripción de la clase, que pertenecen al capítulo de contratos bancarios).</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Citar los arts. "1391" y "1392" CCCN para este deber — esos artículos pertenecen al capítulo de contratos bancarios; la numeración correcta es arts. 991 (buena fe, factor subjetivo) y 992 (confidencialidad, factor objetivo).</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p5">
+          <div class="section-head">
+            <h3>5. Exclusividad territorial en la concesión</h3>
+            <div class="badges">
+              <span class="badge fuente">O3</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Es la exclusividad territorial un elemento esencial del contrato de concesión?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>No.</b> Es un <b>elemento natural</b>, no esencial: admite pacto en contrario (arts. 1503, 1504 inc. b y 1505 inc. b). De existir, suele referirse al territorio, pero incluso así el concedente puede reservarse ventas directas a clientes especiales, como el Estado, diplomáticos o compradores de grandes volúmenes anuales.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico (T4):</b> Dar por sentado que toda concesión es exclusiva por su sola naturaleza jurídica.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p6">
+          <div class="section-head">
+            <h3>6. Retribución del concesionario vs. comisión del corredor</h3>
+            <div class="badges">
+              <span class="badge fuente">O3, D2</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Por qué no es técnicamente correcto llamar "comisión" a la retribución del concesionario?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p>El concesionario actúa a <b>nombre y por cuenta propia</b>, comprando y revendiendo mercaderías a riesgo propio; no media un negocio ajeno como el corredor. Por eso su ganancia es, en principio, la <b>diferencia entre el precio que paga al concedente y el que obtiene en la reventa</b> ("margen comercial"), aunque el art. 1507 CCCN también admite que se pacte como comisión, margen sobre unidades o cantidades fijas.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico (T1):</b> Confundir esta retribución con la comisión del art. 1350 CCCN, que corresponde específicamente al corredor.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p7">
+          <div class="section-head">
+            <h3>7. Concesión vs. distribución</h3>
+            <div class="badges">
+              <span class="badge fuente">O4, D3</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Cuál es la diferencia esencial entre el contrato de concesión y el de distribución?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a)</b> La <b>concesión</b> está tipificada en el CCCN (arts. 1502 a 1511); la <b>distribución</b> es un contrato atípico, sin regulación propia, cuyo concepto fue moldeado por doctrina y jurisprudencia.</p>
+              <p style="margin-top:10px;"><b>(b)</b> El distribuidor tiene <b>mayor autonomía</b> frente al distribuido que el concesionario frente al concedente.</p>
+              <p style="margin-top:10px;"><b>(c)</b> La actividad del distribuidor <b>no comprende las obligaciones de posventa</b> del producto, a diferencia de la del concesionario.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico (T7):</b> Atribuirle a la distribución reglas propias de plazo o extinción, cuando en realidad se toman prestadas de la concesión por remisión del art. 1511 inc. b.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p8">
+          <div class="section-head">
+            <h3>8. Leasing y concurso preventivo</h3>
+            <div class="badges">
+              <span class="badge fuente">S2</span>
+              <span class="badge cae">Cae siempre</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">Si el tomador de un leasing entra en concurso preventivo, ¿qué ocurre con el contrato?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p>El CCCN <b>no regula expresamente</b> los efectos del concurso o la quiebra sobre el leasing; la regla práctica es que <b>el contrato sigue su curso</b> pese al concurso de cualquiera de las partes.</p>
+              <p style="margin-top:10px;">El supuesto específico de la quiebra está regulado en la <b>Ley de Leasing 25.248</b>, no en el Código.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico (T5):</b> Suponer que la apertura del concurso resuelve automáticamente el contrato o habilita al dador a recuperar el bien de inmediato.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-int">
+          <div class="section-head">
+            <h3>Integradora · El corredor Ferretti</h3>
+            <div class="badges">
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Mediante la intervención del corredor Bruno Ferretti, las empresas Aránzazu S.A. (vendedora) y Kowalski Hnos. S.A. (compradora) negocian la venta de un inmueble industrial. En el curso de la negociación, Ferretti toma conocimiento confidencial de que Aránzazu S.A. atraviesa una caída de rentabilidad y necesita vender con urgencia. Se lo revela a Kowalski Hnos. S.A., esperando que esta le encargue futuros negocios de intermediación.
+          </div>
+          <p class="enunciado-q">(a) ¿Qué deber del corredor vulnera Ferretti con esa revelación, y en qué artículo del CCCN está regulado correctamente?</p>
+          <p class="enunciado-q">(b) ¿Qué tipo de obligación incumple y qué factor de atribución le resulta aplicable?</p>
+          <p class="enunciado-q">(c) Si de esa revelación se deriva un perjuicio para Aránzazu S.A., ¿qué consecuencia jurídica puede seguirse para Ferretti?</p>
+          <details>
+            <summary>Ver resolución completa</summary>
+            <div class="detail-content">
+              <p><b>(a)</b> Vulnera el <b>deber de confidencialidad</b> del corredor, regulado en el <b>art. 992 CCCN</b> (la transcripción de la clase citó por error los arts. 1391/1392, que en realidad pertenecen al capítulo de contratos bancarios).</p>
+              <p style="margin-top:10px;"><b>(b)</b> Es una <b>obligación de no hacer</b> —no revelar ni usar en beneficio propio o ajeno la información confidencial conocida por su intervención— y ese tipo de obligación responde a un <b>factor de atribución objetivo</b>, sin necesidad de probar culpa o dolo de Ferretti.</p>
+              <p style="margin-top:10px;"><b>(c)</b> Ferretti queda obligado a <b>resarcir el daño</b> causado a Aránzazu S.A. y puede además <b>perder su derecho a cobrar la comisión</b> pactada, dado que su conducta contraría los deberes que hacen a la imparcialidad de la mediación (arts. 1347 y 1348 CCCN).</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>⚠ Error típico:</b> Creer que, para responsabilizar a Ferretti, hace falta demostrar que actuó con mala fe o intención de dañar — al tratarse de una obligación de no hacer con factor objetivo, ese análisis subjetivo es innecesario.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-c1">
+          <div class="section-head">
+            <h3>Caso 1 · El galgo que volvió a casa</h3>
+            <div class="badges">
+              <span class="badge fuente">Simple</span>
+              <span class="badge fuente">O1</span>
+              <span class="badge fuente">art. 1231 inc. e</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Mariano Sasso es titular de una camioneta de alta gama que utiliza para su actividad profesional. Necesitado de liquidez, se la vende a Global Renting S.A. (empresa financiera) y esta, en el mismo acto, se la entrega nuevamente en leasing: Sasso sigue usando la camioneta mientras paga cánones mensuales, con la posibilidad de recomprarla al final del contrato.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Leaseback (sale and leaseback), art. 1231 inc. e) CCCN.</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>Sasso es titular de un bien propio que decide vender.</li>
+                <li>El comprador (Global Renting S.A.) es, a la vez, quien se lo entrega nuevamente en leasing.</li>
+                <li>Sasso, ahora tomador, conserva el uso del bien y paga cánones con miras a recomprarlo — esa es la estructura típica del inciso e) del art. 1231.</li>
+                <li>La operación funciona como mecanismo de autofinanciamiento para Sasso, que obtiene liquidez sin perder el uso de la camioneta.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> Se configura un leaseback (art. 1231 inc. e CCCN). Sasso vende el bien a Global Renting S.A., que se lo entrega de nuevo en leasing, permitiéndole autofinanciarse sin perder el uso de la camioneta.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Confundir esta operación con una simple compraventa, sin advertir que el vendedor conserva el uso del bien como tomador; o clasificarla como leasing financiero, que exige que el dador adquiera el bien de un tercero indicado por el tomador, no del propio tomador.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con P1 del cuestionario.</p>
+        </div>
+
+        <div class="mat-section" id="mat-c2">
+          <div class="section-head">
+            <h3>Caso 2 · La "comisión" de AutoValle</h3>
+            <div class="badges">
+              <span class="badge trampa">Trampa</span>
+              <span class="badge fuente">T1, O2, O3, D2</span>
+              <span class="badge fuente">arts. 1350 y 1507 CCCN</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            La concesionaria AutoValle comercializa vehículos de la marca Kestrel bajo un contrato de concesión con Kestrel Argentina S.A., y factura mensualmente a la terminal un monto en concepto de "comisión por unidad vendida". Al analizar el contrato para el final, un estudiante sostiene que esa comisión se rige por el art. 1350 CCCN, igual que la comisión de un corredor.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Retribución del concesionario (art. 1507 CCCN), distinta de la comisión del corretaje (art. 1350 CCCN).</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>El concesionario actúa a nombre y por cuenta propia, comprando y revendiendo los vehículos a su propio riesgo, no mediando un negocio ajeno como el corredor.</li>
+                <li>Por eso, aunque el contrato o la práctica comercial llamen "comisión" a esa suma, técnicamente se trata de la retribución del art. 1507 CCCN, que puede consistir en un margen, una comisión o cantidades fijas, según lo pactado con el concedente.</li>
+                <li>El art. 1350 CCCN regula específicamente la comisión del corredor, que media —sin representar ni asumir riesgo propio— entre dos partes que no son él mismo.</li>
+                <li>La denominación comercial "comisión" no cambia la naturaleza jurídica del vínculo: AutoValle no es un intermediario neutral, sino que compra y revende a su propio riesgo.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> El estudiante se equivoca. El nombre comercial "comisión" no determina el régimen aplicable: la retribución de AutoValle se rige por el art. 1507 CCCN, no por el art. 1350 CCCN, porque AutoValle actúa a riesgo propio y no media un negocio ajeno.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico (T1):</b> Confundir la comisión del corretaje con la retribución/diferencia comercial de la concesión por el solo hecho de que ambas se llamen coloquialmente "comisión".</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con P6 del cuestionario.</p>
+        </div>
+
+        <div class="mat-section" id="mat-c3">
+          <div class="section-head">
+            <h3>Caso 3 · El galpón de Herrajes del Sur</h3>
+            <div class="badges">
+              <span class="badge fuente">Complejo</span>
+              <span class="badge fuente">O1, S2, S3, T5, T6</span>
+              <span class="badge fuente">arts. 1231, 1248, 1249; Ley 25.248</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Herrajes del Sur SRL tomó en leasing operativo (art. 1231 inc. d) un galpón industrial de propiedad de Inverfin S.A., comprometiéndose a pagar 48 cánones mensuales. Tras abonar 20 cuotas, dejó de pagar durante cuatro meses consecutivos. Mientras Inverfin S.A. evaluaba iniciar el trámite de desalojo, Herrajes del Sur SRL se presentó en concurso preventivo. El abogado de Inverfin S.A. sostiene que, al haberse abierto el concurso, el contrato de leasing queda automáticamente resuelto y el galpón debe restituirse de inmediato.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Incumplimiento y mora en el leasing inmobiliario (art. 1248), y efecto del concurso preventivo sobre el contrato de leasing (S2).</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>Herrajes del Sur SRL pagó 20 de 48 cuotas (algo más de un cuarto, menos de tres cuartas partes), por lo que corresponde el tramo intermedio del <b>art. 1248 inc. b)</b>: mora automática, con intimación por un plazo no menor a 60 días.</li>
+                <li>La apertura del concurso preventivo <b>no extingue automáticamente</b> el contrato de leasing: la regla general es que el contrato sigue su curso pese al concurso o la quiebra de cualquiera de las partes.</li>
+                <li>El régimen específico de los efectos de la quiebra sobre el leasing está en la <b>Ley de Leasing 25.248</b>, no en el CCCN, por lo que el abogado de Inverfin S.A. no puede fundar la resolución automática en el Código.</li>
+                <li>Inverfin S.A. debe seguir el procedimiento del art. 1248 (intimación, plazo, eventual desalojo) y, en paralelo, verificar su crédito por los cánones adeudados dentro del proceso concursal.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> El abogado de Inverfin S.A. está equivocado. El concurso preventivo no resuelve automáticamente el leasing; el contrato sigue vigente y Inverfin S.A. debe cumplir el procedimiento del art. 1248 inc. b) (intimación con plazo no menor a 60 días) antes de poder demandar el desalojo, además de verificar su crédito en el concurso.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico (T5):</b> Suponer que el concurso o la quiebra de una de las partes extingue automáticamente el leasing, cuando la regla es la continuidad del contrato, con reenvío a la Ley 25.248 para los efectos específicos de la quiebra.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con P8 del cuestionario.</p>
+          <div class="contrafactico">
+            <b>Sub-escenario contrafáctico:</b> ¿Cómo cambiaría el análisis si el galpón fuera reemplazado por una flota de camiones (bien mueble) en las mismas condiciones de mora?<br><br>
+            <b>Resolución contrafáctica:</b> Si el objeto fuera un bien mueble, no correspondería el esquema escalonado del art. 1248 (pensado para inmuebles), sino el del <b>art. 1249</b>: ante la mora automática, Inverfin S.A. podría optar directamente por el secuestro del bien —previa interpelación por un plazo no menor a cinco días— o por la vía ejecutiva para el cobro del canon adeudado, sin el tramo de intimación de 60 días propio de los inmuebles. El concurso preventivo de Herrajes del Sur SRL seguiría sin resolver automáticamente el contrato, por la misma razón de S2.
+          </div>
+        </div>
+
+        <div class="mat-section" id="mat-pareto">
+          <div class="section-head">
+            <h3>Top Pareto</h3>
+          </div>
+          <table>
+            <thead><tr><th>Prioridad</th><th>Pregunta</th><th>Concepto clave</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P2</td><td>Tramos de mora del leasing inmobiliario (art. 1248)</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P4</td><td>Confidencialidad del corredor como obligación de no hacer (art. 992)</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P6</td><td>Comisión del corretaje vs. diferencia comercial de la concesión</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P8</td><td>Continuidad del leasing frente al concurso; reenvío a la Ley 25.248</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>Integradora</td><td>Deber de confidencialidad aplicado a un caso concreto</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mat-section" id="mat-fuentes">
+          <div class="section-head">
+            <h3>Fuentes clave</h3>
+          </div>
+          <table>
+            <thead><tr><th>Fuente</th><th>Qué establece</th><th>Por qué importa en examen</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>Art. 1231 CCCN</b></td>
+                <td>Modalidades de elección del bien en el leasing</td>
+                <td>Base para distinguir financiero, operativo y leaseback</td>
+              </tr>
+              <tr>
+                <td><b>Arts. 1248-1249 CCCN</b></td>
+                <td>Incumplimiento y ejecución del leasing</td>
+                <td>Esquemas distintos según el objeto sea inmueble o mueble; muy preguntado</td>
+              </tr>
+              <tr>
+                <td><b>Art. 992 CCCN</b></td>
+                <td>Deber de confidencialidad en tratativas preliminares</td>
+                <td>Corrige el error de cita de la transcripción (1391/1392) y funda la responsabilidad objetiva del corredor</td>
+              </tr>
+              <tr>
+                <td><b>Art. 1507 CCCN</b></td>
+                <td>Retribución del concesionario</td>
+                <td>Permite distinguir la "comisión" impropia de la concesión de la comisión técnica del corretaje</td>
+              </tr>
+              <tr>
+                <td><b>Ley 25.248</b></td>
+                <td>Régimen del leasing en caso de quiebra</td>
+                <td>Suple el silencio del CCCN sobre ese punto puntual</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="btn-row" style="justify-content:center; margin-top:28px;">
+          <button class="btn" id="btn-start-from-material">▶ Iniciar sesión de estudio</button>
+          <button class="btn secondary" id="btn-back-home-2">← Volver al inicio</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-study" class="screen">
+    <div class="progress-bar">
+      <div class="stats">
+        Pregunta <b id="stat-current">1</b> de <b id="stat-total">11</b>
+        &nbsp;·&nbsp; Dominadas: <b id="stat-mastered">0</b>
+      </div>
+      <div class="track"><div class="fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div id="question-container"></div>
+  </section>
+
+  <section id="screen-flashcards" class="screen">
+    <div class="flashcard-wrap">
+      <div class="flashcard-header">
+        <div class="counter">Ficha <b id="fc-current">1</b> de <b id="fc-total">11</b></div>
+        <div class="flashcard-progress-mini" id="fc-dots"></div>
+      </div>
+      <div class="flashcard" id="flashcard-body"></div>
+      <div class="flashcard-nav">
+        <button class="btn secondary" id="fc-prev">← Anterior</button>
+        <button class="btn secondary" id="fc-home">Volver al inicio</button>
+        <button class="btn" id="fc-next">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-summary" class="screen">
+    <div class="card resumen">
+      <h2>Informe final de la sesión</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="num" id="sum-mastered">0</div><div class="lbl">Dominadas</div></div>
+        <div class="stat-box"><div class="num" id="sum-weak">0</div><div class="lbl">Temas débiles</div></div>
+        <div class="stat-box"><div class="num" id="sum-ok">0</div><div class="lbl">Aciertos MC</div></div>
+        <div class="stat-box"><div class="num" id="sum-err">0</div><div class="lbl">Errores MC</div></div>
+      </div>
+      <div class="section-title err">Temas débiles — para repasar</div>
+      <ul class="debil-list" id="list-weak"></ul>
+      <div class="section-title ok">Dominadas</div>
+      <ul class="debil-list dominadas" id="list-mastered"></ul>
+      <div class="btn-row">
+        <button class="btn" id="btn-review-weak">Repasar sólo temas débiles</button>
+        <button class="btn secondary" id="btn-restart">Reiniciar sesión completa</button>
+        <button class="btn secondary" id="btn-home">Volver al inicio</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: "P1", topic: "Leasing financiero, operativo y leaseback", priority: "alto",
+    enunciado: "¿Qué distingue al leasing financiero del leasing operativo, y dónde encaja el leaseback en esa clasificación?",
+    pista: "Financioso: dador adquiere de tercero por indicación del tomador. Operativo: bien ya es del dador. Leaseback: tomador vende su propio bien al dador y lo recibe de vuelta en leasing.",
+    respuestaLibre: "En el leasing financiero (art. 1231 incs. a, b y c CCCN) el dador adquiere el bien de un tercero por indicación del tomador. En el leasing operativo (inc. d) el bien ya es propiedad del dador antes de vincularse con el tomador. El leaseback (inc. e) es un tercer género: el tomador vende su propio bien al dador, que se lo entrega nuevamente en leasing — funciona como mecanismo de autofinanciamiento.",
+    opciones: [
+      "El leasing financiero y operativo son sinónimos; el leaseback es una compraventa común.",
+      "En el financiero el dador adquiere de un tercero por indicación del tomador; en el operativo el bien ya es del dador; el leaseback es cuando el tomador vende su propio bien al dador y lo recibe de vuelta en leasing.",
+      "El financiero solo aplica a bienes muebles; el operativo a inmuebles; el leaseback es una modalidad del operativo.",
+      "El financiero requiere intervención bancaria; el operativo no; el leaseback es una variante del financiero."
+    ],
+    correcta: 1,
+    explicacion: "Financioso: dador adquiere de tercero por indicación del tomador. Operativo: bien ya es del dador. Leaseback: tomador vende su propio bien al dador y lo recibe de vuelta.",
+    errorTipico: "Tratar al leaseback como una simple compraventa, sin advertir que el vendedor conserva el uso del bien como tomador."
+  },
+  {
+    id: "P2", topic: "Mora y desalojo en leasing inmobiliario", priority: "critico",
+    enunciado: "Si un tomador de leasing sobre un inmueble adeuda un cuarto o más pero menos de tres cuartas partes del canon pactado, ¿qué procedimiento debe seguir el dador antes de poder pedir el desalojo?",
+    pista: "Mora automática. Intimación con plazo no menor a 60 días. Recién después, demanda de desalojo con vista de 5 días.",
+    respuestaLibre: "La mora es automática, sin necesidad de interpelación previa. El dador debe intimar al tomador al pago de los períodos adeudados con más sus intereses, otorgándole un plazo no menor a 60 días desde la notificación. Vencido ese plazo sin pago, recién ahí puede demandar el desalojo, dando previamente vista al tomador por 5 días.",
+    opciones: [
+      "El dador puede demandar el desalojo directamente sin intimación previa.",
+      "La mora es automática; el dador debe intimar al pago con plazo no menor a 60 días, y recién vencido ese plazo puede demandar el desalojo con vista previa de 5 días.",
+      "El dador debe intimar al pago con plazo de 30 días y luego puede desalojar sin vista previa.",
+      "Se requiere siempre sentencia judicial previa que declare la mora antes de cualquier intimación."
+    ],
+    correcta: 1,
+    explicacion: "Mora automática. Intimación con plazo no menor a 60 días. Recién vencido ese plazo, demanda de desalojo con vista previa de 5 días.",
+    errorTipico: "Aplicar directamente el tramo de 'menos de un cuarto' (vista de 5 días sin intimación previa de 60 días) a un tomador que ya pagó más de un cuarto del canon."
+  },
+  {
+    id: "P3", topic: "Determinación de la comisión del corredor", priority: "medio",
+    enunciado: "Si las partes no pactaron el monto de la comisión del corredor, ¿cómo se determina?",
+    pista: "Uso del lugar de celebración → uso del lugar donde realizó su cometido → fija el juez.",
+    respuestaLibre: "Se aplica el uso del lugar de celebración del contrato; en su defecto, el uso del lugar donde el corredor principalmente realizó su cometido; y si tampoco existe un uso determinado, la fija el juez.",
+    opciones: [
+      "A falta de pacto, el corredor no tiene derecho a cobrar nada.",
+      "Se aplica el uso del lugar de celebración; en su defecto, el uso del lugar donde realizó su cometido; y si no existe uso, la fija el juez.",
+      "Siempre la fija el juez, sin importar los usos del lugar.",
+      "Se aplica automáticamente el 5% del valor de la operación."
+    ],
+    correcta: 1,
+    explicacion: "Se aplica el uso del lugar de celebración; en su defecto, el uso del lugar donde realizó su cometido; y si no existe uso, la fija el juez.",
+    errorTipico: "Creer que, a falta de pacto, el corredor no tiene derecho a cobrar nada."
+  },
+  {
+    id: "P4", topic: "Confidencialidad del corredor", priority: "critico",
+    enunciado: "¿Por qué el incumplimiento del deber de confidencialidad del corredor genera responsabilidad objetiva, y no exige probar culpa o dolo?",
+    pista: "Es una obligación de no hacer. Las obligaciones de no hacer tienen factor objetivo.",
+    respuestaLibre: "No revelar información confidencial conocida por su intervención es una obligación de no hacer, y el régimen de las obligaciones de no hacer responde a un factor de atribución objetivo. Basta con que el corredor haya revelado o usado indebidamente la información para que responda, sin necesidad de indagar su intención. El deber está regulado en el art. 992 CCCN (no en los arts. 1391/1392 como aparecía en la transcripción de la clase).",
+    opciones: [
+      "Porque el corredor siempre responde objetivamente por cualquier incumplimiento contractual.",
+      "Porque es una obligación de no hacer, cuyo régimen responde a un factor de atribución objetivo; basta con la revelación indebida, sin probar culpa o dolo.",
+      "Porque la ley exige prueba de dolo específico en todos los casos de corretaje.",
+      "Porque el corredor es un profesional liberal y responde por riesgo creado."
+    ],
+    correcta: 1,
+    explicacion: "Es una obligación de no hacer, cuyo régimen responde a un factor de atribución objetivo; basta con la revelación indebida, sin probar culpa o dolo. Art. 992 CCCN.",
+    errorTipico: "Citar los arts. '1391' y '1392' CCCN para este deber — esos artículos pertenecen al capítulo de contratos bancarios; la numeración correcta es arts. 991 (buena fe, factor subjetivo) y 992 (confidencialidad, factor objetivo)."
+  },
+  {
+    id: "P5", topic: "Exclusividad territorial en la concesión", priority: "alto",
+    enunciado: "¿Es la exclusividad territorial un elemento esencial del contrato de concesión?",
+    pista: "Es elemento natural, no esencial. Admite pacto en contrario (arts. 1503, 1504 inc. b, 1505 inc. b).",
+    respuestaLibre: "No. Es un elemento natural, no esencial: admite pacto en contrario (arts. 1503, 1504 inc. b y 1505 inc. b). De existir, suele referirse al territorio, pero incluso así el concedente puede reservarse ventas directas a clientes especiales, como el Estado, diplomáticos o compradores de grandes volúmenes anuales.",
+    opciones: [
+      "Sí, es un elemento esencial que no admite pacto en contrario.",
+      "No, es un elemento natural que admite pacto en contrario; el concedente puede reservarse ventas a clientes especiales.",
+      "Sí, pero solo cuando el concesionario es persona humana.",
+      "No existe la exclusividad en el contrato de concesión bajo ningún concepto."
+    ],
+    correcta: 1,
+    explicacion: "No, es elemento natural, no esencial. Admite pacto en contrario. El concedente puede reservarse ventas a clientes especiales (Estado, diplomáticos, grandes volúmenes).",
+    errorTipico: "T4 — Dar por sentado que toda concesión es exclusiva por su sola naturaleza jurídica."
+  },
+  {
+    id: "P6", topic: "Retribución del concesionario vs. comisión del corredor", priority: "critico",
+    enunciado: "¿Por qué no es técnicamente correcto llamar 'comisión' a la retribución del concesionario?",
+    pista: "El concesionario actúa a nombre y por cuenta propia, a riesgo propio. No media un negocio ajeno como el corredor. Su ganancia es el margen comercial.",
+    respuestaLibre: "El concesionario actúa a nombre y por cuenta propia, comprando y revendiendo mercaderías a riesgo propio; no media un negocio ajeno como el corredor. Por eso su ganancia es, en principio, la diferencia entre el precio que paga al concedente y el que obtiene en la reventa ('margen comercial'), aunque el art. 1507 CCCN también admite que se pacte como comisión, margen sobre unidades o cantidades fijas.",
+    opciones: [
+      "Porque el concesionario es un empleado del concedente y cobra salario.",
+      "Porque el concesionario actúa a nombre y por cuenta propia, a riesgo propio, y su ganancia es el margen comercial (art. 1507 CCCN), no la comisión del art. 1350 CCCN propia del corredor.",
+      "Porque la ley prohíbe expresamente llamar 'comisión' a cualquier retribución en contratos comerciales.",
+      "Porque el concesionario no tiene derecho a retribución, solo a las ganancias de la reventa."
+    ],
+    correcta: 1,
+    explicacion: "El concesionario actúa a nombre y por cuenta propia, a riesgo propio. Su ganancia es el margen comercial (art. 1507 CCCN), no la comisión del art. 1350 CCCN propia del corredor.",
+    errorTipico: "T1 — Confundir esta retribución con la comisión del art. 1350 CCCN, que corresponde específicamente al corredor."
+  },
+  {
+    id: "P7", topic: "Concesión vs. distribución", priority: "medio",
+    enunciado: "¿Cuál es la diferencia esencial entre el contrato de concesión y el de distribución?",
+    pista: "Concesión: tipificada (arts. 1502-1511). Distribución: atípica. Distribuidor tiene mayor autonomía y no comprende posventa.",
+    respuestaLibre: "(a) La concesión está tipificada en el CCCN (arts. 1502 a 1511); la distribución es un contrato atípico, sin regulación propia. (b) El distribuidor tiene mayor autonomía frente al distribuido que el concesionario frente al concedente. (c) La actividad del distribuidor no comprende las obligaciones de posventa del producto, a diferencia de la del concesionario.",
+    opciones: [
+      "Son contratos idénticos, solo cambia la denominación según la región.",
+      "La concesión está tipificada en el CCCN (arts. 1502-1511); la distribución es atípica. El distribuidor tiene mayor autonomía y no comprende obligaciones de posventa.",
+      "La distribución está tipificada y la concesión es atípica.",
+      "Ambas están tipificadas en el CCCN con el mismo régimen."
+    ],
+    correcta: 1,
+    explicacion: "Concesión: tipificada (arts. 1502-1511). Distribución: atípica. Distribuidor tiene mayor autonomía y no comprende obligaciones de posventa.",
+    errorTipico: "T7 — Atribuirle a la distribución reglas propias de plazo o extinción, cuando en realidad se toman prestadas de la concesión por remisión del art. 1511 inc. b."
+  },
+  {
+    id: "P8", topic: "Leasing y concurso preventivo", priority: "alto",
+    enunciado: "Si el tomador de un leasing entra en concurso preventivo, ¿qué ocurre con el contrato?",
+    pista: "El CCCN no regula expresamente los efectos del concurso. Regla práctica: el contrato sigue su curso. Quiebra: Ley 25.248.",
+    respuestaLibre: "El CCCN no regula expresamente los efectos del concurso o la quiebra sobre el leasing; la regla práctica es que el contrato sigue su curso pese al concurso de cualquiera de las partes. El supuesto específico de la quiebra está regulado en la Ley de Leasing 25.248, no en el Código.",
+    opciones: [
+      "El contrato se resuelve automáticamente al abrirse el concurso.",
+      "El CCCN no regula expresamente los efectos; la regla práctica es que el contrato sigue su curso. La quiebra se rige por la Ley 25.248.",
+      "El dador puede recuperar el bien de inmediato sin trámite alguno.",
+      "El contrato se suspende automáticamente hasta que el juez decida."
+    ],
+    correcta: 1,
+    explicacion: "El CCCN no regula expresamente los efectos; la regla práctica es que el contrato sigue su curso. La quiebra se rige por la Ley 25.248.",
+    errorTipico: "T5 — Suponer que la apertura del concurso resuelve automáticamente el contrato o habilita al dador a recuperar el bien de inmediato."
+  },
+  {
+    id: "INT-a", topic: "Integradora · Deber vulnerado por Ferretti", priority: "critico",
+    contexto: "Mediante la intervención del corredor Bruno Ferretti, las empresas Aránzazu S.A. (vendedora) y Kowalski Hnos. S.A. (compradora) negocian la venta de un inmueble industrial. En el curso de la negociación, Ferretti toma conocimiento confidencial de que Aránzazu S.A. atraviesa una caída de rentabilidad y necesita vender con urgencia. Se lo revela a Kowalski Hnos. S.A., esperando que esta le encargue futuros negocios de intermediación.",
+    enunciado: "(a) ¿Qué deber del corredor vulnera Ferretti con esa revelación, y en qué artículo del CCCN está regulado correctamente?",
+    pista: "Deber de confidencialidad. Art. 992 CCCN (no 1391/1392).",
+    respuestaLibre: "Vulnera el deber de confidencialidad del corredor, regulado en el art. 992 CCCN (la transcripción de la clase citó por error los arts. 1391/1392, que en realidad pertenecen al capítulo de contratos bancarios).",
+    opciones: [
+      "Vulnera el deber de lealtad del art. 1350 CCCN, propio del mandato.",
+      "Vulnera el deber de confidencialidad del art. 992 CCCN (no los arts. 1391/1392 que pertenecen a contratos bancarios).",
+      "No vulnera ningún deber, porque la información era de dominio público.",
+      "Vulnera el deber de información del art. 1101 CCCN propio de los consumidores."
+    ],
+    correcta: 1,
+    explicacion: "Vulnera el deber de confidencialidad del art. 992 CCCN (no los arts. 1391/1392 que pertenecen a contratos bancarios).",
+    errorTipico: "Citar los arts. '1391' y '1392' CCCN para este deber — esos artículos pertenecen al capítulo de contratos bancarios; la numeración correcta es art. 992."
+  },
+  {
+    id: "INT-b", topic: "Integradora · Tipo de obligación y factor de atribución", priority: "critico",
+    contexto: "Ferretti reveló a Kowalski Hnos. S.A. información confidencial conocida por su intervención como corredor, esperando futuros negocios de intermediación.",
+    enunciado: "(b) ¿Qué tipo de obligación incumple y qué factor de atribución le resulta aplicable?",
+    pista: "Obligación de no hacer. Factor objetivo.",
+    respuestaLibre: "Es una obligación de no hacer —no revelar ni usar en beneficio propio o ajeno la información confidencial conocida por su intervención— y ese tipo de obligación responde a un factor de atribución objetivo, sin necesidad de probar culpa o dolo de Ferretti.",
+    opciones: [
+      "Obligación de dar, con factor subjetivo que exige probar dolo.",
+      "Obligación de no hacer, con factor de atribución objetivo; basta con la revelación indebida, sin probar culpa o dolo.",
+      "Obligación de hacer, con factor objetivo que exige probar culpa grave.",
+      "Obligación de no hacer, pero con factor subjetivo que requiere probar mala fe."
+    ],
+    correcta: 1,
+    explicacion: "Obligación de no hacer, con factor de atribución objetivo; basta con la revelación indebida, sin probar culpa o dolo.",
+    errorTipico: "Creer que, para responsabilizar a Ferretti, hace falta demostrar que actuó con mala fe o intención de dañar — al tratarse de una obligación de no hacer con factor objetivo, ese análisis subjetivo es innecesario."
+  },
+  {
+    id: "INT-c", topic: "Integradora · Consecuencias para Ferretti", priority: "critico",
+    contexto: "Ferretti reveló información confidencial de Aránzazu S.A. a Kowalski Hnos. S.A., generando un perjuicio a la vendedora.",
+    enunciado: "(c) Si de esa revelación se deriva un perjuicio para Aránzazu S.A., ¿qué consecuencia jurídica puede seguirse para Ferretti?",
+    pista: "Resarcimiento del daño + posible pérdida del derecho a cobrar la comisión (arts. 1347 y 1348 CCCN).",
+    respuestaLibre: "Ferretti queda obligado a resarcir el daño causado a Aránzazu S.A. y puede además perder su derecho a cobrar la comisión pactada, dado que su conducta contraría los deberes que hacen a la imparcialidad de la mediación (arts. 1347 y 1348 CCCN).",
+    opciones: [
+      "Solo debe devolver la comisión ya cobrada, sin resarcir otros daños.",
+      "Debe resarcir el daño causado y puede perder el derecho a cobrar la comisión pactada (arts. 1347 y 1348 CCCN).",
+      "No tiene ninguna consecuencia porque la información ya era conocida por Kowalski.",
+      "Solo responde si se prueba que actuó con dolo específico."
+    ],
+    correcta: 1,
+    explicacion: "Debe resarcir el daño causado y puede perder el derecho a cobrar la comisión pactada (arts. 1347 y 1348 CCCN).",
+    errorTipico: "Creer que, para responsabilizar a Ferretti, hace falta demostrar que actuó con mala fe o intención de dañar."
+  },
+  {
+    id: "C1", topic: "Caso 1 · El galgo que volvió a casa", priority: "alto",
+    contexto: "Mariano Sasso es titular de una camioneta de alta gama que utiliza para su actividad profesional. Necesitado de liquidez, se la vende a Global Renting S.A. (empresa financiera) y esta, en el mismo acto, se la entrega nuevamente en leasing: Sasso sigue usando la camioneta mientras paga cánones mensuales, con la posibilidad de recomprarla al final del contrato.",
+    enunciado: "¿Qué figura jurídica se configura en esta operación?",
+    pista: "El vendedor conserva el uso del bien como tomador. Art. 1231 inc. e) CCCN.",
+    respuestaLibre: "Se configura un leaseback (art. 1231 inc. e CCCN). Sasso vende el bien a Global Renting S.A., que se lo entrega de nuevo en leasing, permitiéndole autofinanciarse sin perder el uso de la camioneta.",
+    opciones: [
+      "Una compraventa común con pago en cuotas.",
+      "Un leaseback (art. 1231 inc. e CCCN): Sasso vende el bien a Global Renting S.A., que se lo entrega de nuevo en leasing para autofinanciarse.",
+      "Un leasing financiero, porque Global Renting adquirió el bien por indicación de Sasso.",
+      "Un comodato, porque Sasso sigue usando la camioneta sin pagar cánones."
+    ],
+    correcta: 1,
+    explicacion: "Leaseback (art. 1231 inc. e CCCN): Sasso vende el bien a Global Renting S.A., que se lo entrega de nuevo en leasing para autofinanciarse.",
+    errorTipico: "Confundir esta operación con una simple compraventa, sin advertir que el vendedor conserva el uso del bien como tomador; o clasificarla como leasing financiero."
+  },
+  {
+    id: "C2", topic: "Caso 2 · La 'comisión' de AutoValle", priority: "alto",
+    contexto: "La concesionaria AutoValle comercializa vehículos de la marca Kestrel bajo un contrato de concesión con Kestrel Argentina S.A., y factura mensualmente a la terminal un monto en concepto de 'comisión por unidad vendida'. Al analizar el contrato para el final, un estudiante sostiene que esa comisión se rige por el art. 1350 CCCN, igual que la comisión de un corredor.",
+    enunciado: "¿Es correcto el razonamiento del estudiante?",
+    pista: "AutoValle actúa a nombre y por cuenta propia, a riesgo propio. Art. 1507 CCCN, no art. 1350 CCCN.",
+    respuestaLibre: "El estudiante se equivoca. El nombre comercial 'comisión' no determina el régimen aplicable: la retribución de AutoValle se rige por el art. 1507 CCCN, no por el art. 1350 CCCN, porque AutoValle actúa a riesgo propio y no media un negocio ajeno.",
+    opciones: [
+      "Sí es correcto, porque ambas retribuciones se llaman 'comisión' y se rigen por el mismo artículo.",
+      "Es incorrecto: la retribución de AutoValle se rige por el art. 1507 CCCN (retribución del concesionario), no por el art. 1350 CCCN (comisión del corredor), porque AutoValle actúa a riesgo propio.",
+      "Es parcialmente correcto: el art. 1350 CCCN aplica solo si AutoValle es persona jurídica.",
+      "Es correcto, pero solo si AutoValle tiene exclusividad territorial."
+    ],
+    correcta: 1,
+    explicacion: "Incorrecto: la retribución de AutoValle se rige por el art. 1507 CCCN (retribución del concesionario), no por el art. 1350 CCCN (comisión del corredor), porque AutoValle actúa a riesgo propio.",
+    errorTipico: "T1 — Confundir la comisión del corretaje con la retribución/diferencia comercial de la concesión por el solo hecho de que ambas se llamen coloquialmente 'comisión'."
+  },
+  {
+    id: "C3", topic: "Caso 3 · El galpón de Herrajes del Sur", priority: "alto",
+    contexto: "Herrajes del Sur SRL tomó en leasing operativo (art. 1231 inc. d) un galpón industrial de propiedad de Inverfin S.A., comprometiéndose a pagar 48 cánones mensuales. Tras abonar 20 cuotas, dejó de pagar durante cuatro meses consecutivos. Mientras Inverfin S.A. evaluaba iniciar el trámite de desalojo, Herrajes del Sur SRL se presentó en concurso preventivo. El abogado de Inverfin S.A. sostiene que, al haberse abierto el concurso, el contrato de leasing queda automáticamente resuelto y el galpón debe restituirse de inmediato.",
+    enunciado: "¿Es correcto el razonamiento del abogado de Inverfin S.A.?",
+    pista: "El concurso no resuelve automáticamente el leasing. El contrato sigue su curso. Debe seguirse el procedimiento del art. 1248 inc. b) (intimación 60 días).",
+    respuestaLibre: "El abogado está equivocado. El concurso preventivo no resuelve automáticamente el leasing; el contrato sigue vigente y Inverfin S.A. debe cumplir el procedimiento del art. 1248 inc. b) (intimación con plazo no menor a 60 días) antes de poder demandar el desalojo, además de verificar su crédito en el concurso.",
+    opciones: [
+      "Sí es correcto: el concurso resuelve automáticamente el contrato de leasing.",
+      "Es incorrecto: el concurso no resuelve automáticamente el leasing; Inverfin S.A. debe cumplir el procedimiento del art. 1248 inc. b) (intimación con plazo no menor a 60 días) y verificar su crédito en el concurso.",
+      "Es correcto, pero solo si Herrajes del Sur SRL adeuda más de tres cuartas partes del canon.",
+      "Es incorrecto porque el leasing operativo nunca se resuelve por concurso, solo el financiero."
+    ],
+    correcta: 1,
+    explicacion: "Incorrecto: el concurso no resuelve automáticamente el leasing; Inverfin S.A. debe cumplir el procedimiento del art. 1248 inc. b) (intimación con plazo no menor a 60 días) y verificar su crédito en el concurso.",
+    errorTipico: "T5 — Suponer que el concurso o la quiebra de una de las partes extingue automáticamente el leasing, cuando la regla es la continuidad del contrato."
+  }
+];
+
+const STORAGE_KEY = "contratos_clase3_progress";
+
+const state = {
+  queue: [],
+  current: null,
+  phase: "recall",
+  progress: {},
+  sessionStats: { ok: 0, err: 0 },
+  mode: "full",
+  viewedCount: 0,
+  flashcards: {
+    index: 0,
+    revealed: false,
+    order: []
+  }
+};
+
+function saveProgress() {
+  try {
+    const data = { progress: state.progress, sessionStats: state.sessionStats };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (data && data.progress) state.progress = data.progress;
+    if (data && data.sessionStats) state.sessionStats = data.sessionStats;
+    return true;
+  } catch (e) { return false; }
+}
+
+function clearProgress() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+}
+
+function $(sel) { return document.querySelector(sel); }
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function getProgress(qid) {
+  if (!state.progress[qid]) state.progress[qid] = { okCount: 0, errCount: 0, mastered: false, attempts: 0 };
+  return state.progress[qid];
+}
+function isMastered(qid) { return getProgress(qid).mastered; }
+
+function buildQueue(mode) {
+  let pool = mode === "weak" ? QUESTIONS.filter(q => !isMastered(q.id)) : [...QUESTIONS];
+  const order = { critico: 0, alto: 1, medio: 2 };
+  pool.sort((a,b) => order[a.priority] - order[b.priority]);
+  const groups = { critico: [], alto: [], medio: [] };
+  pool.forEach(q => groups[q.priority].push(q));
+  Object.values(groups).forEach(g => shuffle(g));
+  state.queue = [...groups.critico, ...groups.alto, ...groups.medio];
+  state.viewedCount = 0;
+}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+function reinsertLater(q) {
+  const insertAt = Math.min(state.queue.length, 2 + Math.floor(Math.random() * 3));
+  state.queue.splice(insertAt, 0, q);
+}
+function countMastered() { return QUESTIONS.filter(q => isMastered(q.id)).length; }
+
+function hasWeakQuestions() {
+  return QUESTIONS.some(q => !isMastered(q.id) && getProgress(q.id).attempts > 0);
+}
+
+function updateReviewOnlyButtonVisibility() {
+  const btn = $("#btn-review-only");
+  if (hasWeakQuestions()) btn.classList.remove("hidden");
+  else btn.classList.add("hidden");
+}
+
+function renderQuestion() {
+  if (state.queue.length === 0) { renderSummary(); return; }
+  state.current = state.queue.shift();
+  state.phase = "recall";
+  state.viewedCount++;
+  updateProgressBar();
+  drawQuestion();
+}
+
+function updateProgressBar() {
+  const total = QUESTIONS.length;
+  const mastered = countMastered();
+  const currentNum = Math.min(state.viewedCount, total);
+  $("#stat-current").textContent = currentNum;
+  $("#stat-total").textContent = total;
+  $("#stat-mastered").textContent = mastered;
+  $("#progress-fill").style.width = ((mastered / total) * 100) + "%";
+}
+
+function drawQuestion() {
+  const q = state.current;
+  const p = getProgress(q.id);
+  const container = $("#question-container");
+  let prioridadLabel = "";
+  if (q.priority === "critico") prioridadLabel = '<span class="priority critico">Crítico</span>';
+  else if (q.priority === "alto") prioridadLabel = '<span class="priority alto">Alto</span>';
+  else prioridadLabel = '<span class="priority medio">Medio</span>';
+  const counterBadge = `
+    <span class="counter-badge ${p.okCount>0?'ok':''}">✓ ${p.okCount}/2</span>
+    ${p.errCount>0 ? `<span class="counter-badge err">✗ ${p.errCount}</span>` : ""}
+  `;
+  container.innerHTML = `
+    <div class="card">
+      <div class="tag-row">
+        <span class="tag">${q.id} · ${q.topic}</span>
+        ${prioridadLabel}
+        ${counterBadge}
+      </div>
+      ${q.contexto ? `<div class="contexto">${q.contexto}</div>` : ""}
+      <h3>${q.enunciado}</h3>
+      <div id="phase-content"></div>
+    </div>
+  `;
+  if (state.phase === "recall") drawRecallPhase(q);
+  else if (state.phase === "feedback") drawFeedbackPhase(q);
+  else if (state.phase === "mc") drawMCPhase(q);
+}
+
+function drawRecallPhase(q) {
+  const pc = $("#phase-content");
+  pc.innerHTML = `
+    <span class="phase-label">Fase 1 · Recall libre</span>
+    <div class="recall-area">
+      <textarea id="recall-input" placeholder="Escribí lo que recordás de la respuesta. No importa la extensión: el esfuerzo de recordar es lo que fija el contenido."></textarea>
+      <div class="recall-hint"><b>Pista:</b> ${q.pista}</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="btn-show-answer">Ver respuesta modelo</button>
+      <button class="btn secondary" id="btn-skip">Saltar pregunta</button>
+    </div>
+  `;
+  $("#btn-show-answer").addEventListener("click", () => { state.phase = "feedback"; drawQuestion(); });
+  $("#btn-skip").addEventListener("click", () => { reinsertLater(q); renderQuestion(); });
+}
+
+function drawFeedbackPhase(q) {
+  const pc = $("#phase-content");
+  pc.innerHTML = `
+    <span class="phase-label">Fase 2 · Respuesta modelo</span>
+    <div class="feedback">
+      <h4>Respuesta correcta</h4>
+      <div class="bloque">${q.respuestaLibre.replace(/\n/g, "<br>")}</div>
+      <h4>Explicación</h4>
+      <p>${q.explicacion}</p>
+      <h4>Error típico — marcá bien este límite</h4>
+      <div class="error-tipico"><b>⚠</b> ${q.errorTipico}</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="btn-to-mc">Continuar → Refuerzo con opciones</button>
+    </div>
+  `;
+  $("#btn-to-mc").addEventListener("click", () => { state.phase = "mc"; drawQuestion(); });
+}
+
+function drawMCPhase(q) {
+  const pc = $("#phase-content");
+  const opcionesIdx = q.opciones.map((_, i) => i);
+  shuffle(opcionesIdx);
+  let optsHtml = opcionesIdx.map((realIdx, displayIdx) => {
+    const letter = String.fromCharCode(65 + displayIdx);
+    return `<li data-real="${realIdx}"><span class="letter">${letter}</span>${q.opciones[realIdx]}</li>`;
+  }).join("");
+  pc.innerHTML = `
+    <span class="phase-label">Fase 3 · Refuerzo con opciones</span>
+    <ul class="options" id="options-list">${optsHtml}</ul>
+    <div id="mc-feedback"></div>
+  `;
+  pc.querySelectorAll("#options-list li").forEach(li => {
+    li.addEventListener("click", () => handleMCAnswer(q, li));
+  });
+}
+
+function handleMCAnswer(q, liClicked) {
+  const realIdx = parseInt(liClicked.getAttribute("data-real"));
+  const isCorrect = realIdx === q.correcta;
+  const p = getProgress(q.id);
+  p.attempts++;
+  document.querySelectorAll("#options-list li").forEach(li => {
+    li.classList.add("disabled");
+    const r = parseInt(li.getAttribute("data-real"));
+    if (r === q.correcta) li.classList.add("correct");
+    else if (li === liClicked) li.classList.add("wrong");
+  });
+  if (isCorrect) {
+    p.okCount++;
+    state.sessionStats.ok++;
+    if (p.okCount >= 2) p.mastered = true;
+  } else {
+    p.errCount++;
+    state.sessionStats.err++;
+    p.okCount = 0;
+  }
+  saveProgress();
+  updateProgressBar();
+  const fb = $("#mc-feedback");
+  const verdict = isCorrect
+    ? (p.mastered ? "✓ DOMINADA — dos aciertos consecutivos" : "✓ Correcto — necesitás un acierto más para dominarla")
+    : "✗ Incorrecto — la pregunta volverá a aparecer más adelante";
+  fb.innerHTML = `
+    <div class="feedback ${isCorrect ? 'ok' : 'err'}">
+      <div class="veredicto">${verdict}</div>
+      ${!isCorrect ? `
+        <h4>Respuesta correcta</h4>
+        <p>${q.respuestaLibre.replace(/\n/g, "<br>")}</p>
+        <h4>Error típico</h4>
+        <div class="error-tipico"><b>⚠</b> ${q.errorTipico}</div>
+      ` : ""}
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="btn-next">Continuar →</button>
+    </div>
+  `;
+  if (!isCorrect && !p.mastered) reinsertLater(q);
+  $("#btn-next").addEventListener("click", () => {
+    if (state.queue.length === 0) renderSummary();
+    else renderQuestion();
+  });
+}
+
+function renderSummary() {
+  const mastered = QUESTIONS.filter(q => isMastered(q.id));
+  const weak = QUESTIONS.filter(q => !isMastered(q.id) && getProgress(q.id).attempts > 0);
+  const untouched = QUESTIONS.filter(q => getProgress(q.id).attempts === 0);
+  $("#sum-mastered").textContent = mastered.length;
+  $("#sum-weak").textContent = weak.length + untouched.length;
+  $("#sum-ok").textContent = state.sessionStats.ok;
+  $("#sum-err").textContent = state.sessionStats.err;
+  const listWeak = $("#list-weak");
+  const allWeak = [...weak, ...untouched];
+  if (allWeak.length === 0) {
+    listWeak.innerHTML = '<li style="border-left-color:var(--ok); background:var(--ok-bg); color:var(--ok);">No hay temas débiles. ¡Sesión perfecta!</li>';
+  } else {
+    listWeak.innerHTML = allWeak.map(q => {
+      const p = getProgress(q.id);
+      const estado = p.attempts === 0 ? "no intentada" : `${p.errCount} error(es)`;
+      return `<li><span class="q-id">${q.id}</span><b>${q.topic}</b> <span style="color:var(--text-dim); font-size:12px; margin-left:6px;">(${estado})</span></li>`;
+    }).join("");
+  }
+  const listMastered = $("#list-mastered");
+  if (mastered.length === 0) {
+    listMastered.innerHTML = '<li style="color:var(--text-dim); background:var(--bg-3); border-left-color:var(--border);">Todavía no dominaste ninguna pregunta.</li>';
+  } else {
+    listMastered.innerHTML = mastered.map(q => `<li><span class="q-id">${q.id}</span>${q.topic}</li>`).join("");
+  }
+  showScreen("screen-summary");
+}
+
+function initFlashcards() {
+  const order = { critico: 0, alto: 1, medio: 2 };
+  const sorted = [...QUESTIONS].sort((a,b) => order[a.priority] - order[b.priority]);
+  const groups = { critico: [], alto: [], medio: [] };
+  sorted.forEach(q => groups[q.priority].push(q));
+  Object.values(groups).forEach(g => shuffle(g));
+  state.flashcards.order = [...groups.critico, ...groups.alto, ...groups.medio];
+  state.flashcards.index = 0;
+  state.flashcards.revealed = false;
+}
+
+function renderFlashcard() {
+  const fc = state.flashcards;
+  const q = fc.order[fc.index];
+  const p = getProgress(q.id);
+  const body = $("#flashcard-body");
+
+  $("#fc-current").textContent = fc.index + 1;
+  $("#fc-total").textContent = fc.order.length;
+
+  renderFlashcardDots();
+
+  let statusHtml = "";
+  if (p.mastered) statusHtml = '<span class="fc-status mastered">✓ Dominada</span>';
+  else if (p.errCount > 0) statusHtml = '<span class="fc-status weak">⚠ Tema débil</span>';
+
+  let html = `
+    <div class="fc-tag">${q.id} · ${q.topic}</div>
+    ${statusHtml}
+    ${q.contexto ? `<div class="fc-context">${q.contexto}</div>` : ""}
+    <div class="fc-question">${q.enunciado}</div>
+  `;
+
+  if (fc.revealed) {
+    html += `
+      <div class="fc-answer">
+        <div class="feedback">
+          <h4>Respuesta</h4>
+          <div class="bloque">${q.respuestaLibre.replace(/\n/g, "<br>")}</div>
+          <h4>Explicación</h4>
+          <p>${q.explicacion}</p>
+          <h4>Error típico</h4>
+          <div class="error-tipico"><b>⚠</b> ${q.errorTipico}</div>
+        </div>
+        <div class="fc-self-eval">
+          <button class="btn err" id="fc-costo">😕 Me costó</button>
+          <button class="btn ok" id="fc-sabia">😊 La sabía</button>
+        </div>
+      </div>
+    `;
+  } else {
+    html += `
+      <div style="margin-top:auto;">
+        <button class="btn" id="fc-reveal" style="width:100%; justify-content:center;">Mostrar respuesta</button>
+      </div>
+    `;
+  }
+
+  body.innerHTML = html;
+
+  if (fc.revealed) {
+    $("#fc-costo").addEventListener("click", () => handleFlashcardEval(q, false));
+    $("#fc-sabia").addEventListener("click", () => handleFlashcardEval(q, true));
+  } else {
+    $("#fc-reveal").addEventListener("click", () => {
+      state.flashcards.revealed = true;
+      renderFlashcard();
+    });
+  }
+
+  $("#fc-prev").disabled = fc.index === 0;
+  $("#fc-next").disabled = fc.index === fc.order.length - 1;
+}
+
+function renderFlashcardDots() {
+  const fc = state.flashcards;
+  const dots = fc.order.map((q, i) => {
+    const p = getProgress(q.id);
+    let cls = "dot";
+    if (i === fc.index) cls += " current";
+    else if (p.mastered) cls += " mastered";
+    else if (p.errCount > 0) cls += " weak";
+    return `<div class="${cls}" title="${q.id}: ${q.topic}"></div>`;
+  }).join("");
+  $("#fc-dots").innerHTML = dots;
+}
+
+function handleFlashcardEval(q, knewIt) {
+  const p = getProgress(q.id);
+  p.attempts++;
+  if (knewIt) {
+    p.okCount++;
+    state.sessionStats.ok++;
+    if (p.okCount >= 2) p.mastered = true;
+  } else {
+    p.errCount++;
+    state.sessionStats.err++;
+    p.okCount = 0;
+  }
+  saveProgress();
+  updateReviewOnlyButtonVisibility();
+
+  const fc = state.flashcards;
+  if (fc.index < fc.order.length - 1) {
+    fc.index++;
+    fc.revealed = false;
+  } else {
+    fc.revealed = false;
+  }
+  renderFlashcard();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadProgress();
+  updateReviewOnlyButtonVisibility();
+
+  $("#btn-material").addEventListener("click", () => showScreen("screen-material"));
+  $("#btn-back-home").addEventListener("click", () => showScreen("screen-home"));
+  $("#btn-back-home-2").addEventListener("click", () => showScreen("screen-home"));
+  $("#btn-start-from-material").addEventListener("click", () => {
+    state.mode = "full"; buildQueue("full");
+    showScreen("screen-study"); renderQuestion();
+  });
+  $("#btn-start").addEventListener("click", () => {
+    state.mode = "full"; buildQueue("full");
+    showScreen("screen-study"); renderQuestion();
+  });
+
+  $("#btn-flashcards").addEventListener("click", () => {
+    initFlashcards();
+    showScreen("screen-flashcards");
+    renderFlashcard();
+  });
+  $("#fc-prev").addEventListener("click", () => {
+    if (state.flashcards.index > 0) {
+      state.flashcards.index--;
+      state.flashcards.revealed = false;
+      renderFlashcard();
+    }
+  });
+  $("#fc-next").addEventListener("click", () => {
+    if (state.flashcards.index < state.flashcards.order.length - 1) {
+      state.flashcards.index++;
+      state.flashcards.revealed = false;
+      renderFlashcard();
+    }
+  });
+  $("#fc-home").addEventListener("click", () => {
+    updateReviewOnlyButtonVisibility();
+    showScreen("screen-home");
+  });
+
+  $("#btn-review-only").addEventListener("click", () => {
+    state.mode = "weak"; buildQueue("weak");
+    if (state.queue.length === 0) { alert("No hay temas débiles para repasar."); return; }
+    showScreen("screen-study"); renderQuestion();
+  });
+  $("#btn-review-weak").addEventListener("click", () => {
+    state.mode = "weak"; buildQueue("weak");
+    if (state.queue.length === 0) { alert("No hay temas débiles para repasar."); return; }
+    showScreen("screen-study"); renderQuestion();
+  });
+
+  $("#btn-restart").addEventListener("click", () => {
+    state.progress = {};
+    state.sessionStats = { ok: 0, err: 0 };
+    state.queue = [];
+    state.viewedCount = 0;
+    state.mode = "full";
+    clearProgress();
+    buildQueue("full");
+    updateReviewOnlyButtonVisibility();
+    showScreen("screen-study"); renderQuestion();
+  });
+
+  $("#btn-home").addEventListener("click", () => {
+    updateReviewOnlyButtonVisibility();
+    showScreen("screen-home");
+  });
+
+  document.querySelectorAll('.material-toc a[href^="#"]').forEach(a => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute("href"));
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (window.innerWidth <= 900) {
+        $("#material-toc").classList.remove("open");
+        $("#toc-toggle").classList.remove("open");
+        $("#toc-toggle span:first-child").textContent = "📑 Ver índice";
+      }
+    });
+  });
+
+  $("#toc-toggle").addEventListener("click", () => {
+    const toc = $("#material-toc");
+    const toggle = $("#toc-toggle");
+    const isOpen = toc.classList.toggle("open");
+    toggle.classList.toggle("open", isOpen);
+    toggle.querySelector("span:first-child").textContent = isOpen ? "📑 Ocultar índice" : "📑 Ver índice";
+  });
+});
+</script>
+</body>
+</html>

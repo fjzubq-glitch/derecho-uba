@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comercial · Clase 5</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f1724;
+    --bg-2: #182233;
+    --bg-3: #1f2c40;
+    --accent: #6b9bd1;
+    --accent-soft: #8bb3dc;
+    --accent-bg: rgba(107,155,209,0.10);
+    --border: #2a3a52;
+    --border-2: #223047;
+    --text: #e8f1f8;
+    --text-2: #c5d3e3;
+    --text-dim: #8a9bb2;
+    --ok: #5fb88a;
+    --ok-bg: rgba(95,184,138,0.12);
+    --err: #e07a75;
+    --err-bg: rgba(224,122,117,0.12);
+    --warn: #e6b87b;
+    --warn-bg: rgba(230,184,123,0.12);
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+    --shadow-lg: 0 2px 8px rgba(0,0,0,0.35), 0 12px 32px rgba(0,0,0,0.25);
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    padding: 28px 24px 80px;
+    background:
+      radial-gradient(ellipse at top, #1a2a42 0%, var(--bg) 55%),
+      var(--bg);
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  header.expediente {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header.expediente .brand { display: flex; align-items: center; gap: 14px; }
+  header.expediente .logo {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #4a7fc1);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 600; font-size: 18px;
+    font-family: Georgia, serif;
+    box-shadow: 0 2px 10px rgba(107,155,209,0.35);
+  }
+  header.expediente h1 { font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+  header.expediente .sub { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+  header.expediente .meta { font-size: 12px; color: var(--text-dim); text-align: right; letter-spacing: 0.3px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fade .3s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  .card {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 820px) { .intro-grid { grid-template-columns: 1fr; } }
+
+  .intro h2 { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 12px; letter-spacing: -0.2px; }
+  .intro p { color: var(--text-2); margin-bottom: 10px; font-size: 14.5px; }
+  .intro ul { list-style: none; padding: 0; }
+  .intro li {
+    padding: 10px 0 10px 28px;
+    position: relative;
+    font-size: 14px;
+    color: var(--text-2);
+    border-bottom: 1px solid var(--border-2);
+    line-height: 1.55;
+  }
+  .intro li:last-child { border-bottom: none; }
+  .intro li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 16px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent-bg);
+    border: 1.5px solid var(--accent);
+  }
+  .intro li b { color: var(--text); font-weight: 600; }
+
+  .stat-row { display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
+  .stat-pill {
+    flex: 1; min-width: 110px;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .stat-pill .num { font-size: 22px; font-weight: 600; color: var(--accent); font-family: Georgia, serif; }
+  .stat-pill .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #0f1724;
+    border: 1px solid var(--accent);
+    padding: 11px 22px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: 0.2px;
+  }
+  .btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(107,155,209,0.35); }
+  .btn.secondary { background: var(--bg-3); color: var(--text-2); border-color: var(--border); font-weight: 500; }
+  .btn.secondary:hover { background: var(--border); color: var(--text); box-shadow: none; transform: none; }
+  .btn.ghost { background: transparent; color: var(--text-dim); border-color: transparent; padding: 8px 12px; font-size: 13px; font-weight: 500; }
+  .btn.ghost:hover { background: var(--bg-3); color: var(--text); box-shadow: none; transform: none; }
+  .btn.ok { background: var(--ok); border-color: var(--ok); color: #0f1724; }
+  .btn.ok:hover { background: #6fc99a; border-color: #6fc99a; }
+  .btn.err { background: var(--err); border-color: var(--err); color: #0f1724; }
+  .btn.err:hover { background: #e88a85; border-color: #e88a85; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+
+  .progress-bar {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    box-shadow: var(--shadow);
+  }
+  .progress-bar .track { flex: 1; min-width: 160px; height: 6px; background: var(--bg-3); border-radius: 3px; overflow: hidden; }
+  .progress-bar .fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-soft)); border-radius: 3px; transition: width .4s; }
+  .progress-bar .stats { font-size: 13px; color: var(--text-2); font-weight: 500; }
+  .progress-bar .stats b { color: var(--accent); font-weight: 600; }
+
+  .card .tag-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .card .tag { font-size: 11px; letter-spacing: 0.8px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; }
+  .card .priority { display: inline-block; font-size: 10.5px; padding: 3px 9px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .priority.critico { background: var(--err-bg); color: var(--err); }
+  .priority.alto { background: var(--warn-bg); color: var(--warn); }
+  .priority.medio { background: var(--bg-3); color: var(--text-dim); }
+
+  .card h3 { font-size: 19px; color: var(--text); font-weight: 600; line-height: 1.45; margin-bottom: 14px; letter-spacing: -0.2px; }
+  .card .contexto {
+    font-size: 14px; color: var(--text-2); font-style: italic; margin-bottom: 14px;
+    padding: 12px 14px; border-left: 3px solid var(--accent); background: var(--accent-bg);
+    border-radius: 0 8px 8px 0; line-height: 1.6;
+  }
+
+  .recall-area textarea {
+    width: 100%; min-height: 110px;
+    background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 14px; font-family: inherit; font-size: 14.5px;
+    resize: vertical; line-height: 1.55; transition: border-color .15s;
+  }
+  .recall-area textarea:focus { outline: none; border-color: var(--accent); background: var(--bg-3); }
+  .recall-area textarea::placeholder { color: var(--text-dim); }
+  .recall-hint {
+    font-size: 13px; color: var(--text-2); margin-top: 10px;
+    padding: 10px 12px; background: var(--bg-3); border: 1px solid var(--border);
+    border-radius: 8px; line-height: 1.5;
+  }
+  .recall-hint b { color: var(--accent); font-style: normal; }
+
+  .options { list-style: none; }
+  .options li {
+    background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 13px 15px; margin-bottom: 9px; cursor: pointer; transition: all .15s;
+    font-size: 14.5px; line-height: 1.55;
+  }
+  .options li:hover { border-color: var(--accent); background: var(--accent-bg); }
+  .options li.correct { border-color: var(--ok); background: var(--ok-bg); }
+  .options li.wrong { border-color: var(--err); background: var(--err-bg); }
+  .options li.disabled { cursor: default; }
+  .options li.disabled:hover { background: var(--bg); border-color: var(--border); }
+  .options li.correct.disabled:hover { background: var(--ok-bg); border-color: var(--ok); }
+  .options li.wrong.disabled:hover { background: var(--err-bg); border-color: var(--err); }
+  .options li .letter {
+    display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center;
+    border-radius: 6px; background: var(--bg-3); color: var(--accent); margin-right: 10px;
+    font-weight: 600; font-size: 12px; font-family: Georgia, serif;
+  }
+  .options li.correct .letter { background: var(--ok); color: #0f1724; }
+  .options li.wrong .letter { background: var(--err); color: #0f1724; }
+
+  .feedback {
+    margin-top: 18px; padding: 18px; border-radius: 10px;
+    border-left: 3px solid var(--accent); background: var(--accent-bg);
+  }
+  .feedback.ok { border-left-color: var(--ok); background: var(--ok-bg); }
+  .feedback.err { border-left-color: var(--err); background: var(--err-bg); }
+  .feedback .veredicto { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+  .feedback.ok .veredicto { color: var(--ok); }
+  .feedback.err .veredicto { color: var(--err); }
+  .feedback h4 { font-size: 11.5px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin: 14px 0 6px; font-weight: 600; }
+  .feedback h4:first-child { margin-top: 0; }
+  .feedback p, .feedback .bloque { font-size: 14.5px; color: var(--text); line-height: 1.65; }
+  .feedback .error-tipico {
+    background: rgba(224,122,117,0.08); border-left: 2px solid var(--err);
+    padding: 10px 12px; border-radius: 0 6px 6px 0;
+    font-size: 13.5px; line-height: 1.6; color: var(--text-2);
+  }
+  .feedback .error-tipico b { color: var(--err); }
+
+  .resumen h2 { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 18px; letter-spacing: -0.3px; }
+  .resumen .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .resumen .stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; }
+  .resumen .stat-box .num { font-size: 30px; font-weight: 600; color: var(--accent); font-family: Georgia, serif; }
+  .resumen .stat-box .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px; }
+  .debil-list { list-style: none; }
+  .debil-list li {
+    padding: 11px 14px; border-left: 3px solid var(--err); background: var(--err-bg);
+    border-radius: 0 8px 8px 0; margin-bottom: 8px; font-size: 14px; line-height: 1.5;
+  }
+  .debil-list li .q-id {
+    display: inline-block; background: var(--bg-2); color: var(--err);
+    padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;
+    margin-right: 8px; font-family: Georgia, serif;
+  }
+  .dominadas li { border-left-color: var(--ok); background: var(--ok-bg); }
+  .dominadas li .q-id { color: var(--ok); }
+
+  .section-title {
+    font-size: 14px; font-weight: 600; margin: 22px 0 10px;
+    letter-spacing: 0.3px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-title.err { color: var(--err); }
+  .section-title.ok { color: var(--ok); }
+  .section-title::before { content: ""; width: 18px; height: 2px; background: currentColor; border-radius: 1px; }
+
+  .material-wrap { display: grid; grid-template-columns: 240px 1fr; gap: 22px; align-items: start; }
+  @media (max-width: 900px) { .material-wrap { grid-template-columns: 1fr; } }
+
+  .toc-toggle {
+    display: none; width: 100%;
+    background: var(--bg-2); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 16px; font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-bottom: 12px; text-align: left;
+    transition: all .15s; align-items: center; justify-content: space-between;
+  }
+  .toc-toggle:hover { background: var(--bg-3); }
+  .toc-toggle .chevron { transition: transform .2s; font-size: 12px; }
+  .toc-toggle.open .chevron { transform: rotate(180deg); }
+
+  @media (max-width: 900px) {
+    .toc-toggle { display: flex; }
+    .material-toc { display: none; position: static; max-height: none; }
+    .material-toc.open { display: block; }
+  }
+
+  .material-toc {
+    position: sticky; top: 14px;
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; font-size: 13px;
+    max-height: calc(100vh - 28px); overflow-y: auto; box-shadow: var(--shadow);
+  }
+  @media (max-width: 900px) { .material-toc { position: static; max-height: none; } }
+  .material-toc h4 { font-size: 11px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+  .material-toc .toc-group { margin-bottom: 14px; }
+  .material-toc .toc-group-title {
+    color: var(--accent); font-size: 10.5px; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 6px; padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-2); font-weight: 600;
+  }
+  .material-toc a {
+    display: block; color: var(--text-2); text-decoration: none;
+    padding: 5px 8px; border-radius: 6px; transition: all .15s;
+    font-size: 12.5px; line-height: 1.4; margin-bottom: 1px;
+  }
+  .material-toc a:hover { color: var(--accent); background: var(--accent-bg); }
+
+  .material-body { min-width: 0; }
+
+  .material-hero {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 26px; margin-bottom: 20px; box-shadow: var(--shadow);
+  }
+  .material-hero h2 { font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; margin-bottom: 6px; }
+  .material-hero p { color: var(--text-dim); font-size: 14px; }
+
+  .mat-section {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px 24px; margin-bottom: 14px;
+    box-shadow: var(--shadow); scroll-margin-top: 14px;
+  }
+  .mat-section .section-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
+  }
+  .mat-section h3 {
+    font-size: 16.5px; color: var(--text); font-weight: 600;
+    letter-spacing: -0.2px; line-height: 1.4; flex: 1; min-width: 200px;
+  }
+  .mat-section .badges { display: flex; gap: 5px; flex-wrap: wrap; }
+  .mat-section .badge {
+    font-size: 10px; padding: 3px 8px; border-radius: 20px;
+    font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; white-space: nowrap;
+  }
+  .badge.pareto { background: var(--warn-bg); color: var(--warn); }
+  .badge.trampa { background: var(--err-bg); color: var(--err); }
+  .badge.cae { background: var(--ok-bg); color: var(--ok); }
+  .badge.fuente { background: var(--bg-3); color: var(--text-dim); border: 1px solid var(--border); }
+
+  .mat-section .enunciado-q { font-size: 15px; color: var(--text); line-height: 1.6; margin-bottom: 14px; font-weight: 500; }
+
+  .mat-section details {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 10px; overflow: hidden; transition: all .2s;
+  }
+  .mat-section details[open] { border-color: var(--accent); box-shadow: 0 2px 12px rgba(107,155,209,0.15); }
+  .mat-section details summary {
+    padding: 12px 16px; cursor: pointer; font-size: 13.5px;
+    font-weight: 600; color: var(--accent); list-style: none;
+    display: flex; align-items: center; justify-content: space-between;
+    user-select: none; transition: background .15s;
+  }
+  .mat-section details summary:hover { background: var(--accent-bg); }
+  .mat-section details summary::-webkit-details-marker { display: none; }
+  .mat-section details summary::after {
+    content: "+"; font-size: 18px; font-weight: 300; color: var(--accent);
+    transition: transform .2s; line-height: 1;
+  }
+  .mat-section details[open] summary::after { content: "−"; }
+  .mat-section details[open] summary { border-bottom: 1px solid var(--border); background: var(--accent-bg); }
+  .mat-section details .detail-content { padding: 16px; font-size: 14px; line-height: 1.65; color: var(--text-2); }
+  .mat-section details.error-detail summary { color: var(--err); }
+  .mat-section details.error-detail summary::after { color: var(--err); }
+  .mat-section details.error-detail[open] summary { background: var(--err-bg); border-bottom-color: rgba(224,122,117,0.25); }
+  .mat-section details.error-detail summary:hover { background: var(--err-bg); }
+  .mat-section details.error-detail .detail-content { background: var(--err-bg); color: var(--text-2); }
+  .mat-section details.error-detail .detail-content b { color: var(--err); }
+
+  .mat-section .contexto-caso {
+    background: var(--accent-bg); border-left: 3px solid var(--accent);
+    padding: 12px 14px; border-radius: 0 8px 8px 0;
+    font-size: 14px; color: var(--text-2); margin-bottom: 14px; line-height: 1.6;
+  }
+
+  .mat-section table {
+    width: 100%; border-collapse: collapse; font-size: 13.5px;
+    margin: 8px 0; border-radius: 8px; overflow: hidden;
+  }
+  .mat-section th {
+    background: var(--bg-3); color: var(--text); text-align: left;
+    padding: 10px 12px; font-weight: 600; font-size: 11.5px;
+    text-transform: uppercase; letter-spacing: 0.6px; border-bottom: 1px solid var(--border);
+  }
+  .mat-section td { padding: 10px 12px; border-bottom: 1px solid var(--border-2); color: var(--text-2); line-height: 1.5; vertical-align: top; }
+  .mat-section tr:last-child td { border-bottom: none; }
+  .mat-section ol { padding-left: 20px; margin: 6px 0; }
+  .mat-section ol li { margin-bottom: 4px; }
+
+  .contrafactico {
+    background: var(--warn-bg); border-left: 3px solid var(--warn);
+    padding: 12px 14px; border-radius: 0 8px 8px 0; margin-top: 12px;
+    font-size: 13.5px; line-height: 1.6; color: var(--text-2);
+  }
+  .contrafactico b { color: var(--warn); }
+  .link-rel { font-size: 12.5px; color: var(--text-dim); margin-top: 10px; font-style: italic; }
+
+  .flashcard-wrap { max-width: 760px; margin: 0 auto; }
+  .flashcard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .flashcard-header .counter { font-size: 13px; color: var(--text-2); font-weight: 500; }
+  .flashcard-header .counter b { color: var(--accent); }
+  .flashcard-progress-mini { display: flex; gap: 4px; flex-wrap: wrap; }
+  .flashcard-progress-mini .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--bg-3); border: 1px solid var(--border); transition: all .2s;
+  }
+  .flashcard-progress-mini .dot.current { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+  .flashcard-progress-mini .dot.mastered { background: var(--ok); border-color: var(--ok); }
+  .flashcard-progress-mini .dot.weak { background: var(--err); border-color: var(--err); }
+
+  .flashcard {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 30px; min-height: 320px;
+    box-shadow: var(--shadow); display: flex; flex-direction: column; transition: all .3s;
+  }
+  .flashcard .fc-tag { font-size: 11px; letter-spacing: 0.8px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; margin-bottom: 10px; }
+  .flashcard .fc-context {
+    font-size: 14px; color: var(--text-2); font-style: italic; margin-bottom: 14px;
+    padding: 10px 12px; border-left: 3px solid var(--accent); background: var(--accent-bg);
+    border-radius: 0 8px 8px 0; line-height: 1.6;
+  }
+  .flashcard .fc-question { font-size: 18px; color: var(--text); font-weight: 600; line-height: 1.5; letter-spacing: -0.2px; flex: 1; margin-bottom: 18px; }
+  .flashcard .fc-status { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 14px; }
+  .flashcard .fc-status.mastered { background: var(--ok-bg); color: var(--ok); }
+  .flashcard .fc-status.weak { background: var(--err-bg); color: var(--err); }
+  .flashcard .fc-answer { border-top: 1px solid var(--border); padding-top: 18px; margin-top: 8px; animation: fade .3s ease; }
+  .flashcard-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; gap: 10px; }
+  .fc-self-eval { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .fc-self-eval .btn { flex: 1; justify-content: center; min-width: 140px; }
+
+  @media (max-width: 640px) {
+    body { padding: 14px 10px 60px; }
+    header.expediente { padding: 16px 18px; }
+    header.expediente h1 { font-size: 17px; }
+    .card, .mat-section { padding: 18px; }
+    .card h3 { font-size: 17px; }
+    .btn { padding: 10px 16px; font-size: 13.5px; }
+    .material-hero h2 { font-size: 20px; }
+    .mat-section h3 { font-size: 15px; }
+    .flashcard { padding: 20px; min-height: 280px; }
+    .flashcard .fc-question { font-size: 16px; }
+  }
+
+  .hidden { display: none !important; }
+
+  .phase-label {
+    display: inline-block; font-size: 11px; padding: 4px 11px;
+    background: var(--accent-bg); color: var(--accent);
+    border-radius: 20px; font-weight: 600; letter-spacing: 0.6px;
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+
+  .counter-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; padding: 3px 9px; background: var(--bg-3);
+    border-radius: 20px; color: var(--text-dim); font-weight: 600;
+  }
+  .counter-badge.ok { background: var(--ok-bg); color: var(--ok); }
+  .counter-badge.err { background: var(--err-bg); color: var(--err); }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="expediente">
+    <div class="brand">
+      <div class="logo">C5</div>
+      <div>
+        <h1>Derecho Comercial · Clase 5</h1>
+        <div class="sub">Modelo de utilidad, diseño industrial y acumulación de protecciones</div>
+      </div>
+    </div>
+    <div class="meta">14 ítems · 8 preguntas + 3 integradoras + 3 casos</div>
+  </header>
+
+  <section id="screen-home" class="screen active">
+    <div class="intro-grid">
+      <div class="card intro">
+        <h2>Cómo funciona esta sesión</h2>
+        <p>Diseñada para fijar el contenido en la memoria, no para recorrerlo una sola vez.</p>
+        <ul>
+          <li><b>Lectura del material:</b> leé el cuestionario y los casos completos antes de ejercitar.</li>
+          <li><b>Recall libre:</b> intentás recordar la respuesta sin pistas.</li>
+          <li><b>Respuesta modelo:</b> leés la explicación completa y el <em>error típico</em>.</li>
+          <li><b>Refuerzo con opciones:</b> elegís entre alternativas para consolidar.</li>
+          <li><b>Dominio:</b> dos aciertos seguidos marcan la pregunta como dominada; si fallás, vuelve a aparecer más adelante.</li>
+        </ul>
+      </div>
+      <div class="card intro">
+        <h2>Contenido</h2>
+        <div class="stat-row">
+          <div class="stat-pill"><div class="num">14</div><div class="lbl">Ítems</div></div>
+          <div class="stat-pill"><div class="num">3</div><div class="lbl">Casos</div></div>
+        </div>
+        <p style="font-size:13.5px; color:var(--text-dim); font-style:italic; margin-top:10px;">"La interactividad es el medio; lo que importa es que el diseño ayude a fijar el contenido en la memoria."</p>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn secondary" id="btn-material">📖 Leer material de estudio</button>
+      <button class="btn" id="btn-start">▶ Iniciar sesión de estudio</button>
+      <button class="btn secondary" id="btn-flashcards">🗂️ Modo fichas rápidas</button>
+      <button class="btn secondary hidden" id="btn-review-only">Repasar sólo temas débiles</button>
+    </div>
+  </section>
+
+  <section id="screen-material" class="screen">
+    <button class="toc-toggle" id="toc-toggle">
+      <span>📑 Ver índice</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="material-wrap">
+      <aside class="material-toc" id="material-toc">
+        <h4>Índice</h4>
+        <div class="toc-group">
+          <div class="toc-group-title">Cuestionario</div>
+          <a href="#mat-p1">1 · Modelo de utilidad</a>
+          <a href="#mat-p2">2 · Modelo utilidad vs. diseño</a>
+          <a href="#mat-p3">3 · Modelo utilidad vs. patente</a>
+          <a href="#mat-p4">4 · Plazo del modelo de utilidad</a>
+          <a href="#mat-p5">5 · Forma 3D: marca vs. modelo</a>
+          <a href="#mat-p6">6 · Secreto comercial</a>
+          <a href="#mat-p7">7 · Acumulación de protecciones</a>
+          <a href="#mat-p8">8 · Locarno vs. Niza</a>
+          <a href="#mat-int">Integradora · Botella Martina</a>
+        </div>
+        <div class="toc-group">
+          <div class="toc-group-title">Casos</div>
+          <a href="#mat-c1">Caso 1 · Multiherramienta Diego</a>
+          <a href="#mat-c2">Caso 2 · Envase con tapa</a>
+          <a href="#mat-c3">Caso 3 · Frasco Lumière</a>
+        </div>
+        <div class="toc-group">
+          <div class="toc-group-title">Mapas</div>
+          <a href="#mat-pareto">Top Pareto</a>
+          <a href="#mat-fuentes">Fuentes clave</a>
+        </div>
+        <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-2);">
+          <button class="btn ghost" id="btn-back-home" style="width:100%; justify-content:center;">← Volver al inicio</button>
+        </div>
+      </aside>
+
+      <div class="material-body">
+        <div class="material-hero">
+          <h2>Cuestionario y casos · Clase 5</h2>
+          <p>Leé todo el material antes de iniciar la sesión. Las respuestas están ocultas: hacé clic para desplegarlas cuando quieras revisarlas.</p>
+        </div>
+
+        <div class="mat-section" id="mat-p1">
+          <div class="section-head">
+            <h3>1. Modelo de utilidad: definición y requisitos</h3>
+            <div class="badges">
+              <span class="badge fuente">A1</span>
+              <span class="badge pareto">Pareto</span>
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Qué es el modelo de utilidad y qué elementos exige su registro?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Definición:</b></p>
+              <p>El modelo de utilidad protege una nueva forma o disposición introducida en herramientas, instrumentos, utensilios, dispositivos u objetos ya conocidos, cuando esa novedad importe una mejor utilización en la función a la que están destinados (art. 56, Ley 24.481). No protege el producto en sí, sino la nueva utilidad agregada sobre algo preexistente.</p>
+              <p style="margin-top:10px;"><b>(b) Requisitos para su registro:</b></p>
+              <ol>
+                <li><b>Novedad relativa:</b> referida únicamente a la utilidad puntual agregada (no al producto de base).</li>
+                <li><b>Aplicación industrial:</b> posibilidad de reproducción a gran escala.</li>
+                <li><b>Ausencia de actividad inventiva como requisito exigido:</b> a diferencia de la patente, no hace falta acreditarla.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Exigir actividad inventiva para el modelo de utilidad, cuando es precisamente el elemento que lo distingue —por ausencia— de la patente.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p2">
+          <div class="section-head">
+            <h3>2. Modelo de utilidad vs. modelo/diseño industrial</h3>
+            <div class="badges">
+              <span class="badge fuente">A1, A2</span>
+              <span class="badge trampa">Trampa</span>
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Cuál es la diferencia entre modelo de utilidad y modelo/diseño industrial?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p>Se trata de institutos que protegen aspectos distintos de un mismo producto: el modelo de utilidad protege una función nueva, mientras que el modelo y el diseño industrial protegen el carácter ornamental o estético.</p>
+              <table>
+                <thead><tr><th></th><th>Modelo de utilidad</th><th>Modelo industrial</th><th>Diseño industrial</th></tr></thead>
+                <tbody>
+                  <tr><td>Objeto protegido</td><td>Nueva utilidad/función</td><td>Forma ornamental 3D</td><td>Forma ornamental 2D</td></tr>
+                  <tr><td>Norma</td><td>Art. 56, Ley 24.481</td><td>Decreto de 1963</td><td>Decreto de 1963</td></tr>
+                  <tr><td>Plazo</td><td>10 años improrrogables</td><td>Hasta 15 años (5+5+5)</td><td>Hasta 15 años (5+5+5)</td></tr>
+                  <tr><td>Ejemplo de clase</td><td>Spray exprimidor, accesorios Victorinox</td><td>Envase de perfume</td><td>Estampado textil (Louis Vuitton)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Usar "modelo de utilidad" y "modelo industrial" como sinónimos, cuando protegen bienes jurídicos distintos —función versus estética—. Un caso límite discutido en clase es el tetrabrik con tapita: la docente lo encuadró más cerca de diseño porque no cambia la utilidad del producto, solo lo hace más práctico.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p3">
+          <div class="section-head">
+            <h3>3. Modelo de utilidad vs. patente</h3>
+            <div class="badges">
+              <span class="badge fuente">A1, S1</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Qué diferencia al modelo de utilidad de la patente?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p>Comparten el objeto legal (regulados ambos por la Ley 24.481) pero difieren en sus requisitos:</p>
+              <ol>
+                <li><b>Novedad:</b> en la patente debe ser absoluta (creación desde cero); en el modelo de utilidad, relativa (solo la utilidad agregada debe ser nueva).</li>
+                <li><b>Actividad inventiva:</b> exigida en la patente (el resultado no debe alcanzarse por mera aplicación lógica del estado de la técnica); no exigida en el modelo de utilidad.</li>
+                <li><b>Aplicación industrial:</b> exigida en ambos por igual.</li>
+              </ol>
+              <p style="margin-top:10px;">Por el art. 56, 2º párrafo, de la Ley 24.481, quien ya tiene patente sobre un producto no puede además obtener un certificado de modelo de utilidad sobre ese mismo objeto.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que pueden acumularse patente y modelo de utilidad sobre el mismo producto, cuando la ley lo prohíbe expresamente.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p4">
+          <div class="section-head">
+            <h3>4. Plazo de vigencia del modelo de utilidad</h3>
+            <div class="badges">
+              <span class="badge fuente">A1</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Desde qué fecha corre el plazo de vigencia del modelo de utilidad?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p>El plazo de <b>10 años improrrogables</b> corre desde la fecha de <b>presentación</b> de la solicitud ante el INPI, no desde la fecha en que el organismo resuelve otorgar el certificado.</p>
+              <p style="margin-top:10px;">En el ejemplo mostrado en clase, la presentación fue el 28/05/2019, la resolución el 20/12/2021, y el vencimiento quedó fijado igualmente en el 28/05/2029 —es decir, a los 10 años de la presentación, no de la resolución—.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Calcular el vencimiento desde la fecha del certificado otorgado por el INPI, ignorando que el trámite puede demorar años y que ese tiempo corre en contra del titular.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p5">
+          <div class="section-head">
+            <h3>5. Forma tridimensional: marca vs. modelo industrial</h3>
+            <div class="badges">
+              <span class="badge fuente">A2, A3</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Se puede proteger la misma forma tridimensional como marca y como modelo industrial?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Sí</b>, porque cada instituto protege un aspecto distinto de esa forma:</p>
+              <ol>
+                <li>Como <b>marca tridimensional</b>, se protege la asociación entre esa forma y el origen comercial del producto (que el consumidor identifique la forma con una marca determinada).</li>
+                <li>Como <b>modelo industrial</b>, se protege la ornamentalidad de esa forma, con independencia de que además funcione como signo distintivo.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Límite común:</b> la forma no sea la necesaria para que el producto cumpla su función (por ejemplo, que una pelota sea redonda); en ese caso, tampoco es registrable como marca por carecer de capacidad distintiva.</p>
+              <table>
+                <thead><tr><th></th><th>Marca tridimensional</th><th>Modelo industrial</th></tr></thead>
+                <tbody>
+                  <tr><td>Plazo</td><td>10 años, renovable indefinidamente</td><td>Hasta 15 años, improrrogable</td></tr>
+                  <tr><td>Ejemplo de clase</td><td>Envase "One Million" (barrita de oro)</td><td>Mismo envase, en su faz ornamental</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Asumir que, vencido el modelo industrial (15 años), también se pierde la marca; en realidad la marca sigue vigente si fue renovada, porque protege algo distinto.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p6">
+          <div class="section-head">
+            <h3>6. Secreto comercial</h3>
+            <div class="badges">
+              <span class="badge fuente">O3</span>
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Qué es el secreto comercial y qué ocurre si se revela?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Definición:</b></p>
+              <p>El secreto comercial protege información valiosa para una empresa —una fórmula, un procedimiento— que no se registra ante ningún organismo (no es patente, ni marca, ni modelo de utilidad, ni diseño/modelo industrial), sino que se resguarda mediante confidencialidad, típicamente a través de un acuerdo de confidencialidad (NDA).</p>
+              <p style="margin-top:10px;"><b>(b) Plazo:</b></p>
+              <p>A diferencia de los demás institutos vistos en la clase, no tiene plazo de caducidad: puede sostenerse indefinidamente mientras se preserve el secreto de hecho.</p>
+              <p style="margin-top:10px;"><b>(c) Si se revela:</b></p>
+              <p>La consecuencia indicada en clase es <b>responsabilidad penal</b> —no meramente civil—, lo que lo distingue de un incumplimiento contractual ordinario.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Suponer que existe algún registro o plazo de vencimiento para el secreto comercial, cuando su protección depende exclusivamente de mantenerlo confidencial.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p7">
+          <div class="section-head">
+            <h3>7. Acumulación de protecciones sobre un mismo producto</h3>
+            <div class="badges">
+              <span class="badge fuente">O4, A1</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Puede acumularse la protección sobre un mismo producto y qué límite tiene esa acumulación?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) En principio sí:</b></p>
+              <p>Un mismo producto puede protegerse simultáneamente por varias vías de propiedad industrial (marca, modelo de utilidad, modelo/diseño industrial), porque cada una protege un aspecto jurídico distinto y cada trámite se presenta por separado ante la dirección correspondiente del INPI. La única incompatibilidad expresa vista en clase es patente y modelo de utilidad sobre el mismo objeto (art. 56, 2º párr., Ley 24.481).</p>
+              <p style="margin-top:10px;"><b>(b) Límite:</b></p>
+              <p>Esa acumulación tiene un límite: ningún instituto de propiedad industrial habilita apropiarse de derechos de un tercero. Que un objeto reúna en abstracto los requisitos de un modelo o de una marca no autoriza su explotación si su contenido pertenece a otro (caso de las tazas con personajes de Disney).</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que una sola presentación cubre marca, modelo de utilidad y modelo industrial a la vez, cuando cada instituto exige trámite separado, con requisitos y costos propios; o bien creer que la elaboración artesanal de un producto exime de infringir derechos de terceros.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p8">
+          <div class="section-head">
+            <h3>8. Clasificación de Locarno vs. Niza</h3>
+            <div class="badges">
+              <span class="badge fuente">S4</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿En qué se diferencia la clasificación de Locarno de la clasificación de Niza?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Clasificación de Niza:</b></p>
+              <p>Usada para <b>marcas</b>, distingue clases de productos (1 a 34) y de servicios (35 a 45).</p>
+              <p style="margin-top:10px;"><b>(b) Clasificación de Locarno:</b></p>
+              <p>Usada para <b>diseños y modelos industriales</b>, está organizada por rubro (por ejemplo, agroquímicos) y comprende únicamente productos, sin categoría de servicios.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Aplicar la lógica de clases de Niza —con su distinción entre productos y servicios— al momento de clasificar un diseño o modelo industrial bajo Locarno.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-int">
+          <div class="section-head">
+            <h3>Integradora · La botella de Martina</h3>
+            <div class="badges">
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Martina diseña una botella de agua reutilizable que incorpora una curva central que facilita agarrarla mejor y un mecanismo que permite plegarla para ocupar menos espacio. Además, decide decorar la superficie con un estampado geométrico distintivo. Antes de presentar los trámites, un colega le muestra que ese mismo estampado ya fue registrado como diseño industrial por otra empresa, sin que Martina lo supiera al momento de crearlo.
+          </div>
+          <p class="enunciado-q">(a) ¿Qué figura de propiedad industrial protege la forma ergonómica y plegable de la botella, y por qué corresponde esa figura y no otra?</p>
+          <p class="enunciado-q">(b) ¿Puede Martina proteger en un mismo trámite tanto la funcionalidad de la botella como el estampado ornamental, o necesita presentaciones separadas?</p>
+          <p class="enunciado-q">(c) Dado que el estampado que Martina quiere usar ya está registrado por un tercero, ¿puede igualmente registrarlo o explotarlo como propio?</p>
+          <details>
+            <summary>Ver resolución completa</summary>
+            <div class="detail-content">
+              <p><b>(a)</b> La forma ergonómica y plegable corresponde a un <b>modelo de utilidad</b>, porque se trata de una nueva función —mejor agarre, menor volumen— agregada a un producto ya conocido (una botella), sin que se requiera acreditar actividad inventiva ni novedad absoluta del producto en sí, sino solo de esa utilidad puntual.</p>
+              <p style="margin-top:10px;"><b>(b)</b> No. Cada instituto exige un <b>trámite separado</b> ante la dirección correspondiente del INPI, con requisitos y costos propios: el modelo de utilidad va por un lado y, si Martina quisiera registrar un estampado propio como diseño industrial, sería una presentación distinta.</p>
+              <p style="margin-top:10px;"><b>(c)</b> No. Aun cuando el estampado cumpliera en abstracto los requisitos de originalidad y novedad para Martina, no puede registrarlo ni explotarlo porque ya pertenece a un tercero: acumular protecciones sobre un producto no habilita apropiarse de derechos ajenos, tal como se vio con el caso de las tazas con personajes de Disney.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>⚠ Error típico:</b> Un alumno que memorizó los institutos por separado puede resolver correctamente (a) y (b), pero fallar en (c) al no conectar el límite del sistema de acumulación con el caso concreto, tratando la titularidad de terceros como un problema ajeno a la propiedad industrial.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-c1">
+          <div class="section-head">
+            <h3>Caso 1 · El nuevo accesorio de la multiherramienta</h3>
+            <div class="badges">
+              <span class="badge fuente">Simple</span>
+              <span class="badge fuente">O1, S1</span>
+              <span class="badge fuente">A1</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Diego fabrica multiherramientas tipo navaja suiza. A su modelo básico, ya conocido en el mercado, le agrega un destapador de botellas integrado que no existía en ese producto. Diego quiere saber si puede proteger esa incorporación y, si es así, bajo qué figura.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica en juego:</b> Modelo de utilidad.</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>El producto de base (la multiherramienta) ya es conocido; lo que Diego aporta no es un objeto nuevo desde cero.</li>
+                <li>Lo que agrega es una nueva utilidad —el destapador— sobre ese producto conocido, que mejora su función.</li>
+                <li>No se requiere actividad inventiva, a diferencia de la patente; basta con que esa utilidad puntual sea novedosa y tenga aplicación industrial.</li>
+                <li>Si Diego ya tuviera otros accesorios registrados sobre la misma multiherramienta, este nuevo accesorio se tramita por separado, como una utilidad distinta.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> Diego puede proteger el destapador como modelo de utilidad, en trámite independiente, por 10 años improrrogables contados desde la fecha de presentación de la solicitud.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Exigir que Diego demuestre actividad inventiva o que el conjunto de la multiherramienta sea enteramente nuevo, cuando el modelo de utilidad solo exige novedad de la utilidad agregada.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con P1 del cuestionario.</p>
+        </div>
+
+        <div class="mat-section" id="mat-c2">
+          <div class="section-head">
+            <h3>Caso 2 · El envase con tapa práctica</h3>
+            <div class="badges">
+              <span class="badge trampa">Trampa</span>
+              <span class="badge fuente">O1, O2, T1, T5</span>
+              <span class="badge fuente">A1, A2</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Una empresa de lácteos rediseña su envase tradicional: en vez de tener que cortar una esquina para abrirlo, le incorpora una tapa rosca en la parte superior. La empresa consulta a su abogado si debe registrar esto como modelo de utilidad, porque "ahora es mucho más fácil de abrir y cerrar".
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica en juego:</b> Caso límite entre modelo de utilidad y diseño/modelo industrial; conforme el criterio de la docente, se inclina hacia diseño industrial.</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>Hay que preguntarse si la tapa cambia la función esencial del envase (contener y despachar el producto) o solo la hace más práctica sin alterar esa función.</li>
+                <li>Según el criterio expuesto en clase para un caso análogo (el tetrabrik con tapita), agregar practicidad sin modificar la utilidad del producto se acerca más al diseño industrial que al modelo de utilidad.</li>
+                <li>Esto no es una regla automática: si la tapa permitiera, por ejemplo, dosificar el líquido de una manera que antes era imposible, el análisis podría inclinarse hacia modelo de utilidad, porque ahí sí habría una nueva función.</li>
+                <li>Con los datos del enunciado (solo mayor comodidad de apertura), el caso se resuelve como diseño, no como modelo de utilidad.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> No corresponde automáticamente modelo de utilidad; conforme el criterio de la clase, se trata de un caso más cercano al diseño industrial, salvo que se acredite que la tapa aporta una utilidad funcional nueva y no solo mayor practicidad.</p>
+              <p style="margin-top:10px; font-style:italic; color:var(--warn);"><b>Nota:</b> La docente calificó este tipo de caso como "discutible entre una figura y otra" — conviene dejarlo señalado como zona gris y no como regla cerrada si lo vas a usar para preparar una respuesta de examen.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Asumir que cualquier mejora práctica en un envase es, por definición, un modelo de utilidad, sin distinguir entre "nueva función" y "mayor comodidad de uso".</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con P2 del cuestionario.</p>
+        </div>
+
+        <div class="mat-section" id="mat-c3">
+          <div class="section-head">
+            <h3>Caso 3 · El frasco de perfume "Lumière"</h3>
+            <div class="badges">
+              <span class="badge fuente">Complejo</span>
+              <span class="badge fuente">O2, O4, S2, D3</span>
+              <span class="badge fuente">A2, A3</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            La empresa Lumière diseña un frasco de perfume con forma de estrella dorada, absolutamente distintivo dentro del mercado. Ya registró esa forma como marca tridimensional. Ahora su asesora legal le sugiere registrar también la forma del frasco como modelo industrial. El gerente de Lumière pregunta si eso no sería "duplicar" una protección que ya tienen.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica en juego:</b> Acumulación de marca tridimensional y modelo industrial sobre el mismo objeto.</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>La marca tridimensional protege que el consumidor asocie esa forma de estrella dorada con el origen comercial Lumière; es un derecho renovable indefinidamente cada 10 años.</li>
+                <li>El modelo industrial protegería la ornamentalidad de esa misma forma en sí, con independencia de si el consumidor la asocia o no con una marca; su plazo máximo es de 15 años (5+5+5), improrrogable.</li>
+                <li>No hay incompatibilidad entre ambas figuras porque cada una protege un aspecto jurídico distinto: origen comercial en un caso, estética en el otro.</li>
+                <li>La consecuencia práctica de registrar ambas surge recién al vencimiento del modelo industrial: pasados los 15 años, un tercero podría fabricar frascos con esa misma forma ornamental, pero no podría usarlos como marca de sus propios productos si la marca de Lumière sigue vigente y renovada.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> No se trata de una duplicación inútil: registrar ambas figuras amplía la protección de Lumière, porque cubre dos riesgos distintos (imitación de la forma como tal, y confusión de origen comercial), con plazos y alcances diferentes.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que, al vencer el modelo industrial, también se pierde la marca tridimensional, ignorando que son derechos independientes que protegen bienes jurídicos distintos.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con P5 del cuestionario.</p>
+          <div class="contrafactico">
+            <b>Sub-escenario contrafáctico:</b> Supongamos que la forma de estrella del frasco no fuera meramente distintiva, sino la única forma posible para que el producto funcionara como perfume (por ejemplo, si fuera indispensable para el mecanismo de vaporización). ¿Podría igualmente registrarse como marca tridimensional?<br><br>
+            <b>Resolución contrafáctica:</b> No. Si la forma fuera necesaria para que el producto cumpla su función, carecería de capacidad distintiva a los fines marcarios —el mismo límite señalado en clase para el caso de la pelota, que necesariamente debe ser redonda para rodar—. En ese escenario, Lumière podría eventualmente proteger esa forma como modelo industrial (si reúne originalidad y ornamentalidad) o, si existiera una función técnica nueva, como modelo de utilidad, pero no como marca.
+          </div>
+        </div>
+
+        <div class="mat-section" id="mat-pareto">
+          <div class="section-head">
+            <h3>Top Pareto</h3>
+          </div>
+          <table>
+            <thead><tr><th>Prioridad</th><th>Pregunta</th><th>Concepto clave</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P1, P2</td><td>Definición y distinción modelo de utilidad vs. modelo/diseño industrial</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P4</td><td>Cómputo del plazo del modelo de utilidad desde la presentación</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>Integradora</td><td>Sistema de acumulación y su límite frente a terceros</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P3</td><td>Modelo de utilidad vs. patente (actividad inventiva)</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P5</td><td>Marca tridimensional vs. modelo industrial</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P7</td><td>Acumulación de protecciones y trámites separados ante el INPI</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P6</td><td>Secreto comercial: sin registro, sin plazo</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P8</td><td>Locarno vs. Niza</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mat-section" id="mat-fuentes">
+          <div class="section-head">
+            <h3>Fuentes clave</h3>
+          </div>
+          <table>
+            <thead><tr><th>Fuente</th><th>Qué establece</th><th>Por qué importa en examen</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>Art. 56, Ley 24.481</b></td>
+                <td>Define el modelo de utilidad y prohíbe su acumulación con patente sobre el mismo producto</td>
+                <td>Es la fuente guía de la clase; se leyó textualmente y sostiene P1, P3, P4</td>
+              </tr>
+              <tr>
+                <td><b>Decreto de 1963</b> (número a verificar)</td>
+                <td>Regula diseños y modelos industriales</td>
+                <td>Base normativa de P2 y P5; verificar número exacto antes de citarlo en un examen escrito</td>
+              </tr>
+              <tr>
+                <td><b>Art. 2, Ley 22.362</b></td>
+                <td>Excluye del registro marcario la forma necesaria del producto</td>
+                <td>Conecta la clase con la de marcas; sostiene el límite señalado en P5</td>
+              </tr>
+              <tr>
+                <td><b>Ley 11.723</b> (sin artículo preciso citado en clase)</td>
+                <td>Regula software y obras, ajena al INPI</td>
+                <td>Mencionada como digresión (IA, titularidad); baja probabilidad de examen según lo dicho en clase</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="btn-row" style="justify-content:center; margin-top:28px;">
+          <button class="btn" id="btn-start-from-material">▶ Iniciar sesión de estudio</button>
+          <button class="btn secondary" id="btn-back-home-2">← Volver al inicio</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-study" class="screen">
+    <div class="progress-bar">
+      <div class="stats">
+        Pregunta <b id="stat-current">1</b> de <b id="stat-total">14</b>
+        &nbsp;·&nbsp; Dominadas: <b id="stat-mastered">0</b>
+      </div>
+      <div class="track"><div class="fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div id="question-container"></div>
+  </section>
+
+  <section id="screen-flashcards" class="screen">
+    <div class="flashcard-wrap">
+      <div class="flashcard-header">
+        <div class="counter">Ficha <b id="fc-current">1</b> de <b id="fc-total">14</b></div>
+        <div class="flashcard-progress-mini" id="fc-dots"></div>
+      </div>
+      <div class="flashcard" id="flashcard-body"></div>
+      <div class="flashcard-nav">
+        <button class="btn secondary" id="fc-prev">← Anterior</button>
+        <button class="btn secondary" id="fc-home">Volver al inicio</button>
+        <button class="btn" id="fc-next">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-summary" class="screen">
+    <div class="card resumen">
+      <h2>Informe final de la sesión</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="num" id="sum-mastered">0</div><div class="lbl">Dominadas</div></div>
+        <div class="stat-box"><div class="num" id="sum-weak">0</div><div class="lbl">Temas débiles</div></div>
+        <div class="stat-box"><div class="num" id="sum-ok">0</div><div class="lbl">Aciertos MC</div></div>
+        <div class="stat-box"><div class="num" id="sum-err">0</div><div class="lbl">Errores MC</div></div>
+      </div>
+      <div class="section-title err">Temas débiles — para repasar</div>
+      <ul class="debil-list" id="list-weak"></ul>
+      <div class="section-title ok">Dominadas</div>
+      <ul class="debil-list dominadas" id="list-mastered"></ul>
+      <div class="btn-row">
+        <button class="btn" id="btn-review-weak">Repasar sólo temas débiles</button>
+        <button class="btn secondary" id="btn-restart">Reiniciar sesión completa</button>
+        <button class="btn secondary" id="btn-home">Volver al inicio</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: "P1", topic: "Modelo de utilidad: definición y requisitos", priority: "critico",
+    enunciado: "¿Qué es el modelo de utilidad y qué elementos exige su registro?",
+    pista: "No protege el producto en sí, sino la nueva utilidad agregada sobre algo preexistente. Requisitos: novedad relativa, aplicación industrial, y NO exige actividad inventiva.",
+    respuestaLibre: "El modelo de utilidad protege una nueva forma o disposición introducida en herramientas, instrumentos, utensilios, dispositivos u objetos ya conocidos, cuando esa novedad importe una mejor utilización en la función a la que están destinados (art. 56, Ley 24.481). No protege el producto en sí, sino la nueva utilidad agregada sobre algo preexistente. Para su registro exige: (1) novedad relativa, referida únicamente a la utilidad puntual agregada; (2) aplicación industrial, es decir, posibilidad de reproducción a gran escala; (3) ausencia de actividad inventiva como requisito exigido —a diferencia de la patente, no hace falta acreditarla—.",
+    opciones: [
+      "Protege un producto nuevo desde cero y exige actividad inventiva absoluta, novedad absoluta y aplicación industrial.",
+      "Protege una nueva forma o disposición introducida en objetos ya conocidos que importe mejor utilización de su función. Exige novedad relativa (de la utilidad agregada), aplicación industrial, y NO exige actividad inventiva.",
+      "Protege la forma ornamental de un producto y exige novedad absoluta, actividad inventiva y aplicación industrial.",
+      "Protege cualquier mejora sobre un producto conocido y no exige ningún requisito formal para su registro."
+    ],
+    correcta: 1,
+    explicacion: "El modelo de utilidad protege una nueva forma o disposición introducida en objetos ya conocidos que importe mejor utilización de su función. Exige novedad relativa (de la utilidad agregada), aplicación industrial, y NO exige actividad inventiva (art. 56, Ley 24.481).",
+    errorTipico: "Exigir actividad inventiva para el modelo de utilidad, cuando es precisamente el elemento que lo distingue —por ausencia— de la patente."
+  },
+  {
+    id: "P2", topic: "Modelo de utilidad vs. modelo/diseño industrial", priority: "critico",
+    enunciado: "¿Cuál es la diferencia entre modelo de utilidad y modelo/diseño industrial?",
+    pista: "Modelo de utilidad = función nueva. Modelo industrial = forma ornamental 3D. Diseño industrial = forma ornamental 2D. Protegen aspectos distintos del mismo producto.",
+    respuestaLibre: "Se trata de institutos que protegen aspectos distintos de un mismo producto: el modelo de utilidad protege una función nueva, mientras que el modelo y el diseño industrial protegen el carácter ornamental o estético. Modelo de utilidad: nueva utilidad/función, art. 56 Ley 24.481, 10 años improrrogables (ej. spray exprimidor, accesorios Victorinox). Modelo industrial: forma ornamental 3D, Decreto de 1963, hasta 15 años (5+5+5) (ej. envase de perfume). Diseño industrial: forma ornamental 2D, Decreto de 1963, hasta 15 años (5+5+5) (ej. estampado textil Louis Vuitton).",
+    opciones: [
+      "Modelo de utilidad y modelo industrial son sinónimos; ambos protegen la forma ornamental de un producto.",
+      "El modelo de utilidad protege la forma ornamental; el modelo/diseño industrial protege la función nueva.",
+      "El modelo de utilidad protege una función nueva (art. 56 Ley 24.481, 10 años improrrogables); el modelo industrial protege la forma ornamental 3D y el diseño industrial la forma ornamental 2D (Decreto de 1963, hasta 15 años).",
+      "El modelo de utilidad protege la marca; el diseño industrial protege la patente."
+    ],
+    correcta: 2,
+    explicacion: "El modelo de utilidad protege una función nueva (art. 56 Ley 24.481, 10 años improrrogables); el modelo industrial protege la forma ornamental 3D y el diseño industrial la forma ornamental 2D (Decreto de 1963, hasta 15 años).",
+    errorTipico: "Usar 'modelo de utilidad' y 'modelo industrial' como sinónimos, cuando protegen bienes jurídicos distintos —función versus estética—. Un caso límite discutido en clase es el tetrabrik con tapita: la docente lo encuadró más cerca de diseño porque no cambia la utilidad del producto, solo lo hace más práctico."
+  },
+  {
+    id: "P3", topic: "Modelo de utilidad vs. patente", priority: "alto",
+    enunciado: "¿Qué diferencia al modelo de utilidad de la patente?",
+    pista: "Ambos regulados por Ley 24.481. Difieren en: novedad (absoluta vs. relativa), actividad inventiva (exigida vs. no exigida), y no pueden acumularse sobre el mismo producto (art. 56, 2º párr.).",
+    respuestaLibre: "Comparten el objeto legal (regulados ambos por la Ley 24.481) pero difieren en sus requisitos: (1) Novedad: en la patente debe ser absoluta (creación desde cero); en el modelo de utilidad, relativa (solo la utilidad agregada debe ser nueva). (2) Actividad inventiva: exigida en la patente; no exigida en el modelo de utilidad. (3) Aplicación industrial: exigida en ambos por igual. Por el art. 56, 2º párrafo, de la Ley 24.481, quien ya tiene patente sobre un producto no puede además obtener un certificado de modelo de utilidad sobre ese mismo objeto.",
+    opciones: [
+      "Son idénticos; ambos exigen novedad absoluta, actividad inventiva y aplicación industrial.",
+      "La patente exige novedad absoluta y actividad inventiva; el modelo de utilidad exige novedad relativa (solo de la utilidad agregada) y NO exige actividad inventiva. Además, no pueden acumularse sobre el mismo producto (art. 56, 2º párr., Ley 24.481).",
+      "La patente protege la forma ornamental; el modelo de utilidad protege la función nueva.",
+      "El modelo de utilidad exige novedad absoluta y actividad inventiva; la patente no exige nada."
+    ],
+    correcta: 1,
+    explicacion: "La patente exige novedad absoluta y actividad inventiva; el modelo de utilidad exige novedad relativa (solo de la utilidad agregada) y NO exige actividad inventiva. Además, no pueden acumularse sobre el mismo producto (art. 56, 2º párr., Ley 24.481).",
+    errorTipico: "Creer que pueden acumularse patente y modelo de utilidad sobre el mismo producto, cuando la ley lo prohíbe expresamente."
+  },
+  {
+    id: "P4", topic: "Plazo de vigencia del modelo de utilidad", priority: "critico",
+    enunciado: "¿Desde qué fecha corre el plazo de vigencia del modelo de utilidad?",
+    pista: "10 años improrrogables. OJO: corre desde la PRESENTACIÓN de la solicitud, no desde la resolución del INPI.",
+    respuestaLibre: "El plazo de 10 años improrrogables corre desde la fecha de presentación de la solicitud ante el INPI, no desde la fecha en que el organismo resuelve otorgar el certificado. En el ejemplo mostrado en clase, la presentación fue el 28/05/2019, la resolución el 20/12/2021, y el vencimiento quedó fijado igualmente en el 28/05/2029 —es decir, a los 10 años de la presentación, no de la resolución—.",
+    opciones: [
+      "Corre desde la fecha en que el INPI resuelve otorgar el certificado.",
+      "Corre desde la fecha de presentación de la solicitud ante el INPI, no desde la resolución del organismo.",
+      "Corre desde la fecha en que el producto se lanza al mercado.",
+      "Corre desde la fecha de publicación en el Boletín Oficial."
+    ],
+    correcta: 1,
+    explicacion: "El plazo de 10 años improrrogables corre desde la fecha de presentación de la solicitud ante el INPI, no desde la fecha en que el organismo resuelve otorgar el certificado.",
+    errorTipico: "Calcular el vencimiento desde la fecha del certificado otorgado por el INPI, ignorando que el trámite puede demorar años y que ese tiempo corre en contra del titular."
+  },
+  {
+    id: "P5", topic: "Forma tridimensional: marca vs. modelo industrial", priority: "alto",
+    enunciado: "¿Se puede proteger la misma forma tridimensional como marca y como modelo industrial?",
+    pista: "Sí, porque cada instituto protege un aspecto distinto: la marca protege la asociación con el origen comercial; el modelo industrial protege la ornamentalidad. Límite: la forma no sea la necesaria para que el producto cumpla su función.",
+    respuestaLibre: "Sí, porque cada instituto protege un aspecto distinto de esa forma: (1) Como marca tridimensional, se protege la asociación entre esa forma y el origen comercial del producto. (2) Como modelo industrial, se protege la ornamentalidad de esa forma, con independencia de que además funcione como signo distintivo. El límite común a ambas figuras es que la forma no sea la necesaria para que el producto cumpla su función (por ejemplo, que una pelota sea redonda); en ese caso, tampoco es registrable como marca por carecer de capacidad distintiva. Marca tridimensional: 10 años renovable indefinidamente. Modelo industrial: hasta 15 años improrrogable.",
+    opciones: [
+      "No, porque la ley prohíbe acumular ambas protecciones sobre la misma forma.",
+      "Sí, pero solo si la forma es la necesaria para que el producto cumpla su función.",
+      "Sí, porque cada instituto protege un aspecto distinto: la marca protege la asociación con el origen comercial y el modelo industrial protege la ornamentalidad. Límite: la forma no sea la necesaria para que el producto cumpla su función.",
+      "Sí, pero solo si se registran en el mismo trámite ante el INPI."
+    ],
+    correcta: 2,
+    explicacion: "Sí, porque cada instituto protege un aspecto distinto: la marca protege la asociación con el origen comercial y el modelo industrial protege la ornamentalidad. Límite: la forma no sea la necesaria para que el producto cumpla su función.",
+    errorTipico: "Asumir que, vencido el modelo industrial (15 años), también se pierde la marca; en realidad la marca sigue vigente si fue renovada, porque protege algo distinto."
+  },
+  {
+    id: "P6", topic: "Secreto comercial", priority: "alto",
+    enunciado: "¿Qué es el secreto comercial y qué ocurre si se revela?",
+    pista: "Protege información valiosa (fórmula, procedimiento) que NO se registra. Se resguarda mediante confidencialidad (NDA). No tiene plazo de caducidad. Si se revela: responsabilidad PENAL.",
+    respuestaLibre: "El secreto comercial protege información valiosa para una empresa —una fórmula, un procedimiento— que no se registra ante ningún organismo (no es patente, ni marca, ni modelo de utilidad, ni diseño/modelo industrial), sino que se resguarda mediante confidencialidad, típicamente a través de un acuerdo de confidencialidad (NDA). A diferencia de los demás institutos vistos en la clase, no tiene plazo de caducidad: puede sostenerse indefinidamente mientras se preserve el secreto de hecho. Si el secreto se revela, la consecuencia indicada en clase es responsabilidad penal —no meramente civil—, lo que lo distingue de un incumplimiento contractual ordinario.",
+    opciones: [
+      "Es un tipo de patente que se registra ante el INPI y tiene plazo de 20 años.",
+      "Protege información valiosa que no se registra ante ningún organismo, se resguarda mediante confidencialidad (NDA), no tiene plazo de caducidad, y si se revela genera responsabilidad penal.",
+      "Es una marca no registrada que protege el nombre comercial y caduca a los 10 años.",
+      "Protege diseños industriales y debe renovarse cada 5 años."
+    ],
+    correcta: 1,
+    explicacion: "El secreto comercial protege información valiosa que no se registra ante ningún organismo, se resguarda mediante confidencialidad (NDA), no tiene plazo de caducidad, y si se revela genera responsabilidad penal.",
+    errorTipico: "Suponer que existe algún registro o plazo de vencimiento para el secreto comercial, cuando su protección depende exclusivamente de mantenerlo confidencial."
+  },
+  {
+    id: "P7", topic: "Acumulación de protecciones sobre un mismo producto", priority: "alto",
+    enunciado: "¿Puede acumularse la protección sobre un mismo producto y qué límite tiene esa acumulación?",
+    pista: "Sí, en principio: cada instituto protege un aspecto distinto y requiere trámite separado. Única incompatibilidad: patente + modelo de utilidad sobre el mismo objeto. Límite: ningún instituto habilita apropiarse de derechos de un tercero.",
+    respuestaLibre: "En principio sí: un mismo producto puede protegerse simultáneamente por varias vías de propiedad industrial (marca, modelo de utilidad, modelo/diseño industrial), porque cada una protege un aspecto jurídico distinto y cada trámite se presenta por separado ante la dirección correspondiente del INPI. La única incompatibilidad expresa vista en clase es patente y modelo de utilidad sobre el mismo objeto (art. 56, 2º párr., Ley 24.481). Esa acumulación tiene un límite: ningún instituto de propiedad industrial habilita apropiarse de derechos de un tercero. Que un objeto reúna en abstracto los requisitos de un modelo o de una marca no autoriza su explotación si su contenido pertenece a otro (caso de las tazas con personajes de Disney).",
+    opciones: [
+      "No, la ley prohíbe acumular cualquier tipo de protección sobre el mismo producto.",
+      "Sí, y una sola presentación ante el INPI cubre automáticamente marca, modelo de utilidad y modelo industrial.",
+      "Sí, en principio, porque cada instituto protege un aspecto jurídico distinto y requiere trámite separado. Única incompatibilidad: patente y modelo de utilidad sobre el mismo objeto. Límite: ningún instituto habilita apropiarse de derechos de un tercero.",
+      "Sí, pero solo si el producto es de elaboración artesanal."
+    ],
+    correcta: 2,
+    explicacion: "Sí, en principio, porque cada instituto protege un aspecto jurídico distinto y requiere trámite separado. Única incompatibilidad: patente y modelo de utilidad sobre el mismo objeto. Límite: ningún instituto habilita apropiarse de derechos de un terceros.",
+    errorTipico: "Creer que una sola presentación cubre marca, modelo de utilidad y modelo industrial a la vez, cuando cada instituto exige trámite separado, con requisitos y costos propios; o bien creer que la elaboración artesanal de un producto exime de infringir derechos de terceros."
+  },
+  {
+    id: "P8", topic: "Clasificación de Locarno vs. Niza", priority: "alto",
+    enunciado: "¿En qué se diferencia la clasificación de Locarno de la clasificación de Niza?",
+    pista: "Niza = marcas (productos 1-34, servicios 35-45). Locarno = diseños/modelos industriales (solo productos, organizados por rubro).",
+    respuestaLibre: "La clasificación de Niza, usada para marcas, distingue clases de productos (1 a 34) y de servicios (35 a 45). La clasificación de Locarno, usada para diseños y modelos industriales, está organizada por rubro (por ejemplo, agroquímicos) y comprende únicamente productos, sin categoría de servicios.",
+    opciones: [
+      "Niza y Locarno son sinónimos; ambas clasifican marcas en productos y servicios.",
+      "Niza se usa para diseños industriales; Locarno se usa para marcas.",
+      "Niza, usada para marcas, distingue productos (1-34) y servicios (35-45); Locarno, usada para diseños y modelos industriales, comprende únicamente productos organizados por rubro, sin categoría de servicios.",
+      "Niza clasifica patentes; Locarno clasifica secretos comerciales."
+    ],
+    correcta: 2,
+    explicacion: "Niza, usada para marcas, distingue productos (1-34) y servicios (35-45); Locarno, usada para diseños y modelos industriales, comprende únicamente productos organizados por rubro, sin categoría de servicios.",
+    errorTipico: "Aplicar la lógica de clases de Niza —con su distinción entre productos y servicios— al momento de clasificar un diseño o modelo industrial bajo Locarno."
+  },
+  {
+    id: "INT-a", topic: "Integradora · Figura que protege la forma ergonómica", priority: "critico",
+    contexto: "Martina diseña una botella de agua reutilizable que incorpora una curva central que facilita agarrarla mejor y un mecanismo que permite plegarla para ocupar menos espacio.",
+    enunciado: "(a) ¿Qué figura de propiedad industrial protege la forma ergonómica y plegable de la botella, y por qué corresponde esa figura y no otra?",
+    pista: "Nueva función (mejor agarre, menor volumen) agregada a un producto ya conocido (botella). No requiere actividad inventiva ni novedad absoluta del producto en sí.",
+    respuestaLibre: "La forma ergonómica y plegable corresponde a un modelo de utilidad, porque se trata de una nueva función —mejor agarre, menor volumen— agregada a un producto ya conocido (una botella), sin que se requiera acreditar actividad inventiva ni novedad absoluta del producto en sí, sino solo de esa utilidad puntual.",
+    opciones: [
+      "Patente, porque se trata de una invención completamente nueva desde cero.",
+      "Modelo de utilidad, porque se trata de una nueva función agregada a un producto ya conocido, sin requerir actividad inventiva ni novedad absoluta del producto en sí.",
+      "Diseño industrial, porque la forma es ornamental.",
+      "Marca tridimensional, porque la forma identifica el origen comercial."
+    ],
+    correcta: 1,
+    explicacion: "Corresponde a un modelo de utilidad, porque se trata de una nueva función agregada a un producto ya conocido, sin requerir actividad inventiva ni novedad absoluta del producto en sí.",
+    errorTipico: "Confundir modelo de utilidad con diseño industrial, cuando lo que se protege aquí es la función nueva (mejor agarre, plegado), no la ornamentalidad."
+  },
+  {
+    id: "INT-b", topic: "Integradora · Trámites separados ante el INPI", priority: "critico",
+    contexto: "Martina quiere proteger tanto la funcionalidad de la botella (ergonomía y plegado) como el estampado geométrico que decoró en la superficie.",
+    enunciado: "(b) ¿Puede Martina proteger en un mismo trámite tanto la funcionalidad de la botella como el estampado ornamental, o necesita presentaciones separadas?",
+    pista: "Cada instituto exige trámite separado ante la dirección correspondiente del INPI, con requisitos y costos propios.",
+    respuestaLibre: "No. Cada instituto exige un trámite separado ante la dirección correspondiente del INPI, con requisitos y costos propios: el modelo de utilidad va por un lado y, si Martina quisiera registrar un estampado propio como diseño industrial, sería una presentación distinta.",
+    opciones: [
+      "Sí, una sola presentación cubre automáticamente todos los institutos aplicables.",
+      "Sí, pero solo si presenta la solicitud dentro de los 30 días de creada la botella.",
+      "No. Cada instituto exige un trámite separado ante la dirección correspondiente del INPI, con requisitos y costos propios.",
+      "Solo puede proteger uno de los dos aspectos, no ambos."
+    ],
+    correcta: 2,
+    explicacion: "No. Cada instituto exige un trámite separado ante la dirección correspondiente del INPI, con requisitos y costos propios.",
+    errorTipico: "Creer que una sola presentación cubre marca, modelo de utilidad y modelo industrial a la vez, cuando cada instituto exige trámite separado."
+  },
+  {
+    id: "INT-c", topic: "Integradora · Estampado ya registrado por tercero", priority: "critico",
+    contexto: "Antes de presentar los trámites, un colega le muestra a Martina que el estampado geométrico que quiere usar ya fue registrado como diseño industrial por otra empresa, sin que Martina lo supiera al momento de crearlo.",
+    enunciado: "(c) Dado que el estampado que Martina quiere usar ya está registrado por un tercero, ¿puede igualmente registrarlo o explotarlo como propio?",
+    pista: "Ningún instituto de propiedad industrial habilita apropiarse de derechos de un tercero. Caso de las tazas con personajes de Disney.",
+    respuestaLibre: "No. Aun cuando el estampado cumpliera en abstracto los requisitos de originalidad y novedad para Martina, no puede registrarlo ni explotarlo porque ya pertenece a un tercero: acumular protecciones sobre un producto no habilita apropiarse de derechos ajenos, tal como se vio con el caso de las tazas con personajes de Disney.",
+    opciones: [
+      "Sí, porque ella lo creó de buena fe, sin saber que estaba registrado.",
+      "Sí, pero solo si paga una regalía al titular original.",
+      "No. Aun cuando cumpliera en abstracto los requisitos, no puede registrarlo ni explotarlo porque ya pertenece a un tercero: acumular protecciones no habilita apropiarse de derechos ajenos.",
+      "Sí, porque el registro anterior caduca automáticamente a los 5 años."
+    ],
+    correcta: 2,
+    explicacion: "No. Aun cuando cumpliera en abstracto los requisitos, no puede registrarlo ni explotarlo porque ya pertenece a un tercero: acumular protecciones no habilita apropiarse de derechos ajenos.",
+    errorTipico: "Un alumno que memorizó los institutos por separado puede resolver correctamente las otras preguntas de la integradora, pero fallar en esta al no conectar el límite del sistema de acumulación con el caso concreto, tratando la titularidad de terceros como un problema ajeno a la propiedad industrial."
+  },
+  {
+    id: "C1", topic: "Caso 1 · El nuevo accesorio de la multiherramienta", priority: "alto",
+    contexto: "Diego fabrica multiherramientas tipo navaja suiza. A su modelo básico, ya conocido en el mercado, le agrega un destapador de botellas integrado que no existía en ese producto. Diego quiere saber si puede proteger esa incorporación y, si es así, bajo qué figura.",
+    enunciado: "¿Puede Diego proteger el destapador integrado y bajo qué figura?",
+    pista: "El producto de base ya es conocido. Lo que agrega es una nueva utilidad (destapador) sobre ese producto conocido. No se requiere actividad inventiva. Se tramita por separado.",
+    respuestaLibre: "Diego puede proteger el destapador como modelo de utilidad, en trámite independiente, por 10 años improrrogables contados desde la fecha de presentación de la solicitud. El producto de base (la multiherramienta) ya es conocido; lo que Diego aporta es una nueva utilidad —el destapador— sobre ese producto conocido, que mejora su función. No se requiere actividad inventiva; basta con que esa utilidad puntual sea novedosa y tenga aplicación industrial.",
+    opciones: [
+      "No puede protegerlo porque la multiherramienta ya es conocida en el mercado.",
+      "Puede protegerlo como patente, porque se trata de una invención completamente nueva.",
+      "Puede protegerlo como modelo de utilidad, en trámite independiente, por 10 años improrrogables desde la presentación, porque agrega una nueva utilidad sobre un producto conocido sin requerir actividad inventiva.",
+      "Puede protegerlo como diseño industrial, porque el destapador tiene forma ornamental."
+    ],
+    correcta: 2,
+    explicacion: "Puede protegerlo como modelo de utilidad, en trámite independiente, por 10 años improrrogables desde la presentación, porque agrega una nueva utilidad sobre un producto conocido sin requerir actividad inventiva.",
+    errorTipico: "Exigir que Diego demuestre actividad inventiva o que el conjunto de la multiherramienta sea enteramente nuevo, cuando el modelo de utilidad solo exige novedad de la utilidad agregada."
+  },
+  {
+    id: "C2", topic: "Caso 2 · El envase con tapa práctica", priority: "alto",
+    contexto: "Una empresa de lácteos rediseña su envase tradicional: en vez de tener que cortar una esquina para abrirlo, le incorpora una tapa rosca en la parte superior. La empresa consulta a su abogado si debe registrar esto como modelo de utilidad, porque 'ahora es mucho más fácil de abrir y cerrar'.",
+    enunciado: "¿Corresponde registrar la tapa rosca como modelo de utilidad?",
+    pista: "Caso límite. La docente lo inclina hacia diseño industrial (como el tetrabrik con tapita): agregar practicidad sin modificar la función esencial se acerca más al diseño que al modelo de utilidad. Zona gris, no regla cerrada.",
+    respuestaLibre: "No corresponde automáticamente modelo de utilidad; conforme el criterio de la clase, se trata de un caso más cercano al diseño industrial, salvo que se acredite que la tapa aporta una utilidad funcional nueva y no solo mayor practicidad. Hay que preguntarse si la tapa cambia la función esencial del envase (contener y despachar el producto) o solo la hace más práctica sin alterar esa función. Según el criterio expuesto en clase para un caso análogo (el tetrabrik con tapita), agregar practicidad sin modificar la utilidad del producto se acerca más al diseño industrial que al modelo de utilidad.",
+    opciones: [
+      "Sí, automáticamente, porque cualquier mejora práctica en un envase es un modelo de utilidad.",
+      "No, porque las tapas no son registrables bajo ninguna figura de propiedad industrial.",
+      "No corresponde automáticamente modelo de utilidad; conforme el criterio de la clase, se trata de un caso más cercano al diseño industrial, salvo que se acredite que la tapa aporta una utilidad funcional nueva y no solo mayor practicidad.",
+      "Sí, pero solo si la tapa es de color distinto al resto del envase."
+    ],
+    correcta: 2,
+    explicacion: "No corresponde automáticamente modelo de utilidad; conforme el criterio de la clase, se trata de un caso más cercano al diseño industrial, salvo que se acredite que la tapa aporta una utilidad funcional nueva y no solo mayor practicidad.",
+    errorTipico: "Asumir que cualquier mejora práctica en un envase es, por definición, un modelo de utilidad, sin distinguir entre 'nueva función' y 'mayor comodidad de uso'."
+  },
+  {
+    id: "C3", topic: "Caso 3 · El frasco de perfume 'Lumière'", priority: "alto",
+    contexto: "La empresa Lumière diseña un frasco de perfume con forma de estrella dorada, absolutamente distintivo dentro del mercado. Ya registró esa forma como marca tridimensional. Ahora su asesora legal le sugiere registrar también la forma del frasco como modelo industrial. El gerente de Lumière pregunta si eso no sería 'duplicar' una protección que ya tienen.",
+    enunciado: "¿Es útil registrar la forma del frasco como modelo industrial si ya está registrada como marca tridimensional?",
+    pista: "Sí, porque cada instituto protege un aspecto distinto: la marca protege la asociación con el origen comercial (renovable indefinidamente); el modelo industrial protege la ornamentalidad (hasta 15 años improrrogable). Al vencer el modelo, un tercero podría fabricar frascos con esa forma, pero no usarlos como marca.",
+    respuestaLibre: "No se trata de una duplicación inútil: registrar ambas figuras amplía la protección de Lumière, porque cubre dos riesgos distintos (imitación de la forma como tal, y confusión de origen comercial), con plazos y alcances diferentes. La marca tridimensional protege que el consumidor asocie esa forma con el origen comercial Lumière; es renovable indefinidamente cada 10 años. El modelo industrial protegería la ornamentalidad de esa misma forma en sí, con independencia de si el consumidor la asocia o no con una marca; su plazo máximo es de 15 años (5+5+5), improrrogable. La consecuencia práctica surge al vencimiento del modelo industrial: pasados los 15 años, un tercero podría fabricar frascos con esa misma forma ornamental, pero no podría usarlos como marca de sus propios productos si la marca de Lumière sigue vigente y renovada.",
+    opciones: [
+      "No, porque la ley prohíbe acumular ambas protecciones sobre la misma forma.",
+      "Sí, pero solo si la forma es la necesaria para que el producto cumpla su función.",
+      "Sí, porque cada instituto protege un aspecto distinto: la marca protege la asociación con el origen comercial (renovable indefinidamente) y el modelo industrial protege la ornamentalidad (hasta 15 años improrrogable). Al vencer el modelo, un tercero podría fabricar frascos con esa forma, pero no usarlos como marca.",
+      "No es útil, porque al vencer el modelo industrial también se pierde automáticamente la marca tridimensional."
+    ],
+    correcta: 2,
+    explicacion: "Sí, porque cada instituto protege un aspecto distinto: la marca protege la asociación con el origen comercial (renovable indefinidamente) y el modelo industrial protege la ornamentalidad (hasta 15 años improrrogable). Al vencer el modelo, un tercero podría fabricar frascos con esa forma, pero no usarlos como marca.",
+    errorTipico: "Creer que, al vencer el modelo industrial, también se pierde la marca tridimensional, ignorando que son derechos independientes que protegen bienes jurídicos distintos."
+  }
+];
+
+const STORAGE_KEY = "comercial_clase5_progress";
+
+const state = {
+  queue: [],
+  current: null,
+  phase: "recall",
+  progress: {},
+  sessionStats: { ok: 0, err: 0 },
+  mode: "full",
+  viewedCount: 0,
+  flashcards: {
+    index: 0,
+    revealed: false,
+    order: []
+  }
+};
+
+function saveProgress() {
+  try {
+    const data = { progress: state.progress, sessionStats: state.sessionStats };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (data && data.progress) state.progress = data.progress;
+    if (data && data.sessionStats) state.sessionStats = data.sessionStats;
+    return true;
+  } catch (e) { return false; }
+}
+
+function clearProgress() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+}
+
+function $(sel) { return document.querySelector(sel); }
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function getProgress(qid) {
+  if (!state.progress[qid]) state.progress[qid] = { okCount: 0, errCount: 0, mastered: false, attempts: 0 };
+  return state.progress[qid];
+}
+function isMastered(qid) { return getProgress(qid).mastered; }
+
+function buildQueue(mode) {
+  let pool = mode === "weak" ? QUESTIONS.filter(q => !isMastered(q.id)) : [...QUESTIONS];
+  const order = { critico: 0, alto: 1, medio: 2 };
+  pool.sort((a,b) => order[a.priority] - order[b.priority]);
+  const groups = { critico: [], alto: [], medio: [] };
+  pool.forEach(q => groups[q.priority].push(q));
+  Object.values(groups).forEach(g => shuffle(g));
+  state.queue = [...groups.critico, ...groups.alto, ...groups.medio];
+  state.viewedCount = 0;
+}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+function reinsertLater(q) {
+  const insertAt = Math.min(state.queue.length, 2 + Math.floor(Math.random() * 3));
+  state.queue.splice(insertAt, 0, q);
+}
+function countMastered() { return QUESTIONS.filter(q => isMastered(q.id)).length; }
+
+function hasWeakQuestions() {
+  return QUESTIONS.some(q => !isMastered(q.id) && getProgress(q.id).attempts > 0);
+}
+
+function updateReviewOnlyButtonVisibility() {
+  const btn = $("#btn-review-only");
+  if (hasWeakQuestions()) btn.classList.remove("hidden");
+  else btn.classList.add("hidden");
+}
+
+function renderQuestion() {
+  if (state.queue.length === 0) { renderSummary(); return; }
+  state.current = state.queue.shift();
+  state.phase = "recall";
+  state.viewedCount++;
+  updateProgressBar();
+  drawQuestion();
+}
+
+function updateProgressBar() {
+  const total = QUESTIONS.length;
+  const mastered = countMastered();
+  const currentNum = Math.min(state.viewedCount, total);
+  $("#stat-current").textContent = currentNum;
+  $("#stat-total").textContent = total;
+  $("#stat-mastered").textContent = mastered;
+  $("#progress-fill").style.width = ((mastered / total) * 100) + "%";
+}
+
+function drawQuestion() {
+  const q = state.current;
+  const p = getProgress(q.id);
+  const container = $("#question-container");
+  let prioridadLabel = "";
+  if (q.priority === "critico") prioridadLabel = '<span class="priority critico">Crítico</span>';
+  else if (q.priority === "alto") prioridadLabel = '<span class="priority alto">Alto</span>';
+  else prioridadLabel = '<span class="priority medio">Medio</span>';
+  const counterBadge = `
+    <span class="counter-badge ${p.okCount>0?'ok':''}">✓ ${p.okCount}/2</span>
+    ${p.errCount>0 ? `<span class="counter-badge err">✗ ${p.errCount}</span>` : ""}
+  `;
+  container.innerHTML = `
+    <div class="card">
+      <div class="tag-row">
+        <span class="tag">${q.id} · ${q.topic}</span>
+        ${prioridadLabel}
+        ${counterBadge}
+      </div>
+      ${q.contexto ? `<div class="contexto">${q.contexto}</div>` : ""}
+      <h3>${q.enunciado}</h3>
+      <div id="phase-content"></div>
+    </div>
+  `;
+  if (state.phase === "recall") drawRecallPhase(q);
+  else if (state.phase === "feedback") drawFeedbackPhase(q);
+  else if (state.phase === "mc") drawMCPhase(q);
+}
+
+function drawRecallPhase(q) {
+  const pc = $("#phase-content");
+  pc.innerHTML = `
+    <span class="phase-label">Fase 1 · Recall libre</span>
+    <div class="recall-area">
+      <textarea id="recall-input" placeholder="Escribí lo que recordás de la respuesta. No importa la extensión: el esfuerzo de recordar es lo que fija el contenido."></textarea>
+      <div class="recall-hint"><b>Pista:</b> ${q.pista}</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="btn-show-answer">Ver respuesta modelo</button>
+      <button class="btn secondary" id="btn-skip">Saltar pregunta</button>
+    </div>
+  `;
+  $("#btn-show-answer").addEventListener("click", () => { state.phase = "feedback"; drawQuestion(); });
+  $("#btn-skip").addEventListener("click", () => { reinsertLater(q); renderQuestion(); });
+}
+
+function drawFeedbackPhase(q) {
+  const pc = $("#phase-content");
+  pc.innerHTML = `
+    <span class="phase-label">Fase 2 · Respuesta modelo</span>
+    <div class="feedback">
+      <h4>Respuesta correcta</h4>
+      <div class="bloque">${q.respuestaLibre.replace(/\n/g, "<br>")}</div>
+      <h4>Explicación</h4>
+      <p>${q.explicacion}</p>
+      <h4>Error típico — marcá bien este límite</h4>
+      <div class="error-tipico"><b>⚠</b> ${q.errorTipico}</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="btn-to-mc">Continuar → Refuerzo con opciones</button>
+    </div>
+  `;
+  $("#btn-to-mc").addEventListener("click", () => { state.phase = "mc"; drawQuestion(); });
+}
+
+function drawMCPhase(q) {
+  const pc = $("#phase-content");
+  const opcionesIdx = q.opciones.map((_, i) => i);
+  shuffle(opcionesIdx);
+  let optsHtml = opcionesIdx.map((realIdx, displayIdx) => {
+    const letter = String.fromCharCode(65 + displayIdx);
+    return `<li data-real="${realIdx}"><span class="letter">${letter}</span>${q.opciones[realIdx]}</li>`;
+  }).join("");
+  pc.innerHTML = `
+    <span class="phase-label">Fase 3 · Refuerzo con opciones</span>
+    <ul class="options" id="options-list">${optsHtml}</ul>
+    <div id="mc-feedback"></div>
+  `;
+  pc.querySelectorAll("#options-list li").forEach(li => {
+    li.addEventListener("click", () => handleMCAnswer(q, li));
+  });
+}
+
+function handleMCAnswer(q, liClicked) {
+  const realIdx = parseInt(liClicked.getAttribute("data-real"));
+  const isCorrect = realIdx === q.correcta;
+  const p = getProgress(q.id);
+  p.attempts++;
+  document.querySelectorAll("#options-list li").forEach(li => {
+    li.classList.add("disabled");
+    const r = parseInt(li.getAttribute("data-real"));
+    if (r === q.correcta) li.classList.add("correct");
+    else if (li === liClicked) li.classList.add("wrong");
+  });
+  if (isCorrect) {
+    p.okCount++;
+    state.sessionStats.ok++;
+    if (p.okCount >= 2) p.mastered = true;
+  } else {
+    p.errCount++;
+    state.sessionStats.err++;
+    p.okCount = 0;
+  }
+  saveProgress();
+  updateProgressBar();
+  const fb = $("#mc-feedback");
+  const verdict = isCorrect
+    ? (p.mastered ? "✓ DOMINADA — dos aciertos consecutivos" : "✓ Correcto — necesitás un acierto más para dominarla")
+    : "✗ Incorrecto — la pregunta volverá a aparecer más adelante";
+  fb.innerHTML = `
+    <div class="feedback ${isCorrect ? 'ok' : 'err'}">
+      <div class="veredicto">${verdict}</div>
+      ${!isCorrect ? `
+        <h4>Respuesta correcta</h4>
+        <p>${q.respuestaLibre.replace(/\n/g, "<br>")}</p>
+        <h4>Error típico</h4>
+        <div class="error-tipico"><b>⚠</b> ${q.errorTipico}</div>
+      ` : ""}
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="btn-next">Continuar →</button>
+    </div>
+  `;
+  if (!isCorrect && !p.mastered) reinsertLater(q);
+  $("#btn-next").addEventListener("click", () => {
+    if (state.queue.length === 0) renderSummary();
+    else renderQuestion();
+  });
+}
+
+function renderSummary() {
+  const mastered = QUESTIONS.filter(q => isMastered(q.id));
+  const weak = QUESTIONS.filter(q => !isMastered(q.id) && getProgress(q.id).attempts > 0);
+  const untouched = QUESTIONS.filter(q => getProgress(q.id).attempts === 0);
+  $("#sum-mastered").textContent = mastered.length;
+  $("#sum-weak").textContent = weak.length + untouched.length;
+  $("#sum-ok").textContent = state.sessionStats.ok;
+  $("#sum-err").textContent = state.sessionStats.err;
+  const listWeak = $("#list-weak");
+  const allWeak = [...weak, ...untouched];
+  if (allWeak.length === 0) {
+    listWeak.innerHTML = '<li style="border-left-color:var(--ok); background:var(--ok-bg); color:var(--ok);">No hay temas débiles. ¡Sesión perfecta!</li>';
+  } else {
+    listWeak.innerHTML = allWeak.map(q => {
+      const p = getProgress(q.id);
+      const estado = p.attempts === 0 ? "no intentada" : `${p.errCount} error(es)`;
+      return `<li><span class="q-id">${q.id}</span><b>${q.topic}</b> <span style="color:var(--text-dim); font-size:12px; margin-left:6px;">(${estado})</span></li>`;
+    }).join("");
+  }
+  const listMastered = $("#list-mastered");
+  if (mastered.length === 0) {
+    listMastered.innerHTML = '<li style="color:var(--text-dim); background:var(--bg-3); border-left-color:var(--border);">Todavía no dominaste ninguna pregunta.</li>';
+  } else {
+    listMastered.innerHTML = mastered.map(q => `<li><span class="q-id">${q.id}</span>${q.topic}</li>`).join("");
+  }
+  showScreen("screen-summary");
+}
+
+function initFlashcards() {
+  const order = { critico: 0, alto: 1, medio: 2 };
+  const sorted = [...QUESTIONS].sort((a,b) => order[a.priority] - order[b.priority]);
+  const groups = { critico: [], alto: [], medio: [] };
+  sorted.forEach(q => groups[q.priority].push(q));
+  Object.values(groups).forEach(g => shuffle(g));
+  state.flashcards.order = [...groups.critico, ...groups.alto, ...groups.medio];
+  state.flashcards.index = 0;
+  state.flashcards.revealed = false;
+}
+
+function renderFlashcard() {
+  const fc = state.flashcards;
+  const q = fc.order[fc.index];
+  const p = getProgress(q.id);
+  const body = $("#flashcard-body");
+
+  $("#fc-current").textContent = fc.index + 1;
+  $("#fc-total").textContent = fc.order.length;
+
+  renderFlashcardDots();
+
+  let statusHtml = "";
+  if (p.mastered) statusHtml = '<span class="fc-status mastered">✓ Dominada</span>';
+  else if (p.errCount > 0) statusHtml = '<span class="fc-status weak">⚠ Tema débil</span>';
+
+  let html = `
+    <div class="fc-tag">${q.id} · ${q.topic}</div>
+    ${statusHtml}
+    ${q.contexto ? `<div class="fc-context">${q.contexto}</div>` : ""}
+    <div class="fc-question">${q.enunciado}</div>
+  `;
+
+  if (fc.revealed) {
+    html += `
+      <div class="fc-answer">
+        <div class="feedback">
+          <h4>Respuesta</h4>
+          <div class="bloque">${q.respuestaLibre.replace(/\n/g, "<br>")}</div>
+          <h4>Explicación</h4>
+          <p>${q.explicacion}</p>
+          <h4>Error típico</h4>
+          <div class="error-tipico"><b>⚠</b> ${q.errorTipico}</div>
+        </div>
+        <div class="fc-self-eval">
+          <button class="btn err" id="fc-costo">😕 Me costó</button>
+          <button class="btn ok" id="fc-sabia">😊 La sabía</button>
+        </div>
+      </div>
+    `;
+  } else {
+    html += `
+      <div style="margin-top:auto;">
+        <button class="btn" id="fc-reveal" style="width:100%; justify-content:center;">Mostrar respuesta</button>
+      </div>
+    `;
+  }
+
+  body.innerHTML = html;
+
+  if (fc.revealed) {
+    $("#fc-costo").addEventListener("click", () => handleFlashcardEval(q, false));
+    $("#fc-sabia").addEventListener("click", () => handleFlashcardEval(q, true));
+  } else {
+    $("#fc-reveal").addEventListener("click", () => {
+      state.flashcards.revealed = true;
+      renderFlashcard();
+    });
+  }
+
+  $("#fc-prev").disabled = fc.index === 0;
+  $("#fc-next").disabled = fc.index === fc.order.length - 1;
+}
+
+function renderFlashcardDots() {
+  const fc = state.flashcards;
+  const dots = fc.order.map((q, i) => {
+    const p = getProgress(q.id);
+    let cls = "dot";
+    if (i === fc.index) cls += " current";
+    else if (p.mastered) cls += " mastered";
+    else if (p.errCount > 0) cls += " weak";
+    return `<div class="${cls}" title="${q.id}: ${q.topic}"></div>`;
+  }).join("");
+  $("#fc-dots").innerHTML = dots;
+}
+
+function handleFlashcardEval(q, knewIt) {
+  const p = getProgress(q.id);
+  p.attempts++;
+  if (knewIt) {
+    p.okCount++;
+    state.sessionStats.ok++;
+    if (p.okCount >= 2) p.mastered = true;
+  } else {
+    p.errCount++;
+    state.sessionStats.err++;
+    p.okCount = 0;
+  }
+  saveProgress();
+  updateReviewOnlyButtonVisibility();
+
+  const fc = state.flashcards;
+  if (fc.index < fc.order.length - 1) {
+    fc.index++;
+    fc.revealed = false;
+  } else {
+    fc.revealed = false;
+  }
+  renderFlashcard();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadProgress();
+  updateReviewOnlyButtonVisibility();
+
+  $("#btn-material").addEventListener("click", () => showScreen("screen-material"));
+  $("#btn-back-home").addEventListener("click", () => showScreen("screen-home"));
+  $("#btn-back-home-2").addEventListener("click", () => showScreen("screen-home"));
+  $("#btn-start-from-material").addEventListener("click", () => {
+    state.mode = "full"; buildQueue("full");
+    showScreen("screen-study"); renderQuestion();
+  });
+  $("#btn-start").addEventListener("click", () => {
+    state.mode = "full"; buildQueue("full");
+    showScreen("screen-study"); renderQuestion();
+  });
+
+  $("#btn-flashcards").addEventListener("click", () => {
+    initFlashcards();
+    showScreen("screen-flashcards");
+    renderFlashcard();
+  });
+  $("#fc-prev").addEventListener("click", () => {
+    if (state.flashcards.index > 0) {
+      state.flashcards.index--;
+      state.flashcards.revealed = false;
+      renderFlashcard();
+    }
+  });
+  $("#fc-next").addEventListener("click", () => {
+    if (state.flashcards.index < state.flashcards.order.length - 1) {
+      state.flashcards.index++;
+      state.flashcards.revealed = false;
+      renderFlashcard();
+    }
+  });
+  $("#fc-home").addEventListener("click", () => {
+    updateReviewOnlyButtonVisibility();
+    showScreen("screen-home");
+  });
+
+  $("#btn-review-only").addEventListener("click", () => {
+    state.mode = "weak"; buildQueue("weak");
+    if (state.queue.length === 0) { alert("No hay temas débiles para repasar."); return; }
+    showScreen("screen-study"); renderQuestion();
+  });
+  $("#btn-review-weak").addEventListener("click", () => {
+    state.mode = "weak"; buildQueue("weak");
+    if (state.queue.length === 0) { alert("No hay temas débiles para repasar."); return; }
+    showScreen("screen-study"); renderQuestion();
+  });
+
+  $("#btn-restart").addEventListener("click", () => {
+    state.progress = {};
+    state.sessionStats = { ok: 0, err: 0 };
+    state.queue = [];
+    state.viewedCount = 0;
+    state.mode = "full";
+    clearProgress();
+    buildQueue("full");
+    updateReviewOnlyButtonVisibility();
+    showScreen("screen-study"); renderQuestion();
+  });
+
+  $("#btn-home").addEventListener("click", () => {
+    updateReviewOnlyButtonVisibility();
+    showScreen("screen-home");
+  });
+
+  document.querySelectorAll('.material-toc a[href^="#"]').forEach(a => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute("href"));
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (window.innerWidth <= 900) {
+        $("#material-toc").classList.remove("open");
+        $("#toc-toggle").classList.remove("open");
+        $("#toc-toggle span:first-child").textContent = "📑 Ver índice";
+      }
+    });
+  });
+
+  $("#toc-toggle").addEventListener("click", () => {
+    const toc = $("#material-toc");
+    const toggle = $("#toc-toggle");
+    const isOpen = toc.classList.toggle("open");
+    toggle.classList.toggle("open", isOpen);
+    toggle.querySelector("span:first-child").textContent = isOpen ? "📑 Ocultar índice" : "📑 Ver índice";
+  });
+});
+</script>
+</body>
+</html>

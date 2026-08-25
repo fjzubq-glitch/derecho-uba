@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comercial · Clase 4</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f1724;
+    --bg-2: #182233;
+    --bg-3: #1f2c40;
+    --accent: #6b9bd1;
+    --accent-soft: #8bb3dc;
+    --accent-bg: rgba(107,155,209,0.10);
+    --border: #2a3a52;
+    --border-2: #223047;
+    --text: #e8f1f8;
+    --text-2: #c5d3e3;
+    --text-dim: #8a9bb2;
+    --ok: #5fb88a;
+    --ok-bg: rgba(95,184,138,0.12);
+    --err: #e07a75;
+    --err-bg: rgba(224,122,117,0.12);
+    --warn: #e6b87b;
+    --warn-bg: rgba(230,184,123,0.12);
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+    --shadow-lg: 0 2px 8px rgba(0,0,0,0.35), 0 12px 32px rgba(0,0,0,0.25);
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    padding: 28px 24px 80px;
+    background:
+      radial-gradient(ellipse at top, #1a2a42 0%, var(--bg) 55%),
+      var(--bg);
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  header.expediente {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header.expediente .brand { display: flex; align-items: center; gap: 14px; }
+  header.expediente .logo {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #4a7fc1);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 600; font-size: 18px;
+    font-family: Georgia, serif;
+    box-shadow: 0 2px 10px rgba(107,155,209,0.35);
+  }
+  header.expediente h1 { font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+  header.expediente .sub { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+  header.expediente .meta { font-size: 12px; color: var(--text-dim); text-align: right; letter-spacing: 0.3px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fade .3s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  .card {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 820px) { .intro-grid { grid-template-columns: 1fr; } }
+
+  .intro h2 { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 12px; letter-spacing: -0.2px; }
+  .intro p { color: var(--text-2); margin-bottom: 10px; font-size: 14.5px; }
+  .intro ul { list-style: none; padding: 0; }
+  .intro li {
+    padding: 10px 0 10px 28px;
+    position: relative;
+    font-size: 14px;
+    color: var(--text-2);
+    border-bottom: 1px solid var(--border-2);
+    line-height: 1.55;
+  }
+  .intro li:last-child { border-bottom: none; }
+  .intro li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 16px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent-bg);
+    border: 1.5px solid var(--accent);
+  }
+  .intro li b { color: var(--text); font-weight: 600; }
+
+  .stat-row { display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
+  .stat-pill {
+    flex: 1; min-width: 110px;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .stat-pill .num { font-size: 22px; font-weight: 600; color: var(--accent); font-family: Georgia, serif; }
+  .stat-pill .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #0f1724;
+    border: 1px solid var(--accent);
+    padding: 11px 22px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: 0.2px;
+  }
+  .btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(107,155,209,0.35); }
+  .btn.secondary { background: var(--bg-3); color: var(--text-2); border-color: var(--border); font-weight: 500; }
+  .btn.secondary:hover { background: var(--border); color: var(--text); box-shadow: none; transform: none; }
+  .btn.ghost { background: transparent; color: var(--text-dim); border-color: transparent; padding: 8px 12px; font-size: 13px; font-weight: 500; }
+  .btn.ghost:hover { background: var(--bg-3); color: var(--text); box-shadow: none; transform: none; }
+  .btn.ok { background: var(--ok); border-color: var(--ok); color: #0f1724; }
+  .btn.ok:hover { background: #6fc99a; border-color: #6fc99a; }
+  .btn.err { background: var(--err); border-color: var(--err); color: #0f1724; }
+  .btn.err:hover { background: #e88a85; border-color: #e88a85; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+
+  .progress-bar {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    box-shadow: var(--shadow);
+  }
+  .progress-bar .track { flex: 1; min-width: 160px; height: 6px; background: var(--bg-3); border-radius: 3px; overflow: hidden; }
+  .progress-bar .fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-soft)); border-radius: 3px; transition: width .4s; }
+  .progress-bar .stats { font-size: 13px; color: var(--text-2); font-weight: 500; }
+  .progress-bar .stats b { color: var(--accent); font-weight: 600; }
+
+  .card .tag-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .card .tag { font-size: 11px; letter-spacing: 0.8px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; }
+  .card .priority { display: inline-block; font-size: 10.5px; padding: 3px 9px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .priority.critico { background: var(--err-bg); color: var(--err); }
+  .priority.alto { background: var(--warn-bg); color: var(--warn); }
+  .priority.medio { background: var(--bg-3); color: var(--text-dim); }
+
+  .card h3 { font-size: 19px; color: var(--text); font-weight: 600; line-height: 1.45; margin-bottom: 14px; letter-spacing: -0.2px; }
+  .card .contexto {
+    font-size: 14px; color: var(--text-2); font-style: italic; margin-bottom: 14px;
+    padding: 12px 14px; border-left: 3px solid var(--accent); background: var(--accent-bg);
+    border-radius: 0 8px 8px 0; line-height: 1.6;
+  }
+
+  .recall-area textarea {
+    width: 100%; min-height: 110px;
+    background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 14px; font-family: inherit; font-size: 14.5px;
+    resize: vertical; line-height: 1.55; transition: border-color .15s;
+  }
+  .recall-area textarea:focus { outline: none; border-color: var(--accent); background: var(--bg-3); }
+  .recall-area textarea::placeholder { color: var(--text-dim); }
+  .recall-hint {
+    font-size: 13px; color: var(--text-2); margin-top: 10px;
+    padding: 10px 12px; background: var(--bg-3); border: 1px solid var(--border);
+    border-radius: 8px; line-height: 1.5;
+  }
+  .recall-hint b { color: var(--accent); font-style: normal; }
+
+  .options { list-style: none; }
+  .options li {
+    background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 13px 15px; margin-bottom: 9px; cursor: pointer; transition: all .15s;
+    font-size: 14.5px; line-height: 1.55;
+  }
+  .options li:hover { border-color: var(--accent); background: var(--accent-bg); }
+  .options li.correct { border-color: var(--ok); background: var(--ok-bg); }
+  .options li.wrong { border-color: var(--err); background: var(--err-bg); }
+  .options li.disabled { cursor: default; }
+  .options li.disabled:hover { background: var(--bg); border-color: var(--border); }
+  .options li.correct.disabled:hover { background: var(--ok-bg); border-color: var(--ok); }
+  .options li.wrong.disabled:hover { background: var(--err-bg); border-color: var(--err); }
+  .options li .letter {
+    display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center;
+    border-radius: 6px; background: var(--bg-3); color: var(--accent); margin-right: 10px;
+    font-weight: 600; font-size: 12px; font-family: Georgia, serif;
+  }
+  .options li.correct .letter { background: var(--ok); color: #0f1724; }
+  .options li.wrong .letter { background: var(--err); color: #0f1724; }
+
+  .feedback {
+    margin-top: 18px; padding: 18px; border-radius: 10px;
+    border-left: 3px solid var(--accent); background: var(--accent-bg);
+  }
+  .feedback.ok { border-left-color: var(--ok); background: var(--ok-bg); }
+  .feedback.err { border-left-color: var(--err); background: var(--err-bg); }
+  .feedback .veredicto { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+  .feedback.ok .veredicto { color: var(--ok); }
+  .feedback.err .veredicto { color: var(--err); }
+  .feedback h4 { font-size: 11.5px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin: 14px 0 6px; font-weight: 600; }
+  .feedback h4:first-child { margin-top: 0; }
+  .feedback p, .feedback .bloque { font-size: 14.5px; color: var(--text); line-height: 1.65; }
+  .feedback .error-tipico {
+    background: rgba(224,122,117,0.08); border-left: 2px solid var(--err);
+    padding: 10px 12px; border-radius: 0 6px 6px 0;
+    font-size: 13.5px; line-height: 1.6; color: var(--text-2);
+  }
+  .feedback .error-tipico b { color: var(--err); }
+
+  .resumen h2 { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 18px; letter-spacing: -0.3px; }
+  .resumen .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .resumen .stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; }
+  .resumen .stat-box .num { font-size: 30px; font-weight: 600; color: var(--accent); font-family: Georgia, serif; }
+  .resumen .stat-box .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px; }
+  .debil-list { list-style: none; }
+  .debil-list li {
+    padding: 11px 14px; border-left: 3px solid var(--err); background: var(--err-bg);
+    border-radius: 0 8px 8px 0; margin-bottom: 8px; font-size: 14px; line-height: 1.5;
+  }
+  .debil-list li .q-id {
+    display: inline-block; background: var(--bg-2); color: var(--err);
+    padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;
+    margin-right: 8px; font-family: Georgia, serif;
+  }
+  .dominadas li { border-left-color: var(--ok); background: var(--ok-bg); }
+  .dominadas li .q-id { color: var(--ok); }
+
+  .section-title {
+    font-size: 14px; font-weight: 600; margin: 22px 0 10px;
+    letter-spacing: 0.3px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-title.err { color: var(--err); }
+  .section-title.ok { color: var(--ok); }
+  .section-title::before { content: ""; width: 18px; height: 2px; background: currentColor; border-radius: 1px; }
+
+  .material-wrap { display: grid; grid-template-columns: 240px 1fr; gap: 22px; align-items: start; }
+  @media (max-width: 900px) { .material-wrap { grid-template-columns: 1fr; } }
+
+  .toc-toggle {
+    display: none; width: 100%;
+    background: var(--bg-2); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 16px; font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-bottom: 12px; text-align: left;
+    transition: all .15s; align-items: center; justify-content: space-between;
+  }
+  .toc-toggle:hover { background: var(--bg-3); }
+  .toc-toggle .chevron { transition: transform .2s; font-size: 12px; }
+  .toc-toggle.open .chevron { transform: rotate(180deg); }
+
+  @media (max-width: 900px) {
+    .toc-toggle { display: flex; }
+    .material-toc { display: none; position: static; max-height: none; }
+    .material-toc.open { display: block; }
+  }
+
+  .material-toc {
+    position: sticky; top: 14px;
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; font-size: 13px;
+    max-height: calc(100vh - 28px); overflow-y: auto; box-shadow: var(--shadow);
+  }
+  @media (max-width: 900px) { .material-toc { position: static; max-height: none; } }
+  .material-toc h4 { font-size: 11px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+  .material-toc .toc-group { margin-bottom: 14px; }
+  .material-toc .toc-group-title {
+    color: var(--accent); font-size: 10.5px; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 6px; padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-2); font-weight: 600;
+  }
+  .material-toc a {
+    display: block; color: var(--text-2); text-decoration: none;
+    padding: 5px 8px; border-radius: 6px; transition: all .15s;
+    font-size: 12.5px; line-height: 1.4; margin-bottom: 1px;
+  }
+  .material-toc a:hover { color: var(--accent); background: var(--accent-bg); }
+
+  .material-body { min-width: 0; }
+
+  .material-hero {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 26px; margin-bottom: 20px; box-shadow: var(--shadow);
+  }
+  .material-hero h2 { font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; margin-bottom: 6px; }
+  .material-hero p { color: var(--text-dim); font-size: 14px; }
+
+  .mat-section {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px 24px; margin-bottom: 14px;
+    box-shadow: var(--shadow); scroll-margin-top: 14px;
+  }
+  .mat-section .section-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
+  }
+  .mat-section h3 {
+    font-size: 16.5px; color: var(--text); font-weight: 600;
+    letter-spacing: -0.2px; line-height: 1.4; flex: 1; min-width: 200px;
+  }
+  .mat-section .badges { display: flex; gap: 5px; flex-wrap: wrap; }
+  .mat-section .badge {
+    font-size: 10px; padding: 3px 8px; border-radius: 20px;
+    font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; white-space: nowrap;
+  }
+  .badge.pareto { background: var(--warn-bg); color: var(--warn); }
+  .badge.trampa { background: var(--err-bg); color: var(--err); }
+  .badge.cae { background: var(--ok-bg); color: var(--ok); }
+  .badge.fuente { background: var(--bg-3); color: var(--text-dim); border: 1px solid var(--border); }
+
+  .mat-section .enunciado-q { font-size: 15px; color: var(--text); line-height: 1.6; margin-bottom: 14px; font-weight: 500; }
+
+  .mat-section details {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 10px; overflow: hidden; transition: all .2s;
+  }
+  .mat-section details[open] { border-color: var(--accent); box-shadow: 0 2px 12px rgba(107,155,209,0.15); }
+  .mat-section details summary {
+    padding: 12px 16px; cursor: pointer; font-size: 13.5px;
+    font-weight: 600; color: var(--accent); list-style: none;
+    display: flex; align-items: center; justify-content: space-between;
+    user-select: none; transition: background .15s;
+  }
+  .mat-section details summary:hover { background: var(--accent-bg); }
+  .mat-section details summary::-webkit-details-marker { display: none; }
+  .mat-section details summary::after {
+    content: "+"; font-size: 18px; font-weight: 300; color: var(--accent);
+    transition: transform .2s; line-height: 1;
+  }
+  .mat-section details[open] summary::after { content: "−"; }
+  .mat-section details[open] summary { border-bottom: 1px solid var(--border); background: var(--accent-bg); }
+  .mat-section details .detail-content { padding: 16px; font-size: 14px; line-height: 1.65; color: var(--text-2); }
+  .mat-section details.error-detail summary { color: var(--err); }
+  .mat-section details.error-detail summary::after { color: var(--err); }
+  .mat-section details.error-detail[open] summary { background: var(--err-bg); border-bottom-color: rgba(224,122,117,0.25); }
+  .mat-section details.error-detail summary:hover { background: var(--err-bg); }
+  .mat-section details.error-detail .detail-content { background: var(--err-bg); color: var(--text-2); }
+  .mat-section details.error-detail .detail-content b { color: var(--err); }
+
+  .mat-section .contexto-caso {
+    background: var(--accent-bg); border-left: 3px solid var(--accent);
+    padding: 12px 14px; border-radius: 0 8px 8px 0;
+    font-size: 14px; color: var(--text-2); margin-bottom: 14px; line-height: 1.6;
+  }
+
+  .mat-section table {
+    width: 100%; border-collapse: collapse; font-size: 13.5px;
+    margin: 8px 0; border-radius: 8px; overflow: hidden;
+  }
+  .mat-section th {
+    background: var(--bg-3); color: var(--text); text-align: left;
+    padding: 10px 12px; font-weight: 600; font-size: 11.5px;
+    text-transform: uppercase; letter-spacing: 0.6px; border-bottom: 1px solid var(--border);
+  }
+  .mat-section td { padding: 10px 12px; border-bottom: 1px solid var(--border-2); color: var(--text-2); line-height: 1.5; vertical-align: top; }
+  .mat-section tr:last-child td { border-bottom: none; }
+  .mat-section ol { padding-left: 20px; margin: 6px 0; }
+  .mat-section ol li { margin-bottom: 4px; }
+
+  .contrafactico {
+    background: var(--warn-bg); border-left: 3px solid var(--warn);
+    padding: 12px 14px; border-radius: 0 8px 8px 0; margin-top: 12px;
+    font-size: 13.5px; line-height: 1.6; color: var(--text-2);
+  }
+  .contrafactico b { color: var(--warn); }
+  .link-rel { font-size: 12.5px; color: var(--text-dim); margin-top: 10px; font-style: italic; }
+
+  .flashcard-wrap { max-width: 760px; margin: 0 auto; }
+  .flashcard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .flashcard-header .counter { font-size: 13px; color: var(--text-2); font-weight: 500; }
+  .flashcard-header .counter b { color: var(--accent); }
+  .flashcard-progress-mini { display: flex; gap: 4px; flex-wrap: wrap; }
+  .flashcard-progress-mini .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--bg-3); border: 1px solid var(--border); transition: all .2s;
+  }
+  .flashcard-progress-mini .dot.current { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+  .flashcard-progress-mini .dot.mastered { background: var(--ok); border-color: var(--ok); }
+  .flashcard-progress-mini .dot.weak { background: var(--err); border-color: var(--err); }
+
+  .flashcard {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 30px; min-height: 320px;
+    box-shadow: var(--shadow); display: flex; flex-direction: column; transition: all .3s;
+  }
+  .flashcard .fc-tag { font-size: 11px; letter-spacing: 0.8px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; margin-bottom: 10px; }
+  .flashcard .fc-context {
+    font-size: 14px; color: var(--text-2); font-style: italic; margin-bottom: 14px;
+    padding: 10px 12px; border-left: 3px solid var(--accent); background: var(--accent-bg);
+    border-radius: 0 8px 8px 0; line-height: 1.6;
+  }
+  .flashcard .fc-question { font-size: 18px; color: var(--text); font-weight: 600; line-height: 1.5; letter-spacing: -0.2px; flex: 1; margin-bottom: 18px; }
+  .flashcard .fc-status { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 14px; }
+  .flashcard .fc-status.mastered { background: var(--ok-bg); color: var(--ok); }
+  .flashcard .fc-status.weak { background: var(--err-bg); color: var(--err); }
+  .flashcard .fc-answer { border-top: 1px solid var(--border); padding-top: 18px; margin-top: 8px; animation: fade .3s ease; }
+  .flashcard-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; gap: 10px; }
+  .fc-self-eval { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .fc-self-eval .btn { flex: 1; justify-content: center; min-width: 140px; }
+
+  @media (max-width: 640px) {
+    body { padding: 14px 10px 60px; }
+    header.expediente { padding: 16px 18px; }
+    header.expediente h1 { font-size: 17px; }
+    .card, .mat-section { padding: 18px; }
+    .card h3 { font-size: 17px; }
+    .btn { padding: 10px 16px; font-size: 13.5px; }
+    .material-hero h2 { font-size: 20px; }
+    .mat-section h3 { font-size: 15px; }
+    .flashcard { padding: 20px; min-height: 280px; }
+    .flashcard .fc-question { font-size: 16px; }
+  }
+
+  .hidden { display: none !important; }
+
+  .phase-label {
+    display: inline-block; font-size: 11px; padding: 4px 11px;
+    background: var(--accent-bg); color: var(--accent);
+    border-radius: 20px; font-weight: 600; letter-spacing: 0.6px;
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+
+  .counter-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; padding: 3px 9px; background: var(--bg-3);
+    border-radius: 20px; color: var(--text-dim); font-weight: 600;
+  }
+  .counter-badge.ok { background: var(--ok-bg); color: var(--ok); }
+  .counter-badge.err { background: var(--err-bg); color: var(--err); }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="expediente">
+    <div class="brand">
+      <div class="logo">C4</div>
+      <div>
+        <h1>Derecho Comercial · Clase 4</h1>
+        <div class="sub">Marcas, Ley 22.362 y procedimiento de registro</div>
+      </div>
+    </div>
+    <div class="meta">11 ítems · 8 preguntas + 3 integradoras + 3 casos</div>
+  </header>
+
+  <section id="screen-home" class="screen active">
+    <div class="intro-grid">
+      <div class="card intro">
+        <h2>Cómo funciona esta sesión</h2>
+        <p>Diseñada para fijar el contenido en la memoria, no para recorrerlo una sola vez.</p>
+        <ul>
+          <li><b>Lectura del material:</b> leé el cuestionario y los casos completos antes de ejercitar.</li>
+          <li><b>Recall libre:</b> intentás recordar la respuesta sin pistas.</li>
+          <li><b>Respuesta modelo:</b> leés la explicación completa y el <em>error típico</em>.</li>
+          <li><b>Refuerzo con opciones:</b> elegís entre alternativas para consolidar.</li>
+          <li><b>Dominio:</b> dos aciertos seguidos marcan la pregunta como dominada; si fallás, vuelve a aparecer más adelante.</li>
+        </ul>
+      </div>
+      <div class="card intro">
+        <h2>Contenido</h2>
+        <div class="stat-row">
+          <div class="stat-pill"><div class="num">11</div><div class="lbl">Ítems</div></div>
+          <div class="stat-pill"><div class="num">3</div><div class="lbl">Casos</div></div>
+        </div>
+        <p style="font-size:13.5px; color:var(--text-dim); font-style:italic; margin-top:10px;">"La interactividad es el medio; lo que importa es que el diseño ayude a fijar el contenido en la memoria."</p>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn secondary" id="btn-material">📖 Leer material de estudio</button>
+      <button class="btn" id="btn-start">▶ Iniciar sesión de estudio</button>
+      <button class="btn secondary" id="btn-flashcards">🗂️ Modo fichas rápidas</button>
+      <button class="btn secondary hidden" id="btn-review-only">Repasar sólo temas débiles</button>
+    </div>
+  </section>
+
+  <section id="screen-material" class="screen">
+    <button class="toc-toggle" id="toc-toggle">
+      <span>📑 Ver índice</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="material-wrap">
+      <aside class="material-toc" id="material-toc">
+        <h4>Índice</h4>
+        <div class="toc-group">
+          <div class="toc-group-title">Cuestionario</div>
+          <a href="#mat-p1">1 · Definición doctrinaria</a>
+          <a href="#mat-p2">2 · Art. 2 vs. Art. 3</a>
+          <a href="#mat-p3">3 · Fallo Horizonte</a>
+          <a href="#mat-p4">4 · Sistema atributivo</a>
+          <a href="#mat-p5">5 · Renovación</a>
+          <a href="#mat-p6">6 · Clasificación de Niza</a>
+          <a href="#mat-p7">7 · Marca vs. designación</a>
+          <a href="#mat-p8">8 · Extinción vs. nulidad</a>
+          <a href="#mat-int">Integradora · Rodrigo</a>
+        </div>
+        <div class="toc-group">
+          <div class="toc-group-title">Casos</div>
+          <a href="#mat-c1">Caso 1 · Color como marca</a>
+          <a href="#mat-c2">Caso 2 · Protección por rubro</a>
+          <a href="#mat-c3">Caso 3 · Oposición fonética</a>
+        </div>
+        <div class="toc-group">
+          <div class="toc-group-title">Mapas</div>
+          <a href="#mat-pareto">Top Pareto</a>
+          <a href="#mat-fuentes">Fuentes clave</a>
+        </div>
+        <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-2);">
+          <button class="btn ghost" id="btn-back-home" style="width:100%; justify-content:center;">← Volver al inicio</button>
+        </div>
+      </aside>
+
+      <div class="material-body">
+        <div class="material-hero">
+          <h2>Cuestionario y casos · Clase 4</h2>
+          <p>Leé todo el material antes de iniciar la sesión. Las respuestas están ocultas: hacé clic para desplegarlas cuando quieras revisarlas.</p>
+        </div>
+
+        <div class="mat-section" id="mat-p1">
+          <div class="section-head">
+            <h3>1. Definición doctrinaria de marca y art. 1 Ley 22.362</h3>
+            <div class="badges">
+              <span class="badge fuente">A1</span>
+              <span class="badge pareto">Pareto</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Por qué se afirma que la definición de marca es doctrinaria y no legal, y qué es lo que efectivamente regula el artículo 1 de la Ley 22.362?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) ¿Qué dice —y qué no dice— el art. 1?</b></p>
+              <ol>
+                <li>El art. 1 no define qué es una marca.</li>
+                <li>Se limita a enumerar los signos que pueden registrarse como marca para distinguir productos y servicios (palabras, dibujos, emblemas, combinaciones de colores aplicadas en un lugar determinado, frases publicitarias, relieves, y "todo otro signo" con capacidad distintiva).</li>
+                <li>La enumeración es amplia y abierta, no taxativa.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) ¿De dónde surge entonces la definición de marca?</b></p>
+              <p>Es una construcción doctrinaria: todo signo con capacidad distintiva que permite identificar y diferenciar productos y servicios entre sí. La capacidad distintiva es el requisito que el art. 1 exige implícitamente para que un signo sea registrable.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Citar el art. 1 como si contuviera una definición legal de marca, o responder "marca es..." atribuyendo la definición directamente al texto de la ley.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p2">
+          <div class="section-head">
+            <h3>2. Diferencia de fundamento entre art. 2 y art. 3</h3>
+            <div class="badges">
+              <span class="badge fuente">A2, A3</span>
+              <span class="badge cae">Cae siempre</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Cuál es la diferencia de fundamento entre el rechazo de un registro por el art. 2 y el rechazo por el art. 3 de la Ley 22.362?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Fundamento del art. 2:</b></p>
+              <ol>
+                <li>El signo carece del requisito positivo exigido por el art. 1: la capacidad distintiva.</li>
+                <li>Ejemplos: la palabra "queso" para vender queso, formas propias del producto, el color natural o un solo color aplicado sobre el producto.</li>
+                <li>En ningún caso llega siquiera a cumplir el estándar mínimo para ser marca.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Fundamento del art. 3:</b></p>
+              <ol>
+                <li>El signo puede tener capacidad distintiva —incluso es probable que la tenga si ya existe una marca similar registrada—.</li>
+                <li>Su registro está directamente vedado por la ley, por razones de orden público, competencia desleal o protección del consumidor.</li>
+                <li>Ejemplos: marca idéntica o similar a otra registrada, denominaciones de origen, símbolos patrios, nombre de persona sin consentimiento.</li>
+              </ol>
+              <table>
+                <thead><tr><th></th><th>Art. 2</th><th>Art. 3</th></tr></thead>
+                <tbody>
+                  <tr><td>Presupuesto del signo</td><td>No tiene capacidad distintiva</td><td>Puede tener capacidad distintiva</td></tr>
+                  <tr><td>Fundamento del rechazo</td><td>Falta requisito del art. 1</td><td>Prohibición legal directa</td></tr>
+                  <tr><td>Bien jurídico protegido</td><td>Función distintiva de la marca</td><td>Orden público / competencia leal / consumidor</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Tratar ambos artículos como si regularan la misma causal de rechazo, sin advertir que en el art. 3 el signo podría ser perfectamente distintivo.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p3">
+          <div class="section-head">
+            <h3>3. Fallo Horizonte: legitimación para oponerse</h3>
+            <div class="badges">
+              <span class="badge fuente">F1</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">Según el Fallo Horizonte, ¿quién está legitimado para oponerse al registro de una marca?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p>Solo puede ejercer válidamente el derecho de oposición quien ya es titular de una marca registrada. La mera presentación de una solicitud propia en trámite —aun cuando el solicitante entienda que su registro futuro podría verse afectado o generarse competencia— no configura, por sí sola, un interés legítimo suficiente.</p>
+              <p style="margin-top:10px;">Así lo resolvió el caso en el que Horizonte S.A. solicitó "El Intransigente" y Menéndez Arabia se opuso invocando una solicitud propia todavía no registrada, oposición que no prosperó por ese motivo.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que basta con tener una solicitud de marca en trámite (sin registro firme) para poder oponerse válidamente a la de un tercero.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p4">
+          <div class="section-head">
+            <h3>4. Sistema atributivo y efecto de la solicitud</h3>
+            <div class="badges">
+              <span class="badge fuente">O3</span>
+              <span class="badge trampa">Trampa</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿En qué momento se adquiere el derecho de propiedad sobre una marca en el sistema argentino, y qué efecto produce la sola presentación de la solicitud?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Momento de adquisición del derecho:</b></p>
+              <p>El derecho de propiedad sobre la marca se adquiere recién cuando el INPI otorga el registro. El sistema argentino es atributivo, no declarativo.</p>
+              <p style="margin-top:10px;"><b>(b) Efecto de la sola presentación:</b></p>
+              <ol>
+                <li>La presentación de la solicitud no otorga propiedad ni exclusividad.</li>
+                <li>Solo genera una prelación (derecho de preferencia) frente a otra persona que presente la misma marca con posterioridad.</li>
+                <li>Superado el control del INPI, la solicitud se publica un día en el Boletín de Marcas (distinto del Boletín Oficial, se edita los miércoles), y desde el día siguiente corren 30 días corridos para oposiciones.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Sostener que presentar el trámite ya genera el derecho de propiedad sobre la marca, o confundir el Boletín de Marcas con el Boletín Oficial.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p5">
+          <div class="section-head">
+            <h3>5. Renovación de marca registrada</h3>
+            <div class="badges">
+              <span class="badge fuente">A4</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Cómo se renueva una marca registrada y qué debe acreditarse para lograrlo?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <ol>
+                <li>El registro se otorga por diez años, renovable indefinidamente.</li>
+                <li>La renovación no es automática: debe solicitarse proactivamente antes del vencimiento del plazo.</li>
+                <li>Debe acreditarse el uso de la marca durante los cinco años previos al vencimiento, mediante declaración jurada del titular o de su representante, sin necesidad de facturas ni otra documentación adicional.</li>
+                <li>Si no se renueva en término, el derecho caduca y cualquier otra persona puede registrar esa misma marca en el mismo rubro.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que la renovación opera de manera automática, o que requiere prueba documental (facturas, capturas de pantalla) en lugar de una declaración jurada.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p6">
+          <div class="section-head">
+            <h3>6. Clasificación de Niza y protección por clase</h3>
+            <div class="badges">
+              <span class="badge fuente">O3</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Por qué es relevante la clasificación de Niza al momento de registrar una marca, y qué implica que la protección se otorgue "por clase"?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Estructura de la clasificación:</b></p>
+              <ol>
+                <li>Contiene 45 clases: de la 1 a la 34, productos; de la 35 a la 45, servicios.</li>
+                <li>Cada clase agrupa distintos rubros de productos o servicios afines.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Consecuencia de la protección por clase:</b></p>
+              <p>El derecho de propiedad y exclusividad se otorga únicamente respecto de la clase en la que se registró la marca. Por eso una misma expresión puede estar registrada por titulares distintos en clases distintas, como ocurre con "La Chica del Clima" (clases 35, 38 y 41), sin perjuicio de que el INPI puede igualmente rechazar un registro en otra clase si entiende que, por la notoriedad del signo, de todos modos generaría confusión en el consumidor (motivo por el cual no se recomienda intentarlo con marcas muy masivas).</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que registrar una marca la protege automáticamente en todos los rubros, sin necesidad de identificar y registrar en las clases correspondientes.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p7">
+          <div class="section-head">
+            <h3>7. Marca registrada vs. designación comercial</h3>
+            <div class="badges">
+              <span class="badge fuente">S1</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Cuál es la diferencia entre una marca registrada y una designación comercial?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Designación comercial:</b></p>
+              <ol>
+                <li>Es un nombre de fantasía asociado a una actividad comercial (ej. "La Vaca Lola", nombre de una carnicería).</li>
+                <li>Se adquiere con el mero uso, sin trámite ni registro.</li>
+                <li>No otorga exclusividad: no impide que otro comercio use el mismo nombre.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Marca registrada:</b></p>
+              <p>Requiere trámite ante el INPI y, una vez obtenido el registro, otorga derecho de propiedad y exclusividad dentro del rubro correspondiente.</p>
+              <p style="margin-top:10px;"><b>(c) Distinción adicional:</b></p>
+              <p>La marca tampoco debe confundirse con la razón social: en el caso de McDonald's, la marca es "McDonald's", mientras que la razón social de la sociedad titular es Arcos Dorados S.A.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que usar un nombre de fantasía para un local ya constituye una marca, o que ese uso por sí solo impide que un tercero use el mismo nombre.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p8">
+          <div class="section-head">
+            <h3>8. Extinción vs. nulidad (arts. 23 y 24)</h3>
+            <div class="badges">
+              <span class="badge fuente">A4</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Cuál es la diferencia entre la extinción y la nulidad de una marca según los arts. 23 y 24 de la Ley 22.362?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Extinción (art. 23):</b></p>
+              <ol>
+                <li>Por renuncia del titular (poco frecuente).</li>
+                <li>Por vencimiento del plazo de diez años sin haberla renovado, quedando disponible para que cualquier otro la registre en el mismo rubro.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Nulidad (art. 24):</b></p>
+              <ol>
+                <li>Procede cuando la marca fue registrada en violación de la ley.</li>
+                <li>Supuesto 1: el solicitante conocía o debía conocer que la marca pertenecía a un tercero.</li>
+                <li>Supuesto 2: quien registra marcas como actividad habitual con el único fin de comercializarlas, caso en el cual debe ser un tercero quien acredite la mala fe o connivencia.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Usar "extinción" y "nulidad" como sinónimos, sin distinguir que la primera opera por el mero transcurso del tiempo o renuncia, y la segunda requiere un vicio en el origen del registro.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-int">
+          <div class="section-head">
+            <h3>Integradora · Rodrigo y "Ilustra Rodrigo"</h3>
+            <div class="badges">
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Rodrigo, que trabaja en ilustración y tiene una pequeña empresa de contenido, decide formalizar la protección de su marca personal "Ilustra Rodrigo" como marca denominativa en la clase 41 (servicios de educación y publicación). Antes de presentar la solicitud, también evalúa si podría registrar en exclusiva el color celeste que usa en todo su packaging, ya que lo considera parte central de su identidad de marca. Presenta finalmente la solicitud de "Ilustra Rodrigo" un lunes. El martes siguiente, otra persona presenta ante el INPI una solicitud idéntica para la misma clase. Además, un estudio de diseño que tiene una solicitud propia en trámite (no registrada) para una marca que considera fonéticamente similar pretende oponerse al registro de Rodrigo.
+          </div>
+          <p class="enunciado-q">(a) ¿Podría Rodrigo registrar el color celeste en forma exclusiva para identificar el packaging de sus productos?</p>
+          <p class="enunciado-q">(b) Entre Rodrigo y la persona que presentó la solicitud idéntica un día después, ¿quién tiene mejor derecho sobre "Ilustra Rodrigo", y en qué se funda esa preferencia?</p>
+          <p class="enunciado-q">(c) ¿Puede el estudio de diseño oponerse válidamente al registro de Rodrigo invocando su propia solicitud en trámite?</p>
+          <details>
+            <summary>Ver resolución completa</summary>
+            <div class="detail-content">
+              <p><b>(a)</b> No. El color natural o intrínseco de un producto, así como un solo color aplicado sobre él, no puede registrarse como marca conforme al art. 2 de la Ley 22.362, por carecer de capacidad distintiva y por generar, además, un monopolio contrario a la libre competencia (igual criterio que impide registrar el color rojo para identificar baldes).</p>
+              <p style="margin-top:10px;"><b>(b)</b> Rodrigo tiene mejor derecho, en tanto presentó su solicitud primero. El sistema argentino es atributivo: el derecho de propiedad recién se adquiere cuando el INPI otorga el registro, pero la fecha de presentación otorga una prelación o derecho de preferencia frente a solicitudes posteriores por el mismo signo. Ninguno de los dos es aún propietario de la marca hasta que el INPI resuelva.</p>
+              <p style="margin-top:10px;"><b>(c)</b> No. Conforme al Fallo Horizonte, solo puede oponerse válidamente quien ya es titular de una marca registrada. La mera existencia de una solicitud propia en trámite, sin registro firme, no configura por sí sola interés legítimo para oponerse al registro de un tercero.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>⚠ Error típico:</b> Un alumno que estudió cada concepto por separado puede responder correctamente (a) y (b), pero fallar en (c) al asumir —por analogía con la prelación de (b)— que cualquier solicitante en trámite tiene automáticamente derecho a oponerse, sin advertir que ese estándar (interés legítimo para oponerse) es distinto del estándar de prelación entre solicitudes.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-c1">
+          <div class="section-head">
+            <h3>Caso 1 · El color como marca</h3>
+            <div class="badges">
+              <span class="badge fuente">Simple</span>
+              <span class="badge fuente">O1, O2</span>
+              <span class="badge fuente">A1, A2</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Camila fabrica accesorios de cuero y utiliza, hace tres años, el color celeste en todos sus productos y en el packaging. Considera que ese color ya es reconocido por sus clientas y quiere presentar ante el INPI una solicitud para registrar el color celeste, en exclusiva, como marca aplicable a toda su línea de accesorios.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Capacidad distintiva (art. 1) y prohibición de registrar un color aislado (art. 2).</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>El art. 1 exige que el signo tenga capacidad distintiva para ser registrable como marca.</li>
+                <li>El art. 2 excluye expresamente el color natural del producto y también un solo color aplicado sobre él, aun cuando el consumidor lo asocie de hecho a la marca.</li>
+                <li>La razón de la prohibición no es solo la falta de distintividad teórica, sino evitar que se genere un monopolio sobre un color, contrario a la libre competencia.</li>
+                <li>La solución sería distinta si Camila buscara registrar la combinación de colores aplicada en un lugar determinado de sus productos o envases, supuesto sí admitido por el art. 1.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> Camila no puede registrar el color celeste en forma exclusiva y aislada. Podría, en cambio, intentar registrar una combinación de colores aplicada en un lugar determinado del producto o envase, que sí encuadra dentro de los signos registrables del art. 1.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que el uso prolongado y el reconocimiento efectivo del color por parte del público alcanzan para registrarlo, sin advertir que el art. 2 lo excluye expresamente por vía normativa, independientemente del uso de hecho.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con P1 y P2 del cuestionario.</p>
+        </div>
+
+        <div class="mat-section" id="mat-c2">
+          <div class="section-head">
+            <h3>Caso 2 · La trampa de creerse protegido en todos los rubros</h3>
+            <div class="badges">
+              <span class="badge trampa">Trampa (T7)</span>
+              <span class="badge fuente">O3, T7</span>
+              <span class="badge fuente">A1</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Bruno registró hace dos años la marca denominativa "Estrella" en la clase 25 (indumentaria) para su marca de ropa. El año pasado abrió, además, un restaurante y decidió llamarlo también "Estrella", asumiendo que, como ya era titular de esa marca, nadie más podía usar ese nombre para ningún otro rubro. Al intentar registrar "Estrella" en la clase 43 (servicios de restauración), descubre que ya existe una marca "Estrella" registrada en esa clase por un tercero ajeno a su empresa, que además se opone a su solicitud.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Protección de la marca por clase, conforme a la clasificación de Niza.</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>La protección que otorga el registro de una marca alcanza únicamente a la clase en la que fue registrada.</li>
+                <li>El registro de Bruno en la clase 25 (indumentaria) no le otorga ningún derecho de exclusividad sobre el nombre "Estrella" en la clase 43 (servicios de restauración).</li>
+                <li>Al existir ya una marca "Estrella" registrada por un tercero en la clase 43, ese tercero tiene, en principio, mejor derecho sobre el signo dentro de esa clase específica y puede oponerse fundadamente a la nueva solicitud de Bruno.</li>
+                <li>La situación sería distinta si Bruno hubiera registrado originalmente su marca en múltiples clases previendo la eventual expansión de su actividad comercial.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> El registro de Bruno en la clase 25 no le da ningún derecho sobre la clase 43. La oposición del tercero registrado en esa clase está bien fundada, y Bruno debería optar por otro nombre para su restaurante o negociar con el titular de la marca ya registrada.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Asumir que ser titular de una marca en cualquier clase otorga protección genérica sobre el nombre en cualquier rubro, sin verificar la clase específica en la que se solicita cada nuevo registro.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con P6 del cuestionario.</p>
+        </div>
+
+        <div class="mat-section" id="mat-c3">
+          <div class="section-head">
+            <h3>Caso 3 · Oposición fonética y negociación ante el INPI</h3>
+            <div class="badges">
+              <span class="badge fuente">Complejo</span>
+              <span class="badge fuente">O2, O3, O4, F1</span>
+              <span class="badge fuente">A1, A2, A3, F1</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            El laboratorio "NeuroVida" presenta ante el INPI la solicitud de registro de esa marca denominativa para productos vinculados a la prevención de enfermedades neurodegenerativas. Publicada la solicitud en el Boletín de Marcas, dentro de los 30 días corridos siguientes, el laboratorio "NeuroVita" —titular de una marca ya registrada en la misma clase de productos— presenta oposición fundada, alegando similitud fonética entre ambos nombres y riesgo de confusión para el consumidor.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Procedimiento de oposición ante el INPI y prohibición de registrar marcas similares a otras ya registradas (art. 3).</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>Presentada la oposición dentro del plazo de 30 días corridos desde la publicación, el INPI otorga un plazo de 90 días para que las partes negocien y lleguen a un acuerdo.</li>
+                <li>Durante ese plazo, "NeuroVida" puede intentar demostrar que, más allá de la similitud fonética alegada, existen diferencias suficientes (por ejemplo, en el logo o en la combinación de colores) que descartan la confusión en el consumidor.</li>
+                <li>La oposición de "NeuroVita" está fundada en la prohibición del art. 3 (marca similar a otra ya registrada, que genera riesgo de confusión y competencia desleal), no en una falta de capacidad distintiva del art. 2.</li>
+                <li>Si dentro de los 90 días las partes llegan a un acuerdo, "NeuroVita" puede dar de baja la oposición y el trámite de "NeuroVida" continúa.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> Si no se alcanza un acuerdo dentro de los 90 días, resuelve la Dirección de Marcas del INPI, haciendo lugar o no al planteo de alguna de las partes. Contra esa resolución procede recurso ante la Justicia Civil y Comercial dentro de los 30 días hábiles siguientes. Si la oposición prospera, "NeuroVida" debe volver a presentar su solicitud con otro nombre o sonido.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que toda oposición fundada en similitud fonética implica automáticamente el rechazo del registro, sin considerar que el trámite prevé una instancia de negociación entre partes y, eventualmente, resolución administrativa fundada.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con P2, P3 y P4 del cuestionario.</p>
+          <div class="contrafactico">
+            <b>Sub-escenario contrafáctico:</b> ¿Qué hubiera ocurrido si, en lugar de "NeuroVita" (marca ya registrada), quien se hubiera opuesto fuera un tercer laboratorio, "NeuroPlus", que solo tenía una solicitud propia en trámite —sin registro firme— para un nombre que también consideraba fonéticamente similar?<br><br>
+            <b>Resolución contrafáctica:</b> Conforme a la doctrina del Fallo Horizonte, "NeuroPlus" no estaría legitimado para oponerse válidamente, ya que solo puede ejercer el derecho de oposición quien ya es titular de una marca registrada. La mera existencia de una solicitud en trámite, aunque el solicitante entienda que su registro futuro podría verse afectado, no constituye interés legítimo suficiente. Su oposición debería ser rechazada por falta de legitimación, sin que el INPI llegue siquiera a analizar la similitud fonética alegada.
+          </div>
+        </div>
+
+        <div class="mat-section" id="mat-pareto">
+          <div class="section-head">
+            <h3>Top Pareto</h3>
+          </div>
+          <table>
+            <thead><tr><th>Prioridad</th><th>Pregunta</th><th>Concepto clave</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P2</td><td>Art. 2 (falta de distintividad) vs. Art. 3 (prohibición legal)</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P4</td><td>Sistema atributivo: solicitud ≠ propiedad</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P3</td><td>Fallo Horizonte: interés legítimo para oponerse</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P5</td><td>Vigencia y renovación (declaración jurada, no factura)</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P6</td><td>Protección por clase (Niza)</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P7</td><td>Marca vs. designación comercial</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P8</td><td>Extinción vs. nulidad</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>—</td><td>Sigla INPI (no IMPI) — dato puntual, alta probabilidad de trampa de escritura</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mat-section" id="mat-fuentes">
+          <div class="section-head">
+            <h3>Fuentes clave</h3>
+          </div>
+          <table>
+            <thead><tr><th>Fuente</th><th>Qué establece</th><th>Por qué importa en examen</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>Art. 1, Ley 22.362</b></td>
+                <td>Enumera signos registrables; no define marca</td>
+                <td>Base para distinguir norma de doctrina (T2)</td>
+              </tr>
+              <tr>
+                <td><b>Art. 2, Ley 22.362</b></td>
+                <td>Signos sin capacidad distintiva</td>
+                <td>Causal de rechazo más citada en trampas (T3)</td>
+              </tr>
+              <tr>
+                <td><b>Art. 3, Ley 22.362</b></td>
+                <td>Signos prohibidos aunque sean distintivos</td>
+                <td>Se confunde constantemente con el art. 2 (T3)</td>
+              </tr>
+              <tr>
+                <td><b>Arts. 23-24, Ley 22.362</b></td>
+                <td>Extinción y nulidad de la marca</td>
+                <td>Distinción D6, muy preguntada en finales</td>
+              </tr>
+              <tr>
+                <td><b>Fallo Horizonte</b></td>
+                <td>Solo el titular registrado tiene interés legítimo para oponerse</td>
+                <td>Trampa clásica sobre solicitudes en trámite (T4)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="btn-row" style="justify-content:center; margin-top:28px;">
+          <button class="btn" id="btn-start-from-material">▶ Iniciar sesión de estudio</button>
+          <button class="btn secondary" id="btn-back-home-2">← Volver al inicio</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-study" class="screen">
+    <div class="progress-bar">
+      <div class="stats">
+        Pregunta <b id="stat-current">1</b> de <b id="stat-total">11</b>
+        &nbsp;·&nbsp; Dominadas: <b id="stat-mastered">0</b>
+      </div>
+      <div class="track"><div class="fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div id="question-container"></div>
+  </section>
+
+  <section id="screen-flashcards" class="screen">
+    <div class="flashcard-wrap">
+      <div class="flashcard-header">
+        <div class="counter">Ficha <b id="fc-current">1</b> de <b id="fc-total">11</b></div>
+        <div class="flashcard-progress-mini" id="fc-dots"></div>
+      </div>
+      <div class="flashcard" id="flashcard-body"></div>
+      <div class="flashcard-nav">
+        <button class="btn secondary" id="fc-prev">← Anterior</button>
+        <button class="btn secondary" id="fc-home">Volver al inicio</button>
+        <button class="btn" id="fc-next">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-summary" class="screen">
+    <div class="card resumen">
+      <h2>Informe final de la sesión</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="num" id="sum-mastered">0</div><div class="lbl">Dominadas</div></div>
+        <div class="stat-box"><div class="num" id="sum-weak">0</div><div class="lbl">Temas débiles</div></div>
+        <div class="stat-box"><div class="num" id="sum-ok">0</div><div class="lbl">Aciertos MC</div></div>
+        <div class="stat-box"><div class="num" id="sum-err">0</div><div class="lbl">Errores MC</div></div>
+      </div>
+      <div class="section-title err">Temas débiles — para repasar</div>
+      <ul class="debil-list" id="list-weak"></ul>
+      <div class="section-title ok">Dominadas</div>
+      <ul class="debil-list dominadas" id="list-mastered"></ul>
+      <div class="btn-row">
+        <button class="btn" id="btn-review-weak">Repasar sólo temas débiles</button>
+        <button class="btn secondary" id="btn-restart">Reiniciar sesión completa</button>
+        <button class="btn secondary" id="btn-home">Volver al inicio</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: "P1", topic: "Definición doctrinaria de marca y art. 1", priority: "alto",
+    enunciado: "¿Por qué se afirma que la definición de marca es doctrinaria y no legal, y qué es lo que efectivamente regula el artículo 1 de la Ley 22.362?",
+    pista: "El art. 1 no define marca, solo enumera signos registrables. La definición es doctrinaria: signo con capacidad distintiva.",
+    respuestaLibre: "El art. 1 de la Ley 22.362 no define qué es una marca. Se limita a enumerar los signos que pueden registrarse como marca para distinguir productos y servicios (palabras, dibujos, emblemas, combinaciones de colores aplicadas en un lugar determinado, frases publicitarias, relieves, y 'todo otro signo' con capacidad distintiva). La enumeración es amplia y abierta, no taxativa. La definición de marca es una construcción doctrinaria: todo signo con capacidad distintiva que permite identificar y diferenciar productos y servicios entre sí.",
+    opciones: [
+      "El art. 1 define legalmente qué es una marca como 'todo signo susceptible de representación gráfica'.",
+      "El art. 1 no define marca, solo enumera signos registrables con capacidad distintiva; la definición es doctrinaria.",
+      "El art. 1 define marca como 'nombre comercial registrado ante el INPI'.",
+      "El art. 1 establece que marca es sinónimo de designación comercial."
+    ],
+    correcta: 1,
+    explicacion: "El art. 1 no define marca, solo enumera signos registrables. La definición es doctrinaria: todo signo con capacidad distintiva que permite identificar y diferenciar productos y servicios.",
+    errorTipico: "Citar el art. 1 como si contuviera una definición legal de marca, o responder 'marca es...' atribuyendo la definición directamente al texto de la ley."
+  },
+  {
+    id: "P2", topic: "Art. 2 vs. Art. 3 Ley 22.362", priority: "critico",
+    enunciado: "¿Cuál es la diferencia de fundamento entre el rechazo de un registro por el art. 2 y el rechazo por el art. 3 de la Ley 22.362?",
+    pista: "Art. 2: falta capacidad distintiva. Art. 3: prohibición legal directa, aunque el signo sea distintivo.",
+    respuestaLibre: "El art. 2 rechaza signos que carecen de capacidad distintiva (ej. palabra 'queso' para vender queso, color natural). El art. 3 rechaza signos que pueden tener capacidad distintiva pero están prohibidos por ley por razones de orden público, competencia desleal o protección del consumidor (ej. marca idéntica o similar a otra registrada, símbolos patrios).",
+    opciones: [
+      "Ambos artículos regulan la misma causal: falta de capacidad distintiva.",
+      "El art. 2 rechaza por falta de capacidad distintiva; el art. 3 prohíbe signos distintivos por razones de orden público, competencia desleal o protección del consumidor.",
+      "El art. 2 protege al consumidor; el art. 3 protege la función distintiva.",
+      "El art. 2 es para marcas denominativas; el art. 3 es para marcas figurativas."
+    ],
+    correcta: 1,
+    explicacion: "El art. 2 rechaza por falta de capacidad distintiva; el art. 3 prohíbe signos distintivos por razones de orden público, competencia desleal o protección del consumidor.",
+    errorTipico: "Tratar ambos artículos como si regularan la misma causal de rechazo, sin advertir que en el art. 3 el signo podría ser perfectamente distintivo."
+  },
+  {
+    id: "P3", topic: "Fallo Horizonte: legitimación para oponerse", priority: "critico",
+    enunciado: "Según el Fallo Horizonte, ¿quién está legitimado para oponerse al registro de una marca?",
+    pista: "Solo el titular de marca registrada. Una solicitud en trámite no basta.",
+    respuestaLibre: "Solo puede ejercer válidamente el derecho de oposición quien ya es titular de una marca registrada. La mera presentación de una solicitud propia en trámite no configura, por sí sola, un interés legítimo suficiente.",
+    opciones: [
+      "Cualquier persona que considere que la marca podría afectarle.",
+      "Solo quien ya es titular de una marca registrada.",
+      "Cualquier solicitante con una marca en trámite.",
+      "Solo el INPI de oficio."
+    ],
+    correcta: 1,
+    explicacion: "Solo puede ejercer válidamente el derecho de oposición quien ya es titular de una marca registrada. La mera presentación de una solicitud propia en trámite no configura interés legítimo suficiente.",
+    errorTipico: "Creer que basta con tener una solicitud de marca en trámite (sin registro firme) para poder oponerse válidamente a la de un tercero."
+  },
+  {
+    id: "P4", topic: "Sistema atributivo y efecto de la solicitud", priority: "critico",
+    enunciado: "¿En qué momento se adquiere el derecho de propiedad sobre una marca en el sistema argentino, y qué efecto produce la sola presentación de la solicitud?",
+    pista: "Sistema atributivo: propiedad recién con el registro. La solicitud solo genera prelación.",
+    respuestaLibre: "El derecho de propiedad sobre la marca se adquiere recién cuando el INPI otorga el registro (sistema atributivo). La presentación de la solicitud no otorga propiedad ni exclusividad, solo genera una prelación (derecho de preferencia) frente a solicitudes posteriores. Superado el control del INPI, la solicitud se publica en el Boletín de Marcas (los miércoles), y desde el día siguiente corren 30 días corridos para oposiciones.",
+    opciones: [
+      "La propiedad se adquiere con la presentación de la solicitud, que otorga exclusividad inmediata.",
+      "La propiedad se adquiere cuando el INPI otorga el registro; la solicitud solo genera prelación frente a solicitudes posteriores.",
+      "La propiedad se adquiere con el primer uso público de la marca.",
+      "La propiedad se adquiere automáticamente a los 30 días de presentada la solicitud."
+    ],
+    correcta: 1,
+    explicacion: "El derecho de propiedad se adquiere cuando el INPI otorga el registro (sistema atributivo). La solicitud solo genera prelación frente a solicitudes posteriores.",
+    errorTipico: "Sostener que presentar el trámite ya genera el derecho de propiedad sobre la marca, o confundir el Boletín de Marcas con el Boletín Oficial."
+  },
+  {
+    id: "P5", topic: "Renovación de marca registrada", priority: "alto",
+    enunciado: "¿Cómo se renueva una marca registrada y qué debe acreditarse para lograrlo?",
+    pista: "Registro por 10 años, renovable. No es automática. Se acredita uso con declaración jurada, no con facturas.",
+    respuestaLibre: "El registro se otorga por diez años, renovable indefinidamente. La renovación no es automática: debe solicitarse proactivamente antes del vencimiento. Debe acreditarse el uso de la marca durante los cinco años previos al vencimiento, mediante declaración jurada del titular o de su representante, sin necesidad de facturas ni otra documentación adicional. Si no se renueva en término, el derecho caduca.",
+    opciones: [
+      "La renovación es automática cada 10 años sin trámite.",
+      "Debe solicitarse proactivamente antes del vencimiento, acreditando uso con declaración jurada de los últimos 5 años.",
+      "Debe acreditarse uso con facturas y comprobantes de venta de los últimos 10 años.",
+      "La marca se renueva solo si no hubo oposiciones durante su vigencia."
+    ],
+    correcta: 1,
+    explicacion: "La renovación debe solicitarse proactivamente antes del vencimiento, acreditando uso con declaración jurada de los últimos 5 años, sin necesidad de facturas.",
+    errorTipico: "Creer que la renovación opera de manera automática, o que requiere prueba documental (facturas, capturas de pantalla) en lugar de una declaración jurada."
+  },
+  {
+    id: "P6", topic: "Clasificación de Niza y protección por clase", priority: "alto",
+    enunciado: "¿Por qué es relevante la clasificación de Niza al momento de registrar una marca, y qué implica que la protección se otorgue 'por clase'?",
+    pista: "45 clases (1-34 productos, 35-45 servicios). Protección solo en la clase registrada.",
+    respuestaLibre: "La clasificación de Niza contiene 45 clases: de la 1 a la 34, productos; de la 35 a la 45, servicios. El derecho de propiedad y exclusividad se otorga únicamente respecto de la clase en la que se registró la marca. Por eso una misma expresión puede estar registrada por titulares distintos en clases distintas.",
+    opciones: [
+      "La clasificación de Niza es opcional y solo orientativa.",
+      "Contiene 45 clases y la protección se otorga solo en la clase registrada; una misma expresión puede estar registrada por distintos titulares en clases distintas.",
+      "La protección se otorga automáticamente en todas las clases al registrar una marca.",
+      "Solo existen 10 clases principales de productos y servicios."
+    ],
+    correcta: 1,
+    explicacion: "La clasificación de Niza contiene 45 clases y la protección se otorga solo en la clase registrada; una misma expresión puede estar registrada por distintos titulares en clases distintas.",
+    errorTipico: "Creer que registrar una marca la protege automáticamente en todos los rubros, sin necesidad de identificar y registrar en las clases correspondientes."
+  },
+  {
+    id: "P7", topic: "Marca registrada vs. designación comercial", priority: "alto",
+    enunciado: "¿Cuál es la diferencia entre una marca registrada y una designación comercial?",
+    pista: "Designación: nombre de fantasía, se adquiere con el uso, sin exclusividad. Marca: requiere registro ante INPI, otorga exclusividad.",
+    respuestaLibre: "La designación comercial es un nombre de fantasía asociado a una actividad comercial (ej. 'La Vaca Lola'), se adquiere con el mero uso sin trámite ni registro, y no otorga exclusividad. La marca registrada requiere trámite ante el INPI y, una vez obtenido el registro, otorga derecho de propiedad y exclusividad dentro del rubro correspondiente. La marca tampoco debe confundirse con la razón social.",
+    opciones: [
+      "Son sinónimos: ambos se adquieren con el uso y otorgan exclusividad.",
+      "La designación comercial se adquiere con el uso sin exclusividad; la marca requiere registro ante INPI y otorga exclusividad.",
+      "La designación comercial requiere registro; la marca se adquiere con el uso.",
+      "Ambas requieren registro ante el INPI para tener validez."
+    ],
+    correcta: 1,
+    explicacion: "La designación comercial se adquiere con el uso sin exclusividad; la marca requiere registro ante INPI y otorga exclusividad.",
+    errorTipico: "Creer que usar un nombre de fantasía para un local ya constituye una marca, o que ese uso por sí solo impide que un tercero use el mismo nombre."
+  },
+  {
+    id: "P8", topic: "Extinción vs. nulidad (arts. 23 y 24)", priority: "alto",
+    enunciado: "¿Cuál es la diferencia entre la extinción y la nulidad de una marca según los arts. 23 y 24 de la Ley 22.362?",
+    pista: "Extinción: por vencimiento o renuncia. Nulidad: por vicio en el origen del registro (mala fe, conocimiento de marca ajena).",
+    respuestaLibre: "La extinción (art. 23) opera por renuncia del titular o por vencimiento del plazo de diez años sin renovación. La nulidad (art. 24) procede cuando la marca fue registrada en violación de la ley: (1) el solicitante conocía o debía conocer que la marca pertenecía a un tercero, o (2) quien registra marcas como actividad habitual con el único fin de comercializarlas (

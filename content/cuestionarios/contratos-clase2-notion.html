@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contratos · Clase 2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #191919;
+    --bg-2: #232323;
+    --bg-3: #2d2d2d;
+    --accent: #e0e0e0;
+    --accent-soft: #ffffff;
+    --accent-bg: rgba(107,155,209,0.10);
+    --border: #333333;
+    --border-2: #2a2a2a;
+    --text: #ebebeb;
+    --text-2: #cccccc;
+    --text-dim: #888888;
+    --ok: #5fb88a;
+    --ok-bg: rgba(95,184,138,0.12);
+    --err: #e07a75;
+    --err-bg: rgba(224,122,117,0.12);
+    --warn: #e6b87b;
+    --warn-bg: rgba(230,184,123,0.12);
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+    --shadow-lg: 0 2px 8px rgba(0,0,0,0.35), 0 12px 32px rgba(0,0,0,0.25);
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    padding: 28px 24px 80px;
+    background:
+      radial-gradient(ellipse at top, #222222 0%, var(--bg) 55%),
+      var(--bg);
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  header.expediente {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header.expediente .brand { display: flex; align-items: center; gap: 14px; }
+  header.expediente .logo {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #999999);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 600; font-size: 18px;
+    font-family: Georgia, serif;
+    box-shadow: 0 2px 10px rgba(255,255,255,0.1);
+  }
+  header.expediente h1 { font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+  header.expediente .sub { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+  header.expediente .meta { font-size: 12px; color: var(--text-dim); text-align: right; letter-spacing: 0.3px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fade .3s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  .card {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 820px) { .intro-grid { grid-template-columns: 1fr; } }
+
+  .intro h2 { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 12px; letter-spacing: -0.2px; }
+  .intro p { color: var(--text-2); margin-bottom: 10px; font-size: 14.5px; }
+  .intro ul { list-style: none; padding: 0; }
+  .intro li {
+    padding: 10px 0 10px 28px;
+    position: relative;
+    font-size: 14px;
+    color: var(--text-2);
+    border-bottom: 1px solid var(--border-2);
+    line-height: 1.55;
+  }
+  .intro li:last-child { border-bottom: none; }
+  .intro li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 16px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent-bg);
+    border: 1.5px solid var(--accent);
+  }
+  .intro li b { color: var(--text); font-weight: 600; }
+
+  .stat-row { display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
+  .stat-pill {
+    flex: 1; min-width: 110px;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .stat-pill .num { font-size: 22px; font-weight: 600; color: var(--accent); font-family: Georgia, serif; }
+  .stat-pill .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #191919;
+    border: 1px solid var(--accent);
+    padding: 11px 22px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: 0.2px;
+  }
+  .btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(255,255,255,0.1); }
+  .btn.secondary { background: var(--bg-3); color: var(--text-2); border-color: var(--border); font-weight: 500; }
+  .btn.secondary:hover { background: var(--border); color: var(--text); box-shadow: none; transform: none; }
+  .btn.ghost { background: transparent; color: var(--text-dim); border-color: transparent; padding: 8px 12px; font-size: 13px; font-weight: 500; }
+  .btn.ghost:hover { background: var(--bg-3); color: var(--text); box-shadow: none; transform: none; }
+  .btn.ok { background: var(--ok); border-color: var(--ok); color: #191919; }
+  .btn.ok:hover { background: #6fc99a; border-color: #6fc99a; }
+  .btn.err { background: var(--err); border-color: var(--err); color: #191919; }
+  .btn.err:hover { background: #e88a85; border-color: #e88a85; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+
+  .progress-bar {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    box-shadow: var(--shadow);
+  }
+  .progress-bar .track { flex: 1; min-width: 160px; height: 6px; background: var(--bg-3); border-radius: 3px; overflow: hidden; }
+  .progress-bar .fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-soft)); border-radius: 3px; transition: width .4s; }
+  .progress-bar .stats { font-size: 13px; color: var(--text-2); font-weight: 500; }
+  .progress-bar .stats b { color: var(--accent); font-weight: 600; }
+
+  .card .tag-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .card .tag { font-size: 11px; letter-spacing: 0.8px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; }
+  .card .priority { display: inline-block; font-size: 10.5px; padding: 3px 9px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .priority.critico { background: var(--err-bg); color: var(--err); }
+  .priority.alto { background: var(--warn-bg); color: var(--warn); }
+  .priority.medio { background: var(--bg-3); color: var(--text-dim); }
+
+  .card h3 { font-size: 19px; color: var(--text); font-weight: 600; line-height: 1.45; margin-bottom: 14px; letter-spacing: -0.2px; }
+  .card .contexto {
+    font-size: 14px; color: var(--text-2); font-style: italic; margin-bottom: 14px;
+    padding: 12px 14px; border-left: 3px solid var(--accent); background: var(--accent-bg);
+    border-radius: 0 8px 8px 0; line-height: 1.6;
+  }
+
+  .recall-area textarea {
+    width: 100%; min-height: 110px;
+    background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 14px; font-family: inherit; font-size: 14.5px;
+    resize: vertical; line-height: 1.55; transition: border-color .15s;
+  }
+  .recall-area textarea:focus { outline: none; border-color: var(--accent); background: var(--bg-3); }
+  .recall-area textarea::placeholder { color: var(--text-dim); }
+  .recall-hint {
+    font-size: 13px; color: var(--text-2); margin-top: 10px;
+    padding: 10px 12px; background: var(--bg-3); border: 1px solid var(--border);
+    border-radius: 8px; line-height: 1.5;
+  }
+  .recall-hint b { color: var(--accent); font-style: normal; }
+
+  .options { list-style: none; }
+  .options li {
+    background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 13px 15px; margin-bottom: 9px; cursor: pointer; transition: all .15s;
+    font-size: 14.5px; line-height: 1.55;
+  }
+  .options li:hover { border-color: var(--accent); background: var(--accent-bg); }
+  .options li.correct { border-color: var(--ok); background: var(--ok-bg); }
+  .options li.wrong { border-color: var(--err); background: var(--err-bg); }
+  .options li.disabled { cursor: default; }
+  .options li.disabled:hover { background: var(--bg); border-color: var(--border); }
+  .options li.correct.disabled:hover { background: var(--ok-bg); border-color: var(--ok); }
+  .options li.wrong.disabled:hover { background: var(--err-bg); border-color: var(--err); }
+  .options li .letter {
+    display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center;
+    border-radius: 6px; background: var(--bg-3); color: var(--accent); margin-right: 10px;
+    font-weight: 600; font-size: 12px; font-family: Georgia, serif;
+  }
+  .options li.correct .letter { background: var(--ok); color: #191919; }
+  .options li.wrong .letter { background: var(--err); color: #191919; }
+
+  .feedback {
+    margin-top: 18px; padding: 18px; border-radius: 10px;
+    border-left: 3px solid var(--accent); background: var(--accent-bg);
+  }
+  .feedback.ok { border-left-color: var(--ok); background: var(--ok-bg); }
+  .feedback.err { border-left-color: var(--err); background: var(--err-bg); }
+  .feedback .veredicto { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+  .feedback.ok .veredicto { color: var(--ok); }
+  .feedback.err .veredicto { color: var(--err); }
+  .feedback h4 { font-size: 11.5px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin: 14px 0 6px; font-weight: 600; }
+  .feedback h4:first-child { margin-top: 0; }
+  .feedback p, .feedback .bloque { font-size: 14.5px; color: var(--text); line-height: 1.65; }
+  .feedback .error-tipico {
+    background: rgba(224,122,117,0.08); border-left: 2px solid var(--err);
+    padding: 10px 12px; border-radius: 0 6px 6px 0;
+    font-size: 13.5px; line-height: 1.6; color: var(--text-2);
+  }
+  .feedback .error-tipico b { color: var(--err); }
+
+  .resumen h2 { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 18px; letter-spacing: -0.3px; }
+  .resumen .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .resumen .stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; }
+  .resumen .stat-box .num { font-size: 30px; font-weight: 600; color: var(--accent); font-family: Georgia, serif; }
+  .resumen .stat-box .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px; }
+  .debil-list { list-style: none; }
+  .debil-list li {
+    padding: 11px 14px; border-left: 3px solid var(--err); background: var(--err-bg);
+    border-radius: 0 8px 8px 0; margin-bottom: 8px; font-size: 14px; line-height: 1.5;
+  }
+  .debil-list li .q-id {
+    display: inline-block; background: var(--bg-2); color: var(--err);
+    padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;
+    margin-right: 8px; font-family: Georgia, serif;
+  }
+  .dominadas li { border-left-color: var(--ok); background: var(--ok-bg); }
+  .dominadas li .q-id { color: var(--ok); }
+
+  .section-title {
+    font-size: 14px; font-weight: 600; margin: 22px 0 10px;
+    letter-spacing: 0.3px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-title.err { color: var(--err); }
+  .section-title.ok { color: var(--ok); }
+  .section-title::before { content: ""; width: 18px; height: 2px; background: currentColor; border-radius: 1px; }
+
+  .material-wrap { display: grid; grid-template-columns: 240px 1fr; gap: 22px; align-items: start; }
+  @media (max-width: 900px) { .material-wrap { grid-template-columns: 1fr; } }
+
+  .toc-toggle {
+    display: none; width: 100%;
+    background: var(--bg-2); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 16px; font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-bottom: 12px; text-align: left;
+    transition: all .15s; align-items: center; justify-content: space-between;
+  }
+  .toc-toggle:hover { background: var(--bg-3); }
+  .toc-toggle .chevron { transition: transform .2s; font-size: 12px; }
+  .toc-toggle.open .chevron { transform: rotate(180deg); }
+
+  @media (max-width: 900px) {
+    .toc-toggle { display: flex; }
+    .material-toc { display: none; position: static; max-height: none; }
+    .material-toc.open { display: block; }
+  }
+
+  .material-toc {
+    position: sticky; top: 14px;
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; font-size: 13px;
+    max-height: calc(100vh - 28px); overflow-y: auto; box-shadow: var(--shadow);
+  }
+  @media (max-width: 900px) { .material-toc { position: static; max-height: none; } }
+  .material-toc h4 { font-size: 11px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+  .material-toc .toc-group { margin-bottom: 14px; }
+  .material-toc .toc-group-title {
+    color: var(--accent); font-size: 10.5px; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 6px; padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-2); font-weight: 600;
+  }
+  .material-toc a {
+    display: block; color: var(--text-2); text-decoration: none;
+    padding: 5px 8px; border-radius: 6px; transition: all .15s;
+    font-size: 12.5px; line-height: 1.4; margin-bottom: 1px;
+  }
+  .material-toc a:hover { color: var(--accent); background: var(--accent-bg); }
+
+  .material-body { min-width: 0; }
+
+  .material-hero {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 26px; margin-bottom: 20px; box-shadow: var(--shadow);
+  }
+  .material-hero h2 { font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; margin-bottom: 6px; }
+  .material-hero p { color: var(--text-dim); font-size: 14px; }
+
+  .mat-section {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px 24px; margin-bottom: 14px;
+    box-shadow: var(--shadow); scroll-margin-top: 14px;
+  }
+  .mat-section .section-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
+  }
+  .mat-section h3 {
+    font-size: 16.5px; color: var(--text); font-weight: 600;
+    letter-spacing: -0.2px; line-height: 1.4; flex: 1; min-width: 200px;
+  }
+  .mat-section .badges { display: flex; gap: 5px; flex-wrap: wrap; }
+  .mat-section .badge {
+    font-size: 10px; padding: 3px 8px; border-radius: 20px;
+    font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; white-space: nowrap;
+  }
+  .badge.pareto { background: var(--warn-bg); color: var(--warn); }
+  .badge.trampa { background: var(--err-bg); color: var(--err); }
+  .badge.cae { background: var(--ok-bg); color: var(--ok); }
+  .badge.fuente { background: var(--bg-3); color: var(--text-dim); border: 1px solid var(--border); }
+
+  .mat-section .enunciado-q { font-size: 15px; color: var(--text); line-height: 1.6; margin-bottom: 14px; font-weight: 500; }
+
+  .mat-section details {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 10px; overflow: hidden; transition: all .2s;
+  }
+  .mat-section details[open] { border-color: var(--accent); box-shadow: 0 2px 12px rgba(107,155,209,0.15); }
+  .mat-section details summary {
+    padding: 12px 16px; cursor: pointer; font-size: 13.5px;
+    font-weight: 600; color: var(--accent); list-style: none;
+    display: flex; align-items: center; justify-content: space-between;
+    user-select: none; transition: background .15s;
+  }
+  .mat-section details summary:hover { background: var(--accent-bg); }
+  .mat-section details summary::-webkit-details-marker { display: none; }
+  .mat-section details summary::after {
+    content: "+"; font-size: 18px; font-weight: 300; color: var(--accent);
+    transition: transform .2s; line-height: 1;
+  }
+  .mat-section details[open] summary::after { content: "−"; }
+  .mat-section details[open] summary { border-bottom: 1px solid var(--border); background: var(--accent-bg); }
+  .mat-section details .detail-content { padding: 16px; font-size: 14px; line-height: 1.65; color: var(--text-2); }
+  .mat-section details.error-detail summary { color: var(--err); }
+  .mat-section details.error-detail summary::after { color: var(--err); }
+  .mat-section details.error-detail[open] summary { background: var(--err-bg); border-bottom-color: rgba(224,122,117,0.25); }
+  .mat-section details.error-detail summary:hover { background: var(--err-bg); }
+  .mat-section details.error-detail .detail-content { background: var(--err-bg); color: var(--text-2); }
+  .mat-section details.error-detail .detail-content b { color: var(--err); }
+
+  .mat-section .contexto-caso {
+    background: var(--accent-bg); border-left: 3px solid var(--accent);
+    padding: 12px 14px; border-radius: 0 8px 8px 0;
+    font-size: 14px; color: var(--text-2); margin-bottom: 14px; line-height: 1.6;
+  }
+
+  .mat-section table {
+    width: 100%; border-collapse: collapse; font-size: 13.5px;
+    margin: 8px 0; border-radius: 8px; overflow: hidden;
+  }
+  .mat-section th {
+    background: var(--bg-3); color: var(--text); text-align: left;
+    padding: 10px 12px; font-weight: 600; font-size: 11.5px;
+    text-transform: uppercase; letter-spacing: 0.6px; border-bottom: 1px solid var(--border);
+  }
+  .mat-section td { padding: 10px 12px; border-bottom: 1px solid var(--border-2); color: var(--text-2); line-height: 1.5; vertical-align: top; }
+  .mat-section tr:last-child td { border-bottom: none; }
+  .mat-section ol { padding-left: 20px; margin: 6px 0; }
+  .mat-section ol li { margin-bottom: 4px; }
+
+  .contrafactico {
+    background: var(--warn-bg); border-left: 3px solid var(--warn);
+    padding: 12px 14px; border-radius: 0 8px 8px 0; margin-top: 12px;
+    font-size: 13.5px; line-height: 1.6; color: var(--text-2);
+  }
+  .contrafactico b { color: var(--warn); }
+  .link-rel { font-size: 12.5px; color: var(--text-dim); margin-top: 10px; font-style: italic; }
+
+  .flashcard-wrap { max-width: 760px; margin: 0 auto; }
+  .flashcard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .flashcard-header .counter { font-size: 13px; color: var(--text-2); font-weight: 500; }
+  .flashcard-header .counter b { color: var(--accent); }
+  .flashcard-progress-mini { display: flex; gap: 4px; flex-wrap: wrap; }
+  .flashcard-progress-mini .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--bg-3); border: 1px solid var(--border); transition: all .2s;
+  }
+  .flashcard-progress-mini .dot.current { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+  .flashcard-progress-mini .dot.mastered { background: var(--ok); border-color: var(--ok); }
+  .flashcard-progress-mini .dot.weak { background: var(--err); border-color: var(--err); }
+
+  .flashcard {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 30px; min-height: 320px;
+    box-shadow: var(--shadow); display: flex; flex-direction: column; transition: all .3s;
+  }
+  .flashcard .fc-tag { font-size: 11px; letter-spacing: 0.8px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; margin-bottom: 10px; }
+  .flashcard .fc-context {
+    font-size: 14px; color: var(--text-2); font-style: italic; margin-bottom: 14px;
+    padding: 10px 12px; border-left: 3px solid var(--accent); background: var(--accent-bg);
+    border-radius: 0 8px 8px 0; line-height: 1.6;
+  }
+  .flashcard .fc-question { font-size: 18px; color: var(--text); font-weight: 600; line-height: 1.5; letter-spacing: -0.2px; flex: 1; margin-bottom: 18px; }
+  .flashcard .fc-status { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 14px; }
+  .flashcard .fc-status.mastered { background: var(--ok-bg); color: var(--ok); }
+  .flashcard .fc-status.weak { background: var(--err-bg); color: var(--err); }
+  .flashcard .fc-answer { border-top: 1px solid var(--border); padding-top: 18px; margin-top: 8px; animation: fade .3s ease; }
+  .flashcard-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; gap: 10px; }
+  .fc-self-eval { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .fc-self-eval .btn { flex: 1; justify-content: center; min-width: 140px; }
+
+  @media (max-width: 640px) {
+    body { padding: 14px 10px 60px; }
+    header.expediente { padding: 16px 18px; }
+    header.expediente h1 { font-size: 17px; }
+    .card, .mat-section { padding: 18px; }
+    .card h3 { font-size: 17px; }
+    .btn { padding: 10px 16px; font-size: 13.5px; }
+    .material-hero h2 { font-size: 20px; }
+    .mat-section h3 { font-size: 15px; }
+    .flashcard { padding: 20px; min-height: 280px; }
+    .flashcard .fc-question { font-size: 16px; }
+  }
+
+  .hidden { display: none !important; }
+
+  .phase-label {
+    display: inline-block; font-size: 11px; padding: 4px 11px;
+    background: var(--accent-bg); color: var(--accent);
+    border-radius: 20px; font-weight: 600; letter-spacing: 0.6px;
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+
+  .counter-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; padding: 3px 9px; background: var(--bg-3);
+    border-radius: 20px; color: var(--text-dim); font-weight: 600;
+  }
+  .counter-badge.ok { background: var(--ok-bg); color: var(--ok); }
+  .counter-badge.err { background: var(--err-bg); color: var(--err); }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="expediente">
+    <div class="brand">
+      <div class="logo">C2</div>
+      <div>
+        <h1>Contratos · Clase 2</h1>
+        <div class="sub">Mutuo, intereses y anatocismo</div>
+      </div>
+    </div>
+    <div class="meta">14 ítems · 8 preguntas + 3 integradoras + 3 casos</div>
+  </header>
+
+  <section id="screen-home" class="screen active">
+    <div class="intro-grid">
+      <div class="card intro">
+        <h2>Cómo funciona esta sesión</h2>
+        <p>Diseñada para fijar el contenido en la memoria, no para recorrerlo una sola vez.</p>
+        <ul>
+          <li><b>Lectura del material:</b> leé el cuestionario y los casos completos antes de ejercitar.</li>
+          <li><b>Recall libre:</b> intentás recordar la respuesta sin pistas.</li>
+          <li><b>Respuesta modelo:</b> leés la explicación completa y el <em>error típico</em>.</li>
+          <li><b>Refuerzo con opciones:</b> elegís entre alternativas para consolidar.</li>
+          <li><b>Dominio:</b> dos aciertos seguidos marcan la pregunta como dominada; si fallás, vuelve a aparecer más adelante.</li>
+        </ul>
+      </div>
+      <div class="card intro">
+        <h2>Contenido</h2>
+        <div class="stat-row">
+          <div class="stat-pill"><div class="num">14</div><div class="lbl">Ítems</div></div>
+          <div class="stat-pill"><div class="num">3</div><div class="lbl">Casos</div></div>
+        </div>
+        <p style="font-size:13.5px; color:var(--text-dim); font-style:italic; margin-top:10px;">"La interactividad es el medio; lo que importa es que el diseño ayude a fijar el contenido en la memoria."</p>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn secondary" id="btn-material">📖 Leer material de estudio</button>
+      <button class="btn" id="btn-start">▶ Iniciar sesión de estudio</button>
+      <button class="btn secondary" id="btn-flashcards">🗂️ Modo fichas rápidas</button>
+      <button class="btn secondary hidden" id="btn-review-only">Repasar sólo temas débiles</button>
+    </div>
+  </section>
+
+  <section id="screen-material" class="screen">
+    <button class="toc-toggle" id="toc-toggle">
+      <span>📑 Ver índice</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="material-wrap">
+      <aside class="material-toc" id="material-toc">
+        <h4>Índice</h4>
+        <div class="toc-group">
+          <div class="toc-group-title">Cuestionario</div>
+          <a href="#mat-p1">1 · Definición y caracteres</a>
+          <a href="#mat-p2">2 · Riesgo de la cosa</a>
+          <a href="#mat-p3">3 · Contrato real vs. consensual</a>
+          <a href="#mat-p4">4 · Intereses compensatorio vs. moratorio</a>
+          <a href="#mat-p5">5 · Interés punitorio</a>
+          <a href="#mat-p6">6 · Anatocismo</a>
+          <a href="#mat-p7">7 · Prescripción</a>
+          <a href="#mat-p8">8 · Mutuo de consumo</a>
+          <a href="#mat-int">Integradora · Camila y Rodrigo</a>
+        </div>
+        <div class="toc-group">
+          <div class="toc-group-title">Casos</div>
+          <a href="#mat-c1">Caso 1 · Préstamo robado</a>
+          <a href="#mat-c2">Caso 2 · Capitalización mensual</a>
+          <a href="#mat-c3">Caso 3 · Billetera virtual</a>
+        </div>
+        <div class="toc-group">
+          <div class="toc-group-title">Mapas</div>
+          <a href="#mat-pareto">Top Pareto</a>
+          <a href="#mat-fuentes">Fuentes clave</a>
+        </div>
+        <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-2);">
+          <button class="btn ghost" id="btn-back-home" style="width:100%; justify-content:center;">← Volver al inicio</button>
+        </div>
+      </aside>
+
+      <div class="material-body">
+        <div class="material-hero">
+          <h2>Cuestionario y casos · Clase 2</h2>
+          <p>Leé todo el material antes de iniciar la sesión. Las respuestas están ocultas: hacé clic para desplegarlas cuando quieras revisarlas.</p>
+        </div>
+
+        <div class="mat-section" id="mat-p1">
+          <div class="section-head">
+            <h3>1. Definición legal del contrato de mutuo y caracteres</h3>
+            <div class="badges">
+              <span class="badge fuente">A1</span>
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Qué elementos componen la definición legal del contrato de mutuo y qué caracteres se derivan de ella?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Definición legal (art. 1525 CCyC):</b></p>
+              <ol>
+                <li>El mutuante se compromete a entregar en propiedad una cantidad determinada de cosas fungibles al mutuario.</li>
+                <li>El mutuario se obliga a devolver la misma cantidad, calidad y especie, en el plazo pactado.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Caracteres que se derivan:</b></p>
+              <ol>
+                <li><b>Consensual:</b> se perfecciona por el solo consentimiento, sin necesidad de entrega.</li>
+                <li><b>Bilateral:</b> ambas partes asumen obligaciones recíprocas (entregar / restituir).</li>
+                <li><b>Oneroso por regla general:</b> la gratuidad no se presume, requiere pacto expreso.</li>
+                <li><b>No formal,</b> salvo que el mutuario sea consumidor, caso en que se exige forma escrita, tasa anual efectiva y condiciones claras.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que la onerosidad se presume salvo pacto en contrario; en realidad la regla es la inversa — el mutuo se presume oneroso y la gratuidad debe pactarse expresamente.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p2">
+          <div class="section-head">
+            <h3>2. Riesgo de la cosa en el mutuo</h3>
+            <div class="badges">
+              <span class="badge fuente">D1</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">Camila le presta dinero a Bruno. Si ese dinero es robado del domicilio de Bruno sin que medie culpa suya, antes de la restitución, ¿quién soporta esa pérdida y por qué?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p>Bruno, el mutuario, soporta la pérdida, porque al recibir las cosas fungibles en préstamo se convirtió en propietario de ellas —no en mero tenedor— y rige la regla de que la cosa perece para su dueño.</p>
+              <p style="margin-top:10px;">Distinto sería si se tratara de un comodato: allí el comodatario es mero tenedor y el riesgo de la cosa, en principio, lo asume el comodante como propietario.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Aplicar al mutuo la lógica del comodato (donde el que recibe la cosa no asume el riesgo), asumiendo que "el que recibe algo prestado nunca responde si se pierde por caso fortuito".</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p3">
+          <div class="section-head">
+            <h3>3. Contrato real vs. consensual</h3>
+            <div class="badges">
+              <span class="badge fuente">S2</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Por qué la calificación del mutuo como contrato real bajo el Código de Vélez generaba un problema práctico que hoy no existe?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Problema bajo el Código de Vélez:</b></p>
+              <ol>
+                <li>El mutuo se perfeccionaba recién con la entrega de la cosa, no con el acuerdo de voluntades.</li>
+                <li>Si el mutuante no entregaba, no había contrato perfeccionado y, por lo tanto, no había incumplimiento exigible.</li>
+                <li>La parte perjudicada solo podía reclamar el daño derivado de no contar con el dinero, nunca el cumplimiento de la prestación en sí.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Solución bajo el CCyC:</b></p>
+              <p>El mutuo pasó a ser consensual: el contrato queda perfeccionado con el solo acuerdo de partes, de modo que el mutuario puede exigir judicialmente el cumplimiento si el mutuante no entrega la cosa.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Aplicar al régimen vigente la lógica del contrato real, asumiendo que sin entrega no hay obligación exigible.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p4">
+          <div class="section-head">
+            <h3>4. Interés compensatorio vs. moratorio</h3>
+            <div class="badges">
+              <span class="badge fuente">O3</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Qué distingue al interés compensatorio del moratorio, y cómo se determina la tasa moratoria cuando no fue pactada?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Compensatorio vs. moratorio:</b></p>
+              <ol>
+                <li>El <b>compensatorio</b> retribuye al mutuante por no contar con el uso de su capital mientras lo tiene el mutuario; se debe por el solo transcurso del plazo, sin incumplimiento.</li>
+                <li>El <b>moratorio</b> se debe por el solo hecho de que el deudor se constituya en mora; conceptualmente debería ser más gravoso, porque no solo compensa sino que también sanciona el incumplimiento.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Determinación de la tasa moratoria no pactada:</b></p>
+              <p>El Código remite a la tasa que fije el Banco Central; ante la falta histórica de una tasa específica del BCRA, el CCyC habilita al juez a fijarla, lo que generó criterios distintos según el fuero (Samudio en lo civil, La Razón en lo comercial, criterios cambiantes en lo laboral).</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que sin pacto expreso no corresponden intereses moratorios; en realidad se deben igual, por la sola mora, y la tasa la fija el BCRA o, en su defecto, el juez.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p5">
+          <div class="section-head">
+            <h3>5. Interés punitorio y su acumulación</h3>
+            <div class="badges">
+              <span class="badge fuente">O3</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">El interés punitorio fue pactado como cláusula penal para el caso de mora. ¿Se acumula automáticamente al interés moratorio?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p>No automáticamente. Si el punitorio funciona como cláusula penal —indemnización fija ante la mora—, como regla general no correspondería reclamarlo además del moratorio, porque ambos compensan el mismo daño derivado del incumplimiento.</p>
+              <p style="margin-top:10px;">La procedencia conjunta depende de lo efectivamente pactado por las partes, y en cualquier caso el juez conserva la facultad de reducir los intereses cuando resulten excesivos o abusivos.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Asumir que, por estar ambos pactados, corresponde sumarlos siempre sin control judicial.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p6">
+          <div class="section-head">
+            <h3>6. Supuestos de anatocismo</h3>
+            <div class="badges">
+              <span class="badge fuente">S1</span>
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿En qué tres supuestos procede el anatocismo (capitalización de intereses) bajo el CCyC?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <ol>
+                <li><b>Pacto entre las partes,</b> con el límite de que no puede capitalizarse con periodicidad menor a seis meses.</li>
+                <li><b>Demanda judicial</b> de una deuda ya líquida y exigible (por ejemplo, un pagaré): los intereses se capitalizan por única vez desde la fecha de notificación de la demanda.</li>
+                <li><b>Liquidación judicial del crédito</b> cuando la deuda no era líquida desde el inicio (por ejemplo, un reclamo de daños): se capitaliza si, cuantificado el crédito por sentencia y liquidación, el deudor no paga.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Pensar que el anatocismo solo procede si las partes lo pactan, ignorando los dos supuestos judiciales que operan sin necesidad de pacto.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p7">
+          <div class="section-head">
+            <h3>7. Prescripción de capital e intereses</h3>
+            <div class="badges">
+              <span class="badge fuente">O4</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">Un mutuante pretende reclamar, a los 4 años de otorgado el préstamo, tanto el capital como todos los intereses devengados durante ese período. ¿Puede hacerlo íntegramente?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Capital:</b></p>
+              <p>La acción de restitución del capital no tiene plazo especial, por lo que se aplica el plazo genérico de 5 años; a los 4 años, sigue vigente.</p>
+              <p style="margin-top:10px;"><b>(b) Intereses:</b></p>
+              <p>Los intereses son una obligación periódica y prescriben a los 2 años; el mutuante solo puede reclamar los devengados dentro de los últimos 2 años, no los 4 años completos.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Aplicar un único plazo de prescripción (el genérico de 5 años) a todo el reclamo, sin distinguir que los intereses tienen un plazo propio y más breve.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p8">
+          <div class="section-head">
+            <h3>8. Mutuo de consumo y vicios en dinero</h3>
+            <div class="badges">
+              <span class="badge fuente">S3</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">Una entidad dedicada a otorgar préstamos de consumo celebra un mutuo de dinero con una persona física que actúa como consumidora. ¿Qué formalidades adicionales exige el CCyC en ese caso, y qué ocurre con la responsabilidad por vicios si el dinero entregado resultara falso?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Formalidades cuando el mutuario es consumidor:</b></p>
+              <ol>
+                <li>El contrato debe ser escrito.</li>
+                <li>Debe especificar la tasa anual efectiva.</li>
+                <li>Debe detallar de manera clara y explícita las condiciones a favor del consumidor.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Responsabilidad por vicios en el mutuo de dinero:</b></p>
+              <p>El mutuante en principio responde por vicios o defectos de las cosas fungibles entregadas (régimen de saneamiento/evicción), pero esa responsabilidad no se aplica al dinero: si los billetes entregados resultan falsos, el mutuario no puede reclamar por vicios, aunque sí puede exigir el cumplimiento de la entrega de lo efectivamente pactado.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Aplicar sin más la obligación general de saneamiento del mutuante al dinero entregado, ignorando la excepción expresa que trae el Código para este caso.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-int">
+          <div class="section-head">
+            <h3>Integradora · Camila y Rodrigo</h3>
+            <div class="badges">
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Camila (mutuante) le presta a Rodrigo (mutuario) USD 50.000, pactando un interés compensatorio del 0,5% mensual y un interés punitorio del 1% mensual para el caso de mora, sin fijar plazo de restitución ni pactar interés moratorio. Camila le requiere fehacientemente la devolución del capital, y Rodrigo no restituye dentro de los 10 días siguientes, incurriendo en mora. Pasan 3 años sin que Camila reclame nada, hasta que decide iniciar la acción de cobro.
+          </div>
+          <p class="enunciado-q">(a) ¿Qué intereses puede reclamar Camila por el período de mora, y cómo se relacionan entre sí el moratorio y el punitorio en este caso?</p>
+          <p class="enunciado-q">(b) ¿Puede reclamar la totalidad de los intereses devengados durante los 3 años, o existe algún límite?</p>
+          <p class="enunciado-q">(c) ¿Puede reclamar el capital prestado, teniendo en cuenta que pasaron 3 años?</p>
+          <details>
+            <summary>Ver resolución completa</summary>
+            <div class="detail-content">
+              <p><b>(a)</b> Camila puede reclamar el interés compensatorio pactado (0,5% mensual) hasta la mora. A partir de la mora, dado que no pactaron moratorio, correspondería el que fije el BCRA o, en su defecto, el juez interviniente. En cuanto al punitorio (1% mensual, pactado como cláusula penal), su acumulación con el moratorio no es automática, porque ambos compensan el mismo daño derivado del incumplimiento; la procedencia conjunta depende de lo efectivamente pactado y queda sujeta a la facultad judicial de reducir intereses excesivos.</p>
+              <p style="margin-top:10px;"><b>(b)</b> No en su totalidad: los intereses son obligación periódica y prescriben a los 2 años, de modo que Camila solo puede reclamar los devengados dentro de los últimos 2 años anteriores al reclamo, no los 3 años completos.</p>
+              <p style="margin-top:10px;"><b>(c)</b> Sí. La acción de restitución del capital no tiene plazo especial de prescripción, por lo que rige el plazo genérico de 5 años; a los 3 años, la acción sigue vigente.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>⚠ Error típico:</b> Asumir que, como el capital no prescribió, tampoco prescribió ningún interés; en realidad capital e intereses tienen plazos de prescripción autónomos y de distinta extensión.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-c1">
+          <div class="section-head">
+            <h3>Caso 1 · El préstamo que se pierde por robo</h3>
+            <div class="badges">
+              <span class="badge fuente">Simple</span>
+              <span class="badge fuente">O1, O2</span>
+              <span class="badge fuente">A1</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Agustín le presta a Julieta $200.000 en efectivo, sin fijar plazo de devolución. Una semana después, el dinero es sustraído del domicilio de Julieta en un robo del que ella no tuvo ninguna responsabilidad. Julieta sostiene que no debe restituir nada, porque el dinero se perdió por un hecho ajeno a su voluntad y ella —según entiende— solo tenía el dinero en préstamo, no en propiedad.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Contrato de mutuo de dinero (art. 1525 CCyC).</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>El contrato celebrado entre Agustín y Julieta es un mutuo, porque tiene por objeto una cosa fungible (dinero) y Agustín se comprometió a entregarla en propiedad a Julieta.</li>
+                <li>Al ser mutuo, Julieta no es mera tenedora del dinero: al recibirlo, se convirtió en su propietaria.</li>
+                <li>Rige la regla de que la cosa perece para su dueño; por lo tanto, la pérdida del dinero por robo, ocurrida después de la entrega y sin culpa de Julieta, la soporta ella como propietaria, no Agustín.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> Julieta debe restituir el equivalente a los $200.000, con más los intereses si fueron pactados, dentro de los 10 días de que Agustín se lo requiera (a falta de plazo pactado). El robo no la libera de la obligación de restituir, porque el riesgo de la cosa lo asume el propietario, y ella lo es desde la entrega.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico (T1/T2):</b> Creer que, por tratarse de un préstamo, Julieta es mera tenedora del dinero y por eso no responde ante la pérdida por caso fortuito; esa lógica corresponde al comodato, no al mutuo.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con P2 del cuestionario.</p>
+        </div>
+
+        <div class="mat-section" id="mat-c2">
+          <div class="section-head">
+            <h3>Caso 2 · La capitalización mensual de intereses</h3>
+            <div class="badges">
+              <span class="badge trampa">Trampa</span>
+              <span class="badge fuente">S1, T6</span>
+              <span class="badge fuente">A3</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Camila le presta a Bruno $50.000 a devolver en dos años, pactando un interés compensatorio del 3% mensual, con la cláusula de que "los intereses devengados se capitalizarán mensualmente y se sumarán al capital adeudado". A los seis meses, Bruno cuestiona la validez de esa cláusula.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Anatocismo pactado entre partes en un contrato de mutuo.</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>El anatocismo pactado por las partes es válido en el CCyC, pero solo si la periodicidad de capitalización no es menor a seis meses.</li>
+                <li>La cláusula acordada entre Camila y Bruno prevé una capitalización mensual, es decir, con una periodicidad inferior al mínimo legal.</li>
+                <li>Por lo tanto, esa cláusula específica de capitalización mensual no resulta válida tal como fue pactada; ello sin perjuicio de que los intereses compensatorios del 3% mensual, considerados en sí mismos, sigan siendo debidos según lo pactado.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> La cláusula de capitalización mensual es inválida por infringir el plazo mínimo de seis meses que exige el Código para el anatocismo pactado entre partes; Bruno puede cuestionarla con éxito, sin que ello afecte la validez del interés compensatorio pactado en sí.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico (T6):</b> Asumir que cualquier periodicidad de capitalización es válida siempre que esté expresamente pactada, sin reparar en el piso legal de seis meses.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con P6 del cuestionario.</p>
+        </div>
+
+        <div class="mat-section" id="mat-c3">
+          <div class="section-head">
+            <h3>Caso 3 · El préstamo por billetera virtual y el reclamo de intereses</h3>
+            <div class="badges">
+              <span class="badge fuente">Complejo</span>
+              <span class="badge fuente">O1, O3, S3, S4, D1</span>
+              <span class="badge fuente">A1, S3, LDC</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            María, consumidora, toma un préstamo de $500.000 a través de una billetera virtual que opera bajo el sistema francés de amortización, sin que el contrato le haya especificado por escrito la tasa anual efectiva ni las condiciones aplicables en caso de mora. Al tercer mes, María deja de pagar las cuotas y la empresa le reclama, además del capital, un interés moratorio que resulta considerablemente más alto que el compensatorio originalmente pactado.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Mutuo de dinero de consumo (art. 1525 CCyC, con formalidades adicionales por tratarse de un mutuario consumidor).</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>El vínculo entre María y la billetera virtual es un mutuo de dinero, porque hay entrega de una suma en propiedad con obligación de restitución en cuotas.</li>
+                <li>Como María es consumidora y la empresa se dedica a otorgar préstamos de consumo, el contrato debía cumplir formalidades adicionales: forma escrita, especificación de la tasa anual efectiva y detalle claro de las condiciones a favor del consumidor.</li>
+                <li>El incumplimiento de esas formalidades, sumado a que el interés moratorio reclamado resulta considerablemente más alto que el compensatorio pactado, habilita a evaluar su carácter abusivo, principalmente a través de la Ley de Defensa del Consumidor.</li>
+                <li>Corresponde recordar que, bajo el sistema francés, las primeras cuotas se componen mayoritariamente de intereses, por lo que la proporción de capital efectivamente amortizado por María a los tres meses es baja, dato relevante para calcular el saldo realmente adeudado.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> María puede cuestionar tanto la falta de formalidades (forma escrita, TAE, condiciones claras) como la abusividad del interés moratorio reclamado, en ambos casos con fundamento en el régimen de defensa del consumidor; un juez podría reducir ese interés si lo considera excesivo, sin que ello la libere de restituir el capital efectivamente adeudado según el sistema francés pactado.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico (T7):</b> Asumir que, por tratarse de un mutuo de dinero como cualquier otro, no rigen formalidades especiales ni control de abusividad, ignorando que la calidad de consumidor de María activa un régimen más protector.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con P8 del cuestionario.</p>
+          <div class="contrafactico">
+            <b>Sub-escenario contrafáctico:</b> ¿Cambiaría el análisis si, en lugar de una billetera virtual, el préstamo se lo hubiera hecho un amigo de María sin que ella actuara como consumidora frente a un proveedor profesional?<br><br>
+            <b>Resolución contrafáctica:</b> Sí. Al no existir una relación de consumo (el amigo no otorga préstamos de manera profesional ni habitual), no se aplicarían las formalidades adicionales del mutuo de consumo ni el control de abusividad propio de la Ley de Defensa del Consumidor. El mutuo seguiría siendo válido como contrato no formal; el eventual carácter excesivo del interés moratorio solo podría cuestionarse por la vía general de reducción judicial de intereses abusivos que el CCyC habilita para cualquier mutuo, no por el régimen especial de consumo.
+          </div>
+        </div>
+
+        <div class="mat-section" id="mat-pareto">
+          <div class="section-head">
+            <h3>Top Pareto</h3>
+          </div>
+          <table>
+            <thead><tr><th>Prioridad</th><th>Pregunta</th><th>Concepto clave</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P2</td><td>Propiedad vs. tenencia y riesgo de la cosa (mutuo vs. comodato)</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P7 / Integradora</td><td>Prescripción diferenciada: capital (5 años) vs. intereses (2 años)</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P5</td><td>No acumulación automática de moratorio y punitorio</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P6</td><td>Los tres supuestos de anatocismo, no solo el pacto</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P3</td><td>Consecuencias de la consensualidad frente al régimen del contrato real</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P8</td><td>Formalidades del mutuo de consumo y excepción de vicios en dinero</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mat-section" id="mat-fuentes">
+          <div class="section-head">
+            <h3>Fuentes clave</h3>
+          </div>
+          <table>
+            <thead><tr><th>Fuente</th><th>Qué establece</th><th>Por qué importa en examen</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>Art. 1525 CCyC</b></td>
+                <td>Define el contrato de mutuo: entrega en propiedad de cosas fungibles y obligación de restitución en igual cantidad, calidad y especie</td>
+                <td>Es la fuente guía de toda la clase; de ella se derivan todos los caracteres del contrato</td>
+              </tr>
+              <tr>
+                <td><b>Régimen de intereses</b> (compensatorios, moratorios y punitorios)</td>
+                <td>Distingue los tres tipos de interés y su eventual no acumulación</td>
+                <td>Base para resolver cualquier caso de mora e incumplimiento en el mutuo de dinero</td>
+              </tr>
+              <tr>
+                <td><b>Régimen de anatocismo</b></td>
+                <td>Regla general de 6 meses y los dos supuestos judiciales de capitalización</td>
+                <td>Tema frecuente de trampa por desconocer los supuestos no pactados</td>
+              </tr>
+              <tr>
+                <td><b>Plazos de prescripción</b></td>
+                <td>Plazos de 5, 3, 2 y 1 año según el tipo de acción</td>
+                <td>Permite resolver correctamente cualquier caso de reclamo tardío</td>
+              </tr>
+              <tr>
+                <td><b>Fallos "Samudio" y "La Razón"</b></td>
+                <td>Fijación judicial de la tasa de interés moratoria (tasa activa Banco Nación)</td>
+                <td>Explican por qué la tasa aplicable dependía históricamente del fuero</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="btn-row" style="justify-content:center; margin-top:28px;">
+          <button class="btn" id="btn-start-from-material">▶ Iniciar sesión de estudio</button>
+          <button class="btn secondary" id="btn-back-home-2">← Volver al inicio</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-study" class="screen">
+    <div class="progress-bar">
+      <div class="stats">
+        Pregunta <b id="stat-current">1</b> de <b id="stat-total">14</b>
+        &nbsp;·&nbsp; Dominadas: <b id="stat-mastered">0</b>
+      </div>
+      <div class="track"><div class="fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div id="question-container"></div>
+  </section>
+
+  <section id="screen-flashcards" class="screen">
+    <div class="flashcard-wrap">
+      <div class="flashcard-header">
+        <div class="counter">Ficha <b id="fc-current">1</b> de <b id="fc-total">14</b></div>
+        <div class="flashcard-progress-mini" id="fc-dots"></div>
+      </div>
+      <div class="flashcard" id="flashcard-body"></div>
+      <div class="flashcard-nav">
+        <button class="btn secondary" id="fc-prev">← Anterior</button>
+        <button class="btn secondary" id="fc-home">Volver al inicio</button>
+        <button class="btn" id="fc-next">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-summary" class="screen">
+    <div class="card resumen">
+      <h2>Informe final de la sesión</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="num" id="sum-mastered">0</div><div class="lbl">Dominadas</div></div>
+        <div class="stat-box"><div class="num" id="sum-weak">0</div><div class="lbl">Temas débiles</div></div>
+        <div class="stat-box"><div class="num" id="sum-ok">0</div><div class="lbl">Aciertos MC</div></div>
+        <div class="stat-box"><div class="num" id="sum-err">0</div><div class="lbl">Errores MC</div></div>
+      </div>
+      <div class="section-title err">Temas débiles — para repasar</div>
+      <ul class="debil-list" id="list-weak"></ul>
+      <div class="section-title ok">Dominadas</div>
+      <ul class="debil-list dominadas" id="list-mastered"></ul>
+      <div class="btn-row">
+        <button class="btn" id="btn-review-weak">Repasar sólo temas débiles</button>
+        <button class="btn secondary" id="btn-restart">Reiniciar sesión completa</button>
+        <button class="btn secondary" id="btn-home">Volver al inicio</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: "P1", topic: "Definición y caracteres del mutuo", priority: "alto",
+    enunciado: "¿Qué elementos componen la definición legal del contrato de mutuo y qué caracteres se derivan de ella?",
+    pista: "Art. 1525 CCyC: entrega en propiedad de cosas fungibles + obligación de restituir. Caracteres: consensual, bilateral, oneroso por regla, no formal (salvo consumidor).",
+    respuestaLibre: "El mutuante se compromete a entregar en propiedad una cantidad determinada de cosas fungibles al mutuario, quien se obliga a devolver la misma cantidad, calidad y especie en el plazo pactado. Caracteres: consensual (se perfecciona por solo consentimiento), bilateral (ambas partes asumen obligaciones), oneroso por regla general (la gratuidad requiere pacto expreso), y no formal salvo que el mutuario sea consumidor.",
+    opciones: [
+      "El mutuo es un contrato real que se perfecciona con la entrega, bilateral, y siempre gratuito.",
+      "El mutuante entrega en propiedad cosas fungibles y el mutuario devuelve igual cantidad, calidad y especie. Es consensual, bilateral, oneroso por regla general, y no formal salvo consumidor.",
+      "El mutuo es un contrato unilateral donde solo el mutuario asume obligaciones, y es formal en todos los casos.",
+      "El mutuo requiere entrega para perfeccionarse, es unilateral, y la gratuidad se presume salvo pacto en contrario."
+    ],
+    correcta: 1,
+    explicacion: "El mutuo es consensual (no requiere entrega para perfeccionarse), bilateral, oneroso por regla general (la gratuidad debe pactarse), y no formal salvo que el mutuario sea consumidor.",
+    errorTipico: "Creer que la onerosidad se presume salvo pacto en contrario; en realidad la regla es la inversa — el mutuo se presume oneroso y la gratuidad debe pactarse expresamente."
+  },
+  {
+    id: "P2", topic: "Riesgo de la cosa en el mutuo", priority: "critico",
+    enunciado: "Camila le presta dinero a Bruno. Si ese dinero es robado del domicilio de Bruno sin que medie culpa suya, antes de la restitución, ¿quién soporta esa pérdida y por qué?",
+    pista: "En el mutuo, el mutuario se convierte en propietario de las cosas fungibles. Rige 'la cosa perece para su dueño'.",
+    respuestaLibre: "Bruno, el mutuario, soporta la pérdida, porque al recibir las cosas fungibles en préstamo se convirtió en propietario de ellas —no en mero tenedor— y rige la regla de que la cosa perece para su dueño. Distinto sería en el comodato, donde el comodatario es mero tenedor y el riesgo lo asume el comodante.",
+    opciones: [
+      "Camila, porque Bruno era mero tenedor del dinero y no asume el riesgo.",
+      "Bruno, porque al recibir el dinero se convirtió en propietario y rige 'la cosa perece para su dueño'.",
+      "Se divide la pérdida entre ambos, porque ninguno tuvo culpa.",
+      "Camila, porque el dinero se perdió por caso fortuito y Bruno no es responsable."
+    ],
+    correcta: 1,
+    explicacion: "Bruno soporta la pérdida porque en el mutuo el mutuario se convierte en propietario de las cosas fungibles, y rige la regla de que la cosa perece para su dueño.",
+    errorTipico: "Aplicar al mutuo la lógica del comodato (donde el que recibe la cosa no asume el riesgo), asumiendo que 'el que recibe algo prestado nunca responde si se pierde por caso fortuito'."
+  },
+  {
+    id: "P3", topic: "Contrato real vs. consensual", priority: "alto",
+    enunciado: "¿Por qué la calificación del mutuo como contrato real bajo el Código de Vélez generaba un problema práctico que hoy no existe?",
+    pista: "Bajo Vélez, sin entrega no había contrato perfeccionado ni incumplimiento exigible. Bajo CCyC, el mutuo es consensual.",
+    respuestaLibre: "Bajo el Código de Vélez, el mutuo se perfeccionaba recién con la entrega de la cosa, no con el acuerdo de voluntades. Si el mutuante no entregaba, no había contrato perfeccionado y por lo tanto no había incumplimiento exigible; la parte perjudicada solo podía reclamar el daño derivado de no contar con el dinero, nunca el cumplimiento de la prestación en sí. Bajo el CCyC, el mutuo pasó a ser consensual: el contrato queda perfeccionado con el solo acuerdo de partes, de modo que el mutuario puede exigir judicialmente el cumplimiento si el mutuante no entrega.",
+    opciones: [
+      "Bajo Vélez, el mutuo era consensual y no había problema; bajo el CCyC se volvió real.",
+      "Bajo Vélez, sin entrega no había contrato perfeccionado ni incumplimiento exigible; bajo el CCyC, el mutuo es consensual y el mutuario puede exigir el cumplimiento.",
+      "Bajo Vélez, el mutuo era bilateral; bajo el CCyC se volvió unilateral.",
+      "No hay diferencia práctica entre ambos regímenes."
+    ],
+    correcta: 1,
+    explicacion: "Bajo Vélez, sin entrega no había contrato perfeccionado ni incumplimiento exigible; bajo el CCyC, el mutuo es consensual y el mutuario puede exigir el cumplimiento.",
+    errorTipico: "Aplicar al régimen vigente la lógica del contrato real, asumiendo que sin entrega no hay obligación exigible."
+  },
+  {
+    id: "P4", topic: "Interés compensatorio vs. moratorio", priority: "alto",
+    enunciado: "¿Qué distingue al interés compensatorio del moratorio, y cómo se determina la tasa moratoria cuando no fue pactada?",
+    pista: "Compensatorio: retribuye por no contar con el capital. Moratorio: sanciona la mora. Si no

@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comercial · Clase 3</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f1724;
+    --bg-2: #182233;
+    --bg-3: #1f2c40;
+    --accent: #6b9bd1;
+    --accent-soft: #8bb3dc;
+    --accent-bg: rgba(107,155,209,0.10);
+    --border: #2a3a52;
+    --border-2: #223047;
+    --text: #e8f1f8;
+    --text-2: #c5d3e3;
+    --text-dim: #8a9bb2;
+    --ok: #5fb88a;
+    --ok-bg: rgba(95,184,138,0.12);
+    --err: #e07a75;
+    --err-bg: rgba(224,122,117,0.12);
+    --warn: #e6b87b;
+    --warn-bg: rgba(230,184,123,0.12);
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+    --shadow-lg: 0 2px 8px rgba(0,0,0,0.35), 0 12px 32px rgba(0,0,0,0.25);
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    padding: 28px 24px 80px;
+    background:
+      radial-gradient(ellipse at top, #1a2a42 0%, var(--bg) 55%),
+      var(--bg);
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  header.expediente {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header.expediente .brand { display: flex; align-items: center; gap: 14px; }
+  header.expediente .logo {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #4a7fc1);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 600; font-size: 18px;
+    font-family: Georgia, serif;
+    box-shadow: 0 2px 10px rgba(107,155,209,0.35);
+  }
+  header.expediente h1 { font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+  header.expediente .sub { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+  header.expediente .meta { font-size: 12px; color: var(--text-dim); text-align: right; letter-spacing: 0.3px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fade .3s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  .card {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 820px) { .intro-grid { grid-template-columns: 1fr; } }
+
+  .intro h2 { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 12px; letter-spacing: -0.2px; }
+  .intro p { color: var(--text-2); margin-bottom: 10px; font-size: 14.5px; }
+  .intro ul { list-style: none; padding: 0; }
+  .intro li {
+    padding: 10px 0 10px 28px;
+    position: relative;
+    font-size: 14px;
+    color: var(--text-2);
+    border-bottom: 1px solid var(--border-2);
+    line-height: 1.55;
+  }
+  .intro li:last-child { border-bottom: none; }
+  .intro li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 16px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent-bg);
+    border: 1.5px solid var(--accent);
+  }
+  .intro li b { color: var(--text); font-weight: 600; }
+
+  .stat-row { display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
+  .stat-pill {
+    flex: 1; min-width: 110px;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .stat-pill .num { font-size: 22px; font-weight: 600; color: var(--accent); font-family: Georgia, serif; }
+  .stat-pill .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #0f1724;
+    border: 1px solid var(--accent);
+    padding: 11px 22px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: 0.2px;
+  }
+  .btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(107,155,209,0.35); }
+  .btn.secondary { background: var(--bg-3); color: var(--text-2); border-color: var(--border); font-weight: 500; }
+  .btn.secondary:hover { background: var(--border); color: var(--text); box-shadow: none; transform: none; }
+  .btn.ghost { background: transparent; color: var(--text-dim); border-color: transparent; padding: 8px 12px; font-size: 13px; font-weight: 500; }
+  .btn.ghost:hover { background: var(--bg-3); color: var(--text); box-shadow: none; transform: none; }
+  .btn.ok { background: var(--ok); border-color: var(--ok); color: #0f1724; }
+  .btn.ok:hover { background: #6fc99a; border-color: #6fc99a; }
+  .btn.err { background: var(--err); border-color: var(--err); color: #0f1724; }
+  .btn.err:hover { background: #e88a85; border-color: #e88a85; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+
+  .progress-bar {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    box-shadow: var(--shadow);
+  }
+  .progress-bar .track { flex: 1; min-width: 160px; height: 6px; background: var(--bg-3); border-radius: 3px; overflow: hidden; }
+  .progress-bar .fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-soft)); border-radius: 3px; transition: width .4s; }
+  .progress-bar .stats { font-size: 13px; color: var(--text-2); font-weight: 500; }
+  .progress-bar .stats b { color: var(--accent); font-weight: 600; }
+
+  .card .tag-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .card .tag { font-size: 11px; letter-spacing: 0.8px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; }
+  .card .priority { display: inline-block; font-size: 10.5px; padding: 3px 9px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .priority.critico { background: var(--err-bg); color: var(--err); }
+  .priority.alto { background: var(--warn-bg); color: var(--warn); }
+  .priority.medio { background: var(--bg-3); color: var(--text-dim); }
+
+  .card h3 { font-size: 19px; color: var(--text); font-weight: 600; line-height: 1.45; margin-bottom: 14px; letter-spacing: -0.2px; }
+  .card .contexto {
+    font-size: 14px; color: var(--text-2); font-style: italic; margin-bottom: 14px;
+    padding: 12px 14px; border-left: 3px solid var(--accent); background: var(--accent-bg);
+    border-radius: 0 8px 8px 0; line-height: 1.6;
+  }
+
+  .recall-area textarea {
+    width: 100%; min-height: 110px;
+    background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 14px; font-family: inherit; font-size: 14.5px;
+    resize: vertical; line-height: 1.55; transition: border-color .15s;
+  }
+  .recall-area textarea:focus { outline: none; border-color: var(--accent); background: var(--bg-3); }
+  .recall-area textarea::placeholder { color: var(--text-dim); }
+  .recall-hint {
+    font-size: 13px; color: var(--text-2); margin-top: 10px;
+    padding: 10px 12px; background: var(--bg-3); border: 1px solid var(--border);
+    border-radius: 8px; line-height: 1.5;
+  }
+  .recall-hint b { color: var(--accent); font-style: normal; }
+
+  .options { list-style: none; }
+  .options li {
+    background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 13px 15px; margin-bottom: 9px; cursor: pointer; transition: all .15s;
+    font-size: 14.5px; line-height: 1.55;
+  }
+  .options li:hover { border-color: var(--accent); background: var(--accent-bg); }
+  .options li.correct { border-color: var(--ok); background: var(--ok-bg); }
+  .options li.wrong { border-color: var(--err); background: var(--err-bg); }
+  .options li.disabled { cursor: default; }
+  .options li.disabled:hover { background: var(--bg); border-color: var(--border); }
+  .options li.correct.disabled:hover { background: var(--ok-bg); border-color: var(--ok); }
+  .options li.wrong.disabled:hover { background: var(--err-bg); border-color: var(--err); }
+  .options li .letter {
+    display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center;
+    border-radius: 6px; background: var(--bg-3); color: var(--accent); margin-right: 10px;
+    font-weight: 600; font-size: 12px; font-family: Georgia, serif;
+  }
+  .options li.correct .letter { background: var(--ok); color: #0f1724; }
+  .options li.wrong .letter { background: var(--err); color: #0f1724; }
+
+  .feedback {
+    margin-top: 18px; padding: 18px; border-radius: 10px;
+    border-left: 3px solid var(--accent); background: var(--accent-bg);
+  }
+  .feedback.ok { border-left-color: var(--ok); background: var(--ok-bg); }
+  .feedback.err { border-left-color: var(--err); background: var(--err-bg); }
+  .feedback .veredicto { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+  .feedback.ok .veredicto { color: var(--ok); }
+  .feedback.err .veredicto { color: var(--err); }
+  .feedback h4 { font-size: 11.5px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin: 14px 0 6px; font-weight: 600; }
+  .feedback h4:first-child { margin-top: 0; }
+  .feedback p, .feedback .bloque { font-size: 14.5px; color: var(--text); line-height: 1.65; }
+  .feedback .error-tipico {
+    background: rgba(224,122,117,0.08); border-left: 2px solid var(--err);
+    padding: 10px 12px; border-radius: 0 6px 6px 0;
+    font-size: 13.5px; line-height: 1.6; color: var(--text-2);
+  }
+  .feedback .error-tipico b { color: var(--err); }
+
+  .resumen h2 { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 18px; letter-spacing: -0.3px; }
+  .resumen .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .resumen .stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; }
+  .resumen .stat-box .num { font-size: 30px; font-weight: 600; color: var(--accent); font-family: Georgia, serif; }
+  .resumen .stat-box .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px; }
+  .debil-list { list-style: none; }
+  .debil-list li {
+    padding: 11px 14px; border-left: 3px solid var(--err); background: var(--err-bg);
+    border-radius: 0 8px 8px 0; margin-bottom: 8px; font-size: 14px; line-height: 1.5;
+  }
+  .debil-list li .q-id {
+    display: inline-block; background: var(--bg-2); color: var(--err);
+    padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;
+    margin-right: 8px; font-family: Georgia, serif;
+  }
+  .dominadas li { border-left-color: var(--ok); background: var(--ok-bg); }
+  .dominadas li .q-id { color: var(--ok); }
+
+  .section-title {
+    font-size: 14px; font-weight: 600; margin: 22px 0 10px;
+    letter-spacing: 0.3px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-title.err { color: var(--err); }
+  .section-title.ok { color: var(--ok); }
+  .section-title::before { content: ""; width: 18px; height: 2px; background: currentColor; border-radius: 1px; }
+
+  .material-wrap { display: grid; grid-template-columns: 240px 1fr; gap: 22px; align-items: start; }
+  @media (max-width: 900px) { .material-wrap { grid-template-columns: 1fr; } }
+
+  .toc-toggle {
+    display: none; width: 100%;
+    background: var(--bg-2); color: var(--accent);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 16px; font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-bottom: 12px; text-align: left;
+    transition: all .15s; align-items: center; justify-content: space-between;
+  }
+  .toc-toggle:hover { background: var(--bg-3); }
+  .toc-toggle .chevron { transition: transform .2s; font-size: 12px; }
+  .toc-toggle.open .chevron { transform: rotate(180deg); }
+
+  @media (max-width: 900px) {
+    .toc-toggle { display: flex; }
+    .material-toc { display: none; position: static; max-height: none; }
+    .material-toc.open { display: block; }
+  }
+
+  .material-toc {
+    position: sticky; top: 14px;
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; font-size: 13px;
+    max-height: calc(100vh - 28px); overflow-y: auto; box-shadow: var(--shadow);
+  }
+  @media (max-width: 900px) { .material-toc { position: static; max-height: none; } }
+  .material-toc h4 { font-size: 11px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+  .material-toc .toc-group { margin-bottom: 14px; }
+  .material-toc .toc-group-title {
+    color: var(--accent); font-size: 10.5px; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 6px; padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-2); font-weight: 600;
+  }
+  .material-toc a {
+    display: block; color: var(--text-2); text-decoration: none;
+    padding: 5px 8px; border-radius: 6px; transition: all .15s;
+    font-size: 12.5px; line-height: 1.4; margin-bottom: 1px;
+  }
+  .material-toc a:hover { color: var(--accent); background: var(--accent-bg); }
+
+  .material-body { min-width: 0; }
+
+  .material-hero {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 26px; margin-bottom: 20px; box-shadow: var(--shadow);
+  }
+  .material-hero h2 { font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; margin-bottom: 6px; }
+  .material-hero p { color: var(--text-dim); font-size: 14px; }
+
+  .mat-section {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px 24px; margin-bottom: 14px;
+    box-shadow: var(--shadow); scroll-margin-top: 14px;
+  }
+  .mat-section .section-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
+  }
+  .mat-section h3 {
+    font-size: 16.5px; color: var(--text); font-weight: 600;
+    letter-spacing: -0.2px; line-height: 1.4; flex: 1; min-width: 200px;
+  }
+  .mat-section .badges { display: flex; gap: 5px; flex-wrap: wrap; }
+  .mat-section .badge {
+    font-size: 10px; padding: 3px 8px; border-radius: 20px;
+    font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; white-space: nowrap;
+  }
+  .badge.pareto { background: var(--warn-bg); color: var(--warn); }
+  .badge.trampa { background: var(--err-bg); color: var(--err); }
+  .badge.cae { background: var(--ok-bg); color: var(--ok); }
+  .badge.fuente { background: var(--bg-3); color: var(--text-dim); border: 1px solid var(--border); }
+
+  .mat-section .enunciado-q { font-size: 15px; color: var(--text); line-height: 1.6; margin-bottom: 14px; font-weight: 500; }
+
+  .mat-section details {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 10px; overflow: hidden; transition: all .2s;
+  }
+  .mat-section details[open] { border-color: var(--accent); box-shadow: 0 2px 12px rgba(107,155,209,0.15); }
+  .mat-section details summary {
+    padding: 12px 16px; cursor: pointer; font-size: 13.5px;
+    font-weight: 600; color: var(--accent); list-style: none;
+    display: flex; align-items: center; justify-content: space-between;
+    user-select: none; transition: background .15s;
+  }
+  .mat-section details summary:hover { background: var(--accent-bg); }
+  .mat-section details summary::-webkit-details-marker { display: none; }
+  .mat-section details summary::after {
+    content: "+"; font-size: 18px; font-weight: 300; color: var(--accent);
+    transition: transform .2s; line-height: 1;
+  }
+  .mat-section details[open] summary::after { content: "−"; }
+  .mat-section details[open] summary { border-bottom: 1px solid var(--border); background: var(--accent-bg); }
+  .mat-section details .detail-content { padding: 16px; font-size: 14px; line-height: 1.65; color: var(--text-2); }
+  .mat-section details.error-detail summary { color: var(--err); }
+  .mat-section details.error-detail summary::after { color: var(--err); }
+  .mat-section details.error-detail[open] summary { background: var(--err-bg); border-bottom-color: rgba(224,122,117,0.25); }
+  .mat-section details.error-detail summary:hover { background: var(--err-bg); }
+  .mat-section details.error-detail .detail-content { background: var(--err-bg); color: var(--text-2); }
+  .mat-section details.error-detail .detail-content b { color: var(--err); }
+
+  .mat-section .contexto-caso {
+    background: var(--accent-bg); border-left: 3px solid var(--accent);
+    padding: 12px 14px; border-radius: 0 8px 8px 0;
+    font-size: 14px; color: var(--text-2); margin-bottom: 14px; line-height: 1.6;
+  }
+
+  .mat-section table {
+    width: 100%; border-collapse: collapse; font-size: 13.5px;
+    margin: 8px 0; border-radius: 8px; overflow: hidden;
+  }
+  .mat-section th {
+    background: var(--bg-3); color: var(--text); text-align: left;
+    padding: 10px 12px; font-weight: 600; font-size: 11.5px;
+    text-transform: uppercase; letter-spacing: 0.6px; border-bottom: 1px solid var(--border);
+  }
+  .mat-section td { padding: 10px 12px; border-bottom: 1px solid var(--border-2); color: var(--text-2); line-height: 1.5; vertical-align: top; }
+  .mat-section tr:last-child td { border-bottom: none; }
+  .mat-section ol { padding-left: 20px; margin: 6px 0; }
+  .mat-section ol li { margin-bottom: 4px; }
+
+  .contrafactico {
+    background: var(--warn-bg); border-left: 3px solid var(--warn);
+    padding: 12px 14px; border-radius: 0 8px 8px 0; margin-top: 12px;
+    font-size: 13.5px; line-height: 1.6; color: var(--text-2);
+  }
+  .contrafactico b { color: var(--warn); }
+  .link-rel { font-size: 12.5px; color: var(--text-dim); margin-top: 10px; font-style: italic; }
+
+  .flashcard-wrap { max-width: 760px; margin: 0 auto; }
+  .flashcard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .flashcard-header .counter { font-size: 13px; color: var(--text-2); font-weight: 500; }
+  .flashcard-header .counter b { color: var(--accent); }
+  .flashcard-progress-mini { display: flex; gap: 4px; flex-wrap: wrap; }
+  .flashcard-progress-mini .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--bg-3); border: 1px solid var(--border); transition: all .2s;
+  }
+  .flashcard-progress-mini .dot.current { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+  .flashcard-progress-mini .dot.mastered { background: var(--ok); border-color: var(--ok); }
+  .flashcard-progress-mini .dot.weak { background: var(--err); border-color: var(--err); }
+
+  .flashcard {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 30px; min-height: 320px;
+    box-shadow: var(--shadow); display: flex; flex-direction: column; transition: all .3s;
+  }
+  .flashcard .fc-tag { font-size: 11px; letter-spacing: 0.8px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; margin-bottom: 10px; }
+  .flashcard .fc-context {
+    font-size: 14px; color: var(--text-2); font-style: italic; margin-bottom: 14px;
+    padding: 10px 12px; border-left: 3px solid var(--accent); background: var(--accent-bg);
+    border-radius: 0 8px 8px 0; line-height: 1.6;
+  }
+  .flashcard .fc-question { font-size: 18px; color: var(--text); font-weight: 600; line-height: 1.5; letter-spacing: -0.2px; flex: 1; margin-bottom: 18px; }
+  .flashcard .fc-status { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 14px; }
+  .flashcard .fc-status.mastered { background: var(--ok-bg); color: var(--ok); }
+  .flashcard .fc-status.weak { background: var(--err-bg); color: var(--err); }
+  .flashcard .fc-answer { border-top: 1px solid var(--border); padding-top: 18px; margin-top: 8px; animation: fade .3s ease; }
+  .flashcard-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; gap: 10px; }
+  .fc-self-eval { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .fc-self-eval .btn { flex: 1; justify-content: center; min-width: 140px; }
+
+  @media (max-width: 640px) {
+    body { padding: 14px 10px 60px; }
+    header.expediente { padding: 16px 18px; }
+    header.expediente h1 { font-size: 17px; }
+    .card, .mat-section { padding: 18px; }
+    .card h3 { font-size: 17px; }
+    .btn { padding: 10px 16px; font-size: 13.5px; }
+    .material-hero h2 { font-size: 20px; }
+    .mat-section h3 { font-size: 15px; }
+    .flashcard { padding: 20px; min-height: 280px; }
+    .flashcard .fc-question { font-size: 16px; }
+  }
+
+  .hidden { display: none !important; }
+
+  .phase-label {
+    display: inline-block; font-size: 11px; padding: 4px 11px;
+    background: var(--accent-bg); color: var(--accent);
+    border-radius: 20px; font-weight: 600; letter-spacing: 0.6px;
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+
+  .counter-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; padding: 3px 9px; background: var(--bg-3);
+    border-radius: 20px; color: var(--text-dim); font-weight: 600;
+  }
+  .counter-badge.ok { background: var(--ok-bg); color: var(--ok); }
+  .counter-badge.err { background: var(--err-bg); color: var(--err); }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="expediente">
+    <div class="brand">
+      <div class="logo">C3</div>
+      <div>
+        <h1>Derecho Comercial · Clase 3</h1>
+        <div class="sub">Empresario, empresa, hacienda y transferencia de fondo de comercio</div>
+      </div>
+    </div>
+    <div class="meta">14 ítems · 8 preguntas + 3 integradoras + 3 casos</div>
+  </header>
+
+  <section id="screen-home" class="screen active">
+    <div class="intro-grid">
+      <div class="card intro">
+        <h2>Cómo funciona esta sesión</h2>
+        <p>Diseñada para fijar el contenido en la memoria, no para recorrerlo una sola vez.</p>
+        <ul>
+          <li><b>Lectura del material:</b> leé el cuestionario y los casos completos antes de ejercitar.</li>
+          <li><b>Recall libre:</b> intentás recordar la respuesta sin pistas.</li>
+          <li><b>Respuesta modelo:</b> leés la explicación completa y el <em>error típico</em>.</li>
+          <li><b>Refuerzo con opciones:</b> elegís entre alternativas para consolidar.</li>
+          <li><b>Dominio:</b> dos aciertos seguidos marcan la pregunta como dominada; si fallás, vuelve a aparecer más adelante.</li>
+        </ul>
+      </div>
+      <div class="card intro">
+        <h2>Contenido</h2>
+        <div class="stat-row">
+          <div class="stat-pill"><div class="num">14</div><div class="lbl">Ítems</div></div>
+          <div class="stat-pill"><div class="num">3</div><div class="lbl">Casos</div></div>
+        </div>
+        <p style="font-size:13.5px; color:var(--text-dim); font-style:italic; margin-top:10px;">"La interactividad es el medio; lo que importa es que el diseño ayude a fijar el contenido en la memoria."</p>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn secondary" id="btn-material">📖 Leer material de estudio</button>
+      <button class="btn" id="btn-start">▶ Iniciar sesión de estudio</button>
+      <button class="btn secondary" id="btn-flashcards">🗂️ Modo fichas rápidas</button>
+      <button class="btn secondary hidden" id="btn-review-only">Repasar sólo temas débiles</button>
+    </div>
+  </section>
+
+  <section id="screen-material" class="screen">
+    <button class="toc-toggle" id="toc-toggle">
+      <span>📑 Ver índice</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="material-wrap">
+      <aside class="material-toc" id="material-toc">
+        <h4>Índice</h4>
+        <div class="toc-group">
+          <div class="toc-group-title">Cuestionario</div>
+          <a href="#mat-p1">1 · Empresario vs. Empresa</a>
+          <a href="#mat-p2">2 · Empresa vs. Hacienda</a>
+          <a href="#mat-p3">3 · Art. 320 y profesiones</a>
+          <a href="#mat-p4">4 · Modelo utilidad vs. diseño</a>
+          <a href="#mat-p5">5 · Elementos excluidos (11.867)</a>
+          <a href="#mat-p6">6 · Contratos de trabajo</a>
+          <a href="#mat-p7">7 · Plazos Ley 11.867</a>
+          <a href="#mat-p8">8 · Etapas históricas</a>
+          <a href="#mat-int">Integradora · Sabores del Sur</a>
+        </div>
+        <div class="toc-group">
+          <div class="toc-group-title">Casos</div>
+          <a href="#mat-c1">Caso 1 · Estudio de Bruno</a>
+          <a href="#mat-c2">Caso 2 · Duda de Andrea</a>
+          <a href="#mat-c3">Caso 3 · Venta del festival</a>
+        </div>
+        <div class="toc-group">
+          <div class="toc-group-title">Mapas</div>
+          <a href="#mat-pareto">Top Pareto</a>
+          <a href="#mat-fuentes">Fuentes clave</a>
+        </div>
+        <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-2);">
+          <button class="btn ghost" id="btn-back-home" style="width:100%; justify-content:center;">← Volver al inicio</button>
+        </div>
+      </aside>
+
+      <div class="material-body">
+        <div class="material-hero">
+          <h2>Cuestionario y casos · Clase 3</h2>
+          <p>Leé todo el material antes de iniciar la sesión. Las respuestas están ocultas: hacé clic para desplegarlas cuando quieras revisarlas.</p>
+        </div>
+
+        <div class="mat-section" id="mat-p1">
+          <div class="section-head">
+            <h3>1. Empresario vs. Empresa y status jurídico previo a la inscripción</h3>
+            <div class="badges">
+              <span class="badge fuente">A1, A2</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿En qué se diferencian el empresario y la empresa, y qué status jurídico posee la empresa antes de su inscripción registral?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) El empresario:</b></p>
+              <ol>
+                <li>Es la persona humana titular de la empresa,</li>
+                <li>Que organiza los factores de producción —capital y trabajo— para crear y comercializar bienes y servicios,</li>
+                <li>Asumiendo los riesgos y las pérdidas y percibiendo las ganancias.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) ¿Puede la empresa adquirir derechos y contraer obligaciones antes de inscribirse?</b></p>
+              <p>No. La empresa carece de personería jurídica propia hasta su inscripción en el Registro Público (o hasta adquirir personería precaria conforme la Sección IV de la Ley 19.550); mientras tanto, quienes adquieren derechos y contraen obligaciones son sus titulares.</p>
+              <table>
+                <thead><tr><th>Criterio</th><th>Empresario</th><th>Empresa</th></tr></thead>
+                <tbody>
+                  <tr><td>Naturaleza</td><td>Persona humana</td><td>Organización económica</td></tr>
+                  <tr><td>Personería jurídica</td><td>Titular de derechos y obligaciones</td><td>Carece de personería propia hasta inscripción (o precaria, Ley 19.550 Sec. IV)</td></tr>
+                  <tr><td>Función</td><td>Organiza capital y trabajo, asume riesgos</td><td>Es el objeto/instrumento de esa organización</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Asumir que la empresa, por el solo hecho de operar, tiene personería jurídica propia y puede contraer obligaciones sin necesidad de inscripción registral.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p2">
+          <div class="section-head">
+            <h3>2. Empresa vs. establecimiento/hacienda y tipos de hacienda</h3>
+            <div class="badges">
+              <span class="badge fuente">Clase</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Qué diferencia a la empresa del establecimiento o hacienda, y qué tipos de hacienda se distinguieron en clase?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Diferencia entre empresa y hacienda:</b></p>
+              <ol>
+                <li>El establecimiento o hacienda es solo la faz material y patrimonial: instalaciones, mercaderías, elementos físicos.</li>
+                <li>La empresa abarca esa faz material y además los elementos inmateriales: la actividad económica organizada, el personal en trabajo subordinado, el know-how, las marcas y las patentes.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Tipos de hacienda según su estabilidad:</b></p>
+              <ol>
+                <li><b>Hacienda estable:</b> espacio físico permanente (oficinas, locales, galpones).</li>
+                <li><b>Hacienda ocasional:</b> se constituye para un evento puntual, sin espacio físico permanente (ej. festival Lollapalooza, producciones de Live Nation, que contratan un predio por tiempo determinado).</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(c) Hacienda sin actividad empresaria:</b></p>
+              <p>Puede existir hacienda sin actividad empresaria, por ejemplo en negocios paralizados transitoriamente por un proceso sucesorio o un conflicto gremial.</p>
+              <table>
+                <thead><tr><th>Criterio</th><th>Empresa</th><th>Hacienda/Establecimiento</th></tr></thead>
+                <tbody>
+                  <tr><td>Contenido</td><td>Material + inmaterial (actividad, know-how, marcas)</td><td>Solo faz material y patrimonial</td></tr>
+                  <tr><td>Ejemplo estable</td><td>—</td><td>Oficinas, locales, galpones</td></tr>
+                  <tr><td>Ejemplo ocasional</td><td>—</td><td>Festival Lollapalooza / Live Nation</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Usar "empresa" y "hacienda" como sinónimos, ignorando que la primera incluye elementos inmateriales ausentes en la segunda.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p3">
+          <div class="section-head">
+            <h3>3. Art. 320 CCC: eliminación del comerciante y profesiones liberales</h3>
+            <div class="badges">
+              <span class="badge fuente">A1</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">El Código Civil y Comercial eliminó la figura del comerciante. ¿Qué criterio utiliza el art. 320 para identificar a quien está obligado a llevar contabilidad, y qué ocurre con las profesiones liberales?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Figura eliminada y supuestos vigentes:</b></p>
+              <ol>
+                <li>El CCC eliminó al comerciante como figura autónoma.</li>
+                <li>Subsiste la obligación contable para quien: (i) realiza actividad económica organizada, (ii) es titular de una empresa, o (iii) es titular de un establecimiento comercial, industrial o de servicios.</li>
+                <li>La doctrina llama "cuasi empresario" a quien organiza actividad económica sin llegar a estructurar una empresa, equiparándolo funcionalmente al antiguo comerciante.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Profesiones liberales y actividades agropecuarias:</b></p>
+              <p>El art. 320 excluye expresamente de la obligación contable a las personas humanas que ejercen:</p>
+              <ol>
+                <li>Profesiones liberales.</li>
+                <li>Actividades agropecuarias y conexas (afines o parecidas) no organizadas en forma de empresa.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(c) ¿El profesional liberal está exento de toda obligación registral?</b></p>
+              <p>No de toda obligación:</p>
+              <ol>
+                <li>Igual debe inscribirse en su colegio profesional, obtener la matrícula habilitante, abonarla y cumplir el código de ética.</li>
+                <li>Actúa como monotributista, salvo que sea empleado, socio o empresario de un estudio organizado, caso en el que pasa a responsable inscripto y sí queda comprendido en el art. 320.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Buscar la obligación contable en la figura derogada del "comerciante" en lugar de verificar los supuestos objetivos del art. 320, o creer que la excepción de profesión liberal protege indefinidamente aunque esa actividad se organice como empresa.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p4">
+          <div class="section-head">
+            <h3>4. Modelo de utilidad vs. modelo/diseño industrial</h3>
+            <div class="badges">
+              <span class="badge fuente">Clase</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">Diferenciar modelo de utilidad de modelo/diseño industrial, retomando el ejemplo dado en clase.</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Modelo de utilidad:</b></p>
+              <ol>
+                <li>Protege mejoras funcionales sobre objetos de uso práctico ya existentes.</li>
+                <li>No requiere actividad inventiva absoluta, sino una contribución práctica.</li>
+                <li>Ejemplo de clase: la tapa plástica con diseño en cajas tipo tetrabrik, para conservar mejor líquidos como leche o jugo.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Modelo o diseño industrial:</b></p>
+              <ol>
+                <li>Protege planos, dibujos o formas que confieren carácter ornamental a un producto.</li>
+                <li>Ejemplo: el diseño de un termo, una silla o un mueble.</li>
+                <li>Se inscribe en el INPI para otorgar derechos exclusivos a su creador.</li>
+              </ol>
+              <table>
+                <thead><tr><th>Criterio</th><th>Modelo de utilidad</th><th>Modelo/diseño industrial</th></tr></thead>
+                <tbody>
+                  <tr><td>Objeto protegido</td><td>Mejora funcional</td><td>Forma ornamental</td></tr>
+                  <tr><td>Exigencia</td><td>Contribución práctica (no inventiva absoluta)</td><td>Carácter estético/ornamental</td></tr>
+                  <tr><td>Ejemplo de clase</td><td>Tapa plástica en caja tetrabrik</td><td>Diseño de un termo, silla o mueble</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Confundir mejora funcional (modelo de utilidad) con forma ornamental (modelo/diseño industrial), tratándolos como sinónimos.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p5">
+          <div class="section-head">
+            <h3>5. Elementos NO transferidos por la Ley 11.867</h3>
+            <div class="badges">
+              <span class="badge fuente">A3</span>
+              <span class="badge trampa">Trampa</span>
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Qué elementos del patrimonio de una empresa NO se transfieren automáticamente por el régimen de la Ley 11.867, y qué se requiere para incorporarlos a la transferencia?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Inmuebles:</b></p>
+              <p>Los inmuebles no se transfieren por la Ley 11.867; su transmisión tramita mediante compraventa civil por escritura pública.</p>
+              <p style="margin-top:10px;"><b>(b) Créditos, deudas y contratos:</b></p>
+              <p>Permanecen bajo titularidad del enajenante, salvo que el contrato de transferencia especifique expresamente cuáles se ceden al adquirente.</p>
+              <p style="margin-top:10px;"><b>(c) Dinero en efectivo en caja:</b></p>
+              <p>Sigue siendo del enajenante, salvo estipulación en contrario.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que la totalidad del patrimonio de la empresa (incluidos inmuebles, créditos, deudas y contratos) se transmite automáticamente junto con el fondo de comercio.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p6">
+          <div class="section-head">
+            <h3>6. Contratos de trabajo en transferencia de fondo de comercio</h3>
+            <div class="badges">
+              <span class="badge fuente">A4</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Qué ley regula la situación de los contratos de trabajo en una transferencia de fondo de comercio, y qué debe respetar el adquirente respecto de los trabajadores?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Norma aplicable:</b></p>
+              <p>Rige la Ley de Contrato de Trabajo (Ley 20.744), que establece que la transferencia de un establecimiento no extingue los contratos de trabajo.</p>
+              <p style="margin-top:10px;"><b>(b) Obligaciones del adquirente:</b></p>
+              <ol>
+                <li>Debe respetar la antigüedad, el sueldo y los derechos adquiridos de los trabajadores al momento de la transmisión.</li>
+                <li>El trabajador disconforme puede ejercer las opciones que le otorga la legislación laboral.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que la Ley 11.867 regula (o extingue) los contratos de trabajo al transferirse el fondo de comercio.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p7">
+          <div class="section-head">
+            <h3>7. Plazos de la Ley 11.867: edictos y oposición</h3>
+            <div class="badges">
+              <span class="badge fuente">A3</span>
+              <span class="badge trampa">Trampa</span>
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Cuáles son los plazos que fija la Ley 11.867 para la publicación de edictos y para la oposición de acreedores, y desde qué momento se computa el segundo?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Publicación de edictos:</b></p>
+              <p>El enajenante debe publicar avisos durante <b>5 días</b> en el Boletín Oficial de la jurisdicción correspondiente y en un diario de gran circulación.</p>
+              <p style="margin-top:10px;"><b>(b) Plazo de oposición:</b></p>
+              <p>Los acreedores tienen <b>10 días</b> para presentar oposición y exigir la retención de las sumas necesarias para el pago de sus créditos.</p>
+              <p style="margin-top:10px;"><b>(c) Cómputo del plazo de oposición:</b></p>
+              <p>Se computa a partir de la <b>última publicación</b> de edictos (quinto día).</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Confundir el plazo de publicación de edictos (5 días) con el plazo de oposición de acreedores (10 días), o computar este último desde la primera publicación en vez de la última.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-p8">
+          <div class="section-head">
+            <h3>8. Orden cronológico de las etapas del derecho comercial</h3>
+            <div class="badges">
+              <span class="badge fuente">Clase</span>
+              <span class="badge trampa">Trampa</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">Ordenar cronológicamente las etapas subjetiva, objetiva, mixta y actual del derecho comercial, indicando el criterio orientativo de cada una.</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Primera etapa — Subjetiva:</b></p>
+              <ol>
+                <li>Desde la antigüedad hasta la Revolución Francesa.</li>
+                <li>Criterio orientativo: <b>quién</b> realizaba el acto (lex mercatoria aplicada según el sujeto).</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(b) Segunda etapa — Objetiva:</b></p>
+              <ol>
+                <li>Se origina en 1807 con la codificación napoleónica, tomada como referencia por la Argentina (cuyo antiguo art. 8º enumeraba taxativamente los actos de comercio).</li>
+                <li>Criterio orientativo: <b>qué</b> acto se realiza.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(c) Tercera etapa — Mixta:</b></p>
+              <ol>
+                <li>Desde la Revolución Industrial hasta mediados de los años 80; conviven la codificación con leyes supletorias para los negocios no previstos.</li>
+                <li>Criterio orientativo: <b>cómo</b> se produce o comercializa.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>(d) Etapa actual:</b></p>
+              <ol>
+                <li>Desde los años 80 hasta el presente, impulsada por Internet y la comercialización instantánea.</li>
+                <li>Criterio orientativo: <b>inclusivo</b>, integrando quién, qué y cómo, y sumando el <b>dónde</b>.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Invertir el orden cronológico entre la Revolución Francesa (fin de la etapa subjetiva) y la Revolución Industrial (origen de la etapa mixta), como ocurrió en la duda planteada en clase.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-int">
+          <div class="section-head">
+            <h3>Integradora · "Sabores del Sur" de Fernando</h3>
+            <div class="badges">
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Fernando organiza una vez al año un evento gastronómico itinerante llamado "Sabores del Sur", para el cual contrata un predio en Palermo por una semana —siguiendo el modelo de festivales como Lollapalooza—. Para asegurar el éxito de la edición de este año, convocó como chef estrella a un profesional de trayectoria reconocida, cuyo prestigio atrae por sí solo a buena parte del público (de modo análogo al ejemplo de Narda Lepes o Donato de Santis mencionado en clase). Fernando emplea camareros y cocineros bajo relación de dependencia para el armado del evento y decide vender todo el emprendimiento a Valentina, quien planea continuar organizándolo el año próximo.
+          </div>
+          <p class="enunciado-q">(a) ¿Qué tipo de hacienda tiene el emprendimiento de Fernando y por qué corresponde esa calificación?</p>
+          <p class="enunciado-q">(b) ¿Qué componente del valor llave adquiere especial protagonismo en esta venta, dado el prestigio del chef contratado?</p>
+          <p class="enunciado-q">(c) Si Fernando transfiere el emprendimiento a Valentina, ¿qué ocurre con los contratos de trabajo de los camareros y cocineros?</p>
+          <details>
+            <summary>Ver resolución completa</summary>
+            <div class="detail-content">
+              <p><b>(a)</b> Se trata de una <b>hacienda ocasional</b> (o no estable): el emprendimiento funciona con actividad económica organizada, capital y trabajo subordinado, pero contrata un predio y lo habilita por un tiempo determinado, sin espacio físico permanente, tal como el ejemplo de clase del festival Lollapalooza y las producciones de Live Nation.</p>
+              <p style="margin-top:10px;"><b>(b)</b> Adquiere protagonismo el <b>factor personal y la actividad productiva del profesional convocado</b>: el prestigio del chef impacta directamente en el valor de mercado del negocio, como ocurre con chefs reconocidos según el ejemplo dado en clase.</p>
+              <p style="margin-top:10px;"><b>(c)</b> Los contratos de trabajo <b>no se extinguen</b> por la transferencia. Al regirse por la LCT (Ley 20.744) y no por la Ley 11.867, Valentina, como adquirente, debe asumir las relaciones laborales respetando la antigüedad, el sueldo y los derechos adquiridos de camareros y cocineros.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>⚠ Error típico:</b> Creer que, por tratarse de un evento breve y de una hacienda ocasional, el negocio "no es una verdadera empresa" a efectos legales, o que los trabajadores contratados para el evento pierden sus derechos adquiridos al transferirse el emprendimiento a Valentina.</div>
+          </details>
+        </div>
+
+        <div class="mat-section" id="mat-c1">
+          <div class="section-head">
+            <h3>Caso 1 · El estudio de Bruno</h3>
+            <div class="badges">
+              <span class="badge fuente">Simple</span>
+              <span class="badge fuente">O1, D3, D8, S2</span>
+              <span class="badge fuente">A1</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Bruno es abogado, matriculado en el Colegio Público de Abogados, y atiende consultas de forma individual como monotributista. Un año después se asocia con dos colegas y funda el estudio jurídico "Bruno, Paz & Asociados", donde emplean a una secretaria y a dos abogados junior en relación de dependencia, organizan el trabajo por áreas y reparten las ganancias según su participación. Un cliente le pregunta a Bruno si, en esta nueva etapa, el estudio está obligado a llevar contabilidad como cualquier otro comerciante.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Exclusión de profesiones liberales del art. 320 CCC (O1) frente a la actividad económica organizada / empresario.</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>Como profesional individual, Bruno encuadra en la excepción del art. 320: ejerce una profesión liberal, actividad que la norma excluye expresamente de la obligación contable, aunque igual debe cumplir con la matrícula, el pago del colegio profesional y el código de ética.</li>
+                <li>Al fundar el estudio con socios, empleados en relación de dependencia y organización del trabajo por áreas, la actividad deja de ser el ejercicio individual de una profesión liberal y pasa a ser una actividad económica organizada.</li>
+                <li>Bruno y sus socios pasan de monotributistas a responsables inscriptos, y el estudio queda comprendido en los supuestos del art. 320 que sí generan obligación contable (titularidad de una empresa o de un establecimiento de servicios).</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> Sí. El estudio "Bruno, Paz & Asociados" está obligado a llevar contabilidad, porque la organización de capital y trabajo subordinado lo saca de la excepción de "profesión liberal" individual y lo ubica como titular de una actividad económica organizada bajo el art. 320 CCC.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Creer que la excepción del art. 320 para profesiones liberales protege indefinidamente a cualquier actividad ejercida por profesionales, incluso cuando esa actividad ya se organizó como empresa.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con: P2, P3 del cuestionario.</p>
+        </div>
+
+        <div class="mat-section" id="mat-c2">
+          <div class="section-head">
+            <h3>Caso 2 · La duda de Andrea</h3>
+            <div class="badges">
+              <span class="badge trampa">Trampa (T1)</span>
+              <span class="badge fuente">O4, T1</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Tomás, compañero de Andrea, prepara un resumen para el parcial y escribe: "La etapa subjetiva del derecho comercial va desde la Revolución Francesa hasta la Revolución Industrial, cuando el criterio pasa a ser el sujeto que realiza el acto." Antes de entregarlo, le pide a un compañero que revise si su afirmación es correcta.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Periodización histórica del derecho comercial (O4): etapas subjetiva y objetiva.</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>La etapa subjetiva no va "desde la Revolución Francesa hasta la Revolución Industrial", sino desde la antigüedad hasta la Revolución Francesa.</li>
+                <li>El criterio subjetivo (quién realiza el acto) corresponde precisamente a esta primera etapa, no a la que sigue a la Revolución Industrial.</li>
+                <li>La etapa objetiva comienza en 1807 con la codificación napoleónica —anterior, de hecho, a la Revolución Industrial— y su criterio orientativo es qué acto se realiza, no quién lo realiza.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> El resumen de Tomás contiene dos errores: invierte el período de la etapa subjetiva (que termina, no comienza, con la Revolución Francesa) y le atribuye erróneamente el criterio subjetivo a un lapso que en realidad corresponde al inicio de la etapa objetiva.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Invertir el orden cronológico entre la Revolución Francesa y la Revolución Industrial, exactamente el error que motivó la consulta de Andrea en clase.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con: P8 del cuestionario.</p>
+        </div>
+
+        <div class="mat-section" id="mat-c3">
+          <div class="section-head">
+            <h3>Caso 3 · La venta del festival</h3>
+            <div class="badges">
+              <span class="badge fuente">Complejo</span>
+              <span class="badge fuente">O1, O3, S2, D5, D7</span>
+              <span class="badge fuente">A3, A4</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            "Ritmo Sur" es un festival de música que se organiza una vez al año, contratando un predio en las afueras de la ciudad por diez días. Su titular, Joaquín, emplea personal de sonido, seguridad y logística bajo relación de dependencia durante ese período, y mantiene además un contrato de auspicio publicitario vigente con una marca de bebidas. Joaquín decide vender el fondo de comercio de "Ritmo Sur" a la productora "Vértice Live". Publica los edictos correspondientes durante 5 días en el Boletín Oficial y en un diario de gran circulación, y entrega a Vértice Live la nómina de acreedores. Uno de los proveedores de sonido, con un crédito impago, se presenta a los 8 días de la última publicación exigiendo la retención de las sumas adeudadas. Vértice Live pretende, además, quedarse con el dinero en efectivo que hubiera en la caja del festival del año anterior y continuar el contrato de auspicio publicitario vigente.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Transferencia de fondo de comercio (O3) sobre una empresa con hacienda ocasional (O1/D5), con incidencia de la LCT sobre los contratos de trabajo (S2) y de las exclusiones legales del art. 1º de la Ley 11.867 (D7).</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>"Ritmo Sur" constituye una empresa con <b>hacienda ocasional</b>: cuenta con actividad económica organizada, capital y trabajo subordinado, pero contrata el predio por un tiempo determinado para un evento puntual, igual que el ejemplo de Lollapalooza/Live Nation visto en clase.</li>
+                <li>La oposición del proveedor de sonido es <b>válida en cuanto al fondo</b>: se presentó dentro del plazo de 10 días contados desde la última publicación de edictos, por lo que Vértice Live debe retener las sumas necesarias para cubrir ese crédito antes de que la transferencia pueda inscribirse válidamente.</li>
+                <li>El dinero en efectivo en caja <b>no se transfiere automáticamente</b> por la Ley 11.867; sigue siendo de titularidad de Joaquín salvo que se estipule expresamente lo contrario en el contrato de transferencia.</li>
+                <li>El contrato de auspicio publicitario <b>tampoco se transfiere de pleno derecho</b>: al ser un contrato del enajenante, permanece bajo su titularidad salvo cesión expresa pactada entre las partes.</li>
+                <li>Respecto del personal contratado para el evento, sus contratos de trabajo <b>no se extinguen</b> por la transferencia; Vértice Live, como adquirente, debe asumirlos respetando antigüedad, sueldo y derechos adquiridos, conforme la LCT y no la Ley 11.867.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> La oposición del proveedor de sonido obliga a retener los fondos correspondientes antes de inscribir la transferencia. El dinero en caja y el contrato de auspicio no se transmiten automáticamente a Vértice Live; requieren estipulación expresa. Los contratos laborales del personal del festival sí se mantienen, y Vértice Live debe asumirlos con todos los derechos adquiridos.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> Suponer que, por tratarse de un evento ocasional y no de un establecimiento estable, el procedimiento de la Ley 11.867 no se aplica, o que la compra del fondo de comercio arrastra automáticamente la caja y los contratos vigentes del vendedor.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con: P5, P6, P7 del cuestionario.</p>
+          <div class="contrafactico">
+            <b>Sub-escenario contrafáctico:</b> Si Joaquín no hubiera publicado los edictos exigidos por la Ley 11.867 y, aun así, hubiera firmado e inscripto la transferencia con Vértice Live, ¿podría el proveedor de sonido impago hacer valer su crédito contra la productora adquirente?<br><br>
+            <b>Resolución contrafáctica:</b> Sí. La omisión del procedimiento de publicación de edictos y del plazo de oposición priva de eficacia a la transferencia frente a los acreedores del enajenante: al no haberse dado la oportunidad de oponerse y exigir la retención de su crédito, el proveedor conserva la posibilidad de accionar contra Vértice Live como adquirente, ya que el cumplimiento del procedimiento de la Ley 11.867 es precisamente lo que protege a los acreedores y condiciona la oponibilidad válida de la operación frente a terceros.
+          </div>
+        </div>
+
+        <div class="mat-section" id="mat-pareto">
+          <div class="section-head">
+            <h3>Top Pareto</h3>
+          </div>
+          <table>
+            <thead><tr><th>Prioridad</th><th>Pregunta</th><th>Concepto clave</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P1</td><td>Empresario vs. Empresa (personería jurídica)</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P2</td><td>Empresa vs. Hacienda/Establecimiento (y tipos de hacienda)</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P5</td><td>Elementos excluidos del fondo de comercio</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P6</td><td>Contratos de trabajo en la transferencia (LCT)</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P7</td><td>Plazos del procedimiento de transferencia (Ley 11.867)</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P8</td><td>Etapas históricas del derecho comercial</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>Integradora</td><td>Hacienda ocasional + valor llave + contratos de trabajo</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P3</td><td>Sujetos obligados a llevar contabilidad + profesiones liberales</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P4</td><td>Modelo de utilidad vs. Modelo/diseño industrial</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mat-section" id="mat-fuentes">
+          <div class="section-head">
+            <h3>Fuentes clave</h3>
+          </div>
+          <table>
+            <thead><tr><th>Fuente</th><th>Qué establece</th><th>Por qué importa en examen</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>Art. 320 CCC</b> (A1)</td>
+                <td>Sujetos obligados a llevar contabilidad y exclusiones (profesiones liberales, actividades agropecuarias no organizadas como empresa)</td>
+                <td>Fue la lectura asignada como tarea; estructura la delimitación empresario/empresa/comerciante</td>
+              </tr>
+              <tr>
+                <td><b>Ley 19.550, Sección IV</b> (A2)</td>
+                <td>Régimen de personería jurídica precaria para sociedades no inscriptas</td>
+                <td>Explica cómo actúa una empresa antes de su inscripción registral</td>
+              </tr>
+              <tr>
+                <td><b>Ley 11.867</b> (A3)</td>
+                <td>Régimen de transferencia de fondo de comercio: elementos, exclusiones y procedimiento (edictos, oposición, inscripción)</td>
+                <td>Fuente normativa central del bloque más extenso de la clase; alta probabilidad de pregunta de procedimiento</td>
+              </tr>
+              <tr>
+                <td><b>Ley 20.744 — LCT</b> (A4)</td>
+                <td>Continuidad de los contratos de trabajo en caso de transferencia del establecimiento</td>
+                <td>Trampa recurrente: se suele buscar esta regulación erróneamente en la Ley 11.867</td>
+              </tr>
+              <tr>
+                <td><b>Antiguo art. 8º Código de Comercio</b> (A5, derogado)</td>
+                <td>Enumeración taxativa de actos de comercio (etapa objetiva)</td>
+                <td>Clave para entender el origen histórico del criterio objetivo, hoy superado pero examinable en el repaso histórico</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="btn-row" style="justify-content:center; margin-top:28px;">
+          <button class="btn" id="btn-start-from-material">▶ Iniciar sesión de estudio</button>
+          <button class="btn secondary" id="btn-back-home-2">← Volver al inicio</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-study" class="screen">
+    <div class="progress-bar">
+      <div class="stats">
+        Pregunta <b id="stat-current">1</b> de <b id="stat-total">14</b>
+        &nbsp;·&nbsp; Dominadas: <b id="stat-mastered">0</b>
+      </div>
+      <div class="track"><div class="fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div id="question-container"></div>
+  </section>
+
+  <section id="screen-flashcards" class="screen">
+    <div class="flashcard-wrap">
+      <div class="flashcard-header">
+        <div class="counter">Ficha <b id="fc-current">1</b> de <b id="fc-total">14</b></div>
+        <div class="flashcard-progress-mini" id="fc-dots"></div>
+      </div>
+      <div class="flashcard" id="flashcard-body"></div>
+      <div class="flashcard-nav">
+        <button class="btn secondary" id="fc-prev">← Anterior</button>
+        <button class="btn secondary" id="fc-home">Volver al inicio</button>
+        <button class="btn" id="fc-next">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-summary" class="screen">
+    <div class="card resumen">
+      <h2>Informe final de la sesión</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="num" id="sum-mastered">0</div><div class="lbl">Dominadas</div></div>
+        <div class="stat-box"><div class="num" id="sum-weak">0</div><div class="lbl">Temas débiles</div></div>
+        <div class="stat-box"><div class="num" id="sum-ok">0</div><div class="lbl">Aciertos MC</div></div>
+        <div class="stat-box"><div class="num" id="sum-err">0</div><div class="lbl">Errores MC</div></div>
+      </div>
+      <div class="section-title err">Temas débiles — para repasar</div>
+      <ul class="debil-list" id="list-weak"></ul>
+      <div class="section-title ok">Dominadas</div>
+      <ul class="debil-list dominadas" id="list-mastered"></ul>
+      <div class="btn-row">
+        <button class="btn" id="btn-review-weak">Repasar sólo temas débiles</button>
+        <button class="btn secondary" id="btn-restart">Reiniciar sesión completa</button>
+        <button class="btn secondary" id="btn-home">Volver al inicio</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: "P1", topic: "Empresario vs. Empresa y status jurídico", priority: "critico",
+    enunciado: "¿En qué se diferencian el empresario y la empresa, y qué status jurídico posee la empresa antes de su inscripción registral?",
+    pista: "El empresario es persona humana; la empresa es organización económica. La empresa carece de personería propia hasta inscripción (o personería precaria, Ley 19.550 Sec. IV).",
+    respuestaLibre: "El empresario es la persona humana titular de la empresa, que organiza los factores de producción (capital y trabajo) para crear y comercializar bienes y servicios, asumiendo riesgos y percibiendo ganancias. La empresa es la organización económica en sí misma, y carece de personería jurídica propia hasta su inscripción en el Registro Público (o hasta adquirir personería precaria conforme la Sección IV de la Ley 19.550); mientras tanto, quienes adquieren derechos y contraen obligaciones son sus titulares.",
+    opciones: [
+      "El empresario es la organización económica y la empresa es la persona humana; ambas tienen personería jurídica desde el inicio de actividades.",
+      "El empresario es la persona humana que organiza capital y trabajo asumiendo riesgos; la empresa es la organización económica y carece de personería jurídica propia hasta su inscripción registral (o personería precaria, Ley 19.550 Sec. IV).",
+      "Empresario y empresa son sinónimos; ambos adquieren personería jurídica al comenzar la actividad económica.",
+      "El empresario es la persona jurídica titular; la empresa es la persona humana que trabaja en ella, y ambas tienen personería plena desde el inicio."
+    ],
+    correcta: 1,
+    explicacion: "El empresario es la persona humana titular que organiza capital y trabajo asumiendo riesgos. La empresa es la organización económica en sí misma, que carece de personería jurídica propia hasta inscripción registral (o personería precaria según Ley 19.550, Sección IV).",
+    errorTipico: "Asumir que la empresa, por el solo hecho de operar, tiene personería jurídica propia y puede contraer obligaciones sin necesidad de inscripción registral."
+  },
+  {
+    id: "P2", topic: "Empresa vs. establecimiento/hacienda", priority: "critico",
+    enunciado: "¿Qué diferencia a la empresa del establecimiento o hacienda, y qué tipos de hacienda se distinguieron en clase?",
+    pista: "La hacienda es sólo la faz material. La empresa incluye además elementos inmateriales (know-how, marcas, actividad organizada). Tipos de hacienda: estable y ocasional.",
+    respuestaLibre: "El establecimiento o hacienda es solo la faz material y patrimonial (instalaciones, mercaderías, elementos físicos). La empresa abarca esa faz material y además los elementos inmateriales: la actividad económica organizada, el personal en trabajo subordinado, el know-how, las marcas y las patentes. Tipos de hacienda: (1) hacienda estable: espacio físico permanente (oficinas, locales, galpones); (2) hacienda ocasional: se constituye para un evento puntual, sin espacio físico permanente (ej. festival Lollapalooza, producciones de Live Nation).",
+    opciones: [
+      "Empresa y hacienda son sinónimos; ambos incluyen solo elementos materiales y patrimoniales.",
+      "La empresa es solo la faz material; la hacienda incluye además elementos inmateriales como el know-how y las marcas.",
+      "La hacienda es solo la faz material y patrimonial (instalaciones, mercaderías); la empresa incluye además elementos inmateriales (actividad organizada, know-how, marcas, patentes). Tipos de hacienda: estable (espacio permanente) y ocasional (evento puntual, como Lollapalooza).",
+      "La empresa y la hacienda se diferencian solo por el tamaño: la empresa es grande y la hacienda es pequeña."
+    ],
+    correcta: 2,
+    explicacion: "La hacienda es la faz material y patrimonial; la empresa abarca además los elementos inmateriales (actividad organizada, know-how, marcas, patentes). Tipos de hacienda: estable (espacio permanente) y ocasional (evento puntual como Lollapalooza).",
+    errorTipico: "Usar 'empresa' y 'hacienda' como sinónimos, ignorando que la primera incluye elementos inmateriales ausentes en la segunda."
+  },
+  {
+    id: "P3", topic: "Art. 320 CCC y profesiones liberales", priority: "alto",
+    enunciado: "El Código Civil y Comercial eliminó la figura del comerciante. ¿Qué criterio utiliza el art. 320 para identificar a quien está obligado a llevar contabilidad, y qué ocurre con las profesiones liberales?",
+    pista: "El CCC eliminó al comerciante. Subsisten tres supuestos objetivos. Las profesiones liberales están excluidas, pero si se organizan como empresa, pierden la excepción.",
+    respuestaLibre: "El CCC eliminó al comerciante como figura autónoma. Subsiste la obligación contable para quien: (i) realiza actividad económica organizada, (ii) es titular de una empresa, o (iii) es titular de un establecimiento comercial, industrial o de servicios. El art. 320 excluye expresamente de la obligación contable a las personas humanas que ejercen profesiones liberales y actividades agropecuarias y conexas no organizadas en forma de empresa. Sin embargo, si un profesional liberal organiza su actividad como empresa (con socios, empleados en relación de dependencia, etc.), pierde la excepción y queda comprendido en el art. 320.",
+    opciones: [
+      "El CCC mantiene la figura del comerciante; las profesiones liberales siempre están excluidas de la obligación contable, sin importar cómo se organicen.",
+      "El CCC eliminó al comerciante; el art. 320 establece tres supuestos alternativos (actividad económica organizada, empresa o establecimiento). Las profesiones liberales están excluidas, pero si se organizan como empresa pierden la excepción.",
+      "El CCC eliminó al comerciante y toda obligación contable; las profesiones liberales quedan totalmente fuera del derecho comercial.",
+      "El art. 320 solo obliga a las personas jurídicas; las personas humanas están siempre excluidas."
+    ],
+    correcta: 1,
+    explicacion: "El CCC eliminó al comerciante. El art. 320 establece tres supuestos alternativos: actividad económica organizada, empresa o establecimiento. Las profesiones liberales están excluidas, pero si se organizan como empresa (con socios, empleados, etc.) pierden la excepción.",
+    errorTipico: "Buscar la obligación contable en la figura derogada del 'comerciante' en lugar de verificar los supuestos objetivos del art. 320, o creer que la excepción de profesión liberal protege indefinidamente aunque esa actividad se organice como empresa."
+  },
+  {
+    id: "P4", topic: "Modelo de utilidad vs. diseño industrial", priority: "alto",
+    enunciado: "Diferenciar modelo de utilidad de modelo/diseño industrial, retomando el ejemplo dado en clase.",
+    pista: "Modelo de utilidad = mejora funcional (ej. tapa plástica en tetrabrik). Diseño industrial = forma ornamental (ej. diseño de un termo o silla).",
+    respuestaLibre: "El modelo de utilidad protege mejoras funcionales sobre objetos de uso práctico ya existentes; no requiere actividad inventiva absoluta, sino una contribución práctica (ejemplo de clase: la tapa plástica con diseño en cajas tipo tetrabrik, para conservar mejor líquidos). El modelo o diseño industrial protege planos, dibujos o formas que confieren carácter ornamental a un producto (ejemplo: el diseño de un termo, una silla o un mueble). Se inscribe en el INPI para otorgar derechos exclusivos a su creador.",
+    opciones: [
+      "Modelo de utilidad y diseño industrial son sinónimos; ambos protegen la forma estética de un producto.",
+      "El modelo de utilidad protege la forma ornamental; el diseño industrial protege la mejora funcional.",
+      "El modelo de utilidad protege mejoras funcionales sobre objetos de uso práctico (ej. tapa plástica en tetrabrik); el diseño industrial protege formas ornamentales (ej. diseño de un termo o silla).",
+      "El modelo de utilidad protege invenciones absolutas; el diseño industrial protege mejoras prácticas."
+    ],
+    correcta: 2,
+    explicacion: "El modelo de utilidad protege mejoras funcionales (ej. tapa plástica en tetrabrik); el diseño industrial protege formas ornamentales (ej. diseño de un termo o silla). Se inscriben en el INPI.",
+    errorTipico: "Confundir mejora funcional (modelo de utilidad) con forma ornamental (modelo/diseño industrial), tratándolos como sinónimos."
+  },
+  {
+    id: "P5", topic: "Elementos NO transferidos por Ley 11.867", priority: "critico",
+    enunciado: "¿Qué elementos del patrimonio de una empresa NO se transfieren automáticamente por el régimen de la Ley 11.867, y qué se requiere para incorporarlos a la transferencia?",
+    pista: "Inmuebles, créditos, deudas, contratos y dinero en caja NO se transfieren automáticamente. Requieren estipulación expresa en el contrato de transferencia (y escritura pública para inmuebles).",
+    respuestaLibre: "Los inmuebles no se transfieren por la Ley 11.867; su transmisión tramita mediante compraventa civil por escritura pública. Los créditos, deudas y contratos permanecen bajo titularidad del enajenante, salvo que el contrato de transferencia especifique expresamente cuáles se ceden al adquirente. El dinero en efectivo en caja sigue siendo del enajenante, salvo estipulación en contrario.",
+    opciones: [
+      "Todos los elementos del patrimonio (incluidos inmuebles, créditos, deudas y contratos) se transfieren automáticamente junto con el fondo de comercio.",
+      "Solo los inmuebles quedan excluidos; todos los demás elementos se transfieren automáticamente.",
+      "Los inmuebles, créditos, deudas, contratos y dinero en efectivo en caja NO se transfieren automáticamente; requieren estipulación expresa en el contrato de transferencia (y escritura pública para inmuebles).",
+      "Solo los contratos de trabajo quedan excluidos; todos los demás elementos se transfieren automáticamente."
+    ],
+    correcta: 2,
+    explicacion: "Los inmuebles, créditos, deudas, contratos y dinero en efectivo en caja NO se transfieren automáticamente por la Ley 11.867; requieren estipulación expresa en el contrato de transferencia (y escritura pública para inmuebles).",
+    errorTipico: "Creer que la totalidad del patrimonio de la empresa (incluidos inmuebles, créditos, deudas y contratos) se transmite automáticamente junto con el fondo de comercio."
+  },
+  {
+    id: "P6", topic: "Contratos de trabajo en transferencia de fondo de comercio", priority: "critico",
+    enunciado: "¿Qué ley regula la situación de los contratos de trabajo en una transferencia de fondo de comercio, y qué debe respetar el adquirente respecto de los trabajadores?",
+    pista: "Rige la Ley de Contrato de Trabajo (Ley 20.744), NO la Ley 11.867. El adquirente debe respetar antigüedad, sueldo y derechos adquiridos.",
+    respuestaLibre: "Rige la Ley de Contrato de Trabajo (Ley 20.744), que establece que la transferencia de un establecimiento no extingue los contratos de trabajo. El adquirente debe respetar la antigüedad, el sueldo y los derechos adquiridos de los trabajadores al momento de la transmisión. El trabajador disconforme puede ejercer las opciones que le otorga la legislación laboral.",
+    opciones: [
+      "Rige la Ley 11.867, que extingue automáticamente los contratos de trabajo al transferirse el fondo de comercio.",
+      "Rige la Ley de Contrato de Trabajo (Ley 20.744): la transferencia no extingue los contratos; el adquirente debe respetar antigüedad, sueldo y derechos adquiridos.",
+      "Los contratos de trabajo se renegocian desde cero; el adquirente puede decidir si los mantiene o no.",
+      "Solo se mantienen los contratos de los trabajadores con más de 5 años de antigüedad."
+    ],
+    correcta: 1,
+    explicacion: "Rige la Ley de Contrato de Trabajo (Ley 20.744): la transferencia no extingue los contratos; el adquirente debe respetar antigüedad, sueldo y derechos adquiridos.",
+    errorTipico: "Creer que la Ley 11.867 regula (o extingue) los contratos de trabajo al transferirse el fondo de comercio."
+  },
+  {
+    id: "P7", topic: "Plazos de la Ley 11.867: edictos y oposición", priority: "critico",
+    enunciado: "¿Cuáles son los plazos que fija la Ley 11.867 para la publicación de edictos y para la oposición de acreedores, y desde qué momento se computa el segundo?",
+    pista: "Edictos: 5 días. Oposición: 10 días desde la ÚLTIMA publicación (no desde la primera).",
+    respuestaLibre: "El enajenante debe publicar avisos durante 5 días en el Boletín Oficial de la jurisdicción correspondiente y en un diario de gran circulación. Los acreedores tienen 10 días para presentar oposición y exigir la retención de las sumas necesarias para el pago de sus créditos. Este plazo de oposición se computa a partir de la última publicación de edictos (quinto día).",
+    opciones: [
+      "Edictos: 10 días. Oposición: 5 días desde la primera publicación.",
+      "Edictos: 5 días. Oposición: 10 días desde la primera publicación.",
+      "Edictos: 5 días. Oposición: 10 días desde la última publicación (quinto día).",
+      "Edictos: 15 días. Oposición: 30 días desde la última publicación."
+    ],
+    correcta: 2,
+    explicacion: "Edictos: 5 días en Boletín Oficial y diario de gran circulación. Oposición: 10 días desde la última publicación (quinto día).",
+    errorTipico: "Confundir el plazo de publicación de edictos (5 días) con el plazo de oposición de acreedores (10 días), o computar este último desde la primera publicación en vez de la última."
+  },
+  {
+    id: "P8", topic: "Etapas históricas del derecho comercial", priority: "critico",
+    enunciado: "Ordenar cronológicamente las etapas subjetiva, objetiva, mixta y actual del derecho comercial, indicando el criterio orientativo de cada una.",
+    pista: "Subjetiva (antigüedad–Revolución Francesa, quién) → Objetiva (1807, codificación napoleónica, qué) → Mixta (Revolución Industrial–años 80, cómo) → Actual (años 80–hoy, inclusivo: quién/qué/cómo + dónde).",
+    respuestaLibre: "Orden cronológico: (1) Etapa subjetiva: desde la antigüedad hasta la Revolución Francesa; criterio 'quién' realizaba el acto (lex mercatoria). (2) Etapa objetiva: se origina en 1807 con la codificación napoleónica; criterio 'qué' acto se realiza (antiguo art. 8º del Código de Comercio). (3) Etapa mixta: desde la Revolución Industrial hasta mediados de los años 80; criterio 'cómo' se produce o comercializa. (4) Etapa actual: desde los años 80 hasta el presente; criterio inclusivo, integrando quién, qué y cómo, y sumando el 'dónde'.",
+    opciones: [
+      "Objetiva (antigüedad) → Subjetiva (1807) → Actual (Revolución Industrial) → Mixta (años 80).",
+      "Subjetiva (antigüedad–Revolución Francesa, quién) → Objetiva (1807, qué) → Mixta (Revolución Industrial–años 80, cómo) → Actual (años 80–hoy, inclusivo + dónde).",
+      "Subjetiva (antigüedad–Revolución Industrial) → Objetiva (Revolución Francesa) → Mixta (años 80) → Actual (hoy).",
+      "Mixta (antigüedad) → Subjetiva (1807) → Objetiva (Revolución Industrial) → Actual (años 80)."
+    ],
+    correcta: 1,
+    explicacion: "Orden: Subjetiva (antigüedad–Revolución Francesa, quién) → Objetiva (1807, qué) → Mixta (Revolución Industrial–años 80, cómo) → Actual (años 80–hoy, inclusivo + dónde).",
+    errorTipico: "Invertir el orden cronológico entre la Revolución Francesa (fin de la etapa subjetiva) y la Revolución Industrial (origen de la etapa mixta), como ocurrió en la duda planteada en clase."
+  },
+  {
+    id: "INT-a", topic: "Integradora · Tipo de hacienda de Sabores del Sur", priority: "critico",
+    contexto: "Fernando organiza una vez al año un evento gastronómico itinerante llamado 'Sabores del Sur', para el cual contrata un predio en Palermo por una semana —siguiendo el modelo de festivales como Lollapalooza—.",
+    enunciado: "(a) ¿Qué tipo de hacienda tiene el emprendimiento de Fernando y por qué corresponde esa calificación?",
+    pista: "Contrata un predio por tiempo determinado, sin espacio físico permanente. Es el ejemplo de clase de Lollapalooza/Live Nation.",
+    respuestaLibre: "Se trata de una hacienda ocasional (o no estable): el emprendimiento funciona con actividad económica organizada, capital y trabajo subordinado, pero contrata un predio y lo habilita por un tiempo determinado, sin espacio físico permanente, tal como el ejemplo de clase del festival Lollapalooza y las producciones de Live Nation.",
+    opciones: [
+      "Es una hacienda estable porque tiene un nombre comercial reconocido.",
+      "Es una hacienda ocasional (o no estable): funciona con actividad económica organizada, capital y trabajo subordinado, pero contrata un predio por tiempo determinado, sin espacio físico permanente (ej. Lollapalooza/Live Nation).",
+      "No es una hacienda porque no tiene local físico propio.",
+      "Es una hacienda estable porque organiza un evento una vez al año."
+    ],
+    correcta: 1,
+    explicacion: "Es una hacienda ocasional: funciona con actividad económica organizada, capital y trabajo subordinado, pero contrata un predio por tiempo determinado, sin espacio físico permanente (ej. Lollapalooza/Live Nation).",
+    errorTipico: "Creer que, por tratarse de un evento breve y de una hacienda ocasional, el negocio 'no es una verdadera empresa' a efectos legales."
+  },
+  {
+    id: "INT-b", topic: "Integradora · Valor llave y chef estrella", priority: "critico",
+    contexto: "Para asegurar el éxito de la edición de este año, Fernando convocó como chef estrella a un profesional de trayectoria reconocida, cuyo prestigio atrae por sí solo a buena parte del público (de modo análogo al ejemplo de Narda Lepes o Donato de Santis mencionado en clase).",
+    enunciado: "(b) ¿Qué componente del valor llave adquiere especial protagonismo en esta venta, dado el prestigio del chef contratado?",
+    pista: "El factor personal y la actividad productiva del profesional convocado impactan directamente en el valor de mercado del negocio.",
+    respuestaLibre: "Adquiere protagonismo el factor personal y la actividad productiva del profesional convocado: el prestigio del chef impacta directamente en el valor de mercado del negocio, como ocurre con chefs reconocidos según el ejemplo dado en clase.",
+    opciones: [
+      "El valor de los muebles y equipos de cocina.",
+      "El factor personal y la actividad productiva del chef convocado: su prestigio impacta directamente en el valor de mercado del negocio.",
+      "El contrato de alquiler del predio.",
+      "La marca 'Sabores del Sur' registrada en el INPI."
+    ],
+    correcta: 1,
+    explicacion: "Adquiere protagonismo el factor personal y la actividad productiva del profesional convocado: el prestigio del chef impacta directamente en el valor de mercado del negocio.",
+    errorTipico: "No identificar que el valor llave incluye elementos inmateriales como el prestigio profesional y la actividad productiva de personas clave."
+  },
+  {
+    id: "INT-c", topic: "Integradora · Contratos de trabajo en la transferencia", priority: "critico",
+    contexto: "Fernando emplea camareros y cocineros bajo relación de dependencia para el armado del evento y decide vender todo el emprendimiento a Valentina, quien planea continuar organizándolo el año próximo.",
+    enunciado: "(c) Si Fernando transfiere el emprendimiento a Valentina, ¿qué ocurre con los contratos de trabajo de los camareros y cocineros?",
+    pista: "Rige la LCT (Ley 20.744), no la Ley 11.867. Los contratos no se extinguen; Valentina debe asumirlos respetando antigüedad, sueldo y derechos adquiridos.",
+    respuestaLibre: "Los contratos de trabajo no se extinguen por la transferencia. Al regirse por la LCT (Ley 20.744) y no por la Ley 11.867, Valentina, como adquirente, debe asumir las relaciones laborales respetando la antigüedad, el sueldo y los derechos adquiridos de camareros y cocineros.",
+    opciones: [
+      "Los contratos se extinguen automáticamente al transferirse el emprendimiento.",
+      "Valentina puede decidir si los mantiene o no, sin obligación de respetar la antigüedad.",
+      "Los contratos no se extinguen; Valentina, como adquirente, debe asumirlos respetando antigüedad, sueldo y derechos adquiridos, conforme la LCT (Ley 20.744).",
+      "Solo se mantienen los contratos de los trabajadores con más de 2 años de antigüedad."
+    ],
+    correcta: 2,
+    explicacion: "Los contratos no se extinguen; Valentina, como adquirente, debe asumirlos respetando antigüedad, sueldo y derechos adquiridos, conforme la LCT (Ley 20.744).",
+    errorTipico: "Creer que, por tratarse de un evento breve y de una hacienda ocasional, los trabajadores contratados para el evento pierden sus derechos adquiridos al transferirse el emprendimiento."
+  },
+  {
+    id: "C1", topic: "Caso 1 · El estudio de Bruno", priority: "alto",
+    contexto: "Bruno es abogado, matriculado en el Colegio Público de Abogados, y atiende consultas de forma individual como monotributista. Un año después se asocia con dos colegas y funda el estudio jurídico 'Bruno, Paz & Asociados', donde emplean a una secretaria y a dos abogados junior en relación de dependencia, organizan el trabajo por áreas y reparten las ganancias según su participación. Un cliente le pregunta a Bruno si, en esta nueva etapa, el estudio está obligado a llevar contabilidad como cualquier otro comerciante.",
+    enunciado: "¿Está obligado el estudio 'Bruno, Paz & Asociados' a llevar contabilidad?",
+    pista: "Como profesional individual, Bruno estaba excluido. Pero al organizarse como empresa (socios, empleados, organización por áreas), pierde la excepción y queda comprendido en el art. 320.",
+    respuestaLibre: "Sí. El estudio 'Bruno, Paz & Asociados' está obligado a llevar contabilidad, porque la organización de capital y trabajo subordinado lo saca de la excepción de 'profesión liberal' individual y lo ubica como titular de una actividad económica organizada bajo el art. 320 CCC.",
+    opciones: [
+      "No, porque Bruno y sus socios son profesionales liberales y están excluidos del art. 320.",
+      "Sí, porque la organización de capital y trabajo subordinado lo saca de la excepción de 'profesión liberal' individual y lo ubica como titular de una actividad económica organizada bajo el art. 320 CCC.",
+      "Solo está obligado si supera cierto monto de facturación anual.",
+      "Solo está obligado si se inscribe como sociedad anónima."
+    ],
+    correcta: 1,
+    explicacion: "Sí, porque la organización de capital y trabajo subordinado lo saca de la excepción de 'profesión liberal' individual y lo ubica como titular de una actividad económica organizada bajo el art. 320 CCC.",
+    errorTipico: "Creer que la excepción del art. 320 para profesiones liberales protege indefinidamente a cualquier actividad ejercida por profesionales, incluso cuando esa actividad ya se organizó como empresa."
+  },
+  {
+    id: "C2", topic: "Caso 2 · La duda de Andrea", priority: "alto",
+    contexto: "Tomás, compañero de Andrea, prepara un resumen para el parcial y escribe: 'La etapa subjetiva del derecho comercial va desde la Revolución Francesa hasta la Revolución Industrial, cuando el criterio pasa a ser el sujeto que realiza el acto.' Antes de entregarlo, le pide a un compañero que revise si su afirmación es correcta.",
+    enunciado: "¿Es correcta la afirmación de Tomás?",
+    pista: "Tomás invierte el orden: la etapa subjetiva va desde la antigüedad HASTA la Revolución Francesa (no desde ella). Y el criterio subjetivo es de esa primera etapa, no de la que sigue a la Revolución Industrial.",
+    respuestaLibre: "El resumen de Tomás contiene dos errores: invierte el período de la etapa subjetiva (que termina, no comienza, con la Revolución Francesa) y le atribuye erróneamente el criterio subjetivo a un lapso que en realidad corresponde al inicio de la etapa objetiva. La etapa subjetiva va desde la antigüedad hasta la Revolución Francesa; la etapa objetiva comienza en 1807 con la codificación napoleónica.",
+    opciones: [
+      "Sí es correcta: la etapa subjetiva efectivamente va desde la Revolución Francesa hasta la Revolución Industrial.",
+      "Es incorrecta: invierte el período de la etapa subjetiva (que termina, no comienza, con la Revolución Francesa) y le atribuye erróneamente el criterio subjetivo a un lapso que corresponde al inicio de la etapa objetiva.",
+      "Es parcialmente correcta: solo falta mencionar la etapa mixta.",
+      "Es correcta, pero debería agregar que la etapa objetiva comienza en 1900."
+    ],
+    correcta: 1,
+    explicacion: "Es incorrecta: invierte el período de la etapa subjetiva (que termina, no comienza, con la Revolución Francesa) y le atribuye erróneamente el criterio subjetivo a un lapso que corresponde al inicio de la etapa objetiva.",
+    errorTipico: "Invertir el orden cronológico entre la Revolución Francesa y la Revolución Industrial, exactamente el error que motivó la consulta de Andrea en clase."
+  },
+  {
+    id: "C3", topic: "Caso 3 · La venta del festival", priority: "alto",
+    contexto: "'Ritmo Sur' es un festival de música que se organiza una vez al año, contratando un predio en las afueras de la ciudad por diez días. Su titular, Joaquín, emplea personal de sonido, seguridad y logística bajo relación de dependencia durante ese período, y mantiene además un contrato de auspicio publicitario vigente con una marca de bebidas. Joaquín decide vender el fondo de comercio de 'Ritmo Sur' a la productora 'Vértice Live'. Publica los edictos correspondientes durante 5 días en el Boletín Oficial y en un diario de gran circulación, y entrega a Vértice Live la nómina de acreedores. Uno de los proveedores de sonido, con un crédito impago, se presenta a los 8 días de la última publicación exigiendo la retención de las sumas adeudadas. Vértice Live pretende, además, quedarse con el dinero en efectivo que hubiera en la caja del festival del año anterior y continuar el contrato de auspicio publicitario vigente.",
+    enunciado: "¿Es válida la oposición del proveedor de sonido? ¿Puede Vértice Live quedarse con el dinero en caja y el contrato de auspicio? ¿Qué ocurre con los contratos de trabajo del personal del festival?",
+    pista: "Oposición válida (dentro de los 10 días desde la última publicación). Dinero en caja y contrato de auspicio NO se transfieren automáticamente (requieren estipulación expresa). Contratos de trabajo se mantienen (LCT).",
+    respuestaLibre: "La oposición del proveedor de sonido es válida: se presentó dentro del plazo de 10 días contados desde la última publicación de edictos. El dinero en caja y el contrato de auspicio NO se transmiten automáticamente a Vértice Live; requieren estipulación expresa. Los contratos laborales del personal del festival sí se mantienen, y Vértice Live debe asumirlos con todos los derechos adquiridos, conforme la LCT.",
+    opciones: [
+      "La oposición es inválida porque se presentó después de los 5 días de edictos. Vértice Live puede quedarse con todo el patrimonio automáticamente.",
+      "La oposición es válida (dentro de los 10 días desde la última publicación). El dinero en caja y el contrato de auspicio NO se transmiten automáticamente; requieren estipulación expresa. Los contratos laborales se mantienen conforme la LCT.",
+      "La oposición es válida, pero Vértice Live no debe asumir los contratos de trabajo porque es un evento ocasional.",
+      "La oposición es inválida porque el proveedor no estaba en la nómina de acreedores."
+    ],
+    correcta: 1,
+    explicacion: "La oposición es válida (dentro de los 10 días desde la última publicación). El dinero en caja y el contrato de auspicio NO se transmiten automáticamente; requieren estipulación expresa. Los contratos laborales se mantienen conforme la LCT.",
+    errorTipico: "Suponer que, por tratarse de un evento ocasional y no de un establecimiento estable, el procedimiento de la Ley 11.867 no se aplica, o que la compra del fondo de comercio arrastra automáticamente la caja y los contratos vigentes del vendedor."
+  }
+];
+
+const STORAGE_KEY = "comercial_clase3_progress";
+
+const state = {
+  queue: [],
+  current: null,
+  phase: "recall",
+  progress: {},
+  sessionStats: { ok: 0, err: 0 },
+  mode: "full",
+  viewedCount: 0,
+  flashcards: {
+    index: 0,
+    revealed: false,
+    order: []
+  }
+};
+
+function saveProgress() {
+  try {
+    const data = { progress: state.progress, sessionStats: state.sessionStats };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (data && data.progress) state.progress = data.progress;
+    if (data && data.sessionStats) state.sessionStats = data.sessionStats;
+    return true;
+  } catch (e) { return false; }
+}
+
+function clearProgress() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+}
+
+function $(sel) { return document.querySelector(sel); }
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function getProgress(qid) {
+  if (!state.progress[qid]) state.progress[qid] = { okCount: 0, errCount: 0, mastered: false, attempts: 0 };
+  return state.progress[qid];
+}
+function isMastered(qid) { return getProgress(qid).mastered; }
+
+function buildQueue(mode) {
+  let pool = mode === "weak" ? QUESTIONS.filter(q => !isMastered(q.id)) : [...QUESTIONS];
+  const order = { critico: 0, alto: 1, medio: 2 };
+  pool.sort((a,b) => order[a.priority] - order[b.priority]);
+  const groups = { critico: [], alto: [], medio: [] };
+  pool.forEach(q => groups[q.priority].push(q));
+  Object.values(groups).forEach(g => shuffle(g));
+  state.queue = [...groups.critico, ...groups.alto, ...groups.medio];
+  state.viewedCount = 0;
+}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+function reinsertLater(q) {
+  const insertAt = Math.min(state.queue.length, 2 + Math.floor(Math.random() * 3));
+  state.queue.splice(insertAt, 0, q);
+}
+function countMastered() { return QUESTIONS.filter(q => isMastered(q.id)).length; }
+
+function hasWeakQuestions() {
+  return QUESTIONS.some(q => !isMastered(q.id) && getProgress(q.id).attempts > 0);
+}
+
+function updateReviewOnlyButtonVisibility() {
+  const btn = $("#btn-review-only");
+  if (hasWeakQuestions()) btn.classList.remove("hidden");
+  else btn.classList.add("hidden");
+}
+
+function renderQuestion() {
+  if (state.queue.length === 0) { renderSummary(); return; }
+  state.current = state.queue.shift();
+  state.phase = "recall";
+  state.viewedCount++;
+  updateProgressBar();
+  drawQuestion();
+}
+
+function updateProgressBar() {
+  const total = QUESTIONS.length;
+  const mastered = countMastered();
+  const currentNum = Math.min(state.viewedCount, total);
+  $("#stat-current").textContent = currentNum;
+  $("#stat-total").textContent = total;
+  $("#stat-mastered").textContent = mastered;
+  $("#progress-fill").style.width = ((mastered / total) * 100) + "%";
+}
+
+function drawQuestion() {
+  const q = state.current;
+  const p = getProgress(q.id);
+  const container = $("#question-container");
+  let prioridadLabel = "";
+  if (q.priority === "critico") prioridadLabel = '<span class="priority critico">Crítico</span>';
+  else if (q.priority === "alto") prioridadLabel = '<span class="priority alto">Alto</span>';
+  else prioridadLabel = '<span class="priority medio">Medio</span>';
+  const counterBadge = `
+    <span class="counter-badge ${p.okCount>0?'ok':''}">✓ ${p.okCount}/2</span>
+    ${p.errCount>0 ? `<span class="counter-badge err">✗ ${p.errCount}</span>` : ""}
+  `;
+  container.innerHTML = `
+    <div class="card">
+      <div class="tag-row">
+        <span class="tag">${q.id} · ${q.topic}</span>
+        ${prioridadLabel}
+        ${counterBadge}
+      </div>
+      ${q.contexto ? `<div class="contexto">${q.contexto}</div>` : ""}
+      <h3>${q.enunciado}</h3>
+      <div id="phase-content"></div>
+    </div>
+  `;
+  if (state.phase === "recall") drawRecallPhase(q);
+  else if (state.phase === "feedback") drawFeedbackPhase(q);
+  else if (state.phase === "mc") drawMCPhase(q);
+}
+
+function drawRecallPhase(q) {
+  const pc = $("#phase-content");
+  pc.innerHTML = `
+    <span class="phase-label">Fase 1 · Recall libre</span>
+    <div class="recall-area">
+      <textarea id="recall-input" placeholder="Escribí lo que recordás de la respuesta. No importa la extensión: el esfuerzo de recordar es lo que fija el contenido."></textarea>
+      <div class="recall-hint"><b>Pista:</b> ${q.pista}</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="btn-show-answer">Ver respuesta modelo</button>
+      <button class="btn secondary" id="btn-skip">Saltar pregunta</button>
+    </div>
+  `;
+  $("#btn-show-answer").addEventListener("click", () => { state.phase = "feedback"; drawQuestion(); });
+  $("#btn-skip").addEventListener("click", () => { reinsertLater(q); renderQuestion(); });
+}
+
+function drawFeedbackPhase(q) {
+  const pc = $("#phase-content");
+  pc.innerHTML = `
+    <span class="phase-label">Fase 2 · Respuesta modelo</span>
+    <div class="feedback">
+      <h4>Respuesta correcta</h4>
+      <div class="bloque">${q.respuestaLibre.replace(/\n/g, "<br>")}</div>
+      <h4>Explicación</h4>
+      <p>${q.explicacion}</p>
+      <h4>Error típico — marcá bien este límite</h4>
+      <div class="error-tipico"><b>⚠</b> ${q.errorTipico}</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="btn-to-mc">Continuar → Refuerzo con opciones</button>
+    </div>
+  `;
+  $("#btn-to-mc").addEventListener("click", () => { state.phase = "mc"; drawQuestion(); });
+}
+
+function drawMCPhase(q) {
+  const pc = $("#phase-content");
+  const opcionesIdx = q.opciones.map((_, i) => i);
+  shuffle(opcionesIdx);
+  let optsHtml = opcionesIdx.map((realIdx, displayIdx) => {
+    const letter = String.fromCharCode(65 + displayIdx);
+    return `<li data-real="${realIdx}"><span class="letter">${letter}</span>${q.opciones[realIdx]}</li>`;
+  }).join("");
+  pc.innerHTML = `
+    <span class="phase-label">Fase 3 · Refuerzo con opciones</span>
+    <ul class="options" id="options-list">${optsHtml}</ul>
+    <div id="mc-feedback"></div>
+  `;
+  pc.querySelectorAll("#options-list li").forEach(li => {
+    li.addEventListener("click", () => handleMCAnswer(q, li));
+  });
+}
+
+function handleMCAnswer(q, liClicked) {
+  const realIdx = parseInt(liClicked.getAttribute("data-real"));
+  const isCorrect = realIdx === q.correcta;
+  const p = getProgress(q.id);
+  p.attempts++;
+  document.querySelectorAll("#options-list li").forEach(li => {
+    li.classList.add("disabled");
+    const r = parseInt(li.getAttribute("data-real"));
+    if (r === q.correcta) li.classList.add("correct");
+    else if (li === liClicked) li.classList.add("wrong");
+  });
+  if (isCorrect) {
+    p.okCount++;
+    state.sessionStats.ok++;
+    if (p.okCount >= 2) p.mastered = true;
+  } else {
+    p.errCount++;
+    state.sessionStats.err++;
+    p.okCount = 0;
+  }
+  saveProgress();
+  updateProgressBar();
+  const fb = $("#mc-feedback");
+  const verdict = isCorrect
+    ? (p.mastered ? "✓ DOMINADA — dos aciertos consecutivos" : "✓ Correcto — necesitás un acierto más para dominarla")
+    : "✗ Incorrecto — la pregunta volverá a aparecer más adelante";
+  fb.innerHTML = `
+    <div class="feedback ${isCorrect ? 'ok' : 'err'}">
+      <div class="veredicto">${verdict}</div>
+      ${!isCorrect ? `
+        <h4>Respuesta correcta</h4>
+        <p>${q.respuestaLibre.replace(/\n/g, "<br>")}</p>
+        <h4>Error típico</h4>
+        <div class="error-tipico"><b>⚠</b> ${q.errorTipico}</div>
+      ` : ""}
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="btn-next">Continuar →</button>
+    </div>
+  `;
+  if (!isCorrect && !p.mastered) reinsertLater(q);
+  $("#btn-next").addEventListener("click", () => {
+    if (state.queue.length === 0) renderSummary();
+    else renderQuestion();
+  });
+}
+
+function renderSummary() {
+  const mastered = QUESTIONS.filter(q => isMastered(q.id));
+  const weak = QUESTIONS.filter(q => !isMastered(q.id) && getProgress(q.id).attempts > 0);
+  const untouched = QUESTIONS.filter(q => getProgress(q.id).attempts === 0);
+  $("#sum-mastered").textContent = mastered.length;
+  $("#sum-weak").textContent = weak.length + untouched.length;
+  $("#sum-ok").textContent = state.sessionStats.ok;
+  $("#sum-err").textContent = state.sessionStats.err;
+  const listWeak = $("#list-weak");
+  const allWeak = [...weak, ...untouched];
+  if (allWeak.length === 0) {
+    listWeak.innerHTML = '<li style="border-left-color:var(--ok); background:var(--ok-bg); color:var(--ok);">No hay temas débiles. ¡Sesión perfecta!</li>';
+  } else {
+    listWeak.innerHTML = allWeak.map(q => {
+      const p = getProgress(q.id);
+      const estado = p.attempts === 0 ? "no intentada" : `${p.errCount} error(es)`;
+      return `<li><span class="q-id">${q.id}</span><b>${q.topic}</b> <span style="color:var(--text-dim); font-size:12px; margin-left:6px;">(${estado})</span></li>`;
+    }).join("");
+  }
+  const listMastered = $("#list-mastered");
+  if (mastered.length === 0) {
+    listMastered.innerHTML = '<li style="color:var(--text-dim); background:var(--bg-3); border-left-color:var(--border);">Todavía no dominaste ninguna pregunta.</li>';
+  } else {
+    listMastered.innerHTML = mastered.map(q => `<li><span class="q-id">${q.id}</span>${q.topic}</li>`).join("");
+  }
+  showScreen("screen-summary");
+}
+
+function initFlashcards() {
+  const order = { critico: 0, alto: 1, medio: 2 };
+  const sorted = [...QUESTIONS].sort((a,b) => order[a.priority] - order[b.priority]);
+  const groups = { critico: [], alto: [], medio: [] };
+  sorted.forEach(q => groups[q.priority].push(q));
+  Object.values(groups).forEach(g => shuffle(g));
+  state.flashcards.order = [...groups.critico, ...groups.alto, ...groups.medio];
+  state.flashcards.index = 0;
+  state.flashcards.revealed = false;
+}
+
+function renderFlashcard() {
+  const fc = state.flashcards;
+  const q = fc.order[fc.index];
+  const p = getProgress(q.id);
+  const body = $("#flashcard-body");
+
+  $("#fc-current").textContent = fc.index + 1;
+  $("#fc-total").textContent = fc.order.length;
+
+  renderFlashcardDots();
+
+  let statusHtml = "";
+  if (p.mastered) statusHtml = '<span class="fc-status mastered">✓ Dominada</span>';
+  else if (p.errCount > 0) statusHtml = '<span class="fc-status weak">⚠ Tema débil</span>';
+
+  let html = `
+    <div class="fc-tag">${q.id} · ${q.topic}</div>
+    ${statusHtml}
+    ${q.contexto ? `<div class="fc-context">${q.contexto}</div>` : ""}
+    <div class="fc-question">${q.enunciado}</div>
+  `;
+
+  if (fc.revealed) {
+    html += `
+      <div class="fc-answer">
+        <div class="feedback">
+          <h4>Respuesta</h4>
+          <div class="bloque">${q.respuestaLibre.replace(/\n/g, "<br>")}</div>
+          <h4>Explicación</h4>
+          <p>${q.explicacion}</p>
+          <h4>Error típico</h4>
+          <div class="error-tipico"><b>⚠</b> ${q.errorTipico}</div>
+        </div>
+        <div class="fc-self-eval">
+          <button class="btn err" id="fc-costo">😕 Me costó</button>
+          <button class="btn ok" id="fc-sabia">😊 La sabía</button>
+        </div>
+      </div>
+    `;
+  } else {
+    html += `
+      <div style="margin-top:auto;">
+        <button class="btn" id="fc-reveal" style="width:100%; justify-content:center;">Mostrar respuesta</button>
+      </div>
+    `;
+  }
+
+  body.innerHTML = html;
+
+  if (fc.revealed) {
+    $("#fc-costo").addEventListener("click", () => handleFlashcardEval(q, false));
+    $("#fc-sabia").addEventListener("click", () => handleFlashcardEval(q, true));
+  } else {
+    $("#fc-reveal").addEventListener("click", () => {
+      state.flashcards.revealed = true;
+      renderFlashcard();
+    });
+  }
+
+  $("#fc-prev").disabled = fc.index === 0;
+  $("#fc-next").disabled = fc.index === fc.order.length - 1;
+}
+
+function renderFlashcardDots() {
+  const fc = state.flashcards;
+  const dots = fc.order.map((q, i) => {
+    const p = getProgress(q.id);
+    let cls = "dot";
+    if (i === fc.index) cls += " current";
+    else if (p.mastered) cls += " mastered";
+    else if (p.errCount > 0) cls += " weak";
+    return `<div class="${cls}" title="${q.id}: ${q.topic}"></div>`;
+  }).join("");
+  $("#fc-dots").innerHTML = dots;
+}
+
+function handleFlashcardEval(q, knewIt) {
+  const p = getProgress(q.id);
+  p.attempts++;
+  if (knewIt) {
+    p.okCount++;
+    state.sessionStats.ok++;
+    if (p.okCount >= 2) p.mastered = true;
+  } else {
+    p.errCount++;
+    state.sessionStats.err++;
+    p.okCount = 0;
+  }
+  saveProgress();
+  updateReviewOnlyButtonVisibility();
+
+  const fc = state.flashcards;
+  if (fc.index < fc.order.length - 1) {
+    fc.index++;
+    fc.revealed = false;
+  } else {
+    fc.revealed = false;
+  }
+  renderFlashcard();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadProgress();
+  updateReviewOnlyButtonVisibility();
+
+  $("#btn-material").addEventListener("click", () => showScreen("screen-material"));
+  $("#btn-back-home").addEventListener("click", () => showScreen("screen-home"));
+  $("#btn-back-home-2").addEventListener("click", () => showScreen("screen-home"));
+  $("#btn-start-from-material").addEventListener("click", () => {
+    state.mode = "full"; buildQueue("full");
+    showScreen("screen-study"); renderQuestion();
+  });
+  $("#btn-start").addEventListener("click", () => {
+    state.mode = "full"; buildQueue("full");
+    showScreen("screen-study"); renderQuestion();
+  });
+
+  $("#btn-flashcards").addEventListener("click", () => {
+    initFlashcards();
+    showScreen("screen-flashcards");
+    renderFlashcard();
+  });
+  $("#fc-prev").addEventListener("click", () => {
+    if (state.flashcards.index > 0) {
+      state.flashcards.index--;
+      state.flashcards.revealed = false;
+      renderFlashcard();
+    }
+  });
+  $("#fc-next").addEventListener("click", () => {
+    if (state.flashcards.index < state.flashcards.order.length - 1) {
+      state.flashcards.index++;
+      state.flashcards.revealed = false;
+      renderFlashcard();
+    }
+  });
+  $("#fc-home").addEventListener("click", () => {
+    updateReviewOnlyButtonVisibility();
+    showScreen("screen-home");
+  });
+
+  $("#btn-review-only").addEventListener("click", () => {
+    state.mode = "weak"; buildQueue("weak");
+    if (state.queue.length === 0) { alert("No hay temas débiles para repasar."); return; }
+    showScreen("screen-study"); renderQuestion();
+  });
+  $("#btn-review-weak").addEventListener("click", () => {
+    state.mode = "weak"; buildQueue("weak");
+    if (state.queue.length === 0) { alert("No hay temas débiles para repasar."); return; }
+    showScreen("screen-study"); renderQuestion();
+  });
+
+  $("#btn-restart").addEventListener("click", () => {
+    state.progress = {};
+    state.sessionStats = { ok: 0, err: 0 };
+    state.queue = [];
+    state.viewedCount = 0;
+    state.mode = "full";
+    clearProgress();
+    buildQueue("full");
+    updateReviewOnlyButtonVisibility();
+    showScreen("screen-study"); renderQuestion();
+  });
+
+  $("#btn-home").addEventListener("click", () => {
+    updateReviewOnlyButtonVisibility();
+    showScreen("screen-home");
+  });
+
+  document.querySelectorAll('.material-toc a[href^="#"]').forEach(a => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute("href"));
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (window.innerWidth <= 900) {
+        $("#material-toc").classList.remove("open");
+        $("#toc-toggle").classList.remove("open");
+        $("#toc-toggle span:first-child").textContent = "📑 Ver índice";
+      }
+    });
+  });
+
+  $("#toc-toggle").addEventListener("click", () => {
+    const toc = $("#material-toc");
+    const toggle = $("#toc-toggle");
+    const isOpen = toc.classList.toggle("open");
+    toggle.classList.toggle("open", isOpen);
+    toggle.querySelector("span:first-child").textContent = isOpen ? "📑 Ocultar índice" : "📑 Ver índice";
+  });
+});
+</script>
+</body>
+</html>

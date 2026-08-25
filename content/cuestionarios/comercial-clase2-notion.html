@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comercial · Clase 2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #191919;
+    --bg-2: #232323;
+    --bg-3: #2d2d2d;
+    --accent: #e0e0e0;
+    --accent-soft: #ffffff;
+    --accent-bg: rgba(107,155,209,0.10);
+    --border: #333333;
+    --border-2: #2a2a2a;
+    --text: #ebebeb;
+    --text-2: #cccccc;
+    --text-dim: #888888;
+    --ok: #5fb88a;
+    --ok-bg: rgba(95,184,138,0.12);
+    --err: #e07a75;
+    --err-bg: rgba(224,122,117,0.12);
+    --warn: #e6b87b;
+    --warn-bg: rgba(230,184,123,0.12);
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+    --shadow-lg: 0 2px 8px rgba(0,0,0,0.35), 0 12px 32px rgba(0,0,0,0.25);
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    padding: 28px 24px 80px;
+    background:
+      radial-gradient(ellipse at top, #222222 0%, var(--bg) 55%),
+      var(--bg);
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* Header */
+  header.expediente {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header.expediente .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  header.expediente .logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #999999);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    font-family: Georgia, serif;
+    box-shadow: 0 2px 10px rgba(255,255,255,0.1);
+  }
+  header.expediente h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+  header.expediente .sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  header.expediente .meta {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: right;
+    letter-spacing: 0.3px;
+  }
+
+  /* Pantallas */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fade .3s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* Cards genéricas */
+  .card {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+
+  /* Inicio */
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 820px) { .intro-grid { grid-template-columns: 1fr; } }
+
+  .intro h2 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+    letter-spacing: -0.2px;
+  }
+  .intro p { color: var(--text-2); margin-bottom: 10px; font-size: 14.5px; }
+  .intro ul { list-style: none; padding: 0; }
+  .intro li {
+    padding: 10px 0 10px 28px;
+    position: relative;
+    font-size: 14px;
+    color: var(--text-2);
+    border-bottom: 1px solid var(--border-2);
+    line-height: 1.55;
+  }
+  .intro li:last-child { border-bottom: none; }
+  .intro li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 16px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent-bg);
+    border: 1.5px solid var(--accent);
+  }
+  .intro li b { color: var(--text); font-weight: 600; }
+
+  .stat-row {
+    display: flex;
+    gap: 10px;
+    margin: 14px 0;
+    flex-wrap: wrap;
+  }
+  .stat-pill {
+    flex: 1;
+    min-width: 110px;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .stat-pill .num {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: Georgia, serif;
+  }
+  .stat-pill .lbl {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  /* Botones */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #191919;
+    border: 1px solid var(--accent);
+    padding: 11px 22px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: 0.2px;
+  }
+  .btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(255,255,255,0.1); }
+  .btn.secondary {
+    background: var(--bg-3);
+    color: var(--text-2);
+    border-color: var(--border);
+    font-weight: 500;
+  }
+  .btn.secondary:hover { background: var(--border); color: var(--text); box-shadow: none; transform: none; }
+  .btn.ghost {
+    background: transparent;
+    color: var(--text-dim);
+    border-color: transparent;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .btn.ghost:hover { background: var(--bg-3); color: var(--text); box-shadow: none; transform: none; }
+  .btn.ok { background: var(--ok); border-color: var(--ok); color: #191919; }
+  .btn.ok:hover { background: #6fc99a; border-color: #6fc99a; }
+  .btn.err { background: var(--err); border-color: var(--err); color: #191919; }
+  .btn.err:hover { background: #e88a85; border-color: #e88a85; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+
+  /* Progreso */
+  .progress-bar {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    box-shadow: var(--shadow);
+  }
+  .progress-bar .track {
+    flex: 1;
+    min-width: 160px;
+    height: 6px;
+    background: var(--bg-3);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+    border-radius: 3px;
+    transition: width .4s;
+  }
+  .progress-bar .stats {
+    font-size: 13px;
+    color: var(--text-2);
+    font-weight: 500;
+  }
+  .progress-bar .stats b { color: var(--accent); font-weight: 600; }
+
+  /* Tarjeta pregunta */
+  .card .tag-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .card .tag {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .card .priority {
+    display: inline-block;
+    font-size: 10.5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .priority.critico { background: var(--err-bg); color: var(--err); }
+  .priority.alto { background: var(--warn-bg); color: var(--warn); }
+  .priority.medio { background: var(--bg-3); color: var(--text-dim); }
+
+  .card h3 {
+    font-size: 19px;
+    color: var(--text);
+    font-weight: 600;
+    line-height: 1.45;
+    margin-bottom: 14px;
+    letter-spacing: -0.2px;
+  }
+  .card .contexto {
+    font-size: 14px;
+    color: var(--text-2);
+    font-style: italic;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-bg);
+    border-radius: 0 8px 8px 0;
+    line-height: 1.6;
+  }
+
+  /* Recall */
+  .recall-area textarea {
+    width: 100%;
+    min-height: 110px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 14.5px;
+    resize: vertical;
+    line-height: 1.55;
+    transition: border-color .15s;
+  }
+  .recall-area textarea:focus { outline: none; border-color: var(--accent); background: var(--bg-3); }
+  .recall-area textarea::placeholder { color: var(--text-dim); }
+  .recall-hint {
+    font-size: 13px;
+    color: var(--text-2);
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    line-height: 1.5;
+  }
+  .recall-hint b { color: var(--accent); font-style: normal; }
+
+  /* Opciones */
+  .options { list-style: none; }
+  .options li {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 15px;
+    margin-bottom: 9px;
+    cursor: pointer;
+    transition: all .15s;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .options li:hover { border-color: var(--accent); background: var(--accent-bg); }
+  .options li.correct { border-color: var(--ok); background: var(--ok-bg); }
+  .options li.wrong { border-color: var(--err); background: var(--err-bg); }
+  .options li.disabled { cursor: default; }
+  .options li.disabled:hover { background: var(--bg); border-color: var(--border); }
+  .options li.correct.disabled:hover { background: var(--ok-bg); border-color: var(--ok); }
+  .options li.wrong.disabled:hover { background: var(--err-bg); border-color: var(--err); }
+  .options li .letter {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    border-radius: 6px;
+    background: var(--bg-3);
+    color: var(--accent);
+    margin-right: 10px;
+    font-weight: 600;
+    font-size: 12px;
+    font-family: Georgia, serif;
+  }
+  .options li.correct .letter { background: var(--ok); color: #191919; }
+  .options li.wrong .letter { background: var(--err); color: #191919; }
+
+  /* Feedback */
+  .feedback {
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: 10px;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-bg);
+  }
+  .feedback.ok { border-left-color: var(--ok); background: var(--ok-bg); }
+  .feedback.err { border-left-color: var(--err); background: var(--err-bg); }
+  .feedback .veredicto {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .feedback.ok .veredicto { color: var(--ok); }
+  .feedback.err .veredicto { color: var(--err); }
+  .feedback h4 {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin: 14px 0 6px;
+    font-weight: 600;
+  }
+  .feedback h4:first-child { margin-top: 0; }
+  .feedback p, .feedback .bloque {
+    font-size: 14.5px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+  .feedback .error-tipico {
+    background: rgba(224,122,117,0.08);
+    border-left: 2px solid var(--err);
+    padding: 10px 12px;
+    border-radius: 0 6px 6px 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text-2);
+  }
+  .feedback .error-tipico b { color: var(--err); }
+
+  /* Resumen */
+  .resumen h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 18px;
+    letter-spacing: -0.3px;
+  }
+  .resumen .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .resumen .stat-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .resumen .stat-box .num {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: Georgia, serif;
+  }
+  .resumen .stat-box .lbl {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-top: 4px;
+  }
+  .debil-list { list-style: none; }
+  .debil-list li {
+    padding: 11px 14px;
+    border-left: 3px solid var(--err);
+    background: var(--err-bg);
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .debil-list li .q-id {
+    display: inline-block;
+    background: var(--bg-2);
+    color: var(--err);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 12px;
+    margin-right: 8px;
+    font-family: Georgia, serif;
+  }
+  .dominadas li {
+    border-left-color: var(--ok);
+    background: var(--ok-bg);
+  }
+  .dominadas li .q-id { color: var(--ok); }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 22px 0 10px;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title.err { color: var(--err); }
+  .section-title.ok { color: var(--ok); }
+  .section-title::before {
+    content: "";
+    width: 18px; height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+  }
+
+  /* MATERIAL DE ESTUDIO */
+  .material-wrap {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 22px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .material-wrap { grid-template-columns: 1fr; }
+  }
+
+  /* TOC toggle (mobile) */
+  .toc-toggle {
+    display: none;
+    width: 100%;
+    background: var(--bg-2);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    text-align: left;
+    transition: all .15s;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .toc-toggle:hover { background: var(--bg-3); }
+  .toc-toggle .chevron {
+    transition: transform .2s;
+    font-size: 12px;
+  }
+  .toc-toggle.open .chevron { transform: rotate(180deg); }
+
+  @media (max-width: 900px) {
+    .toc-toggle { display: flex; }
+    .material-toc {
+      display: none;
+      position: static;
+      max-height: none;
+    }
+    .material-toc.open { display: block; }
+  }
+
+  .material-toc {
+    position: sticky;
+    top: 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 13px;
+    max-height: calc(100vh - 28px);
+    overflow-y: auto;
+    box-shadow: var(--shadow);
+  }
+  @media (max-width: 900px) {
+    .material-toc { position: static; max-height: none; }
+  }
+  .material-toc h4 {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .material-toc .toc-group { margin-bottom: 14px; }
+  .material-toc .toc-group-title {
+    color: var(--accent);
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-2);
+    font-weight: 600;
+  }
+  .material-toc a {
+    display: block;
+    color: var(--text-2);
+    text-decoration: none;
+    padding: 5px 8px;
+    border-radius: 6px;
+    transition: all .15s;
+    font-size: 12.5px;
+    line-height: 1.4;
+    margin-bottom: 1px;
+  }
+  .material-toc a:hover {
+    color: var(--accent);
+    background: var(--accent-bg);
+  }
+
+  .material-body { min-width: 0; }
+
+  .material-hero {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .material-hero h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+  .material-hero p {
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+
+  /* Sección de pregunta/caso */
+  .mat-section {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    scroll-margin-top: 14px;
+  }
+  .mat-section .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .mat-section h3 {
+    font-size: 16.5px;
+    color: var(--text);
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    line-height: 1.4;
+    flex: 1;
+    min-width: 200px;
+  }
+  .mat-section .badges {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .mat-section .badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .badge.pareto { background: var(--warn-bg); color: var(--warn); }
+  .badge.trampa { background: var(--err-bg); color: var(--err); }
+  .badge.cae { background: var(--ok-bg); color: var(--ok); }
+  .badge.fuente { background: var(--bg-3); color: var(--text-dim); border: 1px solid var(--border); }
+
+  .mat-section .enunciado-q {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  /* Desplegables */
+  .mat-section details {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: all .2s;
+  }
+  .mat-section details[open] {
+    border-color: var(--accent);
+    box-shadow: 0 2px 12px rgba(107,155,209,0.15);
+  }
+  .mat-section details summary {
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--accent);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    transition: background .15s;
+  }
+  .mat-section details summary:hover { background: var(--accent-bg); }
+  .mat-section details summary::-webkit-details-marker { display: none; }
+  .mat-section details summary::after {
+    content: "+";
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--accent);
+    transition: transform .2s;
+    line-height: 1;
+  }
+  .mat-section details[open] summary::after {
+    content: "−";
+  }
+  .mat-section details[open] summary {
+    border-bottom: 1px solid var(--border);
+    background: var(--accent-bg);
+  }
+  .mat-section details .detail-content {
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text-2);
+  }
+  .mat-section details.error-detail summary {
+    color: var(--err);
+  }
+  .mat-section details.error-detail summary::after { color: var(--err); }
+  .mat-section details.error-detail[open] summary {
+    background: var(--err-bg);
+    border-bottom-color: rgba(224,122,117,0.25);
+  }
+  .mat-section details.error-detail summary:hover { background: var(--err-bg); }
+  .mat-section details.error-detail .detail-content {
+    background: var(--err-bg);
+    color: var(--text-2);
+  }
+  .mat-section details.error-detail .detail-content b { color: var(--err); }
+
+  /* Contexto de caso */
+  .mat-section .contexto-caso {
+    background: var(--accent-bg);
+    border-left: 3px solid var(--accent);
+    padding: 12px 14px;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    color: var(--text-2);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  /* Tablas */
+  .mat-section table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 8px 0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .mat-section th {
+    background: var(--bg-3);
+    color: var(--text);
+    text-align: left;
+    padding: 10px 12px;
+    font-weight: 600;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mat-section td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-2);
+    color: var(--text-2);
+    line-height: 1.5;
+    vertical-align: top;
+  }
+  .mat-section tr:last-child td { border-bottom: none; }
+  .mat-section ol { padding-left: 20px; margin: 6px 0; }
+  .mat-section ol li { margin-bottom: 4px; }
+
+  .contrafactico {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn);
+    padding: 12px 14px;
+    border-radius: 0 8px 8px 0;
+    margin-top: 12px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text-2);
+  }
+  .contrafactico b { color: var(--warn); }
+  .link-rel {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* ============================================================
+     MODO FICHAS (FLASHCARDS)
+     ============================================================ */
+  .flashcard-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .flashcard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .flashcard-header .counter {
+    font-size: 13px;
+    color: var(--text-2);
+    font-weight: 500;
+  }
+  .flashcard-header .counter b { color: var(--accent); }
+  .flashcard-progress-mini {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .flashcard-progress-mini .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    transition: all .2s;
+  }
+  .flashcard-progress-mini .dot.current {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-bg);
+  }
+  .flashcard-progress-mini .dot.mastered {
+    background: var(--ok);
+    border-color: var(--ok);
+  }
+  .flashcard-progress-mini .dot.weak {
+    background: var(--err);
+    border-color: var(--err);
+  }
+
+  .flashcard {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 30px;
+    min-height: 320px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    transition: all .3s;
+  }
+  .flashcard .fc-tag {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .flashcard .fc-context {
+    font-size: 14px;
+    color: var(--text-2);
+    font-style: italic;
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-bg);
+    border-radius: 0 8px 8px 0;
+    line-height: 1.6;
+  }
+  .flashcard .fc-question {
+    font-size: 18px;
+    color: var(--text);
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: -0.2px;
+    flex: 1;
+    margin-bottom: 18px;
+  }
+  .flashcard .fc-status {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .flashcard .fc-status.mastered { background: var(--ok-bg); color: var(--ok); }
+  .flashcard .fc-status.weak { background: var(--err-bg); color: var(--err); }
+
+  .flashcard .fc-answer {
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    margin-top: 8px;
+    animation: fade .3s ease;
+  }
+
+  .flashcard-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    gap: 10px;
+  }
+  .flashcard-nav .nav-center {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex: 1;
+  }
+  .fc-self-eval {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .fc-self-eval .btn { flex: 1; justify-content: center; min-width: 140px; }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    body { padding: 14px 10px 60px; }
+    header.expediente { padding: 16px 18px; }
+    header.expediente h1 { font-size: 17px; }
+    .card, .mat-section { padding: 18px; }
+    .card h3 { font-size: 17px; }
+    .btn { padding: 10px 16px; font-size: 13.5px; }
+    .material-hero h2 { font-size: 20px; }
+    .mat-section h3 { font-size: 15px; }
+    .flashcard { padding: 20px; min-height: 280px; }
+    .flashcard .fc-question { font-size: 16px; }
+  }
+
+  .hidden { display: none !important; }
+
+  .phase-label {
+    display: inline-block;
+    font-size: 11px;
+    padding: 4px 11px;
+    background: var(--accent-bg);
+    color: var(--accent);
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .counter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    padding: 3px 9px;
+    background: var(--bg-3);
+    border-radius: 20px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+  .counter-badge.ok { background: var(--ok-bg); color: var(--ok); }
+  .counter-badge.err { background: var(--err-bg); color: var(--err); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="expediente">
+    <div class="brand">
+      <div class="logo">C2</div>
+      <div>
+        <h1>Derecho Comercial · Clase 2</h1>
+        <div class="sub">Sesión interactiva con repetición espaciada y recall activo</div>
+      </div>
+    </div>
+    <div class="meta">14 ítems · 8 preguntas + 3 integradoras + 3 casos</div>
+  </header>
+
+  <!-- PANTALLA INICIO -->
+  <section id="screen-home" class="screen active">
+    <div class="intro-grid">
+      <div class="card intro">
+        <h2>Cómo funciona esta sesión</h2>
+        <p>Diseñada para fijar el contenido en la memoria, no para recorrerlo una sola vez.</p>
+        <ul>
+          <li><b>Lectura del material:</b> leé el cuestionario y los casos completos antes de ejercitar.</li>
+          <li><b>Recall libre:</b> intentás recordar la respuesta sin pistas.</li>
+          <li><b>Respuesta modelo:</b> leés la explicación completa y el <em>error típico</em>.</li>
+          <li><b>Refuerzo con opciones:</b> elegís entre alternativas para consolidar.</li>
+          <li><b>Dominio:</b> dos aciertos seguidos marcan la pregunta como dominada; si fallás, vuelve a aparecer más adelante.</li>
+        </ul>
+      </div>
+      <div class="card intro">
+        <h2>Contenido</h2>
+        <div class="stat-row">
+          <div class="stat-pill"><div class="num">14</div><div class="lbl">Ítems</div></div>
+          <div class="stat-pill"><div class="num">3</div><div class="lbl">Casos</div></div>
+        </div>
+        <p style="font-size:13.5px; color:var(--text-dim); font-style:italic; margin-top:10px;">"La interactividad es el medio; lo que importa es que el diseño ayude a fijar el contenido en la memoria."</p>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn secondary" id="btn-material">📖 Leer material de estudio</button>
+      <button class="btn" id="btn-start">▶ Iniciar sesión de estudio</button>
+      <button class="btn secondary" id="btn-flashcards">🗂️ Modo fichas rápidas</button>
+      <button class="btn secondary hidden" id="btn-review-only">Repasar sólo temas débiles</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA MATERIAL DE ESTUDIO -->
+  <section id="screen-material" class="screen">
+    <button class="toc-toggle" id="toc-toggle">
+      <span>📑 Ver índice</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="material-wrap">
+      <aside class="material-toc" id="material-toc">
+        <h4>Índice</h4>
+        <div class="toc-group">
+          <div class="toc-group-title">Cuestionario</div>
+          <a href="#mat-p1">1 · Etapas históricas</a>
+          <a href="#mat-p2">2 · Art. 320 CCC</a>
+          <a href="#mat-p3">3 · Exclusión art. 320</a>
+          <a href="#mat-p4">4 · AEO vs. empresa</a>
+          <a href="#mat-p5">5 · Doble acepción establecimiento</a>
+          <a href="#mat-p6">6 · Venta por Mercado Libre</a>
+          <a href="#mat-p7">7 · Sociedad sin actividad</a>
+          <a href="#mat-p8">8 · Art. 8° vs. art. 320</a>
+          <a href="#mat-int">Integradora · Julieta</a>
+        </div>
+        <div class="toc-group">
+          <div class="toc-group-title">Casos</div>
+          <a href="#mat-c1">Caso 1 · Kiosco Roberto</a>
+          <a href="#mat-c2">Caso 2 · Mariano</a>
+          <a href="#mat-c3">Caso 3 · Norte SRL</a>
+        </div>
+        <div class="toc-group">
+          <div class="toc-group-title">Mapas</div>
+          <a href="#mat-pareto">Top Pareto</a>
+          <a href="#mat-fuentes">Fuentes clave</a>
+        </div>
+        <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-2);">
+          <button class="btn ghost" id="btn-back-home" style="width:100%; justify-content:center;">← Volver al inicio</button>
+        </div>
+      </aside>
+
+      <div class="material-body">
+        <div class="material-hero">
+          <h2>Cuestionario y casos · Clase 2</h2>
+          <p>Leé todo el material antes de iniciar la sesión. Las respuestas están ocultas: hacé clic para desplegarlas cuando quieras revisarlas.</p>
+        </div>
+
+        <!-- P1 -->
+        <div class="mat-section" id="mat-p1">
+          <div class="section-head">
+            <h3>1. Criterio distintivo de las cuatro etapas históricas</h3>
+            <div class="badges">
+              <span class="badge fuente">O1</span>
+              <span class="badge pareto">Pareto</span>
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Cuál es el criterio distintivo de cada una de las cuatro etapas históricas del derecho comercial?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <table>
+                <thead><tr><th>Etapa</th><th>Período</th><th>Criterio</th><th>Qué determina la aplicación</th></tr></thead>
+                <tbody>
+                  <tr><td>Subjetiva</td><td>Edad Media – 1807</td><td>Quién</td><td>La calidad de comerciante del sujeto (Lex Mercatoria)</td></tr>
+                  <tr><td>Objetiva</td><td>1807 – 1890</td><td>Qué</td><td>Si el acto está tipificado como acto de comercio (Código Francés 1807)</td></tr>
+                  <tr><td>Mixta</td><td>1890 – 1983/85</td><td>Cómo</td><td>Código vigente + leyes especiales</td></tr>
+                  <tr><td>Actual</td><td>1983/85 – hoy</td><td>Dónde</td><td>Variable virtual/presencial, sin descartar quién/qué/cómo</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> creer que cada etapa deroga por completo el criterio de la anterior, cuando en realidad la etapa actual es comprehensiva de las tres preguntas previas; y, relacionado, atribuir la primera codificación comercial a Italia en lugar de Francia (1807).</div>
+          </details>
+        </div>
+
+        <!-- P2 -->
+        <div class="mat-section" id="mat-p2">
+          <div class="section-head">
+            <h3>2. Tres supuestos del art. 320 CCC</h3>
+            <div class="badges">
+              <span class="badge fuente">A1 (O2)</span>
+              <span class="badge pareto">Pareto</span>
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <p class="enunciado-q">Según el artículo 320 CCC, ¿cuáles son los tres supuestos alternativos cuya configuración genera la obligación de llevar contabilidad?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <ol>
+                <li>Realizar actividad económica organizada.</li>
+                <li>Ser titular de una empresa.</li>
+                <li>Ser titular de un establecimiento comercial, industrial o de servicios.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> pensar que el art. 320 solo alcanza al comerciante individual clásico, sin advertir que también comprende a personas jurídicas, directores, accionistas y socios capitalistas titulares de una empresa.</div>
+          </details>
+        </div>
+
+        <!-- P3 -->
+        <div class="mat-section" id="mat-p3">
+          <div class="section-head">
+            <h3>3. Exclusión del último párrafo del art. 320 CCC</h3>
+            <div class="badges">
+              <span class="badge fuente">A1 (O2)</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Qué sujetos quedan excluidos de la obligación de llevar contabilidad conforme al último párrafo del art. 320 CCC, y qué consecuencia tiene esa exclusión?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <ol>
+                <li>Las personas humanas que realizan actividades profesionales (abogados, médicos, etc.).</li>
+                <li>Las personas humanas que realizan actividades agropecuarias pequeñas u oficios.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> creer que esta exclusión saca a estos sujetos del ámbito del derecho comercial en general, cuando en realidad solo significa que la contabilidad es facultativa para ellos y que no corresponde sanción por no llevarla.</div>
+          </details>
+        </div>
+
+        <!-- P4 -->
+        <div class="mat-section" id="mat-p4">
+          <div class="section-head">
+            <h3>4. Actividad económica organizada vs. empresa</h3>
+            <div class="badges">
+              <span class="badge fuente">O3</span>
+              <span class="badge pareto">Pareto</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Qué relación existe entre "Actividad Económica Organizada" y "Empresa", y cuál es el elemento que la cátedra señala como distintivo de esta última?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <table>
+                <thead><tr><th>Noción</th><th>Naturaleza</th><th>Elemento distintivo</th></tr></thead>
+                <tbody>
+                  <tr><td>Actividad económica organizada</td><td>Género</td><td>Reiteración de actos bajo organización independiente del titular, con efectos económicos</td></tr>
+                  <tr><td>Empresa</td><td>Especie</td><td>Además del género: objeto, colocación de bienes/servicios en el mercado, socios capitalistas y trabajo ajeno subordinado</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> usar "actividad económica organizada" y "empresa" como sinónimos, sin advertir la relación de género a especie confirmada por la cátedra.</div>
+          </details>
+        </div>
+
+        <!-- P5 -->
+        <div class="mat-section" id="mat-p5">
+          <div class="section-head">
+            <h3>5. Doble acepción del "Establecimiento"</h3>
+            <div class="badges">
+              <span class="badge fuente">O3</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Cuáles son las dos acepciones del concepto de "Establecimiento" desarrolladas en clase?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">
+              <p><b>(a) Acepción popular:</b> el lugar físico donde se desarrollan las actividades económicas (local, kiosco, oficina, fábrica).</p>
+              <p style="margin-top:8px;"><b>(b) Acepción jurídico-comercial:</b> el conjunto de bienes materiales e inmateriales afectados a determinada actividad económica.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> reducir el concepto de establecimiento únicamente al local físico, ignorando la acepción jurídico-comercial que abarca también bienes inmateriales.</div>
+          </details>
+        </div>
+
+        <!-- P6 -->
+        <div class="mat-section" id="mat-p6">
+          <div class="section-head">
+            <h3>6. Venta por Mercado Libre como acto de comercio</h3>
+            <div class="badges">
+              <span class="badge fuente">S3 (D4)</span>
+            </div>
+          </div>
+          <p class="enunciado-q">¿Por qué se considera acto de comercio, y no un acto civil, la venta de un bien propio realizada a través de una plataforma como Mercado Libre?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">Porque la venta de cosas por dinero es un acto de comercio (lo civil, en este contexto, queda reservado a los inmuebles); la plataforma actúa como intermediaria o "vidriera virtual" entre comprador y vendedor, conforme a los términos y condiciones aceptados por el usuario.</div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> pensar que vender bienes propios sin ser empresario queda automáticamente fuera del ámbito del derecho comercial.</div>
+          </details>
+        </div>
+
+        <!-- P7 -->
+        <div class="mat-section" id="mat-p7">
+          <div class="section-head">
+            <h3>7. Sociedad sin actividad ("pelada") en liquidación</h3>
+            <div class="badges">
+              <span class="badge fuente">S4</span>
+            </div>
+          </div>
+          <p class="enunciado-q">Una sociedad constituida entre dos personas que actualmente no tiene actividad ("sociedad pelada") y está en proceso de liquidación, ¿está igualmente obligada a llevar contabilidad e inscribirse?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">Sí: por el solo hecho de ser persona jurídica y haber adoptado un tipo societario, se entiende que actúa en forma de empresa; debe llevar libros, presentar estados contables y, en su caso, inscribir la liquidación en el registro público correspondiente (en Capital Federal, ante la IGJ).</div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> creer que la ausencia de actividad exime a la sociedad de sus obligaciones contables y registrales.</div>
+          </details>
+        </div>
+
+        <!-- P8 -->
+        <div class="mat-section" id="mat-p8">
+          <div class="section-head">
+            <h3>8. Art. 8° derogado vs. art. 320 CCC vigente</h3>
+            <div class="badges">
+              <span class="badge fuente">A2 / A1</span>
+              <span class="badge trampa">Trampa</span>
+            </div>
+          </div>
+          <p class="enunciado-q">Un compañero sostiene que, para determinar si a una persona se le aplica derecho comercial hoy, corresponde recurrir al listado de actos de comercio del art. 8° del Código de Comercio. ¿Es correcto?</p>
+          <details>
+            <summary>Ver respuesta</summary>
+            <div class="detail-content">No: el art. 8° pertenecía al Código de Comercio derogado y respondía al criterio "qué" de la etapa objetiva; hoy, bajo el CCC unificado, la norma vigente que delimita la aplicación del derecho comercial es el art. 320 CCC.</div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico:</b> confundir la teoría de los actos de comercio del código derogado con el art. 320 CCC actualmente vigente.</div>
+          </details>
+        </div>
+
+        <!-- INTEGRADORA -->
+        <div class="mat-section" id="mat-int">
+          <div class="section-head">
+            <h3>Integradora · Julieta, Textil Sur SRL y Tomás</h3>
+            <div class="badges">
+              <span class="badge cae">Cae siempre</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Julieta diseñó un software y lo vende a través de Mercado Libre, cobrando mediante billetera virtual y entregándolo por descarga directa al celular del comprador. Además, Julieta es socia al 50% de "Textil Sur SRL", sociedad dedicada a la confección de ropa que actualmente no tiene actividad y está en proceso de liquidación. Por su parte, Tomás, vecino de Julieta, vende ocasionalmente algunos objetos personales usados a través de la misma plataforma.
+          </div>
+          <p class="enunciado-q">(a) ¿La venta del software por Julieta constituye un acto de comercio, pese a no existir establecimiento físico ni entrega de una cosa tangible?</p>
+          <p class="enunciado-q">(b) ¿Está "Textil Sur SRL" obligada a llevar contabilidad y a inscribir su liquidación, a pesar de no tener actividad?</p>
+          <p class="enunciado-q">(c) ¿La venta ocasional de objetos personales usados por Tomás lo convierte en sujeto obligado por el art. 320 CCC?</p>
+          <details>
+            <summary>Ver resolución completa</summary>
+            <div class="detail-content">
+              <p><b>(a)</b> Sí. La venta de cosas por dinero es un acto de comercio con independencia de su carácter intangible; la plataforma actúa como intermediaria, y la etapa actual del derecho comercial (criterio "dónde") no excluye lo virtual, sino que lo incorpora junto con el quién, el qué y el cómo.</p>
+              <p style="margin-top:10px;"><b>(b)</b> Sí. Por el solo hecho de ser persona jurídica privada, "Textil Sur SRL" debe llevar contabilidad y cumplir sus obligaciones registrales, incluida la inscripción de la liquidación ante el registro público correspondiente, independientemente de la falta actual de actividad.</p>
+              <p style="margin-top:10px;"><b>(c)</b> No necesariamente. Una venta aislada y ocasional de bienes propios sigue siendo, en sí misma, un acto de comercio, pero la obligación de llevar contabilidad conforme al art. 320 CCC requiere configurar alguno de los tres supuestos alternativos (actividad económica organizada, titularidad de empresa o de establecimiento); la sola venta esporádica, sin regularidad ni organización, no basta por sí sola para generar esa obligación.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>⚠ Error típico:</b> confundir "acto de comercio" (categoría que puede predicarse de un acto aislado, como la venta de Tomás) con "sujeto obligado a llevar contabilidad" (que exige organización o regularidad conforme al art. 320); un alumno que memorizó pero no integró los conceptos tiende a igualar ambas categorías.</div>
+          </details>
+        </div>
+
+        <!-- CASO 1 -->
+        <div class="mat-section" id="mat-c1">
+          <div class="section-head">
+            <h3>Caso 1 · El kiosco de Roberto</h3>
+            <div class="badges">
+              <span class="badge fuente">Simple</span>
+              <span class="badge fuente">O2, O3</span>
+              <span class="badge fuente">A1</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            Roberto es titular de un kiosco de barrio donde vende bebidas, golosinas y artículos de librería. No está inscripto como sociedad ni tiene empleados. Un amigo le dice que, al no tener empleados ni estar constituido como empresa formal, no tiene ninguna obligación contable.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Art. 320 CCC — supuesto de titularidad de establecimiento comercial.</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>El art. 320 CCC prevé tres supuestos alternativos: actividad económica organizada, titularidad de empresa o titularidad de establecimiento comercial, industrial o de servicios.</li>
+                <li>Roberto, aunque no cuente con empleados ni esté organizado como empresa en sentido técnico, es titular de un establecimiento comercial en su acepción popular (el kiosco).</li>
+                <li>Basta con configurar uno solo de los tres supuestos alternativos para que nazca la obligación contable.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> Roberto sí está obligado a llevar contabilidad y cumplir los regímenes informativos correspondientes, porque es titular de un establecimiento comercial, con independencia de no tener empleados ni estar organizado como empresa.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico (T4):</b> creer que el art. 320 solo alcanza a comerciantes con estructura empresarial compleja, ignorando que la sola titularidad de un establecimiento ya configura uno de los supuestos alternativos.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con: P2 del cuestionario.</p>
+        </div>
+
+        <!-- CASO 2 -->
+        <div class="mat-section" id="mat-c2">
+          <div class="section-head">
+            <h3>Caso 2 · La confusión de Mariano en el parcial</h3>
+            <div class="badges">
+              <span class="badge trampa">Trampa</span>
+              <span class="badge fuente">T1, O1, O2</span>
+              <span class="badge fuente">A2, A1</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            En un parcial, Mariano escribe que, para determinar si a Ana —titular de una tienda online— se le aplica derecho comercial, corresponde recurrir al art. 8° del Código de Comercio y verificar si su actividad encuadra en el listado taxativo de actos de comercio allí previsto.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Distinción entre la etapa objetiva (Código de Comercio derogado, art. 8°) y la etapa actual (art. 320 CCC vigente).</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>El art. 8° del Código de Comercio pertenecía a la etapa objetiva del derecho comercial, hoy derogada, cuyo criterio rector era "qué" acto se realizaba.</li>
+                <li>Con la unificación del Código Civil y Comercial, ese código y ese artículo dejaron de estar vigentes.</li>
+                <li>La norma vigente que hoy delimita la aplicación del derecho comercial —y que corresponde aplicar al caso de Ana— es el art. 320 CCC, propio de la etapa actual.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> El razonamiento de Mariano es incorrecto: no corresponde acudir al art. 8° del Código de Comercio, que se encuentra derogado, sino al art. 320 CCC, que es la norma vigente para determinar las obligaciones comerciales de Ana.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico (T1):</b> confundir la teoría de los actos de comercio del código derogado con el art. 320 CCC actualmente vigente.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con: P8 del cuestionario.</p>
+        </div>
+
+        <!-- CASO 3 -->
+        <div class="mat-section" id="mat-c3">
+          <div class="section-head">
+            <h3>Caso 3 · Norte SRL y el alquiler comercial</h3>
+            <div class="badges">
+              <span class="badge fuente">Complejo</span>
+              <span class="badge fuente">O2, O3, S4, T10</span>
+              <span class="badge fuente">A1</span>
+            </div>
+          </div>
+          <div class="contexto-caso">
+            "Norte SRL" es una sociedad constituida por dos socios, originalmente dedicada a la confección de ropa. Además de esa actividad, la sociedad compró un local y lo alquila para uso comercial. En la actualidad, la producción textil está detenida, pero el alquiler del local sigue generando ingresos regulares.
+          </div>
+          <details>
+            <summary>Ver resolución</summary>
+            <div class="detail-content">
+              <p><b>Figura jurídica:</b> Art. 320 CCC — obligación contable de las personas jurídicas privadas, combinada con la noción de actividad económica organizada.</p>
+              <p style="margin-top:10px;"><b>Razonamiento:</b></p>
+              <ol>
+                <li>Norte SRL es persona jurídica privada; por ese solo hecho, y en tanto se entiende que actúa en forma de empresa, ya está obligada a llevar contabilidad.</li>
+                <li>Independientemente de ello, la explotación del local en alquiler comercial constituye, por sí misma, actividad económica organizada.</li>
+                <li>La circunstancia de que la actividad textil original esté detenida no exime a la sociedad de sus obligaciones contables mientras conserve personalidad jurídica y desarrolle alguna actividad económica.</li>
+              </ol>
+              <p style="margin-top:10px;"><b>Respuesta:</b> Norte SRL está obligada a llevar contabilidad, tanto por su carácter de persona jurídica privada como por la actividad económica organizada que representa el alquiler comercial del local.</p>
+            </div>
+          </details>
+          <details class="error-detail">
+            <summary>Ver error típico</summary>
+            <div class="detail-content"><b>❌ Error típico (T10):</b> creer que la sola detención de la actividad originaria (textil) libera a la sociedad de sus obligaciones contables y registrales.</div>
+          </details>
+          <p class="link-rel">🔗 Relacionado con: P7 del cuestionario, Integradora (b).</p>
+          <div class="contrafactico">
+            <b>Sub-escenario contrafáctico:</b> Si Norte SRL nunca hubiese tenido actividad alguna —ni producción textil ni alquiler— y se encontrara "pelada", en trámite de liquidación, ¿cambiaría la respuesta?<br><br>
+            <b>Resolución:</b> No cambia. Según lo señalado en clase respecto de la consulta de Ana (S4), aun una sociedad sin ninguna actividad debe llevar libros y realizar las inscripciones correspondientes, incluida la liquidación ante el registro público competente (en Capital Federal, la IGJ), por el solo hecho de conservar personalidad jurídica bajo un tipo societario.
+          </div>
+        </div>
+
+        <!-- TOP PARETO -->
+        <div class="mat-section" id="mat-pareto">
+          <div class="section-head">
+            <h3>Top Pareto</h3>
+          </div>
+          <table>
+            <thead><tr><th>Prioridad</th><th>Pregunta</th><th>Concepto clave</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P2</td><td>Tres supuestos alternativos del art. 320 CCC</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>P1</td><td>Cuatro etapas históricas y su criterio rector</td></tr>
+              <tr><td style="color:var(--err); font-weight:600;">🔴 Crítico</td><td>Integradora</td><td>Distinción acto de comercio vs. sujeto obligado</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P4</td><td>Actividad económica organizada (género) vs. empresa (especie)</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P8</td><td>Art. 8° derogado vs. art. 320 CCC vigente</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P7</td><td>Persona jurídica sin actividad y obligación contable</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P3</td><td>Exclusión de profesionales y actividades agropecuarias pequeñas</td></tr>
+              <tr><td style="color:var(--warn); font-weight:600;">🟠 Alto</td><td>P5</td><td>Doble acepción del establecimiento</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- FUENTES CLAVE -->
+        <div class="mat-section" id="mat-fuentes">
+          <div class="section-head">
+            <h3>Fuentes clave</h3>
+          </div>
+          <table>
+            <thead><tr><th>Fuente</th><th>Qué establece</th><th>Por qué importa en examen</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>Art. 320 CCC</b></td>
+                <td>Sujetos obligados a llevar contabilidad y regímenes registrales, con sus tres supuestos alternativos y su exclusión final</td>
+                <td>Es la norma vigente y eje delimitativo del derecho comercial hoy; fuente guía de la clase</td>
+              </tr>
+              <tr>
+                <td><b>Antiguo art. 8° Código de Comercio</b> (derogado)</td>
+                <td>Enumeraba taxativamente los actos de comercio (etapa objetiva)</td>
+                <td>Trampa frecuente: se confunde con el art. 320 vigente</td>
+              </tr>
+              <tr>
+                <td><b>Código de Comercio francés de 1807</b></td>
+                <td>Primera codificación comercial separada del derecho civil</td>
+                <td>Marca el inicio de la etapa objetiva y el modelo que inspiró al viejo Código de Comercio argentino</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="btn-row" style="justify-content:center; margin-top:28px;">
+          <button class="btn" id="btn-start-from-material">▶ Iniciar sesión de estudio</button>
+          <button class="btn secondary" id="btn-back-home-2">← Volver al inicio</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANTALLA ESTUDIO -->
+  <section id="screen-study" class="screen">
+    <div class="progress-bar">
+      <div class="stats">
+        Pregunta <b id="stat-current">1</b> de <b id="stat-total">14</b>
+        &nbsp;·&nbsp; Dominadas: <b id="stat-mastered">0</b>
+      </div>
+      <div class="track"><div class="fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <div id="question-container"></div>
+  </section>
+
+  <!-- PANTALLA FICHAS -->
+  <section id="screen-flashcards" class="screen">
+    <div class="flashcard-wrap">
+      <div class="flashcard-header">
+        <div class="counter">Ficha <b id="fc-current">1</b> de <b id="fc-total">14</b></div>
+        <div class="flashcard-progress-mini" id="fc-dots"></div>
+      </div>
+      <div class="flashcard" id="flashcard-body"></div>
+      <div class="flashcard-nav">
+        <button class="btn secondary" id="fc-prev">← Anterior</button>
+        <button class="btn secondary" id="fc-home">Volver al inicio</button>
+        <button class="btn" id="fc-next">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANTALLA RESUMEN -->
+  <section id="screen-summary" class="screen">
+    <div class="card resumen">
+      <h2>Informe final de la sesión</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="num" id="sum-mastered">0</div><div class="lbl">Dominadas</div></div>
+        <div class="stat-box"><div class="num" id="sum-weak">0</div><div class="lbl">Temas débiles</div></div>
+        <div class="stat-box"><div class="num" id="sum-ok">0</div><div class="lbl">Aciertos MC</div></div>
+        <div class="stat-box"><div class="num" id="sum-err">0</div><div class="lbl">Errores MC</div></div>
+      </div>
+
+      <div class="section-title err">Temas débiles — para repasar</div>
+      <ul class="debil-list" id="list-weak"></ul>
+
+      <div class="section-title ok">Dominadas</div>
+      <ul class="debil-list dominadas" id="list-mastered"></ul>
+
+      <div class="btn-row">
+        <button class="btn" id="btn-review-weak">Repasar sólo temas débiles</button>
+        <button class="btn secondary" id="btn-restart">Reiniciar sesión completa</button>
+        <button class="btn secondary" id="btn-home">Volver al inicio</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: "P1", topic: "Etapas históricas del derecho comercial", priority: "critico",
+    enunciado: "¿Cuál es el criterio distintivo de cada una de las cuatro etapas históricas del derecho comercial?",
+    pista: "Pensá en cuatro preguntas rectoras: quién, qué, cómo y dónde; y en qué determina la aplicación del derecho comercial en cada etapa.",
+    respuestaLibre: "Las cuatro etapas son: (1) Subjetiva (Edad Media–1807): criterio 'quién', aplica por la calidad de comerciante del sujeto (Lex Mercatoria). (2) Objetiva (1807–1890): criterio 'qué', aplica si el acto está tipificado como acto de comercio (Código Francés 1807). (3) Mixta (1890–1983/85): criterio 'cómo', el código vigente se complementa con leyes especiales. (4) Actual (1983/85–hoy): criterio 'dónde', se agrega la variable virtual/presencial sin descartar las preguntas anteriores.",
+    opciones: [
+      "Subjetiva (quién) · Objetiva (qué) · Mixta (cómo) · Actual (dónde); la etapa actual es comprehensiva de las tres preguntas previas.",
+      "Subjetiva (qué) · Objetiva (quién) · Mixta (dónde) · Actual (cómo); cada etapa deroga completamente a la anterior.",
+      "Subjetiva (quién) · Objetiva (cómo) · Mixta (qué) · Actual (dónde); la primera codificación comercial fue italiana.",
+      "Subjetiva (dónde) · Objetiva (qué) · Mixta (quién) · Actual (cómo); el Código Francés de 1807 cerró la etapa mixta."
+    ],
+    correcta: 0,
+    explicacion: "La etapa subjetiva (medieval) atiende a la calidad del sujeto (comerciante); la objetiva (desde el Código Francés de 1807) atiende al acto tipificado; la mixta combina código vigente con leyes especiales; la actual agrega la variable virtual/presencial sin descartar quién/qué/cómo.",
+    errorTipico: "Creer que cada etapa deroga por completo el criterio de la anterior, cuando en realidad la etapa actual es comprehensiva de las tres preguntas previas; y, relacionado, atribuir la primera codificación comercial a Italia en lugar de Francia (1807)."
+  },
+  {
+    id: "P2", topic: "Art. 320 CCC — sujetos obligados a llevar contabilidad", priority: "critico",
+    enunciado: "Según el artículo 320 CCC, ¿cuáles son los tres supuestos alternativos cuya configuración genera la obligación de llevar contabilidad?",
+    pista: "Son tres supuestos alternativos (basta uno): actividad económica organizada, titular de empresa, titular de establecimiento.",
+    respuestaLibre: "Los tres supuestos alternativos del art. 320 CCC son: (1) realizar actividad económica organizada; (2) ser titular de una empresa; (3) ser titular de un establecimiento comercial, industrial o de servicios.",
+    opciones: [
+      "Ser comerciante inscripto, tener empleados en relación de dependencia y superar cierto monto de facturación anual.",
+      "Realizar actividad económica organizada, ser titular de una empresa, o ser titular de un establecimiento comercial, industrial o de servicios.",
+      "Ser persona jurídica, realizar actos de comercio del art. 8° del Código de Comercio, o tener establecimiento físico.",
+      "Ser titular de un local habilitado, facturar en moneda extranjera, o tener socios capitalistas."
+    ],
+    correcta: 1,
+    explicacion: "El art. 320 CCC establece tres supuestos alternativos: basta configurar cualquiera de ellos para nacer la obligación de llevar contabilidad. No se acumulan: son disyuntivos.",
+    errorTipico: "Pensar que el art. 320 solo alcanza al comerciante individual clásico, sin advertir que también comprende a personas jurídicas, directores, accionistas y socios capitalistas titulares de una empresa."
+  },
+  {
+    id: "P3", topic: "Exclusiones del art. 320 CCC", priority: "alto",
+    enunciado: "¿Qué sujetos quedan excluidos de la obligación de llevar contabilidad conforme al último párrafo del art. 320 CCC, y qué consecuencia tiene esa exclusión?",
+    pista: "Son personas humanas: profesionales liberales y pequeños productores/oficios. La exclusión no los saca del derecho comercial.",
+    respuestaLibre: "Quedan excluidos: (1) las personas humanas que realizan actividades profesionales (abogados, médicos, etc.); (2) las personas humanas que realizan actividades agropecuarias pequeñas u oficios. Consecuencia: la contabilidad es facultativa para ellos y no corresponde sanción por no llevarla, pero eso NO los saca del ámbito del derecho comercial en general.",
+    opciones: [
+      "Las personas jurídicas sin actividad y las sociedades en liquidación; quedan totalmente fuera del derecho comercial.",
+      "Las personas humanas que realizan actividades profesionales y las que realizan actividades agropecuarias pequeñas u oficios; para ellos la contabilidad es facultativa y no hay sanción, pero siguen en el ámbito del derecho comercial.",
+      "Todos los monotributistas y los pequeños comerciantes minoristas; quedan eximidos de toda obligación registral.",
+      "Los extranjeros sin residencia y las cooperativas de trabajo; no pueden ser sujetos de derecho comercial."
+    ],
+    correcta: 1,
+    explicacion: "La exclusión del último párrafo del art. 320 CCC es acotada: sólo alcanza a profesionales liberales y pequeños productores/oficios (personas humanas). La contabilidad pasa a ser facultativa y no hay sanción por no llevarla.",
+    errorTipico: "Creer que esta exclusión saca a estos sujetos del ámbito del derecho comercial en general, cuando en realidad solo significa que la contabilidad es facultativa para ellos y que no corresponde sanción por no llevarla."
+  },
+  {
+    id: "P4", topic: "Actividad económica organizada vs. empresa", priority: "alto",
+    enunciado: "¿Qué relación existe entre 'Actividad Económica Organizada' y 'Empresa', y cuál es el elemento distintivo de esta última?",
+    pista: "Relación de género a especie. La empresa agrega algo más: objeto, colocación en mercado, socios capitalistas y trabajo ajeno.",
+    respuestaLibre: "Actividad económica organizada es el género (reiteración de actos bajo organización independiente, con efectos económicos). Empresa es la especie: además de los elementos del género, exige objeto, colocación de bienes/servicios en el mercado, socios capitalistas y trabajo ajeno subordinado.",
+    opciones: [
+      "Son sinónimos perfectos según la cátedra; no hay diferencia conceptual entre ambos.",
+      "La empresa es el género y la actividad económica organizada es la especie; la empresa exige sólo reiteración de actos.",
+      "Actividad económica organizada es el género; empresa es la especie y agrega objeto, colocación en el mercado, socios capitalistas y trabajo ajeno subordinado.",
+      "Son categorías del derecho civil; el derecho comercial sólo utiliza la noción de acto de comercio."
+    ],
+    correcta: 2,
+    explicacion: "La relación es de género (actividad económica organizada) a especie (empresa). La empresa exige, además, objeto, colocación de bienes/servicios en el mercado, socios capitalistas y trabajo ajeno subordinado.",
+    errorTipico: "Usar 'actividad económica organizada' y 'empresa' como sinónimos, sin advertir la relación de género a especie confirmada por la cátedra."
+  },
+  {
+    id: "P5", topic: "Doble acepción del establecimiento", priority: "alto",
+    enunciado: "¿Cuáles son las dos acepciones del concepto de 'Establecimiento' desarrolladas en clase?",
+    pista: "Una es popular/física; la otra es jurídico-comercial e incluye bienes inmateriales.",
+    respuestaLibre: "(a) Acepción popular: el lugar físico donde se desarrollan las actividades económicas (local, kiosco, oficina, fábrica). (b) Acepción jurídico-comercial: el conjunto de bienes materiales e inmateriales afectados a determinada actividad económica.",
+    opciones: [
+      "Establecimiento principal y establecimiento secundario, según la cantidad de empleados.",
+      "Acepción popular (lugar físico) y acepción jurídico-comercial (conjunto de bienes materiales e inmateriales afectados a la actividad).",
+      "Establecimiento abierto al público y establecimiento cerrado; sólo el primero genera obligaciones comerciales.",
+      "Establecimiento comercial e industrial; la diferencia radica en el tipo de habilitación municipal."
+    ],
+    correcta: 1,
+    explicacion: "La acepción popular identifica al establecimiento con el lugar físico. La acepción jurídico-comercial lo entiende como universalidad: conjunto de bienes materiales e inmateriales (marca, clientela, contratos, etc.) afectados a una actividad.",
+    errorTipico: "Reducir el concepto de establecimiento únicamente al local físico, ignorando la acepción jurídico-comercial que abarca también bienes inmateriales."
+  },
+  {
+    id: "P6", topic: "Venta por Mercado Libre como acto de comercio", priority: "medio",
+    enunciado: "¿Por qué se considera acto de comercio, y no un acto civil, la venta de un bien propio realizada a través de una plataforma como Mercado Libre?",
+    pista: "La venta de cosas por dinero es acto de comercio; la plataforma es intermediaria/vidriera virtual.",
+    respuestaLibre: "Porque la venta de cosas por dinero es un acto de comercio (lo civil queda reservado, en este contexto, a los inmuebles); la plataforma actúa como intermediaria o 'vidriera virtual' entre comprador y vendedor, conforme a los términos y condiciones aceptados por el usuario.",
+    opciones: [
+      "Porque toda venta por internet es acto de comercio, sin importar el bien vendido.",
+      "Porque la venta de cosas por dinero es acto de comercio (lo civil se reserva a inmuebles) y la plataforma actúa como intermediaria o vidriera virtual entre las partes.",
+      "Porque Mercado Libre está inscripto como comerciante mayorista y atrae la comercialidad a todos sus usuarios.",
+      "Porque el uso de billetera virtual convierte automáticamente en comerciante al vendedor."
+    ],
+    correcta: 1,
+    explicacion: "La venta de cosas por dinero es acto de comercio; la plataforma funciona como intermediaria/vidriera virtual. Lo civil, en este contexto, queda reservado a los inmuebles.",
+    errorTipico: "Pensar que vender bienes propios sin ser empresario queda automáticamente fuera del ámbito del derecho comercial."
+  },
+  {
+    id: "P7", topic: "Sociedad sin actividad y obligación contable", priority: "alto",
+    enunciado: "Una sociedad constituida entre dos personas que actualmente no tiene actividad ('sociedad pelada') y está en proceso de liquidación, ¿está igualmente obligada a llevar contabilidad e inscribirse?",
+    pista: "Por el solo hecho de ser persona jurídica y haber adoptado un tipo societario, se entiende que actúa en forma de empresa.",
+    respuestaLibre: "Sí: por el solo hecho de ser persona jurídica y haber adoptado un tipo societario, se entiende que actúa en forma de empresa; debe llevar libros, presentar estados contables y, en su caso, inscribir la liquidación en el registro público correspondiente (en CABA, ante la IGJ).",
+    opciones: [
+      "No: si no tiene actividad, no hay obligación contable ni registral hasta que reinicie operaciones.",
+      "Sí, pero sólo si tiene más de tres socios y facturación superior a un monto mínimo.",
+      "Sí: por el solo hecho de ser persona jurídica y haber adoptado un tipo societario, debe llevar libros, presentar estados contables e inscribir la liquidación ante el registro público (IGJ en CABA).",
+      "Sólo está obligada si la sociedad fue constituida bajo el tipo SRL; las SA quedan exceptuadas."
+    ],
+    correcta: 2,
+    explicacion: "La sociedad, por el solo hecho de existir como persona jurídica bajo un tipo societario, se entiende que actúa en forma de empresa. Debe llevar libros, presentar estados contables e inscribir la liquidación ante el registro público correspondiente (IGJ en CABA).",
+    errorTipico: "Creer que la ausencia de actividad exime a la sociedad de sus obligaciones contables y registrales."
+  },
+  {
+    id: "P8", topic: "Art. 8° derogado vs. art. 320 CCC vigente", priority: "alto",
+    enunciado: "Un compañero sostiene que, para determinar si a una persona se le aplica derecho comercial hoy, corresponde recurrir al listado de actos de comercio del art. 8° del Código de Comercio. ¿Es correcto?",
+    pista: "El art. 8° era de la etapa objetiva y está derogado. La norma vigente es el art. 320 CCC.",
+    respuestaLibre: "No: el art. 8° pertenecía al Código de Comercio derogado y respondía al criterio 'qué' de la etapa objetiva; hoy, bajo el CCC unificado, la norma vigente que delimita la aplicación del derecho comercial es el art. 320 CCC.",
+    opciones: [
+      "Sí, porque el art. 8° del Código de Comercio sigue vigente y enumera taxativamente los actos de comercio.",
+      "No: el art. 8° pertenecía al Código de Comercio derogado (etapa objetiva, criterio 'qué'); hoy la norma vigente es el art. 320 CCC.",
+      "Sí, pero sólo para personas humanas; las personas jurídicas se rigen directamente por el art. 320 CCC.",
+      "No: hoy no existe ningún listado vigente, la aplicación del derecho comercial se decide caso por caso por el juez."
+    ],
+    correcta: 1,
+    explicacion: "El art. 8° del Código de Comercio fue derogado con la unificación del Código Civil y Comercial. La norma vigente para delimitar la aplicación del derecho comercial es el art. 320 CCC.",
+    errorTipico: "Confundir la teoría de los actos de comercio del código derogado con el art. 320 CCC actualmente vigente."
+  },
+  {
+    id: "INT-a", topic: "Integradora · Julieta / software / Mercado Libre", priority: "critico",
+    contexto: "Julieta diseñó un software y lo vende a través de Mercado Libre, cobrando mediante billetera virtual y entregándolo por descarga directa al celular del comprador.",
+    enunciado: "(a) ¿La venta del software realizada por Julieta a través de Mercado Libre constituye un acto de comercio, pese a no existir establecimiento físico ni entrega de una cosa tangible?",
+    pista: "La venta de cosas por dinero es acto de comercio con independencia de su carácter intangible; la etapa actual incorpora lo virtual.",
+    respuestaLibre: "Sí. La venta de cosas por dinero es un acto de comercio con independencia de su carácter intangible; la plataforma actúa como intermediaria, y la etapa actual del derecho comercial (criterio 'dónde') no excluye lo virtual, sino que lo incorpora junto con el quién, el qué y el cómo.",
+    opciones: [
+      "No, porque no hay entrega de una cosa tangible ni establecimiento físico; es un acto civil.",
+      "Sí, pero sólo si Julieta está inscripta como comerciante ante AFIP.",
+      "Sí: la venta de cosas por dinero es acto de comercio con independencia de su intangibilidad; la plataforma actúa como intermediaria y la etapa actual incorpora lo virtual junto con quién/qué/cómo.",
+      "Depende de si el software fue registrado ante la DNDA; si no lo está, es acto civil."
+    ],
+    correcta: 2,
+    explicacion: "La venta de cosas por dinero es acto de comercio con independencia de su carácter intangible. La plataforma actúa como intermediaria y la etapa actual del derecho comercial (criterio 'dónde') no excluye lo virtual, sino que lo incorpora junto con el quién, el qué y el cómo.",
+    errorTipico: "Confundir 'acto de comercio' (categoría que puede predicarse de un acto aislado) con 'sujeto obligado a llevar contabilidad' (que exige organización o regularidad conforme al art. 320)."
+  },
+  {
+    id: "INT-b", topic: "Integradora · Textil Sur SRL en liquidación", priority: "critico",
+    contexto: "Julieta es socia al 50% de 'Textil Sur SRL', sociedad dedicada a la confección de ropa que actualmente no tiene actividad y está en proceso de liquidación.",
+    enunciado: "(b) ¿Está 'Textil Sur SRL' obligada a llevar contabilidad y a inscribir su liquidación, a pesar de no tener actividad?",
+    pista: "Por el solo hecho de ser persona jurídica privada, debe llevar contabilidad y cumplir obligaciones registrales.",
+    respuestaLibre: "Sí. Por el solo hecho de ser persona jurídica privada, 'Textil Sur SRL' debe llevar contabilidad y cumplir sus obligaciones registrales, incluida la inscripción de la liquidación ante el registro público correspondiente, independientemente de la falta actual de actividad.",
+    opciones: [
+      "No: si no tiene actividad, no hay obligación contable ni registral.",
+      "Sí, pero sólo si la liquidación supera los 12 meses.",
+      "Sí: por el solo hecho de ser persona jurídica privada, debe llevar contabilidad e inscribir la liquidación ante el registro público correspondiente, independientemente de la falta de actividad.",
+      "Sólo está obligada si tiene deudas pendientes con terceros."
+    ],
+    correcta: 2,
+    explicacion: "Por el solo hecho de ser persona jurídica privada, 'Textil Sur SRL' debe llevar contabilidad y cumplir sus obligaciones registrales, incluida la inscripción de la liquidación ante el registro público correspondiente, independientemente de la falta actual de actividad.",
+    errorTipico: "Creer que la ausencia de actividad exime a la sociedad de sus obligaciones contables y registrales."
+  },
+  {
+    id: "INT-c", topic: "Integradora · Tomás / venta ocasional", priority: "critico",
+    contexto: "Tomás, vecino de Julieta, vende ocasionalmente algunos objetos personales usados a través de la misma plataforma (Mercado Libre).",
+    enunciado: "(c) ¿La venta ocasional de objetos personales usados por parte de Tomás lo convierte, por ese solo hecho, en sujeto obligado por el art. 320 CCC?",
+    pista: "La venta aislada puede ser acto de comercio, pero la obligación del art. 320 exige actividad económica organizada, empresa o establecimiento.",
+    respuestaLibre: "No necesariamente. Una venta aislada y ocasional de bienes propios sigue siendo, en sí misma, un acto de comercio, pero la obligación de llevar contabilidad conforme al art. 320 CCC requiere configurar alguno de los tres supuestos alternativos (actividad económica organizada, titularidad de empresa o de establecimiento); la sola venta esporádica, sin regularidad ni organización, no basta por sí sola para generar esa obligación.",
+    opciones: [
+      "Sí, porque toda venta por Mercado Libre lo convierte automáticamente en sujeto obligado por el art. 320 CCC.",
+      "No necesariamente: la venta aislada puede ser acto de comercio, pero el art. 320 CCC exige actividad económica organizada, empresa o establecimiento; la venta esporádica sin regularidad no basta.",
+      "Sí, pero sólo si supera cierto monto anual de facturación.",
+      "No, porque los objetos usados están excluidos del derecho comercial."
+    ],
+    correcta: 1,
+    explicacion: "Una venta aislada y ocasional de bienes propios puede ser acto de comercio, pero la obligación de llevar contabilidad del art. 320 CCC requiere configurar alguno de los tres supuestos alternativos. La sola venta esporádica, sin regularidad ni organización, no basta.",
+    errorTipico: "Confundir 'acto de comercio' (categoría que puede predicarse de un acto aislado, como la venta de Tomás) con 'sujeto obligado a llevar contabilidad' (que exige organización o regularidad conforme al art. 320)."
+  },
+  {
+    id: "C1", topic: "Caso 1 · El kiosco de Roberto", priority: "alto",
+    contexto: "Roberto es titular de un kiosco de barrio donde vende bebidas, golosinas y artículos de librería. No está inscripto como sociedad ni tiene empleados. Un amigo le dice que, al no tener empleados ni estar constituido como empresa formal, no tiene ninguna obligación contable.",
+    enunciado: "¿Es correcto el razonamiento del amigo de Roberto? ¿Está obligado Roberto a llevar contabilidad?",
+    pista: "Art. 320 CCC: tres supuestos alternativos. Basta con ser titular de un establecimiento comercial.",
+    respuestaLibre: "No, el razonamiento del amigo es incorrecto. Roberto sí está obligado a llevar contabilidad porque es titular de un establecimiento comercial (su kiosco), que es uno de los tres supuestos alternativos del art. 320 CCC. Basta configurar uno solo de los supuestos, con independencia de no tener empleados ni estar organizado como empresa.",
+    opciones: [
+      "Sí tiene razón el amigo: sin empleados ni estructura empresarial no hay obligación contable.",
+      "No: Roberto está obligado porque es titular de un establecimiento comercial, uno de los tres supuestos alternativos del art. 320 CCC; basta uno solo.",
+      "Sólo estaría obligado si factura más de un monto mínimo anual.",
+      "Sólo estaría obligado si se inscribe previamente como comerciante en el registro público."
+    ],
+    correcta: 1,
+    explicacion: "Roberto sí está obligado a llevar contabilidad porque es titular de un establecimiento comercial, uno de los tres supuestos alternativos del art. 320 CCC. Basta configurar uno solo de los supuestos, con independencia de no tener empleados ni estar organizado como empresa.",
+    errorTipico: "Creer que el art. 320 solo alcanza a comerciantes con estructura empresarial compleja, ignorando que la sola titularidad de un establecimiento ya configura uno de los supuestos alternativos."
+  },
+  {
+    id: "C2", topic: "Caso 2 · La confusión de Mariano en el parcial", priority: "alto",
+    contexto: "En un parcial, Mariano escribe que, para determinar si a Ana —titular de una tienda online— se le aplica derecho comercial, corresponde recurrir al art. 8° del Código de Comercio y verificar si su actividad encuadra en el listado taxativo de actos de comercio allí previsto.",
+    enunciado: "¿Es correcto el razonamiento de Mariano? ¿Qué norma corresponde aplicar hoy?",
+    pista: "El art. 8° del Código de Comercio está derogado. La norma vigente es el art. 320 CCC.",
+    respuestaLibre: "El razonamiento de Mariano es incorrecto: no corresponde acudir al art. 8° del Código de Comercio, que se encuentra derogado, sino al art. 320 CCC, que es la norma vigente para determinar las obligaciones comerciales de Ana.",
+    opciones: [
+      "Sí es correcto: el art. 8° del Código de Comercio sigue vigente y contiene el listado taxativo.",
+      "Es incorrecto: corresponde aplicar el art. 320 CCC, norma vigente; el art. 8° del Código de Comercio está derogado.",
+      "Es parcialmente correcto: el art. 8° aplica a personas humanas y el art. 320 a personas jurídicas.",
+      "Es incorrecto: hoy no existe ninguna norma que delimite la aplicación del derecho comercial."
+    ],
+    correcta: 1,
+    explicacion: "El razonamiento de Mariano es incorrecto: no corresponde acudir al art. 8° del Código de Comercio, que se encuentra derogado, sino al art. 320 CCC, que es la norma vigente para determinar las obligaciones comerciales de Ana.",
+    errorTipico: "Confundir la teoría de los actos de comercio del código derogado con el art. 320 CCC actualmente vigente."
+  },
+  {
+    id: "C3", topic: "Caso 3 · Norte SRL y el alquiler comercial", priority: "alto",
+    contexto: "'Norte SRL' es una sociedad constituida por dos socios, originalmente dedicada a la confección de ropa. Además de esa actividad, la sociedad compró un local y lo alquila para uso comercial. En la actualidad, la producción textil está detenida, pero el alquiler del local sigue generando ingresos regulares.",
+    enunciado: "¿Está Norte SRL obligada a llevar contabilidad?",
+    pista: "Doble fundamento: persona jurídica privada + actividad económica organizada (alquiler).",
+    respuestaLibre: "Sí. Norte SRL está obligada a llevar contabilidad tanto por su carácter de persona jurídica privada (que por sí solo la obliga, en tanto se entiende que actúa en forma de empresa) como por la actividad económica organizada que representa el alquiler comercial del local. La detención de la actividad textil originaria no la exime.",
+    opciones: [
+      "No: al estar detenida la actividad textil original, no hay obligación contable.",
+      "Sí, pero sólo si el alquiler supera cierto monto anual.",
+      "Sí: tanto por su carácter de persona jurídica privada como por la actividad económica organizada del alquiler comercial; la detención de la actividad textil no la exime.",
+      "Sólo está obligada si tiene más de tres empleados en el local alquilado."
+    ],
+    correcta: 2,
+    explicacion: "Norte SRL está obligada a llevar contabilidad tanto por su carácter de persona jurídica privada como por la actividad económica organizada que representa el alquiler comercial del local. La detención de la actividad textil original no la exime.",
+    errorTipico: "Creer que la sola detención de la actividad originaria (textil) libera a la sociedad de sus obligaciones contables y registrales."
+  }
+];
+
+/* ============================================================
+   ESTADO DE SESIÓN
+   ============================================================ */
+const STORAGE_KEY = "comercial_clase2_progress";
+
+const state = {
+  queue: [],
+  current: null,
+  phase: "recall",
+  progress: {},
+  sessionStats: { ok: 0, err: 0 },
+  mode: "full",
+  viewedCount: 0, // contador explícito de preguntas vistas (bug fix #1)
+  flashcards: {
+    index: 0,
+    revealed: false,
+    order: [] // orden de las fichas
+  }
+};
+
+/* ============================================================
+   PERSISTENCIA (localStorage) — bug fix #2
+   ============================================================ */
+function saveProgress() {
+  try {
+    const data = {
+      progress: state.progress,
+      sessionStats: state.sessionStats
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) { /* ignorar si localStorage no está disponible */ }
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (data && data.progress) {
+      state.progress = data.progress;
+    }
+    if (data && data.sessionStats) {
+      state.sessionStats = data.sessionStats;
+    }
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function clearProgress() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (e) {}
+}
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+function $(sel) { return document.querySelector(sel); }
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function getProgress(qid) {
+  if (!state.progress[qid]) {
+    state.progress[qid] = { okCount: 0, errCount: 0, mastered: false, attempts: 0 };
+  }
+  return state.progress[qid];
+}
+function isMastered(qid) { return getProgress(qid).mastered; }
+function isWeak(qid) { const p = getProgress(qid); return !p.mastered && p.attempts > 0; }
+
+function buildQueue(mode) {
+  let pool = mode === "weak" ? QUESTIONS.filter(q => !isMastered(q.id)) : [...QUESTIONS];
+  const order = { critico: 0, alto: 1, medio: 2 };
+  pool.sort((a,b) => order[a.priority] - order[b.priority]);
+  const groups = { critico: [], alto: [], medio: [] };
+  pool.forEach(q => groups[q.priority].push(q));
+  Object.values(groups).forEach(g => shuffle(g));
+  state.queue = [...groups.critico, ...groups.alto, ...groups.medio];
+  state.viewedCount = 0; // resetear contador al iniciar nueva sesión
+}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+function reinsertLater(q) {
+  const insertAt = Math.min(state.queue.length, 2 + Math.floor(Math.random() * 3));
+  state.queue.splice(insertAt, 0, q);
+}
+function allMastered() { return QUESTIONS.every(q => isMastered(q.id)); }
+function countMastered() { return QUESTIONS.filter(q => isMastered(q.id)).length; }
+
+function hasWeakQuestions() {
+  return QUESTIONS.some(q => !isMastered(q.id) && getProgress(q.id).attempts > 0);
+}
+
+function updateReviewOnlyButtonVisibility() {
+  const btn = $("#btn-review-only");
+  if (hasWeakQuestions()) {
+    btn.classList.remove("hidden");
+  } else {
+    btn.classList.add("hidden");
+  }
+}
+
+/* ============================================================
+   RENDER DE PREGUNTA (modo sesión)
+   ============================================================ */
+function renderQuestion() {
+  if (state.queue.length === 0) {
+    renderSummary();
+    return;
+  }
+  state.current = state.queue.shift();
+  state.phase = "recall";
+  state.viewedCount++; // bug fix #1: contador explícito
+  updateProgressBar();
+  drawQuestion();
+}
+
+function updateProgressBar() {
+  const total = QUESTIONS.length;
+  const mastered = countMastered();
+  // bug fix #1: usar viewedCount en vez de calcular desde la cola
+  const currentNum = Math.min(state.viewedCount, total);
+  $("#stat-current").textContent = currentNum;
+  $("#stat-total").textContent = total;
+  $("#stat-mastered").textContent = mastered;
+  $("#progress-fill").style.width = ((mastered / total) * 100) + "%";
+}
+
+function drawQuestion() {
+  const q = state.current;
+  const p = getProgress(q.id);
+  const container = $("#question-container");
+  let prioridadLabel = "";
+  if (q.priority === "critico") prioridadLabel = '<span class="priority critico">Crítico</span>';
+  else if (q.priority === "alto") prioridadLabel = '<span class="priority alto">Alto</span>';
+  else prioridadLabel = '<span class="priority medio">Medio</span>';
+  const counterBadge = `
+    <span class="counter-badge ${p.okCount>0?'ok':''}">✓ ${p.okCount}/2</span>
+    ${p.errCount>0 ? `<span class="counter-badge err">✗ ${p.errCount}</span>` : ""}
+  `;
+  container.innerHTML = `
+    <div class="card">
+      <div class="tag-row">
+        <span class="tag">${q.id} · ${q.topic}</span>
+        ${prioridadLabel}
+        ${counterBadge}
+      </div>
+      ${q.contexto ? `<div class="contexto">${q.contexto}</div>` : ""}
+      <h3>${q.enunciado}</h3>
+      <div id="phase-content"></div>
+    </div>
+  `;
+  if (state.phase === "recall") drawRecallPhase(q);
+  else if (state.phase === "feedback") drawFeedbackPhase(q);
+  else if (state.phase === "mc") drawMCPhase(q);
+}
+
+function drawRecallPhase(q) {
+  const pc = $("#phase-content");
+  pc.innerHTML = `
+    <span class="phase-label">Fase 1 · Recall libre</span>
+    <div class="recall-area">
+      <textarea id="recall-input" placeholder="Escribí lo que recordás de la respuesta. No importa la extensión: el esfuerzo de recordar es lo que fija el contenido."></textarea>
+      <div class="recall-hint"><b>Pista:</b> ${q.pista}</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="btn-show-answer">Ver respuesta modelo</button>
+      <button class="btn secondary" id="btn-skip">Saltar pregunta</button>
+    </div>
+  `;
+  $("#btn-show-answer").addEventListener("click", () => { state.phase = "feedback"; drawQuestion(); });
+  $("#btn-skip").addEventListener("click", () => { reinsertLater(q); renderQuestion(); });
+}
+
+function drawFeedbackPhase(q) {
+  const pc = $("#phase-content");
+  pc.innerHTML = `
+    <span class="phase-label">Fase 2 · Respuesta modelo</span>
+    <div class="feedback">
+      <h4>Respuesta correcta</h4>
+      <div class="bloque">${q.respuestaLibre.replace(/\n/g, "<br>")}</div>
+      <h4>Explicación</h4>
+      <p>${q.explicacion}</p>
+      <h4>Error típico — marcá bien este límite</h4>
+      <div class="error-tipico"><b>⚠</b> ${q.errorTipico}</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="btn-to-mc">Continuar → Refuerzo con opciones</button>
+    </div>
+  `;
+  $("#btn-to-mc").addEventListener("click", () => { state.phase = "mc"; drawQuestion(); });
+}
+
+function drawMCPhase(q) {
+  const pc = $("#phase-content");
+  const opcionesIdx = q.opciones.map((_, i) => i);
+  shuffle(opcionesIdx);
+  let optsHtml = opcionesIdx.map((realIdx, displayIdx) => {
+    const letter = String.fromCharCode(65 + displayIdx);
+    return `<li data-real="${realIdx}"><span class="letter">${letter}</span>${q.opciones[realIdx]}</li>`;
+  }).join("");
+  pc.innerHTML = `
+    <span class="phase-label">Fase 3 · Refuerzo con opciones</span>
+    <ul class="options" id="options-list">${optsHtml}</ul>
+    <div id="mc-feedback"></div>
+  `;
+  pc.querySelectorAll("#options-list li").forEach(li => {
+    li.addEventListener("click", () => handleMCAnswer(q, li));
+  });
+}
+
+function handleMCAnswer(q, liClicked) {
+  const realIdx = parseInt(liClicked.getAttribute("data-real"));
+  const isCorrect = realIdx === q.correcta;
+  const p = getProgress(q.id);
+  p.attempts++;
+  document.querySelectorAll("#options-list li").forEach(li => {
+    li.classList.add("disabled");
+    const r = parseInt(li.getAttribute("data-real"));
+    if (r === q.correcta) li.classList.add("correct");
+    else if (li === liClicked) li.classList.add("wrong");
+  });
+  if (isCorrect) {
+    p.okCount++;
+    state.sessionStats.ok++;
+    if (p.okCount >= 2) p.mastered = true;
+  } else {
+    p.errCount++;
+    state.sessionStats.err++;
+    p.okCount = 0;
+  }
+  saveProgress(); // persistir tras cada respuesta
+  updateProgressBar();
+  const fb = $("#mc-feedback");
+  const verdict = isCorrect
+    ? (p.mastered ? "✓ DOMINADA — dos aciertos consecutivos" : "✓ Correcto — necesitás un acierto más para dominarla")
+    : "✗ Incorrecto — la pregunta volverá a aparecer más adelante";
+  fb.innerHTML = `
+    <div class="feedback ${isCorrect ? 'ok' : 'err'}">
+      <div class="veredicto">${verdict}</div>
+      ${!isCorrect ? `
+        <h4>Respuesta correcta</h4>
+        <p>${q.respuestaLibre.replace(/\n/g, "<br>")}</p>
+        <h4>Error típico</h4>
+        <div class="error-tipico"><b>⚠</b> ${q.errorTipico}</div>
+      ` : ""}
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="btn-next">Continuar →</button>
+    </div>
+  `;
+  if (!isCorrect && !p.mastered) reinsertLater(q);
+  $("#btn-next").addEventListener("click", () => {
+    if (state.queue.length === 0) renderSummary();
+    else renderQuestion();
+  });
+}
+
+function renderSummary() {
+  const mastered = QUESTIONS.filter(q => isMastered(q.id));
+  const weak = QUESTIONS.filter(q => !isMastered(q.id) && getProgress(q.id).attempts > 0);
+  const untouched = QUESTIONS.filter(q => getProgress(q.id).attempts === 0);
+  $("#sum-mastered").textContent = mastered.length;
+  $("#sum-weak").textContent = weak.length + untouched.length;
+  $("#sum-ok").textContent = state.sessionStats.ok;
+  $("#sum-err").textContent = state.sessionStats.err;
+  const listWeak = $("#list-weak");
+  const allWeak = [...weak, ...untouched];
+  if (allWeak.length === 0) {
+    listWeak.innerHTML = '<li style="border-left-color:var(--ok); background:var(--ok-bg); color:var(--ok);">No hay temas débiles. ¡Sesión perfecta!</li>';
+  } else {
+    listWeak.innerHTML = allWeak.map(q => {
+      const p = getProgress(q.id);
+      const estado = p.attempts === 0 ? "no intentada" : `${p.errCount} error(es)`;
+      return `<li><span class="q-id">${q.id}</span><b>${q.topic}</b> <span style="color:var(--text-dim); font-size:12px; margin-left:6px;">(${estado})</span></li>`;
+    }).join("");
+  }
+  const listMastered = $("#list-mastered");
+  if (mastered.length === 0) {
+    listMastered.innerHTML = '<li style="color:var(--text-dim); background:var(--bg-3); border-left-color:var(--border);">Todavía no dominaste ninguna pregunta.</li>';
+  } else {
+    listMastered.innerHTML = mastered.map(q => `<li><span class="q-id">${q.id}</span>${q.topic}</li>`).join("");
+  }
+  showScreen("screen-summary");
+}
+
+/* ============================================================
+   MODO FICHAS (FLASHCARDS)
+   ============================================================ */
+function initFlashcards() {
+  // Ordenar por prioridad (crítico primero) y mezclar dentro de cada grupo
+  const order = { critico: 0, alto: 1, medio: 2 };
+  const sorted = [...QUESTIONS].sort((a,b) => order[a.priority] - order[b.priority]);
+  const groups = { critico: [], alto: [], medio: [] };
+  sorted.forEach(q => groups[q.priority].push(q));
+  Object.values(groups).forEach(g => shuffle(g));
+  state.flashcards.order = [...groups.critico, ...groups.alto, ...groups.medio];
+  state.flashcards.index = 0;
+  state.flashcards.revealed = false;
+}
+
+function renderFlashcard() {
+  const fc = state.flashcards;
+  const q = fc.order[fc.index];
+  const p = getProgress(q.id);
+  const body = $("#flashcard-body");
+
+  // Actualizar contador
+  $("#fc-current").textContent = fc.index + 1;
+  $("#fc-total").textContent = fc.order.length;
+
+  // Renderizar dots de progreso
+  renderFlashcardDots();
+
+  // Status badge
+  let statusHtml = "";
+  if (p.mastered) {
+    statusHtml = '<span class="fc-status mastered">✓ Dominada</span>';
+  } else if (p.errCount > 0) {
+    statusHtml = '<span class="fc-status weak">⚠ Tema débil</span>';
+  }
+
+  let html = `
+    <div class="fc-tag">${q.id} · ${q.topic}</div>
+    ${statusHtml}
+    ${q.contexto ? `<div class="fc-context">${q.contexto}</div>` : ""}
+    <div class="fc-question">${q.enunciado}</div>
+  `;
+
+  if (fc.revealed) {
+    html += `
+      <div class="fc-answer">
+        <div class="feedback">
+          <h4>Respuesta</h4>
+          <div class="bloque">${q.respuestaLibre.replace(/\n/g, "<br>")}</div>
+          <h4>Explicación</h4>
+          <p>${q.explicacion}</p>
+          <h4>Error típico</h4>
+          <div class="error-tipico"><b>⚠</b> ${q.errorTipico}</div>
+        </div>
+        <div class="fc-self-eval">
+          <button class="btn err" id="fc-costo">😕 Me costó</button>
+          <button class="btn ok" id="fc-sabia">😊 La sabía</button>
+        </div>
+      </div>
+    `;
+  } else {
+    html += `
+      <div style="margin-top:auto;">
+        <button class="btn" id="fc-reveal" style="width:100%; justify-content:center;">Mostrar respuesta</button>
+      </div>
+    `;
+  }
+
+  body.innerHTML = html;
+
+  // Event listeners
+  if (fc.revealed) {
+    $("#fc-costo").addEventListener("click", () => handleFlashcardEval(q, false));
+    $("#fc-sabia").addEventListener("click", () => handleFlashcardEval(q, true));
+  } else {
+    $("#fc-reveal").addEventListener("click", () => {
+      state.flashcards.revealed = true;
+      renderFlashcard();
+    });
+  }
+
+  // Actualizar estado de botones de navegación
+  $("#fc-prev").disabled = fc.index === 0;
+  $("#fc-next").disabled = fc.index === fc.order.length - 1;
+}
+
+function renderFlashcardDots() {
+  const fc = state.flashcards;
+  const dots = fc.order.map((q, i) => {
+    const p = getProgress(q.id);
+    let cls = "dot";
+    if (i === fc.index) cls += " current";
+    else if (p.mastered) cls += " mastered";
+    else if (p.errCount > 0) cls += " weak";
+    return `<div class="${cls}" title="${q.id}: ${q.topic}"></div>`;
+  }).join("");
+  $("#fc-dots").innerHTML = dots;
+}
+
+function handleFlashcardEval(q, knewIt) {
+  const p = getProgress(q.id);
+  p.attempts++;
+  if (knewIt) {
+    p.okCount++;
+    state.sessionStats.ok++;
+    if (p.okCount >= 2) p.mastered = true;
+  } else {
+    p.errCount++;
+    state.sessionStats.err++;
+    p.okCount = 0;
+  }
+  saveProgress();
+  updateReviewOnlyButtonVisibility();
+
+  // Avanzar automáticamente a la siguiente ficha si no es la última
+  const fc = state.flashcards;
+  if (fc.index < fc.order.length - 1) {
+    fc.index++;
+    fc.revealed = false;
+  } else {
+    // Si es la última, sólo resetear revealed
+    fc.revealed = false;
+  }
+  renderFlashcard();
+}
+
+/* ============================================================
+   EVENTOS GLOBALES
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", () => {
+  // Cargar progreso guardado (bug fix #2)
+  loadProgress();
+  updateReviewOnlyButtonVisibility();
+
+  // Navegación
+  $("#btn-material").addEventListener("click", () => showScreen("screen-material"));
+  $("#btn-back-home").addEventListener("click", () => showScreen("screen-home"));
+  $("#btn-back-home-2").addEventListener("click", () => showScreen("screen-home"));
+  $("#btn-start-from-material").addEventListener("click", () => {
+    state.mode = "full"; buildQueue("full");
+    showScreen("screen-study"); renderQuestion();
+  });
+  $("#btn-start").addEventListener("click", () => {
+    state.mode = "full"; buildQueue("full");
+    showScreen("screen-study"); renderQuestion();
+  });
+
+  // Modo fichas
+  $("#btn-flashcards").addEventListener("click", () => {
+    initFlashcards();
+    showScreen("screen-flashcards");
+    renderFlashcard();
+  });
+  $("#fc-prev").addEventListener("click", () => {
+    if (state.flashcards.index > 0) {
+      state.flashcards.index--;
+      state.flashcards.revealed = false;
+      renderFlashcard();
+    }
+  });
+  $("#fc-next").addEventListener("click", () => {
+    if (state.flashcards.index < state.flashcards.order.length - 1) {
+      state.flashcards.index++;
+      state.flashcards.revealed = false;
+      renderFlashcard();
+    }
+  });
+  $("#fc-home").addEventListener("click", () => {
+    updateReviewOnlyButtonVisibility();
+    showScreen("screen-home");
+  });
+
+  // Repaso de temas débiles
+  $("#btn-review-only").addEventListener("click", () => {
+    state.mode = "weak"; buildQueue("weak");
+    if (state.queue.length === 0) { alert("No hay temas débiles para repasar."); return; }
+    showScreen("screen-study"); renderQuestion();
+  });
+  $("#btn-review-weak").addEventListener("click", () => {
+    state.mode = "weak"; buildQueue("weak");
+    if (state.queue.length === 0) { alert("No hay temas débiles para repasar."); return; }
+    showScreen("screen-study"); renderQuestion();
+  });
+
+  // Reiniciar
+  $("#btn-restart").addEventListener("click", () => {
+    state.progress = {};
+    state.sessionStats = { ok: 0, err: 0 };
+    state.queue = [];
+    state.viewedCount = 0;
+    state.mode = "full";
+    clearProgress();
+    buildQueue("full");
+    updateReviewOnlyButtonVisibility();
+    showScreen("screen-study"); renderQuestion();
+  });
+
+  // Volver al inicio
+  $("#btn-home").addEventListener("click", () => {
+    updateReviewOnlyButtonVisibility();
+    showScreen("screen-home");
+  });
+
+  // Smooth scroll para TOC
+  document.querySelectorAll('.material-toc a[href^="#"]').forEach(a => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute("href"));
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      // En mobile, cerrar el TOC después de navegar
+      if (window.innerWidth <= 900) {
+        $("#material-toc").classList.remove("open");
+        $("#toc-toggle").classList.remove("open");
+        $("#toc-toggle span:first-child").textContent = "📑 Ver índice";
+      }
+    });
+  });
+
+  // TOC toggle (mobile) — bug fix #3
+  $("#toc-toggle").addEventListener("click", () => {
+    const toc = $("#material-toc");
+    const toggle = $("#toc-toggle");
+    const isOpen = toc.classList.toggle("open");
+    toggle.classList.toggle("open", isOpen);
+    toggle.querySelector("span:first-child").textContent = isOpen ? "📑 Ocultar índice" : "📑 Ver índice";
+  });
+});
+</script>
+</body>
+</html>
