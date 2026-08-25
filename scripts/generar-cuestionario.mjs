@@ -77,7 +77,7 @@ function generar(template, data) {
 }
 
 const [, , input] = process.argv;
-const jsonPath = input || path.join(root, "content", "cuestionarios", "contratos-clase1.json");
+const jsonPath = input || path.join(root, "content", "cuestionarios", "contratos", "contratos-clase1.json");
 const data = JSON.parse(readFileSync(jsonPath, "utf-8"));
 const template = readFileSync(path.join(root, "public", "plantilla-cuestionario.html"), "utf-8");
 const html = generar(template, data);

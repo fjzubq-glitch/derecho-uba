@@ -1,0 +1,452 @@
+{
+  "header": {
+    "title": "Contratos · Clase 1",
+    "sub": "Derecho del consumidor: destinatario final, cadena de comercialización y vías de reclamo",
+    "meta": "14 ítems · 8 preguntas + 3 integradoras + 3 casos"
+  },
+  "storageKey": "contratos_clase1_progress",
+  "questions": [
+    {
+      "id": "P1",
+      "topic": "Destinatario final (art. 1092 CCC)",
+      "priority": "critico",
+      "enunciado": "¿Qué significa que un consumidor sea 'destinatario final' en los términos del art. 1092 CCC, y qué ocurre cuando el bien adquirido reingresa —aunque transformado— a la cadena de comercialización?",
+      "pista": "Destinatario final = consumo propio/familiar/social, sin reinsertar en el mercado. Si reingresa transformado, no hay calidad de consumidor.",
+      "respuestaLibre": "(a) Ser destinatario final implica que el bien o servicio se adquiere para consumo propio, familiar o social, sin volver a insertarse en el mercado de ninguna forma. (b) Si el bien reingresa transformado —por ejemplo, madera adquirida para fabricar un mueble que luego se comercializa— quien lo adquirió no reviste la calidad de consumidor final y la operación queda fuera del régimen de consumo.",
+      "opciones": [
+        "Destinatario final es cualquiera que pague por un bien, sin importar si luego lo revende o transforma.",
+        "Ser destinatario final implica adquirir el bien para consumo propio, familiar o social, sin reinsertarlo en el mercado. Si el bien reingresa transformado (ej. madera para fabricar muebles), quien lo adquirió no es consumidor final y la operación queda fuera del régimen de consumo.",
+        "Destinatario final es solo la persona humana que compra en un comercio; las personas jurídicas nunca pueden serlo.",
+        "Ser destinatario final significa que el bien fue fabricado especialmente para el comprador, sin importar su uso posterior."
+      ],
+      "correcta": 1,
+      "explicacion": "Ser destinatario final implica adquirir el bien para consumo propio, familiar o social, sin reinsertarlo en el mercado. Si el bien reingresa transformado (ej. madera para fabricar muebles), quien lo adquirió no es consumidor final y la operación queda fuera del régimen de consumo.",
+      "errorTipico": "Dar por sentada la calidad de consumidor por el solo hecho de haber pagado por el bien, sin verificar si ese bien reingresa —transformado o no— a la cadena de comercialización."
+    },
+    {
+      "id": "P2",
+      "topic": "Relación vs. contrato de consumo",
+      "priority": "alto",
+      "enunciado": "¿En qué se diferencian la relación de consumo (art. 1092 CCC) y el contrato de consumo (art. 1093 CCC)?",
+      "pista": "Relación = vínculo amplio (publicidad → posventa). Contrato = acto puntual de celebración.",
+      "respuestaLibre": "(a) La relación de consumo es el vínculo amplio entre proveedor y consumidor, que comienza con la publicidad y se extiende hasta el servicio de posventa. (b) El contrato de consumo es el acto puntual de celebración —la adquisición del bien o servicio— dentro de ese vínculo más amplio.",
+      "opciones": [
+        "Son sinónimos: ambos se refieren al acto puntual de compra del bien o servicio.",
+        "La relación de consumo es el vínculo amplio que abarca desde la publicidad hasta la posventa; el contrato de consumo es el acto puntual de celebración dentro de ese vínculo.",
+        "La relación de consumo solo existe cuando hay contrato; el contrato de consumo existe aunque no haya relación.",
+        "La relación de consumo se rige por el Código Civil; el contrato de consumo se rige por la Ley 24.240."
+      ],
+      "correcta": 1,
+      "explicacion": "La relación de consumo es el vínculo amplio que abarca desde la publicidad hasta la posventa; el contrato de consumo es el acto puntual de celebración dentro de ese vínculo.",
+      "errorTipico": "T2 — Usar 'relación de consumo' y 'contrato de consumo' como sinónimos, ignorando que la primera abarca también la etapa publicitaria y la posventa."
+    },
+    {
+      "id": "P3",
+      "topic": "Responsabilidad solidaria de la cadena",
+      "priority": "critico",
+      "enunciado": "¿Contra quién puede dirigir su reclamo el consumidor cuando un producto llega defectuoso por una falla imputable a algún eslabón de la cadena de comercialización?",
+      "pista": "Indistintamente contra CUALQUIER integrante de la cadena. Responsabilidad objetiva y solidaria (art. 2 Ley 24.240).",
+      "respuestaLibre": "El consumidor puede reclamar indistintamente contra cualquier integrante de la cadena —marca, distribuidor, comercializador— en razón de la responsabilidad objetiva y solidaria que rige la materia (art. 2, Ley 24.240), sin necesidad de conocer los acuerdos internos entre ellos; luego esos sujetos dirimen entre sí sus responsabilidades.",
+      "opciones": [
+        "Solo contra quien vendió directamente el producto al consumidor, porque los demás no tienen vínculo con él.",
+        "Solo contra el fabricante, porque es el responsable original del defecto.",
+        "Indistintamente contra cualquier integrante de la cadena (marca, distribuidor, comercializador), por responsabilidad objetiva y solidaria (art. 2 Ley 24.240), sin necesidad de conocer los acuerdos internos entre ellos.",
+        "Solo contra el distribuidor, porque es quien transporta el producto."
+      ],
+      "correcta": 2,
+      "explicacion": "El consumidor puede reclamar indistintamente contra cualquier integrante de la cadena (marca, distribuidor, comercializador), por responsabilidad objetiva y solidaria (art. 2 Ley 24.240), sin necesidad de conocer los acuerdos internos entre ellos.",
+      "errorTipico": "Creer que solo puede demandarse a quien vendió directamente el producto al consumidor, desconociendo la solidaridad de toda la cadena."
+    },
+    {
+      "id": "P4",
+      "topic": "Bystander derogado / caso 'Mosca'",
+      "priority": "critico",
+      "enunciado": "¿Sigue vigente hoy la figura del consumidor expuesto o 'bystander' reconocida en el caso 'Mosca'?",
+      "pista": "Mosca la reconoció, pero fue DEROGADA por el aluvión de reclamos. Hoy solo subsisten consumidor directo e indirecto.",
+      "respuestaLibre": "(a) El caso 'Mosca' efectivamente reconoció esa figura para quien, sin ser parte de la relación de consumo, resultaba dañado por ella. (b) Sin embargo, la categoría fue eliminada del régimen vigente por el aluvión de reclamos que generó, principalmente contra empresas de transporte; hoy solo subsisten el consumidor directo y el consumidor indirecto.",
+      "opciones": [
+        "Sí, sigue plenamente vigente conforme al caso 'Mosca' y permite reclamar a cualquier persona expuesta a la relación de consumo.",
+        "El caso 'Mosca' reconoció la figura, pero fue eliminada del régimen vigente por el aluvión de reclamos; hoy solo subsisten el consumidor directo y el indirecto.",
+        "Solo está vigente para accidentes de tránsito, no para otros supuestos.",
+        "Nunca existió en el derecho argentino; 'Mosca' es un caso extranjero."
+      ],
+      "correcta": 1,
+      "explicacion": "El caso 'Mosca' reconoció la figura, pero fue eliminada del régimen vigente por el aluvión de reclamos; hoy solo subsisten el consumidor directo y el indirecto.",
+      "errorTipico": "T1 — Invocar 'Mosca' y el bystander como fundamento normativo vigente para encuadrar un caso en el régimen de consumo."
+    },
+    {
+      "id": "P5",
+      "topic": "Profesionales matriculados excluidos",
+      "priority": "critico",
+      "enunciado": "¿Puede un consumidor reclamar por la vía de consumo contra un profesional con matrícula habilitante (odontólogo, abogado, médico, arquitecto, gasista) por una mala praxis o un servicio deficiente?",
+      "pista": "En principio NO: quedan fuera del régimen de consumo. EXCEPTO si el servicio se presta a través de una persona jurídica (clínica, sociedad), caso en que sí procede contra la empresa.",
+      "respuestaLibre": "(a) En principio no: los profesionales con matrícula o título habilitante quedan expresamente fuera del régimen de consumo, y el reclamo debe canalizarse por la vía de la responsabilidad civil común. (b) Esa exclusión cae cuando el servicio se presta a través de una persona jurídica —por ejemplo, una clínica constituida como sociedad—, caso en que sí procede el reclamo de consumo contra la empresa, aunque no contra el profesional individualmente.",
+      "opciones": [
+        "Sí, siempre, porque cualquier servicio oneroso está comprendido en el régimen de consumo.",
+        "No, nunca, ni siquiera cuando el servicio se presta a través de una persona jurídica.",
+        "En principio no contra el profesional individual (queda fuera del régimen de consumo), pero sí contra la persona jurídica si el servicio se presta a través de ella (ej. clínica, sociedad).",
+        "Solo si el profesional no tiene matrícula habilitante."
+      ],
+      "correcta": 2,
+      "explicacion": "En principio no contra el profesional individual (queda fuera del régimen de consumo), pero sí contra la persona jurídica si el servicio se presta a través de ella (ej. clínica, sociedad).",
+      "errorTipico": "T4 — Tratar la exclusión de los profesionales matriculados como absoluta, sin advertir que cae cuando el servicio se presta a través de una persona jurídica con fines de lucro."
+    },
+    {
+      "id": "P6",
+      "topic": "Aeronavegación y overbooking",
+      "priority": "alto",
+      "enunciado": "Un pasajero es víctima de overbooking en un vuelo. ¿Puede reclamar por la vía de consumo, pese a que la aeronavegación se rige en principio por su propio Código Aeronáutico?",
+      "pista": "Sí, para cuestiones puntuales: overbooking, robo de equipaje, reconocimiento de millas. Fuero de conciliación específico (sin fuerza ejecutiva).",
+      "respuestaLibre": "Sí: aunque la aeronavegación está en principio excluida del régimen de consumo, la cátedra señaló que cuestiones puntuales como el overbooking, el robo de equipaje y el reconocimiento de millas sí quedan comprendidas dentro del régimen de consumo, con un fuero de conciliación específico (cuyo acuerdo, sin embargo, no tiene fuerza ejecutiva).",
+      "opciones": [
+        "No, ningún reclamo vinculado a un vuelo puede canalizarse por la vía de consumo.",
+        "Sí, pero solo para el robo de equipaje, no para overbooking ni millas.",
+        "Sí, aunque la aeronavegación está en principio excluida, cuestiones puntuales como overbooking, robo de equipaje y reconocimiento de millas quedan comprendidas en el régimen de consumo, con un fuero de conciliación específico (sin fuerza ejecutiva).",
+        "Sí, y el acuerdo de conciliación tiene fuerza ejecutiva como una sentencia."
+      ],
+      "correcta": 2,
+      "explicacion": "Sí, aunque la aeronavegación está en principio excluida, cuestiones puntuales como overbooking, robo de equipaje y reconocimiento de millas quedan comprendidas en el régimen de consumo, con un fuero de conciliación específico (sin fuerza ejecutiva).",
+      "errorTipico": "T5 — Asumir que ningún reclamo vinculado a un vuelo puede canalizarse por la vía de consumo por tratarse de una actividad regida por normativa aeronáutica."
+    },
+    {
+      "id": "P7",
+      "topic": "Conciliación CABA vs. procedimiento en CGP",
+      "priority": "alto",
+      "enunciado": "¿Qué diferencia existe entre el procedimiento de conciliación de la Justicia de Consumo de CABA y el procedimiento de consumo tramitado ante los CGP?",
+      "pista": "Justicia de Consumo CABA: conciliador del Consejo de la Magistratura, acuerdo con fuerza ejecutiva, acta negativa habilita vía judicial. CGP: sin fuerza ejecutiva, no habilita vía judicial.",
+      "respuestaLibre": "(a) En la Justicia de Consumo de CABA, el conciliador es designado por el Consejo de la Magistratura y, si se llega a un acuerdo, este tiene fuerza ejecutiva y equivale a una sentencia; si no, se habilita la vía judicial mediante acta negativa. (b) En los CGP, el procedimiento de consumo carece de fuerza ejecutiva y no habilita directamente la vía judicial ante un incumplimiento, porque los audiencistas no son conciliadores matriculados.",
+      "opciones": [
+        "Son idénticos: ambos tienen fuerza ejecutiva y habilitan la vía judicial.",
+        "La Justicia de Consumo de CABA tiene acuerdo con fuerza ejecutiva (equivale a sentencia) y habilita vía judicial mediante acta negativa; el procedimiento en CGP carece de fuerza ejecutiva y no habilita la vía judicial.",
+        "El procedimiento en CGP tiene más fuerza ejecutiva que la Justicia de Consumo de CABA.",
+        "Ninguno de los dos habilita la vía judicial; solo sirven como mediación voluntaria."
+      ],
+      "correcta": 1,
+      "explicacion": "La Justicia de Consumo de CABA tiene acuerdo con fuerza ejecutiva (equivale a sentencia) y habilita vía judicial mediante acta negativa; el procedimiento en CGP carece de fuerza ejecutiva y no habilita la vía judicial.",
+      "errorTipico": "Confundir ambos trámites y asumir que cualquier acuerdo alcanzado en sede de consumo tiene fuerza ejecutiva."
+    },
+    {
+      "id": "P8",
+      "topic": "Interpretación más favorable (medicina prepaga)",
+      "priority": "alto",
+      "enunciado": "Ante un conflicto entre un consumidor y una empresa de medicina prepaga, ¿qué norma corresponde aplicar primero: la Ley 26.682 (medicina prepaga) o la Ley 24.240?",
+      "pista": "Principio de interpretación más favorable (art. 1095 CCC): se aplica la norma que otorgue MAYOR protección al consumidor, sin preferencia automática por la ley especial.",
+      "respuestaLibre": "Corresponde aplicar la norma que otorgue mayor protección al consumidor, conforme el principio de interpretación más favorable (art. 1095 CCC); en general, será la Ley 24.240, salvo que la Ley 26.682 resulte más beneficiosa en el punto concreto discutido (arts. 1094 in fine y 1095 CCC).",
+      "opciones": [
+        "Siempre la Ley 26.682, por ser ley especial.",
+        "Siempre la Ley 24.240, por ser la ley general de defensa del consumidor.",
+        "La norma que otorgue mayor protección al consumidor (principio de interpretación más favorable, art. 1095 CCC); en general la Ley 24.240, salvo que la Ley 26.682 resulte más beneficiosa en el punto concreto.",
+        "Se aplican ambas por igual, sin preferencia."
+      ],
+      "correcta": 2,
+      "explicacion": "La norma que otorgue mayor protección al consumidor (principio de interpretación más favorable, art. 1095 CCC); en general la Ley 24.240, salvo que la Ley 26.682 resulte más beneficiosa en el punto concreto.",
+      "errorTipico": "T3 — Aplicar automáticamente la ley especial (26.682) sin comparar cuál de las dos normas resulta más favorable al consumidor."
+    },
+    {
+      "id": "INT-a",
+      "topic": "Integradora · Julieta consumidora directa",
+      "priority": "critico",
+      "contexto": "Julieta, abogada penalista, compra una gargantilla de la marca Saluzzio para uso personal. Al probársela, nota que le queda más ajustada que en la publicidad; al contar los eslabones, descubre que tiene 32 en lugar de los 31 anunciados.",
+      "enunciado": "(a) ¿Julieta reviste la calidad de consumidora directa en los términos del art. 1092 CCC?",
+      "pista": "Adquirió la gargantilla para uso personal, sin reinsertarla en el mercado. Es destinataria final.",
+      "respuestaLibre": "Sí. Julieta adquirió la gargantilla para uso personal, como destinataria final, sin intención de reinsertarla en el mercado, por lo que encuadra plenamente en el art. 1092 CCC como consumidora directa.",
+      "opciones": [
+        "No, porque es abogada y los profesionales matriculados están excluidos del régimen de consumo.",
+        "No, porque la gargantilla es un bien suntuario y no está protegido por la Ley 24.240.",
+        "Sí, porque adquirió la gargantilla para uso personal, como destinataria final, sin intención de reinsertarla en el mercado, encuadrando plenamente en el art. 1092 CCC.",
+        "Solo si la gargantilla hubiera sido fabricada especialmente para ella."
+      ],
+      "correcta": 2,
+      "explicacion": "Sí, porque adquirió la gargantilla para uso personal, como destinataria final, sin intención de reinsertarla en el mercado, encuadrando plenamente en el art. 1092 CCC.",
+      "errorTipico": "Confundir la profesión de Julieta (abogada) con la calidad de consumidora: la exclusión de profesionales matriculados aplica cuando ellos PRESTAN servicios, no cuando los CONSUMEN."
+    },
+    {
+      "id": "INT-b",
+      "topic": "Integradora · Responsabilidad solidaria de la cadena",
+      "priority": "critico",
+      "contexto": "Julieta sospecha que Saluzzio retira eslabones de las gargantillas vendidas para fabricar y comercializar productos adicionales por separado.",
+      "enunciado": "(b) ¿Contra qué integrantes de la cadena de comercialización podría dirigir su reclamo, y bajo qué tipo de responsabilidad?",
+      "pista": "Indistintamente contra la marca o el comercio. Responsabilidad objetiva y solidaria (art. 2 Ley 24.240).",
+      "respuestaLibre": "Puede reclamar indistintamente contra la marca Saluzzio o contra el comercio que le vendió el producto, dado que la responsabilidad de toda la cadena de comercialización es solidaria y objetiva (art. 2, Ley 24.240); no necesita acreditar los acuerdos internos entre esos sujetos ni probar culpa.",
+      "opciones": [
+        "Solo contra el comercio que le vendió la gargantilla, porque es el único con quien tuvo vínculo contractual.",
+        "Solo contra la marca Saluzzio, porque es la responsable del defecto de fabricación.",
+        "Indistintamente contra la marca Saluzzio o contra el comercio vendedor, por responsabilidad solidaria y objetiva de toda la cadena (art. 2 Ley 24.240), sin necesidad de probar culpa ni acreditar acuerdos internos.",
+        "Contra ambos, pero solo si prueba culpa de cada uno por separado."
+      ],
+      "correcta": 2,
+      "explicacion": "Indistintamente contra la marca Saluzzio o contra el comercio vendedor, por responsabilidad solidaria y objetiva de toda la cadena (art. 2 Ley 24.240), sin necesidad de probar culpa ni acreditar acuerdos internos.",
+      "errorTipico": "Pensar que, por no haber comprado directamente a la fábrica sino a un comercio minorista, Julieta solo puede reclamarle al vendedor final y no a la marca —desconociendo que la solidaridad alcanza a toda la cadena, no solo al último eslabón—."
+    },
+    {
+      "id": "INT-c",
+      "topic": "Integradora · Organismo y efecto del acuerdo",
+      "priority": "critico",
+      "contexto": "Julieta decide presentar el reclamo en CABA por la gargantilla defectuosa.",
+      "enunciado": "(c) ¿Ante qué organismo podría presentar el reclamo en CABA, y qué efecto tendría el acuerdo alcanzado en esa instancia?",
+      "pista": "Justicia de Consumo de CABA (conciliación prejudicial obligatoria). Acuerdo con FUERZA EJECUTIVA (equivale a sentencia). Acta negativa habilita vía judicial.",
+      "respuestaLibre": "Podría presentarlo ante la Justicia de Consumo de CABA, en la etapa de conciliación prejudicial obligatoria; si se alcanza un acuerdo, este tiene fuerza ejecutiva y equivale a una sentencia, y si no se logra, se labra acta negativa que habilita la vía judicial ante los tribunales de consumo.",
+      "opciones": [
+        "Ante los CGP, con acuerdo sin fuerza ejecutiva.",
+        "Ante la Justicia de Consumo de CABA, en conciliación prejudicial obligatoria; el acuerdo tiene fuerza ejecutiva y equivale a una sentencia, y si no se logra, se labra acta negativa que habilita la vía judicial.",
+        "Ante el INPI, que entiende en conflictos de consumo.",
+        "Ante la Defensoría del Pueblo, cuyo acuerdo es vinculante para las partes."
+      ],
+      "correcta": 1,
+      "explicacion": "Ante la Justicia de Consumo de CABA, en conciliación prejudicial obligatoria; el acuerdo tiene fuerza ejecutiva y equivale a una sentencia, y si no se logra, se labra acta negativa que habilita la vía judicial.",
+      "errorTipico": "Confundir la Justicia de Consumo de CABA (acuerdo con fuerza ejecutiva) con el procedimiento ante los CGP (sin fuerza ejecutiva)."
+    },
+    {
+      "id": "C1",
+      "topic": "Caso 1 · El consorcio y los productos de limpieza",
+      "priority": "alto",
+      "contexto": "El consorcio de propietarios de un edificio, representado por su administrador, el Sr. Gómez, adquiere periódicamente lavandina y detergente para la limpieza de los ascensores y espacios comunes en un comercio de artículos de limpieza. Uno de los envases de lavandina llega con el precinto roto y el contenido evaporado. El administrador consulta si el consorcio puede reclamar por la vía de consumo.",
+      "enunciado": "¿Puede el consorcio reclamar por la vía de consumo?",
+      "pista": "El consorcio es persona jurídica que adquiere como destinataria final, sin reinsertar en el mercado. Configura contrato de consumo (art. 1093 CCC).",
+      "respuestaLibre": "Sí, el consorcio puede reclamar por la vía de consumo: reviste la calidad de consumidor final persona jurídica y el vínculo con el comercio configura un contrato de consumo. El consorcio es una persona jurídica que adquiere el producto como destinataria final, sin reinsertarlo en el mercado ni transformarlo (art. 1092 CCC).",
+      "opciones": [
+        "No, porque solo las personas humanas pueden ser consumidoras.",
+        "No, porque el uso del bien en espacios comunes excluye el régimen de consumo.",
+        "Sí, porque el consorcio es persona jurídica que adquiere el producto como destinataria final, sin reinsertarlo en el mercado; el vínculo con el comercio configura un contrato de consumo.",
+        "Solo si el administrador es persona humana y reclama a título personal."
+      ],
+      "correcta": 2,
+      "explicacion": "Sí, porque el consorcio es persona jurídica que adquiere el producto como destinataria final, sin reinsertarlo en el mercado; el vínculo con el comercio configura un contrato de consumo.",
+      "errorTipico": "Creer que solo las personas humanas pueden ser consumidoras, o que el uso del bien en un ámbito no estrictamente doméstico excluye el régimen de consumo."
+    },
+    {
+      "id": "C2",
+      "topic": "Caso 2 · El remisero y la bengala en la tribuna",
+      "priority": "alto",
+      "contexto": "Ricardo, remisero, lleva a un cliente a un partido de fútbol y espera estacionado fuera del estadio. Desde la tribuna, un hincha arroja un elemento pirotécnico que impacta en el vehículo y en el propio Ricardo, causándole una lesión ocular. Tras conocer el caso 'Mosca' en un curso de capacitación, Ricardo pretende reclamar contra el club invocando su condición de 'consumidor expuesto'.",
+      "enunciado": "¿Puede Ricardo reclamar hoy como consumidor expuesto invocando el caso 'Mosca'?",
+      "pista": "Mosca reconoció la figura, pero fue DEROGADA. Hoy solo subsisten consumidor directo e indirecto. Ricardo debe reclamar por responsabilidad civil común.",
+      "respuestaLibre": "No, Ricardo no puede reclamar hoy como consumidor expuesto. 'Mosca' ilustra el origen histórico del criterio, pero no constituye fundamento normativo vigente para encuadrar el caso dentro del régimen de consumo. Su reclamo debe encausarse por las reglas generales de responsabilidad civil, no por el régimen protectorio de consumo.",
+      "opciones": [
+        "Sí, porque el caso 'Mosca' sigue plenamente vigente y ampara a cualquier persona expuesta a una relación de consumo.",
+        "Sí, pero solo si Ricardo demuestra que el club tenía deberes de seguridad específicos.",
+        "No, porque la figura del consumidor expuesto/bystander fue eliminada del régimen vigente; 'Mosca' es solo un antecedente histórico. Su reclamo debe canalizarse por la vía de la responsabilidad civil común.",
+        "No, porque Ricardo es remisero y los profesionales del transporte están excluidos del régimen de consumo."
+      ],
+      "correcta": 2,
+      "explicacion": "No, porque la figura del consumidor expuesto/bystander fue eliminada del régimen vigente; 'Mosca' es solo un antecedente histórico. Su reclamo debe canalizarse por la vía de la responsabilidad civil común.",
+      "errorTipico": "T1 — Citar 'Mosca' y el bystander como si fuera doctrina vigente, sin advertir que la figura fue eliminada del régimen actual."
+    },
+    {
+      "id": "C3",
+      "topic": "Caso 3 · El implante mal realizado",
+      "priority": "alto",
+      "contexto": "Marina concurre al consultorio particular del odontólogo Dr. Ibáñez, matriculado, quien le realiza un implante dental que termina infectándose por una mala praxis. Marina pretende reclamar por la vía de consumo, alegando que pagó honorarios por un servicio prestado en forma onerosa.",
+      "enunciado": "¿Puede Marina reclamar por la vía de consumo contra el Dr. Ibáñez a título individual?",
+      "pista": "No: el Dr. Ibáñez es profesional con matrícula habilitante, excluido del régimen de consumo. Corresponde responsabilidad civil por mala praxis. EXCEPCIÓN: si el servicio se prestara a través de una persona jurídica (clínica), sí procedería contra la empresa.",
+      "respuestaLibre": "No, Marina no puede reclamar por la vía de consumo contra el Dr. Ibáñez a título individual; corresponde la vía de la responsabilidad civil por mala praxis. El Dr. Ibáñez es profesional con matrícula habilitante, excluido del régimen de consumo. Sin embargo, si el mismo implante hubiera sido realizado en una 'Clínica Dental XY S.A.' (persona jurídica), sí procedería el reclamo de consumo contra la clínica, aunque no contra el Dr. Ibáñez individualmente.",
+      "opciones": [
+        "Sí, porque pagó honorarios por un servicio oneroso.",
+        "Sí, porque cualquier servicio de salud está comprendido en el régimen de consumo.",
+        "No, porque el Dr. Ibáñez es profesional con matrícula habilitante, excluido del régimen de consumo; corresponde la vía de la responsabilidad civil por mala praxis. Solo procedería el reclamo de consumo si el servicio se prestara a través de una persona jurídica (clínica).",
+        "No, porque Marina no celebró contrato por escrito con el Dr. Ibáñez."
+      ],
+      "correcta": 2,
+      "explicacion": "No, porque el Dr. Ibáñez es profesional con matrícula habilitante, excluido del régimen de consumo; corresponde la vía de la responsabilidad civil por mala praxis. Solo procedería el reclamo de consumo si el servicio se prestara a través de una persona jurídica (clínica).",
+      "errorTipico": "T4 — Asumir que la excepción de los profesionales matriculados es absoluta, sin verificar si el servicio se presta a través de una persona jurídica."
+    }
+  ],
+  "material": [
+    {
+      "id": "mat-p1",
+      "title": "1. Destinatario final (art. 1092 CCC)",
+      "badges": [
+        { "text": "O1", "kind": "fuente" },
+        { "text": "Pareto", "kind": "pareto" },
+        { "text": "Cae siempre", "kind": "cae" }
+      ],
+      "enunciado": "¿Qué significa que un consumidor sea 'destinatario final' en los términos del art. 1092 CCC, y qué ocurre cuando el bien adquirido reingresa —aunque transformado— a la cadena de comercialización?",
+      "respuesta": "(a) Ser destinatario final implica que el bien o servicio se adquiere para consumo propio, familiar o social, sin volver a insertarse en el mercado de ninguna forma.\n\n(b) Si el bien reingresa transformado —por ejemplo, madera adquirida para fabricar un mueble que luego se comercializa— quien lo adquirió no reviste la calidad de consumidor final y la operación queda fuera del régimen de consumo.",
+      "errorTipico": "Dar por sentada la calidad de consumidor por el solo hecho de haber pagado por el bien, sin verificar si ese bien reingresa —transformado o no— a la cadena de comercialización."
+    },
+    {
+      "id": "mat-p2",
+      "title": "2. Relación de consumo vs. contrato de consumo",
+      "badges": [
+        { "text": "D1", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "¿En qué se diferencian la relación de consumo (art. 1092 CCC) y el contrato de consumo (art. 1093 CCC)?",
+      "respuesta": "(a) La relación de consumo es el vínculo amplio entre proveedor y consumidor, que comienza con la publicidad y se extiende hasta el servicio de posventa.\n\n(b) El contrato de consumo es el acto puntual de celebración —la adquisición del bien o servicio— dentro de ese vínculo más amplio.",
+      "table": {
+        "headers": ["Aspecto", "Relación de consumo (art. 1092)", "Contrato de consumo (art. 1093)"],
+        "rows": [
+          ["Extensión temporal", "Desde la publicidad hasta la posventa", "Momento puntual de celebración"],
+          ["Naturaleza", "Vínculo jurídico amplio", "Acto contractual específico"],
+          ["Sujetos", "Proveedor y consumidor/usuario (incluye equiparado)", "Proveedor profesional u ocasional y consumidor/usuario final"]
+        ]
+      },
+      "errorTipico": "T2 — Usar 'relación de consumo' y 'contrato de consumo' como sinónimos, ignorando que la primera abarca también la etapa publicitaria y la posventa."
+    },
+    {
+      "id": "mat-p3",
+      "title": "3. Responsabilidad solidaria de la cadena",
+      "badges": [
+        { "text": "O3", "kind": "fuente" },
+        { "text": "Pareto", "kind": "pareto" }
+      ],
+      "enunciado": "¿Contra quién puede dirigir su reclamo el consumidor cuando un producto llega defectuoso por una falla imputable a algún eslabón de la cadena de comercialización?",
+      "respuesta": "El consumidor puede reclamar indistintamente contra cualquier integrante de la cadena —marca, distribuidor, comercializador— en razón de la responsabilidad objetiva y solidaria que rige la materia (art. 2, Ley 24.240), sin necesidad de conocer los acuerdos internos entre ellos; luego esos sujetos dirimen entre sí sus responsabilidades.",
+      "errorTipico": "Creer que solo puede demandarse a quien vendió directamente el producto al consumidor, desconociendo la solidaridad de toda la cadena."
+    },
+    {
+      "id": "mat-p4",
+      "title": "4. Bystander derogado / caso 'Mosca'",
+      "badges": [
+        { "text": "O3 / caso Mosca", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" },
+        { "text": "Cae siempre", "kind": "cae" }
+      ],
+      "enunciado": "¿Sigue vigente hoy la figura del consumidor expuesto o 'bystander' reconocida en el caso 'Mosca'?",
+      "respuesta": "(a) El caso 'Mosca' efectivamente reconoció esa figura para quien, sin ser parte de la relación de consumo, resultaba dañado por ella.\n\n(b) Sin embargo, la categoría fue eliminada del régimen vigente por el aluvión de reclamos que generó, principalmente contra empresas de transporte; hoy solo subsisten el consumidor directo y el consumidor indirecto.",
+      "table": {
+        "headers": ["Tipo de consumidor", "Vínculo con el proveedor", "Vigencia actual"],
+        "rows": [
+          ["Directo", "Contrata directamente con el proveedor", "Vigente"],
+          ["Indirecto", "Se beneficia de la relación sin haber contratado", "Vigente"],
+          ["Expuesto / bystander", "Ajeno a la relación, solo 'expuesto' a ella", "Derogado"]
+        ]
+      },
+      "errorTipico": "T1 — Invocar 'Mosca' y el bystander como fundamento normativo vigente para encuadrar un caso en el régimen de consumo."
+    },
+    {
+      "id": "mat-p5",
+      "title": "5. Profesionales matriculados excluidos",
+      "badges": [
+        { "text": "O4", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" },
+        { "text": "Pareto", "kind": "pareto" }
+      ],
+      "enunciado": "¿Puede un consumidor reclamar por la vía de consumo contra un profesional con matrícula habilitante por una mala praxis o un servicio deficiente?",
+      "respuesta": "(a) En principio no: los profesionales con matrícula o título habilitante quedan expresamente fuera del régimen de consumo, y el reclamo debe canalizarse por la vía de la responsabilidad civil común.\n\n(b) Esa exclusión cae cuando el servicio se presta a través de una persona jurídica —por ejemplo, una clínica constituida como sociedad—, caso en que sí procede el reclamo de consumo contra la empresa, aunque no contra el profesional individualmente.",
+      "errorTipico": "T4 — Tratar la exclusión de los profesionales matriculados como absoluta, sin advertir que cae cuando el servicio se presta a través de una persona jurídica con fines de lucro."
+    },
+    {
+      "id": "mat-p6",
+      "title": "6. Aeronavegación y overbooking",
+      "badges": [
+        { "text": "O4", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "Un pasajero es víctima de overbooking en un vuelo. ¿Puede reclamar por la vía de consumo, pese a que la aeronavegación se rige en principio por su propio Código Aeronáutico?",
+      "respuesta": "Sí: aunque la aeronavegación está en principio excluida del régimen de consumo, la cátedra señaló que cuestiones puntuales como el overbooking, el robo de equipaje y el reconocimiento de millas sí quedan comprendidas dentro del régimen de consumo, con un fuero de conciliación específico (cuyo acuerdo, sin embargo, no tiene fuerza ejecutiva).",
+      "errorTipico": "T5 — Asumir que ningún reclamo vinculado a un vuelo puede canalizarse por la vía de consumo por tratarse de una actividad regida por normativa aeronáutica."
+    },
+    {
+      "id": "mat-p7",
+      "title": "7. Conciliación CABA vs. procedimiento en CGP",
+      "badges": [
+        { "text": "D3 / D4", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "¿Qué diferencia existe entre el procedimiento de conciliación de la Justicia de Consumo de CABA y el procedimiento de consumo tramitado ante los CGP?",
+      "respuesta": "(a) En la Justicia de Consumo de CABA, el conciliador es designado por el Consejo de la Magistratura y, si se llega a un acuerdo, este tiene fuerza ejecutiva y equivale a una sentencia; si no, se habilita la vía judicial mediante acta negativa.\n\n(b) En los CGP, el procedimiento de consumo carece de fuerza ejecutiva y no habilita directamente la vía judicial ante un incumplimiento, porque los audiencistas no son conciliadores matriculados.",
+      "table": {
+        "headers": ["Instancia", "Fuerza ejecutiva del acuerdo", "Habilita vía judicial ante incumplimiento"],
+        "rows": [
+          ["Justicia de Consumo CABA", "Sí (equivale a sentencia)", "Sí, mediante acta negativa"],
+          ["Procedimiento de consumo en CGP", "No", "No (hay que iniciar todo el proceso de nuevo)"]
+        ]
+      },
+      "errorTipico": "Confundir ambos trámites y asumir que cualquier acuerdo alcanzado en sede de consumo tiene fuerza ejecutiva."
+    },
+    {
+      "id": "mat-p8",
+      "title": "8. Interpretación más favorable (medicina prepaga)",
+      "badges": [
+        { "text": "S3", "kind": "fuente" },
+        { "text": "Pareto", "kind": "pareto" }
+      ],
+      "enunciado": "Ante un conflicto entre un consumidor y una empresa de medicina prepaga, ¿qué norma corresponde aplicar primero: la Ley 26.682 o la Ley 24.240?",
+      "respuesta": "Corresponde aplicar la norma que otorgue mayor protección al consumidor, conforme el principio de interpretación más favorable (art. 1095 CCC); en general, será la Ley 24.240, salvo que la Ley 26.682 resulte más beneficiosa en el punto concreto discutido (arts. 1094 in fine y 1095 CCC).",
+      "errorTipico": "T3 — Aplicar automáticamente la ley especial (26.682) sin comparar cuál de las dos normas resulta más favorable al consumidor."
+    },
+    {
+      "id": "mat-int",
+      "title": "Integradora · Julieta y la gargantilla Saluzzio",
+      "badges": [
+        { "text": "Integrador", "kind": "info" }
+      ],
+      "respuesta": "Julieta es consumidora directa (art. 1092 CCC): adquirió la gargantilla para uso personal, como destinataria final, sin intención de reinsertarla en el mercado. Puede reclamar indistintamente contra la marca Saluzzio o contra el comercio vendedor, por responsabilidad solidaria y objetiva de toda la cadena (art. 2 Ley 24.240). Debe presentar el reclamo ante la Justicia de Consumo de CABA, donde el acuerdo tiene fuerza ejecutiva."
+    },
+    {
+      "id": "mat-c1",
+      "title": "Caso 1 · El consorcio y los productos de limpieza",
+      "badges": [
+        { "text": "Complejo", "kind": "fuente" },
+        { "text": "O1, D1", "kind": "fuente" }
+      ],
+      "contexto": "El consorcio de propietarios de un edificio, representado por su administrador, el Sr. Gómez, adquiere periódicamente lavandina y detergente para la limpieza de los ascensores y espacios comunes en un comercio de artículos de limpieza. Uno de los envases de lavandina llega con el precinto roto y el contenido evaporado.",
+      "respuesta": "Sí, el consorcio puede reclamar por la vía de consumo: reviste la calidad de consumidor final persona jurídica y el vínculo con el comercio configura un contrato de consumo (art. 1093 CCC). El consorcio adquiere el producto como destinataria final, sin reinsertarlo en el mercado ni transformarlo.",
+      "errorTipico": "Creer que solo las personas humanas pueden ser consumidoras, o que el uso del bien en un ámbito no estrictamente doméstico excluye el régimen de consumo."
+    },
+    {
+      "id": "mat-c2",
+      "title": "Caso 2 · El remisero y la bengala en la tribuna",
+      "badges": [
+        { "text": "Trampa", "kind": "trampa" },
+        { "text": "O3, T1", "kind": "fuente" },
+        { "text": "Caso 'Mosca'; art. 2 Ley 24.240", "kind": "fuente" }
+      ],
+      "contexto": "Ricardo, remisero, lleva a un cliente a un partido de fútbol y espera estacionado fuera del estadio. Desde la tribuna, un hincha arroja un elemento pirotécnico que impacta en el vehículo y en el propio Ricardo, causándole una lesión ocular. Tras conocer el caso 'Mosca' en un curso de capacitación, Ricardo pretende reclamar contra el club invocando su condición de 'consumidor expuesto'.",
+      "respuesta": "No, Ricardo no puede reclamar hoy como consumidor expuesto. 'Mosca' ilustra el origen histórico del criterio, pero la figura del consumidor expuesto/bystander fue eliminada del régimen vigente por el aluvión de reclamos. Su reclamo debe encausarse por las reglas generales de responsabilidad civil.",
+      "errorTipico": "T1 — Citar 'Mosca' y el bystander como si fuera doctrina vigente, sin advertir que la figura fue eliminada del régimen actual.",
+      "contrafactual": "Si Ricardo hubiera sido pasajero del remis (contratado por el cliente), podría reclamar como consumidor indirecto del servicio de transporte."
+    },
+    {
+      "id": "mat-c3",
+      "title": "Caso 3 · El implante mal realizado",
+      "badges": [
+        { "text": "Complejo", "kind": "fuente" },
+        { "text": "O4, T4", "kind": "fuente" },
+        { "text": "Art. 1092 CCC; doctrina cátedra", "kind": "fuente" }
+      ],
+      "contexto": "Marina concurre al consultorio particular del odontólogo Dr. Ibáñez, matriculado, quien le realiza un implante dental que termina infectándose por una mala praxis. Marina pretende reclamar por la vía de consumo, alegando que pagó honorarios por un servicio prestado en forma onerosa.",
+      "respuesta": "No, Marina no puede reclamar por la vía de consumo contra el Dr. Ibáñez a título individual; corresponde la vía de la responsabilidad civil por mala praxis. El Dr. Ibáñez es profesional con matrícula habilitante, excluido del régimen de consumo.",
+      "errorTipico": "T4 — Asumir que la excepción de los profesionales matriculados es absoluta, sin verificar si el servicio se presta a través de una persona jurídica.",
+      "contrafactual": "Si el mismo implante hubiera sido realizado en la 'Clínica Dental XY S.A.' (persona jurídica que emplea al Dr. Ibáñez y publicita sus servicios con fines comerciales), Marina podría reclamar por la vía de consumo contra la Clínica, aunque no contra el Dr. Ibáñez individualmente."
+    },
+    {
+      "id": "mat-pareto",
+      "title": "Top Pareto",
+      "badges": [],
+      "respuesta": "Preguntas críticas que caen SIEMPRE en examen: P1 (Destinatario final O1), P3 (Responsabilidad solidaria O3), P4 (Bystander derogado O3/T1), P5 (Profesionales matriculados O4/T4). Preguntas de alto nivel: P2 (Relación vs contrato D1/T2), P8 (Interpretación favorable S3/T3), P7 (Conciliación CABA vs CGP D3/D4), P6 (Aeronavegación O4/T5).",
+      "table": {
+        "headers": ["Prioridad", "Pregunta", "Concepto clave"],
+        "rows": [
+          ["Crítico", "P1", "Destinatario final (O1)"],
+          ["Crítico", "P3", "Responsabilidad solidaria de la cadena (O3)"],
+          ["Crítico", "P4", "Bystander derogado / caso Mosca (O3, T1)"],
+          ["Crítico", "P5", "Excepción de profesionales matriculados (O4, T4)"],
+          ["Alto", "P2", "Relación vs. contrato de consumo (D1, T2)"],
+          ["Alto", "P8", "Interpretación favorable / prelación normativa (S3, T3)"],
+          ["Alto", "P7", "Conciliación CABA vs. CGP (D3, D4)"],
+          ["Alto", "P6", "Aeronavegación y overbooking (O4, T5)"]
+        ]
+      }
+    },
+    {
+      "id": "mat-fuentes",
+      "title": "Fuentes clave",
+      "badges": [],
+      "respuesta": "Art. 42 CN: derechos constitucionales de consumidores. Ley 24.240 art. 1: objeto y ámbito. Ley 24.240 art. 2: proveedor y responsabilidad solidaria. Art. 1092 CCC: relación de consumo y destinatario final. Art. 1093 CCC: contrato de consumo. Arts. 1094 in fine y 1095 CCC: interpretación más favorable. Caso 'Mosca': origen histórico del consumidor expuesto (hoy derogado).",
+      "table": {
+        "headers": ["Fuente", "Qué establece", "Por qué importa en examen"],
+        "rows": [
+          ["Art. 42 CN", "Derechos constitucionales de consumidores y usuarios", "Fundamenta la raigambre constitucional del régimen"],
+          ["Ley 24.240, art. 1", "Objeto y ámbito de aplicación", "Determina la aplicación prioritaria de la ley especial"],
+          ["Ley 24.240, art. 2", "Definición de proveedor y responsabilidad solidaria", "Base normativa de la responsabilidad de toda la cadena"],
+          ["Art. 1092 CCC", "Relación de consumo y destinatario final", "Criterio clave para encuadrar cualquier caso en consumo"],
+          ["Art. 1093 CCC", "Contrato de consumo", "Distingue el momento de celebración del vínculo más amplio"],
+          ["Arts. 1094 in fine y 1095 CCC", "Interpretación más favorable al consumidor", "Resuelve conflictos normativos y dudas interpretativas"],
+          ["Caso 'Mosca'", "Origen histórico del consumidor expuesto/bystander", "Trampa clásica: figura hoy derogada"]
+        ]
+      }
+    }
+  ]
+}
