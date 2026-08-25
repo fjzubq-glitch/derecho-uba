@@ -62,10 +62,17 @@ function renderToc(material = []) {
     .join("\n");
 }
 
+function generarLogo(title = "") {
+  const m = title.match(/^([A-Za-zÀ-ÿ]+)\s*·\s*Clase\s+(\d+)/i);
+  if (!m) return "C1";
+  return m[1].charAt(0).toUpperCase() + m[2];
+}
+
 function generar(template, data) {
   const total = data.questions.length;
   const casos = data.questions.filter((q) => /^(C|INT)/i.test(q.id)).length;
   return template
+    .replace("__LOGO__", generarLogo(data.header.title))
     .replace("__TITLE__", esc(data.header.title))
     .replaceAll("__TITLE__", esc(data.header.title))
     .replace("__HEADER_SUB__", esc(data.header.sub))

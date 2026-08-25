@@ -77,9 +77,12 @@ export function renderMaterial(material: MaterialSection[]): string {
             .map((r) => `<tr>${r.map((c) => `<td>${inline(c)}</td>`).join("")}</tr>`)
             .join("")}</tbody></table>`
         : "";
-      const resp = m.respuesta
-        ? `<details><summary>Ver resolución</summary><div class="detail-content">${m.table ? tbl : hasHtml(m.respuesta) ? m.respuesta : paragraphs(m.respuesta)}</div></details>`
-        : "";
+      let resp = "";
+      if (m.respuesta) {
+        resp = `<details><summary>Ver resolución</summary><div class="detail-content">${m.table ? tbl : hasHtml(m.respuesta) ? m.respuesta : paragraphs(m.respuesta)}</div></details>`;
+      } else if (m.table) {
+        resp = tbl;
+      }
       const err = m.errorTipico
         ? `<details class="error-detail"><summary>Ver error típico</summary><div class="detail-content"><b>❌ Error típico:</b> ${inline(m.errorTipico)}</div></details>`
         : "";
@@ -114,11 +117,19 @@ export function renderToc(material: MaterialSection[]): string {
     .join("\n");
 }
 
+function generarLogo(title: string): string {
+  const m = title.match(/^([A-Za-zÀ-ÿ]+)\s*·\s*Clase\s+(\d+)/i);
+  if (!m) return "C1";
+  const initial = m[1].charAt(0).toUpperCase();
+  return `${initial}${m[2]}`;
+}
+
 export function generarCuestionarioHTML(template: string, data: CuestionarioData): string {
   const key = data.storageKey || "quiz_progress";
   const total = data.questions.length;
   const casos = data.questions.filter((q) => /^(C|INT)/i.test(q.id)).length;
   return template
+    .replace("__LOGO__", generarLogo(data.header.title))
     .replace("__TITLE__", esc(data.header.title))
     .replaceAll("__TITLE__", esc(data.header.title))
     .replace("__HEADER_SUB__", esc(data.header.sub))
