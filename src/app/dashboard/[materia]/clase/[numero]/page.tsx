@@ -300,7 +300,7 @@ function handleAudioAction(archivo: Archivo) {
     }
   }
 
-   function handleCardClick(archivo: Archivo | null) {
+   async function handleCardClick(archivo: Archivo | null) {
      if (!archivo) return;
      const tipo = archivo.tipo as CardTipo;
 if (isTranscription(tipo)) {
@@ -332,7 +332,17 @@ if (isTranscription(tipo)) {
       } else if (tipo === "cuestionario") {
         if (archivo.storage_key) {
           const back = `/dashboard/${materiaSlug}/clase/${numero}`;
-          window.open(`/visor/${archivo.id}?back=${encodeURIComponent(back)}&nombre=${encodeURIComponent(archivo.nombre_display)}`, "_blank");
+          let url = `/visor/${archivo.id}?back=${encodeURIComponent(back)}&nombre=${encodeURIComponent(archivo.nombre_display)}`;
+          try {
+            const tokenRes = await fetch(`/api/admin/visor-token?id=${archivo.id}`);
+            if (tokenRes.ok) {
+              const { token } = await tokenRes.json();
+              url += `&t=${encodeURIComponent(token)}`;
+            }
+          } catch {
+            // si falla el token, abre igual (el visor mostrara "No autorizado")
+          }
+          window.open(url, "_blank");
           trackActivity({ tipo: "quiz_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
   } else if (isAudioTipo(tipo)) {

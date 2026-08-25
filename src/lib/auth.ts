@@ -64,3 +64,31 @@ export function clearSessionCookieHeader(): string {
 }
 
 export const SESSION_COOKIE_NAME = SESSION_COOKIE;
+
+export function verifyVisorToken(token: string | null | undefined, archivoId: string): boolean {
+  if (!token) return false;
+  const parts = token.split(".");
+  if (parts.length !== 2) return false;
+  const [body, sig] = parts;
+  const secret = sessionSecret();
+  const expected = createHmac("sha256", secret).update(body).digest("base64url");
+  const a = Buffer.from(sig);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length || !timingSafeEqual(a, b)) return false;
+  try {
+    const payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
+    if (!payload.exp || Date.now() > payload.exp) return false;
+    if (payload.a !== archivoId) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function createVisorToken(archivoId: string): string {
+  const secret = sessionSecret();
+  const payload = { a: archivoId, exp: Date.now() + 5 * 60 * 1000 };
+  const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const sig = createHmac("sha256", secret).update(body).digest("base64url");
+  return `${body}.${sig}`;
+}
