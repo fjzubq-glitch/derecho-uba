@@ -40,7 +40,7 @@ export async function POST() {
       }
     }
 
-    return NextResponse.json({ ok: true, regenerated, skipped, errors: errors.length > 0 ? errors : undefined });
+    return NextResponse.json({ ok: true, regenerated, skipped, total: archivos.length, names: archivos.map(a => a.nombre_display), errors: errors.length > 0 ? errors : undefined });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json({ ok: false, error: msg }, { status: 500 });

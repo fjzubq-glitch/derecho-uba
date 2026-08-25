@@ -437,6 +437,8 @@ export default function AdminPage() {
 
   const [regenerating, setRegenerating] = useState(false);
   const [regenResult, setRegenResult] = useState("");
+  const [migrating, setMigrating] = useState(false);
+  const [migrateResult, setMigrateResult] = useState("");
 
   async function handleRegenerate() {
     setRegenerating(true);
@@ -453,6 +455,25 @@ export default function AdminPage() {
       setRegenResult("Error: " + String(e));
     } finally {
       setRegenerating(false);
+    }
+  }
+
+  async function handleMigrate() {
+    setMigrating(true);
+    setMigrateResult("");
+    try {
+      const res = await fetch("/api/admin/migrate-contenido", { method: "POST" });
+      const data = await res.json();
+      if (data.ok) {
+        setMigrateResult(`Migrados: ${data.migrated}/${data.total} cuestionarios`);
+        if (data.results) setMigrateResult((prev) => prev + "\n" + data.results.join("\n"));
+      } else {
+        setMigrateResult("Error: " + data.error);
+      }
+    } catch (e) {
+      setMigrateResult("Error: " + String(e));
+    } finally {
+      setMigrating(false);
     }
   }
 
@@ -805,10 +826,34 @@ export default function AdminPage() {
                 >
                   {regenerating ? "Regenerando..." : "Regenerar HTML"}
                 </button>
+                <button
+                  onClick={handleMigrate}
+                  disabled={migrating}
+                  style={{
+                    padding: "7px 14px",
+                    fontSize: "11px",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    background: "var(--color-gold)",
+                    color: "var(--color-ink)",
+                    border: "none",
+                    borderRadius: 0,
+                    cursor: migrating ? "not-allowed" : "pointer",
+                    opacity: migrating ? 0.5 : 1,
+                  }}
+                >
+                  {migrating ? "Migrando..." : "Migrar contenido"}
+                </button>
               </div>
               {regenResult && (
                 <div style={{ padding: "10px 14px", marginBottom: "16px", background: regenResult.startsWith("Error") ? "rgba(224,85,85,0.08)" : "rgba(185,154,98,0.08)", border: `1px solid ${regenResult.startsWith("Error") ? "rgba(224,85,85,0.3)" : "var(--color-gold-dim)"}`, borderRadius: 0 }}>
                   <p style={{ fontSize: "12px", color: regenResult.startsWith("Error") ? "#E05555" : "var(--color-gold)" }}>{regenResult}</p>
+                </div>
+              )}
+              {migrateResult && (
+                <div style={{ padding: "10px 14px", marginBottom: "16px", background: migrateResult.startsWith("Error") ? "rgba(224,85,85,0.08)" : "rgba(95,184,138,0.08)", border: `1px solid ${migrateResult.startsWith("Error") ? "rgba(224,85,85,0.3)" : "rgba(95,184,138,0.3)"}`, borderRadius: 0, whiteSpace: "pre-wrap" }}>
+                  <p style={{ fontSize: "12px", color: migrateResult.startsWith("Error") ? "#E05555" : "#5fb88a" }}>{migrateResult}</p>
                 </div>
               )}
               <AdminMaterias />
