@@ -38,7 +38,7 @@ interface Clase {
 }
 
 interface EditData {
-  tipo: "clase" | "archivo" | "punteo_clase";
+  tipo: "clase" | "archivo" | "punteo_clase" | "cuestionario";
   id: string;
   data: Record<string, string | number>;
 }
@@ -289,7 +289,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
           setProcessing(false);
           return;
         }
-      } else if (replacing.tipo === "archivo" || replacing.tipo === "punteo_clase") {
+      } else if (replacing.tipo === "archivo" || replacing.tipo === "punteo_clase" || replacing.tipo === "cuestionario") {
         if (newFile) {
           const formData = new FormData();
           formData.append("archivoId", replacing.archivoId);
@@ -439,6 +439,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     transcripcion: <FileText style={{ width: "14px", height: "14px" }} />,
     punteo_clase: <FileText style={{ width: "14px", height: "14px" }} />,
     archivo: <FileText style={{ width: "14px", height: "14px" }} />,
+    cuestionario: <Check style={{ width: "14px", height: "14px" }} />,
     enlace: <Link2 style={{ width: "14px", height: "14px" }} />,
     youtube: <ExternalLink style={{ width: "14px", height: "14px" }} />,
   };
@@ -449,11 +450,12 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     transcripcion: "Transcripción",
     punteo_clase: "Punteo de clase",
     archivo: "Archivo adjunto",
+    cuestionario: "Cuestionario interactivo",
     enlace: "Enlace útil",
     youtube: "YouTube",
   };
 
-  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo" || tipo === "punteo_clase";
+  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo" || tipo === "punteo_clase" || tipo === "cuestionario";
 
   const actionBtnStyle: React.CSSProperties = {
     padding: "6px 12px",
@@ -1015,7 +1017,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                   color: "var(--color-text)",
                 }}
               >
-                Editar {editing.tipo === "clase" ? "Clase" : editing.tipo === "punteo_clase" ? "Punteo de clase" : "Archivo"}
+                Editar {editing.tipo === "clase" ? "Clase" : TIPO_LABELS[editing.tipo] || "Archivo"}
               </h3>
               <button
                 onClick={() => setEditing(null)}
@@ -1155,7 +1157,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                   marginBottom: "8px",
                 }}
               >
-                Eliminar {deleting.tipo === "clase" ? "Clase" : deleting.tipo === "punteo_clase" ? "Punteo de clase" : "Archivo"}
+                Eliminar {deleting.tipo === "clase" ? "Clase" : TIPO_LABELS[deleting.tipo] || "Archivo"}
               </h3>
               <p
                 style={{
@@ -1300,7 +1302,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 </>
               )}
 
-              {(replacing.tipo === "archivo" || replacing.tipo === "punteo_clase") && (
+              {(replacing.tipo === "archivo" || replacing.tipo === "punteo_clase" || replacing.tipo === "cuestionario") && (
                 <div>
                   <label style={labelStyle}>Archivo nuevo (o pegá un link)</label>
                   <div

@@ -6,7 +6,7 @@ import { formatFechaLocal } from "@/lib/utils";
 import { Upload, FileText, X, Check, Loader2, Headphones, Link2, Play } from "@/components/icons";
 
 interface UploadItem {
-  tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "punteo_clase" | "enlace";
+  tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "punteo_clase" | "enlace" | "cuestionario";
   nombre: string;
   archivo?: File;
   driveLink?: string;
@@ -92,6 +92,11 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const punteoInputRef = useRef<HTMLInputElement>(null);
   const [punteoDropHover, setPunteoDropHover] = useState(false);
 
+  const [cuestionarioNombre, setCuestionarioNombre] = useState("");
+  const [cuestionarioFile, setCuestionarioFile] = useState<File | null>(null);
+  const cuestionarioInputRef = useRef<HTMLInputElement>(null);
+  const [cuestionarioDropHover, setCuestionarioDropHover] = useState(false);
+
   const [enlaceNombre, setEnlaceNombre] = useState("");
   const [enlaceUrl, setEnlaceUrl] = useState("");
 
@@ -114,10 +119,11 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     (transcripcionMethod === "texto" && transcripcionTexto.trim() !== "");
   const hasArchivo = archivoFile !== null || (archivoUseLink && archivoLink.trim() !== "");
   const hasPunteo = punteoFile !== null || (punteoUseLink && punteoLink.trim() !== "");
+  const hasCuestionario = cuestionarioFile !== null;
   const hasEnlace = enlaceUrl.trim() !== "";
   const hasClaseYoutube = claseYoutubeItems.some((i) => i.url.trim() !== "");
 
-  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasPunteo, hasEnlace, hasClaseYoutube].filter(Boolean).length;
+  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasPunteo, hasEnlace, hasClaseYoutube, hasCuestionario].filter(Boolean).length;
   useEffect(() => {
     if (materias.length > 0 && !materiaId) {
       setMateriaId(materias[0].id);
@@ -228,6 +234,10 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
       }
     }
 
+    if (hasCuestionario) {
+      items.push({ tipo: "cuestionario", nombre: cuestionarioNombre || `Cuestionario Clase ${claseNumero}`, archivo: cuestionarioFile as File });
+    }
+
     if (hasEnlace) {
       items.push({ tipo: "enlace", nombre: enlaceNombre || `Enlace útil`, driveLink: enlaceUrl });
     }
@@ -279,6 +289,8 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     setPunteoFile(null);
     setPunteoLink("");
     setPunteoUseLink(false);
+    setCuestionarioNombre("");
+    setCuestionarioFile(null);
     setEnlaceNombre("");
     setEnlaceUrl("");
     setClaseYoutubeItems([{ nombre: "", url: "" }]);
@@ -901,6 +913,47 @@ Clase Virtual
           )}
         </div>
 
+        {/* Cuestionario interactivo (solo admin) */}
+        <div style={{ padding: "24px", border: "1px dashed var(--color-gold-dim)", borderRadius: 0 }}>
+          <h3 style={sectionHeaderStyle}>
+            <Check style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+            Cuestionario interactivo
+          </h3>
+
+          <input
+            type="text"
+            value={cuestionarioNombre}
+            onChange={(e) => setCuestionarioNombre(e.target.value)}
+            placeholder="Nombre del cuestionario (ej: Cuestionario Clase 5)"
+            aria-label="Nombre del cuestionario"
+            style={{ ...inputStyle, marginBottom: "16px" }}
+          />
+
+          <div className="space-y-3">
+            <DropZone
+              file={cuestionarioFile}
+              onFile={(f) => setCuestionarioFile(f)}
+              onClear={() => setCuestionarioFile(null)}
+              hover={cuestionarioDropHover}
+              onHover={setCuestionarioDropHover}
+              inputRef={cuestionarioInputRef}
+            />
+            <input
+              ref={cuestionarioInputRef}
+              type="file"
+              accept=".html,.htm,text/html"
+              onChange={(e) => {
+                const f = e.target.files?.[0] || null;
+                if (f) setCuestionarioFile(f);
+              }}
+              style={{ display: "none" }}
+            />
+            <p style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
+              Archivo HTML. Solo visible para el administrador, no aparece para estudiantes.
+            </p>
+          </div>
+        </div>
+
         {/* Enlace útil */}
         <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
           <h3 style={sectionHeaderStyle}>
@@ -952,6 +1005,7 @@ Clase Virtual
             { label: "Punteo de clase", ready: hasPunteo },
             { label: "Archivo adjunto", ready: hasArchivo },
             { label: "Enlace", ready: hasEnlace },
+            { label: "Cuestionario", ready: hasCuestionario },
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-2">
               <div
@@ -986,10 +1040,10 @@ Clase Virtual
           style={{
             fontFamily: "var(--font-ibm-plex-mono)",
             fontSize: "12px",
-            color: loadedCount === 6 ? "var(--color-gold)" : "var(--color-text-muted)",
+            color: loadedCount === 7 ? "var(--color-gold)" : "var(--color-text-muted)",
           }}
         >
-          {loadedCount}/6 cargados
+          {loadedCount}/7 cargados
         </span>
       </div>
 

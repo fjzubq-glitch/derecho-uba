@@ -36,7 +36,7 @@ interface MateriaData {
   nombre: string;
 }
 
-type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "punteo_clase" | "archivo" | "enlace";
+type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "punteo_clase" | "archivo" | "enlace" | "cuestionario";
 
 function isHtmlArchivo(a: Archivo | null): boolean {
   if (!a || !a.storage_key) return false;
@@ -92,6 +92,11 @@ const CARD_CONFIG: Record<CardTipo, {
     label: "ENLACE ÚTIL",
     subtitle: () => "Abrir enlace",
   },
+  cuestionario: {
+    icon: <Check style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
+    label: "CUESTIONARIO INTERACTIVO",
+    subtitle: () => "Abrir cuestionario",
+  },
 };
 
 export default function ClaseNumeroPage() {
@@ -119,7 +124,16 @@ export default function ClaseNumeroPage() {
 
   // Transcription expand
   const [openTranscripcion, setOpenTranscripcion] = useState(false);
+  // Solo el admin ve las cards de cuestionario
+  const [esAdmin, setEsAdmin] = useState(false);
   let cardIndex = 0;
+
+  useEffect(() => {
+    fetch("/api/admin/session")
+      .then((r) => r.json())
+      .then((d) => setEsAdmin(!!d.ok))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (materiaSlug && numero) {
@@ -315,7 +329,13 @@ if (isTranscription(tipo)) {
             trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
           }
         }
- } else if (isAudioTipo(tipo)) {
+      } else if (tipo === "cuestionario") {
+        if (archivo.storage_key) {
+          const back = `/dashboard/${materiaSlug}/clase/${numero}`;
+          window.open(`/visor/${archivo.id}?back=${encodeURIComponent(back)}&nombre=${encodeURIComponent(archivo.nombre_display)}`, "_blank");
+          trackActivity({ tipo: "quiz_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+        }
+  } else if (isAudioTipo(tipo)) {
        handleAudioAction(archivo);
      }
    }
@@ -665,7 +685,8 @@ if (isTranscription(tipo)) {
 
    // Orden fijo de las cards en todas las clases:
   // 1° audio o video de la clase, 2° transcripción, 3° punteo, 4° resto
-  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "punteo_clase", "archivo", "enlace"];
+  // El cuestionario solo se muestra al administrador
+  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "punteo_clase", "archivo", "enlace", ...(esAdmin ? (["cuestionario"] as CardTipo[]) : [])];
 
   if (loading) {
     return (
@@ -798,7 +819,7 @@ if (isTranscription(tipo)) {
           </div>
 
           {/* Cards de contenido */}
-          {clase.archivos.length === 0 ? (
+          {clase.archivos.filter((a) => esAdmin || a.tipo !== "cuestionario").length === 0 ? (
             <div
               style={{
                 padding: "80px 48px",

@@ -265,7 +265,7 @@ export default function AdminPage() {
     claseTitulo: string,
     claseFecha: string,
     items: Array<{
-      tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "punteo_clase" | "enlace";
+      tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "punteo_clase" | "enlace" | "cuestionario";
       nombre: string;
       archivo?: File;
       driveLink?: string;
