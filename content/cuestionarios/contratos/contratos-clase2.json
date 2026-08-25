@@ -1,0 +1,564 @@
+{
+  "header": {
+    "title": "Contratos · Clase 2",
+    "sub": "Mutuo, intereses y anatocismo",
+    "meta": "14 ítems · 8 preguntas + 3 integradoras + 3 casos"
+  },
+  "storageKey": "contratos_clase2_progress",
+  "questions": [
+    {
+      "id": "P1",
+      "topic": "Definición y caracteres del mutuo",
+      "priority": "alto",
+      "enunciado": "¿Qué elementos componen la definición legal del contrato de mutuo y qué caracteres se derivan de ella?",
+      "pista": "Art. 1525 CCyC: entrega en propiedad de cosas fungibles + obligación de restituir. Caracteres: consensual, bilateral, oneroso por regla, no formal (salvo consumidor).",
+      "respuestaLibre": "El mutuante se compromete a entregar en propiedad una cantidad determinada de cosas fungibles al mutuario, quien se obliga a devolver la misma cantidad, calidad y especie en el plazo pactado. Caracteres: consensual, bilateral, oneroso por regla general, y no formal salvo consumidor.",
+      "opciones": [
+        "El mutuo es un contrato real que se perfecciona con la entrega, bilateral, y siempre gratuito.",
+        "El mutuante entrega en propiedad cosas fungibles y el mutuario devuelve igual cantidad, calidad y especie. Es consensual, bilateral, oneroso por regla general, y no formal salvo consumidor.",
+        "El mutuo es un contrato unilateral donde solo el mutuario asume obligaciones, y es formal en todos los casos.",
+        "El mutuo requiere entrega para perfeccionarse, es unilateral, y la gratuidad se presume salvo pacto en contrario."
+      ],
+      "correcta": 1,
+      "explicacion": "El mutuo es consensual, bilateral, oneroso por regla general, y no formal salvo que el mutuario sea consumidor.",
+      "errorTipico": "Creer que la onerosidad se presume salvo pacto en contrario; la regla es inversa."
+    },
+    {
+      "id": "P2",
+      "topic": "Riesgo de la cosa en el mutuo",
+      "priority": "critico",
+      "enunciado": "Camila le presta dinero a Bruno. Si ese dinero es robado del domicilio de Bruno sin culpa suya, ¿quién soporta esa pérdida y por qué?",
+      "pista": "En el mutuo, el mutuario se convierte en propietario de las cosas fungibles. Rige 'la cosa perece para su dueño'.",
+      "respuestaLibre": "Bruno soporta la pérdida, porque al recibir las cosas fungibles en préstamo se convirtió en propietario de ellas y rige la regla de que la cosa perece para su dueño. Distinto sería en el comodato.",
+      "opciones": [
+        "Camila, porque Bruno era mero tenedor del dinero y no asume el riesgo.",
+        "Bruno, porque al recibir el dinero se convirtió en propietario y rige 'la cosa perece para su dueño'.",
+        "Se divide la pérdida entre ambos, porque ninguno tuvo culpa.",
+        "Camila, porque el dinero se perdió por caso fortuito y Bruno no es responsable."
+      ],
+      "correcta": 1,
+      "explicacion": "Bruno soporta la pérdida porque en el mutuo el mutuario se convierte en propietario de las cosas fungibles, y rige la regla de que la cosa perece para su dueño.",
+      "errorTipico": "Aplicar al mutuo la lógica del comodato (donde el que recibe la cosa no asume el riesgo)."
+    },
+    {
+      "id": "P3",
+      "topic": "Contrato real vs. consensual",
+      "priority": "alto",
+      "enunciado": "¿Por qué la calificación del mutuo como contrato real bajo el Código de Vélez generaba un problema práctico que hoy no existe?",
+      "pista": "Bajo Vélez, sin entrega no había contrato perfeccionado ni incumplimiento exigible. Bajo CCyC, el mutuo es consensual.",
+      "respuestaLibre": "Bajo Vélez, el mutuo se perfeccionaba recién con la entrega de la cosa, no con el acuerdo de voluntades. Si el mutuante no entregaba, no había contrato perfeccionado ni incumplimiento exigible. Bajo el CCyC, el mutuo pasó a ser consensual: el contrato queda perfeccionado con el solo acuerdo de partes.",
+      "opciones": [
+        "Bajo Vélez, el mutuo era consensual y no había problema; bajo el CCyC se volvió real.",
+        "Bajo Vélez, sin entrega no había contrato perfeccionado ni incumplimiento exigible; bajo el CCyC, el mutuo es consensual y el mutuario puede exigir el cumplimiento.",
+        "Bajo Vélez, el mutuo era bilateral; bajo el CCyC se volvió unilateral.",
+        "No hay diferencia práctica entre ambos regímenes."
+      ],
+      "correcta": 1,
+      "explicacion": "Bajo Vélez, sin entrega no había contrato perfeccionado ni incumplimiento exigible; bajo el CCyC, el mutuo es consensual y el mutuario puede exigir el cumplimiento.",
+      "errorTipico": "Aplicar al régimen vigente la lógica del contrato real, asumiendo que sin entrega no hay obligación exigible."
+    },
+    {
+      "id": "P4",
+      "topic": "Interés compensatorio vs. moratorio",
+      "priority": "alto",
+      "enunciado": "¿Qué distingue al interés compensatorio del moratorio, y cómo se determina la tasa moratoria cuando no fue pactada?",
+      "pista": "Compensatorio: retribuye por no contar con el capital. Moratorio: sanciona la mora. Si no se pacta, la fija el BCRA o el juez.",
+      "respuestaLibre": "El compensatorio retribuye al mutuante por no contar con el uso de su capital; se debe por el solo transcurso del plazo, sin incumplimiento. El moratorio se debe por la mora; conceptualmente debería ser más gravoso. Si no se pactó la tasa moratoria, el Código remite a la tasa que fije el Banco Central; el CCyC habilita al juez a fijarla.",
+      "opciones": [
+        "El compensatorio se debe por mora y el moratorio por el solo transcurso del plazo.",
+        "El compensatorio retribuye al mutuante por no contar con el uso de su capital; el moratorio se debe por la mora y sanciona el incumplimiento. Si no se pacta, la fija el BCRA o el juez.",
+        "Ambos son idénticos y se acumulan automáticamente.",
+        "El compensatorio es obligatorio y el moratorio solo se debe si se pactó expresamente."
+      ],
+      "correcta": 1,
+      "explicacion": "El compensatorio retribuye al mutuante por no contar con el uso de su capital; el moratorio se debe por la mora. Si no se pacta, la fija el BCRA o, en su defecto, el juez.",
+      "errorTipico": "Creer que sin pacto expreso no corresponden intereses moratorios; en realidad se deben igual, por la sola mora."
+    },
+    {
+      "id": "P5",
+      "topic": "Interés punitorio y su acumulación",
+      "priority": "critico",
+      "enunciado": "El interés punitorio fue pactado como cláusula penal para el caso de mora. ¿Se acumula automáticamente al interés moratorio?",
+      "pista": "Punitorio = cláusula penal. No se acumula automáticamente al moratorio. Facultad judicial de reducción.",
+      "respuestaLibre": "No automáticamente. Si el punitorio funciona como cláusula penal —indemnización fija ante la mora—, como regla general no correspondería reclamarlo además del moratorio, porque ambos compensan el mismo daño derivado del incumplimiento. La procedencia conjunta depende de lo efectivamente pactado, y el juez conserva la facultad de reducir los intereses cuando resulten excesivos.",
+      "opciones": [
+        "Sí, siempre se acumulan sin control judicial.",
+        "No automáticamente. Si el punitorio es cláusula penal, no corresponde sumarlo al moratorio sin más. El juez puede reducir intereses excesivos.",
+        "Solo se acumula si el juez lo ordena expresamente.",
+        "El punitorio reemplaza al moratorio, nunca coexisten."
+      ],
+      "correcta": 1,
+      "explicacion": "No automáticamente. Si el punitorio es cláusula penal, ambos compensan el mismo daño. El juez conserva la facultad de reducir intereses excesivos.",
+      "errorTipico": "Asumir que, por estar ambos pactados, corresponde sumarlos siempre sin control judicial."
+    },
+    {
+      "id": "P6",
+      "topic": "Supuestos de anatocismo",
+      "priority": "alto",
+      "enunciado": "¿En qué tres supuestos procede el anatocismo (capitalización de intereses) bajo el CCyC?",
+      "pista": "Tres supuestos: (1) pacto (mínimo 6 meses), (2) demanda judicial (deuda líquida), (3) liquidación judicial (deuda no líquida).",
+      "respuestaLibre": "Pacto entre las partes, con periodicidad mínima de seis meses. Demanda judicial de una deuda ya líquida y exigible: los intereses se capitalizan por única vez desde la notificación de la demanda. Liquidación judicial del crédito cuando la deuda no era líquida desde el inicio.",
+      "opciones": [
+        "Solo cuando las partes lo pactan expresamente.",
+        "Pacto entre partes (mínimo 6 meses), demanda judicial de deuda líquida, y liquidación judicial de deuda no líquida.",
+        "Siempre opera de oficio por ministerio de la ley.",
+        "Solo cuando el juez lo ordena en una ejecución fiscal."
+      ],
+      "correcta": 1,
+      "explicacion": "Tres supuestos: pacto (mínimo 6 meses), demanda judicial (deuda líquida y exigible), liquidación judicial (deuda no líquida desde el inicio).",
+      "errorTipico": "Pensar que el anatocismo solo procede si las partes lo pactan, ignorando los dos supuestos judiciales."
+    },
+    {
+      "id": "P7",
+      "topic": "Prescripción de capital e intereses",
+      "priority": "critico",
+      "enunciado": "Un mutuante pretende reclamar, a los 4 años de otorgado el préstamo, tanto el capital como todos los intereses devengados durante ese período. ¿Puede hacerlo íntegramente?",
+      "pista": "Capital: 5 años. Intereses: 2 años (obligación periódica). No confundir plazos.",
+      "respuestaLibre": "Capital: la acción de restitución del capital no tiene plazo especial, se aplica el plazo genérico de 5 años; a los 4 años, sigue vigente. Intereses: los intereses son obligación periódica y prescriben a los 2 años; solo puede reclamar los devengados dentro de los últimos 2 años.",
+      "opciones": [
+        "Sí, puede reclamar todo porque el plazo genérico de 5 años cubre tanto capital como intereses.",
+        "No: el capital prescribe a los 5 años (aún vigente), pero los intereses prescriben a los 2 años (obligación periódica), solo puede reclamar los últimos 2 años.",
+        "No puede reclamar nada porque ya prescribió todo a los 3 años.",
+        "Solo puede reclamar el capital, los intereses se extinguen automáticamente."
+      ],
+      "correcta": 1,
+      "explicacion": "Capital: plazo genérico de 5 años, a los 4 años sigue vigente. Intereses: obligación periódica, prescriben a los 2 años, solo los devengados dentro de los últimos 2 años.",
+      "errorTipico": "Aplicar un único plazo de prescripción (el genérico de 5 años) a todo el reclamo, sin distinguir que los intereses tienen un plazo propio y más breve."
+    },
+    {
+      "id": "P8",
+      "topic": "Mutuo de consumo y vicios en dinero",
+      "priority": "alto",
+      "enunciado": "Una entidad dedicada a otorgar préstamos de consumo celebra un mutuo de dinero con una persona física consumidora. ¿Qué formalidades adicionales exige el CCyC, y qué ocurre con la responsabilidad por vicios si el dinero resultara falso?",
+      "pista": "Mutuo de consumo: forma escrita, TAE, condiciones claras. Vicios en dinero: mutuante NO responde por billetes falsos.",
+      "respuestaLibre": "Formalidades: el contrato debe ser escrito, debe especificar la tasa anual efectiva, y debe detallar las condiciones a favor del consumidor. Responsabilidad por vicios: el mutuante responde por vicios de cosas fungibles, pero esa responsabilidad no se aplica al dinero: si los billetes resultan falsos, el mutuario no puede reclamar por vicios.",
+      "opciones": [
+        "No hay formalidades adicionales; se rige por las mismas reglas que el mutuo entre particulares.",
+        "Formalidades: forma escrita, TAE, condiciones claras. Vicios: el mutuante NO responde por billetes falsos.",
+        "Solo se exige forma escrita. El mutuante responde por vicios en todos los casos.",
+        "El contrato puede ser verbal y el mutuante siempre responde por vicios del dinero."
+      ],
+      "correcta": 1,
+      "explicacion": "Formalidades: escritura, TAE, condiciones claras. Responsabilidad por vicios: el mutuante NO responde por billetes falsos.",
+      "errorTipico": "Aplicar sin más la obligación general de saneamiento del mutuante al dinero entregado, ignorando la excepción expresa del Código."
+    },
+    {
+      "id": "INT-a",
+      "topic": "Integradora · Intereses en mora",
+      "priority": "critico",
+      "contexto": "Camila (mutuante) le presta a Rodrigo (mutuario) USD 50.000, pactando un interés compensatorio del 0,5% mensual y un interés punitorio del 1% mensual para el caso de mora, sin fijar plazo de restitución ni pactar interés moratorio. Camila le requiere fehacientemente la devolución del capital, y Rodrigo no restituye dentro de los 10 días siguientes, incurriendo en mora. Pasan 3 años sin que Camila reclame nada.",
+      "enunciado": "(a) ¿Qué intereses puede reclamar Camila por el período de mora, y cómo se relacionan entre sí el moratorio y el punitorio?",
+      "pista": "Interés compensatorio hasta la mora. Moratorio: lo fija BCRA/juez. Punitorio no se acumula automáticamente.",
+      "respuestaLibre": "Camila puede reclamar el interés compensatorio pactado (0,5% mensual) hasta la mora. A partir de la mora, dado que no pactaron moratorio, correspondería el que fije el BCRA o el juez. El punitorio (1% mensual, como cláusula penal) no se acumula automáticamente con el moratorio; la procedencia conjunta depende de lo pactado y queda sujeta a la facultad judicial de reducir intereses excesivos.",
+      "opciones": [
+        "Puede reclamar compensatorio, moratorio y punitorio acumulados sin límite.",
+        "Compensatorio hasta la mora. Moratorio lo fija BCRA/juez. Punitorio no se acumula automáticamente al moratorio.",
+        "Solo puede reclamar el compensatorio; los otros dos no corresponden.",
+        "Puede reclamar punitorio y moratorio, pero no el compensatorio."
+      ],
+      "correcta": 1,
+      "explicacion": "Compensatorio hasta la mora. Moratorio lo fija BCRA/juez. Punitorio no se acumula automáticamente al moratorio.",
+      "errorTipico": "Asumir que los tres tipos de interés se acumulan sin control judicial."
+    },
+    {
+      "id": "INT-b",
+      "topic": "Integradora · Prescripción de intereses",
+      "priority": "critico",
+      "contexto": "Camila prestó USD 50.000 a Rodrigo con intereses compensatorio y punitorio pactados. Rodrigo incurrió en mora y pasaron 3 años sin reclamo.",
+      "enunciado": "(b) ¿Puede reclamar la totalidad de los intereses devengados durante los 3 años, o existe algún límite?",
+      "pista": "Intereses = obligación periódica → prescriben a 2 años.",
+      "respuestaLibre": "No en su totalidad: los intereses son obligación periódica y prescriben a los 2 años, de modo que Camila solo puede reclamar los devengados dentro de los últimos 2 años anteriores al reclamo, no los 3 años completos.",
+      "opciones": [
+        "Sí, puede reclamar todos los intereses de los 3 años.",
+        "No: los intereses prescriben a los 2 años como obligación periódica, solo puede reclamar los últimos 2 años.",
+        "No puede reclamar ningún interés porque todos prescribieron.",
+        "Solo puede reclamar intereses si presentó demanda antes del año."
+      ],
+      "correcta": 1,
+      "explicacion": "Los intereses son obligación periódica y prescriben a los 2 años. Solo puede reclamar los devengados dentro de los últimos 2 años.",
+      "errorTipico": "Asumir que los intereses se rigen por el mismo plazo de prescripción que el capital (5 años)."
+    },
+    {
+      "id": "INT-c",
+      "topic": "Integradora · Prescripción del capital",
+      "priority": "critico",
+      "contexto": "Camila prestó USD 50.000 a Rodrigo. Pasaron 3 años desde el préstamo y Camila decide cobrar.",
+      "enunciado": "(c) ¿Puede reclamar el capital prestado, teniendo en cuenta que pasaron 3 años?",
+      "pista": "Capital: plazo genérico 5 años, sigue vigente a los 3 años.",
+      "respuestaLibre": "Sí. La acción de restitución del capital no tiene plazo especial de prescripción, por lo que rige el plazo genérico de 5 años; a los 3 años, la acción sigue vigente.",
+      "opciones": [
+        "No, porque el capital también prescribió a los 2 años.",
+        "Sí, porque la acción de restitución del capital prescribe a los 5 años (plazo genérico) y a los 3 años sigue vigente.",
+        "No, porque sin plazo pactado la acción prescribe a los 6 meses.",
+        "Solo si Camila presentó carta documento antes del año."
+      ],
+      "correcta": 1,
+      "explicacion": "La acción de restitución del capital prescribe a los 5 años (plazo genérico). A los 3 años, la acción sigue vigente.",
+      "errorTipico": "Confundir el plazo de prescripción del capital con el de los intereses."
+    },
+    {
+      "id": "C1",
+      "topic": "Caso 1 · El préstamo que se pierde por robo",
+      "priority": "alto",
+      "contexto": "Agustín le presta a Julieta $200.000 en efectivo, sin fijar plazo de devolución. Una semana después, el dinero es sustraído del domicilio de Julieta en un robo del que ella no tuvo ninguna responsabilidad. Julieta sostiene que no debe restituir nada, porque el dinero se perdió por un hecho ajeno a su voluntad y ella —según entiende— solo tenía el dinero en préstamo, no en propiedad.",
+      "enunciado": "¿Debe Julieta restituir el dinero? ¿Por qué?",
+      "pista": "Mutuo → propiedad para el mutuario → cosa perece para su dueño.",
+      "respuestaLibre": "Figura jurídica: Contrato de mutuo de dinero (art. 1525 CCyC). (1) El contrato es un mutuo porque tiene por objeto una cosa fungible (dinero) y Agustín se comprometió a entregarla en propiedad. (2) Julieta no es mera tenedora: al recibirlo, se convirtió en propietaria. (3) Rige la cosa perece para su dueño; la pérdida por robo la soporta ella. Respuesta: Julieta debe restituir $200.000, con más los intereses si fueron pactados, dentro de los 10 días de requerido.",
+      "opciones": [
+        "No, porque el dinero se perdió por caso fortuito y ella no tuvo culpa.",
+        "Sí, porque en el mutuo Julieta se convirtió en propietaria y la cosa perece para su dueño.",
+        "Solo si Agustín demuestra que Julieta fue negligente.",
+        "No, porque no había plazo pactado."
+      ],
+      "correcta": 1,
+      "explicacion": "Julieta debe restituir porque en el mutuo se convirtió en propietaria y la cosa perece para su dueño.",
+      "errorTipico": "Creer que Julieta es mera tenedora del dinero y que el caso fortuito la libera; esa lógica corresponde al comodato, no al mutuo."
+    },
+    {
+      "id": "C2",
+      "topic": "Caso 2 · La capitalización mensual de intereses",
+      "priority": "alto",
+      "contexto": "Camila le presta a Bruno $50.000 a devolver en dos años, pactando un interés compensatorio del 3% mensual, con la cláusula de que los intereses devengados se capitalizarán mensualmente y se sumarán al capital adeudado. A los seis meses, Bruno cuestiona la validez de esa cláusula.",
+      "enunciado": "¿Es válida la cláusula de capitalización mensual pactada entre Camila y Bruno?",
+      "pista": "Anatocismo pactado: periodicidad mínima 6 meses. Capitalización mensual = inválida.",
+      "respuestaLibre": "Figura jurídica: Anatocismo pactado. (1) El anatocismo pactado es válido, pero solo si la periodicidad no es menor a 6 meses. (2) La cláusula prevé capitalización mensual, inferior al mínimo legal. (3) La cláusula de capitalización mensual es inválida, sin afectar la validez del interés compensatorio pactado. Respuesta: La cláusula de capitalización mensual es inválida por infringir el plazo mínimo de 6 meses.",
+      "opciones": [
+        "Sí, porque las partes pueden pactar libremente la periodicidad de capitalización.",
+        "No, porque la capitalización mensual infringe el plazo mínimo de 6 meses para el anatocismo pactado.",
+        "Solo es inválida si Bruno demuestra que fue engañado.",
+        "Sí, pero solo si Bruno es comerciante."
+      ],
+      "correcta": 1,
+      "explicacion": "La cláusula de capitalización mensual es inválida por infringir el plazo mínimo de 6 meses del anatocismo pactado.",
+      "errorTipico": "Asumir que cualquier periodicidad de capitalización es válida siempre que esté expresamente pactada, sin reparar en el piso legal de seis meses."
+    },
+    {
+      "id": "C3",
+      "topic": "Caso 3 · El préstamo por billetera virtual",
+      "priority": "alto",
+      "contexto": "María, consumidora, toma un préstamo de $500.000 a través de una billetera virtual que opera bajo el sistema francés de amortización, sin que el contrato le haya especificado por escrito la tasa anual efectiva ni las condiciones aplicables en caso de mora. Al tercer mes, María deja de pagar y la empresa le reclama un interés moratorio considerablemente más alto que el compensatorio.",
+      "enunciado": "¿Puede María cuestionar el reclamo de la empresa?",
+      "pista": "Mutuo de consumo: formalidades adicionales. Moratorio abusivo: control de consumidor.",
+      "respuestaLibre": "Figura jurídica: Mutuo de dinero de consumo. (1) Mutuo de dinero. (2) Como María es consumidora, formalidades: escritura, TAE, condiciones claras. (3) Incumplimiento de formalidades + moratorio abusivo habilita control de abusividad por Ley de Defensa del Consumidor. (4) Bajo sistema francés, la proporción de capital amortizado a los 3 meses es baja. Respuesta: María puede cuestionar la falta de formalidades y la abusividad del moratorio.",
+      "opciones": [
+        "No, porque María aceptó las condiciones al firmar el contrato digital.",
+        "Sí, porque la empresa incumplió formalidades (escritura, TAE, condiciones claras) y el moratorio puede ser abusivo.",
+        "Solo si María demuestra que no leyó las condiciones.",
+        "No, porque el sistema francés de amortización es legal."
+      ],
+      "correcta": 1,
+      "explicacion": "María puede cuestionar la falta de formalidades y la abusividad del interés moratorio.",
+      "errorTipico": "Asumir que, por tratarse de un mutuo de dinero como cualquier otro, no rigen formalidades especiales ni control de abusividad."
+    }
+  ],
+  "material": [
+    {
+      "id": "mat-p1",
+      "title": "1. Definición legal del contrato de mutuo y caracteres",
+      "badges": [
+        {
+          "text": "A1",
+          "kind": "fuente"
+        },
+        {
+          "text": "Cae siempre",
+          "kind": "cae"
+        }
+      ],
+      "enunciado": "¿Qué elementos componen la definición legal del contrato de mutuo y qué caracteres se derivan de ella?",
+      "respuesta": "<p><b>(a) Definición legal (art. 1525 CCyC):</b></p>\r\n              <ol>\r\n                <li>El mutuante se compromete a entregar en propiedad una cantidad determinada de cosas fungibles al mutuario.</li>\r\n                <li>El mutuario se obliga a devolver la misma cantidad, calidad y especie, en el plazo pactado.</li>\r\n              </ol>\r\n              <p style=\"margin-top:10px;\"><b>(b) Caracteres que se derivan:</b></p>\r\n              <ol>\r\n                <li><b>Consensual:</b> se perfecciona por el solo consentimiento, sin necesidad de entrega.</li>\r\n                <li><b>Bilateral:</b> ambas partes asumen obligaciones recíprocas (entregar / restituir).</li>\r\n                <li><b>Oneroso por regla general:</b> la gratuidad no se presume, requiere pacto expreso.</li>\r\n                <li><b>No formal,</b> salvo que el mutuario sea consumidor, caso en que se exige forma escrita, tasa anual efectiva y condiciones claras.</li>\r\n              </ol>",
+      "errorTipico": "❌ Error típico: Creer que la onerosidad se presume salvo pacto en contrario; en realidad la regla es la inversa — el mutuo se presume oneroso y la gratuidad debe pactarse expresamente."
+    },
+    {
+      "id": "mat-p2",
+      "title": "2. Riesgo de la cosa en el mutuo",
+      "badges": [
+        {
+          "text": "D1",
+          "kind": "fuente"
+        },
+        {
+          "text": "Trampa",
+          "kind": "trampa"
+        }
+      ],
+      "enunciado": "Camila le presta dinero a Bruno. Si ese dinero es robado del domicilio de Bruno sin que medie culpa suya, antes de la restitución, ¿quién soporta esa pérdida y por qué?",
+      "respuesta": "<p>Bruno, el mutuario, soporta la pérdida, porque al recibir las cosas fungibles en préstamo se convirtió en propietario de ellas —no en mero tenedor— y rige la regla de que la cosa perece para su dueño.</p>\r\n              <p style=\"margin-top:10px;\">Distinto sería si se tratara de un comodato: allí el comodatario es mero tenedor y el riesgo de la cosa, en principio, lo asume el comodante como propietario.</p>",
+      "errorTipico": "❌ Error típico: Aplicar al mutuo la lógica del comodato (donde el que recibe la cosa no asume el riesgo), asumiendo que \"el que recibe algo prestado nunca responde si se pierde por caso fortuito\"."
+    },
+    {
+      "id": "mat-p3",
+      "title": "3. Contrato real vs. consensual",
+      "badges": [
+        {
+          "text": "S2",
+          "kind": "fuente"
+        },
+        {
+          "text": "Trampa",
+          "kind": "trampa"
+        }
+      ],
+      "enunciado": "¿Por qué la calificación del mutuo como contrato real bajo el Código de Vélez generaba un problema práctico que hoy no existe?",
+      "respuesta": "<p><b>(a) Problema bajo el Código de Vélez:</b></p>\r\n              <ol>\r\n                <li>El mutuo se perfeccionaba recién con la entrega de la cosa, no con el acuerdo de voluntades.</li>\r\n                <li>Si el mutuante no entregaba, no había contrato perfeccionado y, por lo tanto, no había incumplimiento exigible.</li>\r\n                <li>La parte perjudicada solo podía reclamar el daño derivado de no contar con el dinero, nunca el cumplimiento de la prestación en sí.</li>\r\n              </ol>\r\n              <p style=\"margin-top:10px;\"><b>(b) Solución bajo el CCyC:</b></p>\r\n              <p>El mutuo pasó a ser consensual: el contrato queda perfeccionado con el solo acuerdo de partes, de modo que el mutuario puede exigir judicialmente el cumplimiento si el mutuante no entrega la cosa.</p>",
+      "errorTipico": "❌ Error típico: Aplicar al régimen vigente la lógica del contrato real, asumiendo que sin entrega no hay obligación exigible."
+    },
+    {
+      "id": "mat-p4",
+      "title": "4. Interés compensatorio vs. moratorio",
+      "badges": [
+        {
+          "text": "O3",
+          "kind": "fuente"
+        },
+        {
+          "text": "Pareto",
+          "kind": "pareto"
+        }
+      ],
+      "enunciado": "¿Qué distingue al interés compensatorio del moratorio, y cómo se determina la tasa moratoria cuando no fue pactada?",
+      "respuesta": "<p><b>(a) Compensatorio vs. moratorio:</b></p>\r\n              <ol>\r\n                <li>El <b>compensatorio</b> retribuye al mutuante por no contar con el uso de su capital mientras lo tiene el mutuario; se debe por el solo transcurso del plazo, sin incumplimiento.</li>\r\n                <li>El <b>moratorio</b> se debe por el solo hecho de que el deudor se constituya en mora; conceptualmente debería ser más gravoso, porque no solo compensa sino que también sanciona el incumplimiento.</li>\r\n              </ol>\r\n              <p style=\"margin-top:10px;\"><b>(b) Determinación de la tasa moratoria no pactada:</b></p>\r\n              <p>El Código remite a la tasa que fije el Banco Central; ante la falta histórica de una tasa específica del BCRA, el CCyC habilita al juez a fijarla, lo que generó criterios distintos según el fuero (Samudio en lo civil, La Razón en lo comercial, criterios cambiantes en lo laboral).</p>",
+      "errorTipico": "❌ Error típico: Creer que sin pacto expreso no corresponden intereses moratorios; en realidad se deben igual, por la sola mora, y la tasa la fija el BCRA o, en su defecto, el juez."
+    },
+    {
+      "id": "mat-p5",
+      "title": "5. Interés punitorio y su acumulación",
+      "badges": [
+        {
+          "text": "O3",
+          "kind": "fuente"
+        },
+        {
+          "text": "Trampa",
+          "kind": "trampa"
+        }
+      ],
+      "enunciado": "El interés punitorio fue pactado como cláusula penal para el caso de mora. ¿Se acumula automáticamente al interés moratorio?",
+      "respuesta": "<p>No automáticamente. Si el punitorio funciona como cláusula penal —indemnización fija ante la mora—, como regla general no correspondería reclamarlo además del moratorio, porque ambos compensan el mismo daño derivado del incumplimiento.</p>\r\n              <p style=\"margin-top:10px;\">La procedencia conjunta depende de lo efectivamente pactado por las partes, y en cualquier caso el juez conserva la facultad de reducir los intereses cuando resulten excesivos o abusivos.</p>",
+      "errorTipico": "❌ Error típico: Asumir que, por estar ambos pactados, corresponde sumarlos siempre sin control judicial."
+    },
+    {
+      "id": "mat-p6",
+      "title": "6. Supuestos de anatocismo",
+      "badges": [
+        {
+          "text": "S1",
+          "kind": "fuente"
+        },
+        {
+          "text": "Cae siempre",
+          "kind": "cae"
+        }
+      ],
+      "enunciado": "¿En qué tres supuestos procede el anatocismo (capitalización de intereses) bajo el CCyC?",
+      "respuesta": "<ol>\r\n                <li><b>Pacto entre las partes,</b> con el límite de que no puede capitalizarse con periodicidad menor a seis meses.</li>\r\n                <li><b>Demanda judicial</b> de una deuda ya líquida y exigible (por ejemplo, un pagaré): los intereses se capitalizan por única vez desde la fecha de notificación de la demanda.</li>\r\n                <li><b>Liquidación judicial del crédito</b> cuando la deuda no era líquida desde el inicio (por ejemplo, un reclamo de daños): se capitaliza si, cuantificado el crédito por sentencia y liquidación, el deudor no paga.</li>\r\n              </ol>",
+      "errorTipico": "❌ Error típico: Pensar que el anatocismo solo procede si las partes lo pactan, ignorando los dos supuestos judiciales que operan sin necesidad de pacto."
+    },
+    {
+      "id": "mat-p7",
+      "title": "7. Prescripción de capital e intereses",
+      "badges": [
+        {
+          "text": "O4",
+          "kind": "fuente"
+        },
+        {
+          "text": "Trampa",
+          "kind": "trampa"
+        }
+      ],
+      "enunciado": "Un mutuante pretende reclamar, a los 4 años de otorgado el préstamo, tanto el capital como todos los intereses devengados durante ese período. ¿Puede hacerlo íntegramente?",
+      "respuesta": "<p><b>(a) Capital:</b></p>\r\n              <p>La acción de restitución del capital no tiene plazo especial, por lo que se aplica el plazo genérico de 5 años; a los 4 años, sigue vigente.</p>\r\n              <p style=\"margin-top:10px;\"><b>(b) Intereses:</b></p>\r\n              <p>Los intereses son una obligación periódica y prescriben a los 2 años; el mutuante solo puede reclamar los devengados dentro de los últimos 2 años, no los 4 años completos.</p>",
+      "errorTipico": "❌ Error típico: Aplicar un único plazo de prescripción (el genérico de 5 años) a todo el reclamo, sin distinguir que los intereses tienen un plazo propio y más breve."
+    },
+    {
+      "id": "mat-p8",
+      "title": "8. Mutuo de consumo y vicios en dinero",
+      "badges": [
+        {
+          "text": "S3",
+          "kind": "fuente"
+        },
+        {
+          "text": "Pareto",
+          "kind": "pareto"
+        }
+      ],
+      "enunciado": "Una entidad dedicada a otorgar préstamos de consumo celebra un mutuo de dinero con una persona física que actúa como consumidora. ¿Qué formalidades adicionales exige el CCyC en ese caso, y qué ocurre con la responsabilidad por vicios si el dinero entregado resultara falso?",
+      "respuesta": "<p><b>(a) Formalidades cuando el mutuario es consumidor:</b></p>\r\n              <ol>\r\n                <li>El contrato debe ser escrito.</li>\r\n                <li>Debe especificar la tasa anual efectiva.</li>\r\n                <li>Debe detallar de manera clara y explícita las condiciones a favor del consumidor.</li>\r\n              </ol>\r\n              <p style=\"margin-top:10px;\"><b>(b) Responsabilidad por vicios en el mutuo de dinero:</b></p>\r\n              <p>El mutuante en principio responde por vicios o defectos de las cosas fungibles entregadas (régimen de saneamiento/evicción), pero esa responsabilidad no se aplica al dinero: si los billetes entregados resultan falsos, el mutuario no puede reclamar por vicios, aunque sí puede exigir el cumplimiento de la entrega de lo efectivamente pactado.</p>",
+      "errorTipico": "❌ Error típico: Aplicar sin más la obligación general de saneamiento del mutuante al dinero entregado, ignorando la excepción expresa que trae el Código para este caso."
+    },
+    {
+      "id": "mat-int",
+      "title": "Integradora · Camila y Rodrigo",
+      "badges": [
+        {
+          "text": "Cae siempre",
+          "kind": "cae"
+        }
+      ],
+      "enunciado": "(a) ¿Qué intereses puede reclamar Camila por el período de mora, y cómo se relacionan entre sí el moratorio y el punitorio en este caso? (b) ¿Puede reclamar la totalidad de los intereses devengados durante los 3 años, o existe algún límite? (c) ¿Puede reclamar el capital prestado, teniendo en cuenta que pasaron 3 años?",
+      "respuesta": "<p><b>(a)</b> Camila puede reclamar el interés compensatorio pactado (0,5% mensual) hasta la mora. A partir de la mora, dado que no pactaron moratorio, correspondería el que fije el BCRA o, en su defecto, el juez interviniente. En cuanto al punitorio (1% mensual, pactado como cláusula penal), su acumulación con el moratorio no es automática, porque ambos compensan el mismo daño derivado del incumplimiento; la procedencia conjunta depende de lo efectivamente pactado y queda sujeta a la facultad judicial de reducir intereses excesivos.</p>\r\n              <p style=\"margin-top:10px;\"><b>(b)</b> No en su totalidad: los intereses son obligación periódica y prescriben a los 2 años, de modo que Camila solo puede reclamar los devengados dentro de los últimos 2 años anteriores al reclamo, no los 3 años completos.</p>\r\n              <p style=\"margin-top:10px;\"><b>(c)</b> Sí. La acción de restitución del capital no tiene plazo especial de prescripción, por lo que rige el plazo genérico de 5 años; a los 3 años, la acción sigue vigente.</p>",
+      "errorTipico": "⚠ Error típico: Asumir que, como el capital no prescribió, tampoco prescribió ningún interés; en realidad capital e intereses tienen plazos de prescripción autónomos y de distinta extensión.",
+      "contexto": "Camila (mutuante) le presta a Rodrigo (mutuario) USD 50.000, pactando un interés compensatorio del 0,5% mensual y un interés punitorio del 1% mensual para el caso de mora, sin fijar plazo de restitución ni pactar interés moratorio. Camila le requiere fehacientemente la devolución del capital, y Rodrigo no restituye dentro de los 10 días siguientes, incurriendo en mora. Pasan 3 años sin que Camila reclame nada, hasta que decide iniciar la acción de cobro."
+    },
+    {
+      "id": "mat-c1",
+      "title": "Caso 1 · El préstamo que se pierde por robo",
+      "badges": [
+        {
+          "text": "Simple",
+          "kind": "fuente"
+        },
+        {
+          "text": "O1, O2",
+          "kind": "fuente"
+        },
+        {
+          "text": "A1",
+          "kind": "fuente"
+        }
+      ],
+      "enunciado": "",
+      "respuesta": "<p><b>Figura jurídica:</b> Contrato de mutuo de dinero (art. 1525 CCyC).</p>\r\n              <p style=\"margin-top:10px;\"><b>Razonamiento:</b></p>\r\n              <ol>\r\n                <li>El contrato celebrado entre Agustín y Julieta es un mutuo, porque tiene por objeto una cosa fungible (dinero) y Agustín se comprometió a entregarla en propiedad a Julieta.</li>\r\n                <li>Al ser mutuo, Julieta no es mera tenedora del dinero: al recibirlo, se convirtió en su propietaria.</li>\r\n                <li>Rige la regla de que la cosa perece para su dueño; por lo tanto, la pérdida del dinero por robo, ocurrida después de la entrega y sin culpa de Julieta, la soporta ella como propietaria, no Agustín.</li>\r\n              </ol>\r\n              <p style=\"margin-top:10px;\"><b>Respuesta:</b> Julieta debe restituir el equivalente a los $200.000, con más los intereses si fueron pactados, dentro de los 10 días de que Agustín se lo requiera (a falta de plazo pactado). El robo no la libera de la obligación de restituir, porque el riesgo de la cosa lo asume el propietario, y ella lo es desde la entrega.</p>",
+      "errorTipico": "❌ Error típico (T1/T2): Creer que, por tratarse de un préstamo, Julieta es mera tenedora del dinero y por eso no responde ante la pérdida por caso fortuito; esa lógica corresponde al comodato, no al mutuo.",
+      "contexto": "Agustín le presta a Julieta $200.000 en efectivo, sin fijar plazo de devolución. Una semana después, el dinero es sustraído del domicilio de Julieta en un robo del que ella no tuvo ninguna responsabilidad. Julieta sostiene que no debe restituir nada, porque el dinero se perdió por un hecho ajeno a su voluntad y ella —según entiende— solo tenía el dinero en préstamo, no en propiedad.",
+      "linkRel": "Relacionado con P2 del cuestionario."
+    },
+    {
+      "id": "mat-c2",
+      "title": "Caso 2 · La capitalización mensual de intereses",
+      "badges": [
+        {
+          "text": "Trampa",
+          "kind": "trampa"
+        },
+        {
+          "text": "S1, T6",
+          "kind": "fuente"
+        },
+        {
+          "text": "A3",
+          "kind": "fuente"
+        }
+      ],
+      "enunciado": "",
+      "respuesta": "<p><b>Figura jurídica:</b> Anatocismo pactado entre partes en un contrato de mutuo.</p>\r\n              <p style=\"margin-top:10px;\"><b>Razonamiento:</b></p>\r\n              <ol>\r\n                <li>El anatocismo pactado por las partes es válido en el CCyC, pero solo si la periodicidad de capitalización no es menor a seis meses.</li>\r\n                <li>La cláusula acordada entre Camila y Bruno prevé una capitalización mensual, es decir, con una periodicidad inferior al mínimo legal.</li>\r\n                <li>Por lo tanto, esa cláusula específica de capitalización mensual no resulta válida tal como fue pactada; ello sin perjuicio de que los intereses compensatorios del 3% mensual, considerados en sí mismos, sigan siendo debidos según lo pactado.</li>\r\n              </ol>\r\n              <p style=\"margin-top:10px;\"><b>Respuesta:</b> La cláusula de capitalización mensual es inválida por infringir el plazo mínimo de seis meses que exige el Código para el anatocismo pactado entre partes; Bruno puede cuestionarla con éxito, sin que ello afecte la validez del interés compensatorio pactado en sí.</p>",
+      "errorTipico": "❌ Error típico (T6): Asumir que cualquier periodicidad de capitalización es válida siempre que esté expresamente pactada, sin reparar en el piso legal de seis meses.",
+      "contexto": "Camila le presta a Bruno $50.000 a devolver en dos años, pactando un interés compensatorio del 3% mensual, con la cláusula de que \"los intereses devengados se capitalizarán mensualmente y se sumarán al capital adeudado\". A los seis meses, Bruno cuestiona la validez de esa cláusula.",
+      "linkRel": "Relacionado con P6 del cuestionario."
+    },
+    {
+      "id": "mat-c3",
+      "title": "Caso 3 · El préstamo por billetera virtual y el reclamo de intereses",
+      "badges": [
+        {
+          "text": "Complejo",
+          "kind": "fuente"
+        },
+        {
+          "text": "O1, O3, S3, S4, D1",
+          "kind": "fuente"
+        },
+        {
+          "text": "A1, S3, LDC",
+          "kind": "fuente"
+        }
+      ],
+      "enunciado": "",
+      "respuesta": "<p><b>Figura jurídica:</b> Mutuo de dinero de consumo (art. 1525 CCyC, con formalidades adicionales por tratarse de un mutuario consumidor).</p>\r\n              <p style=\"margin-top:10px;\"><b>Razonamiento:</b></p>\r\n              <ol>\r\n                <li>El vínculo entre María y la billetera virtual es un mutuo de dinero, porque hay entrega de una suma en propiedad con obligación de restitución en cuotas.</li>\r\n                <li>Como María es consumidora y la empresa se dedica a otorgar préstamos de consumo, el contrato debía cumplir formalidades adicionales: forma escrita, especificación de la tasa anual efectiva y detalle claro de las condiciones a favor del consumidor.</li>\r\n                <li>El incumplimiento de esas formalidades, sumado a que el interés moratorio reclamado resulta considerablemente más alto que el compensatorio pactado, habilita a evaluar su carácter abusivo, principalmente a través de la Ley de Defensa del Consumidor.</li>\r\n                <li>Corresponde recordar que, bajo el sistema francés, las primeras cuotas se componen mayoritariamente de intereses, por lo que la proporción de capital efectivamente amortizado por María a los tres meses es baja, dato relevante para calcular el saldo realmente adeudado.</li>\r\n              </ol>\r\n              <p style=\"margin-top:10px;\"><b>Respuesta:</b> María puede cuestionar tanto la falta de formalidades (forma escrita, TAE, condiciones claras) como la abusividad del interés moratorio reclamado, en ambos casos con fundamento en el régimen de defensa del consumidor; un juez podría reducir ese interés si lo considera excesivo, sin que ello la libere de restituir el capital efectivamente adeudado según el sistema francés pactado.</p>",
+      "errorTipico": "❌ Error típico (T7): Asumir que, por tratarse de un mutuo de dinero como cualquier otro, no rigen formalidades especiales ni control de abusividad, ignorando que la calidad de consumidor de María activa un régimen más protector.",
+      "contexto": "María, consumidora, toma un préstamo de $500.000 a través de una billetera virtual que opera bajo el sistema francés de amortización, sin que el contrato le haya especificado por escrito la tasa anual efectiva ni las condiciones aplicables en caso de mora. Al tercer mes, María deja de pagar las cuotas y la empresa le reclama, además del capital, un interés moratorio que resulta considerablemente más alto que el compensatorio originalmente pactado.",
+      "linkRel": "Relacionado con P8 del cuestionario."
+    },
+    {
+      "id": "mat-pareto",
+      "title": "Top Pareto",
+      "badges": [],
+      "enunciado": "",
+      "respuesta": "",
+      "errorTipico": null,
+      "table": {
+        "headers": [
+          "Prioridad",
+          "Pregunta",
+          "Concepto clave"
+        ],
+        "rows": [
+          [
+            "🔴 Crítico",
+            "P2",
+            "Propiedad vs. tenencia y riesgo de la cosa (mutuo vs. comodato)"
+          ],
+          [
+            "🔴 Crítico",
+            "P7 / Integradora",
+            "Prescripción diferenciada: capital (5 años) vs. intereses (2 años)"
+          ],
+          [
+            "🔴 Crítico",
+            "P5",
+            "No acumulación automática de moratorio y punitorio"
+          ],
+          [
+            "🟠 Alto",
+            "P6",
+            "Los tres supuestos de anatocismo, no solo el pacto"
+          ],
+          [
+            "🟠 Alto",
+            "P3",
+            "Consecuencias de la consensualidad frente al régimen del contrato real"
+          ],
+          [
+            "🟠 Alto",
+            "P8",
+            "Formalidades del mutuo de consumo y excepción de vicios en dinero"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "mat-fuentes",
+      "title": "Fuentes clave",
+      "badges": [],
+      "enunciado": "",
+      "respuesta": "",
+      "errorTipico": null,
+      "table": {
+        "headers": [
+          "Fuente",
+          "Qué establece",
+          "Por qué importa en examen"
+        ],
+        "rows": [
+          [
+            "Art. 1525 CCyC",
+            "Define el contrato de mutuo: entrega en propiedad de cosas fungibles y obligación de restitución en igual cantidad, calidad y especie",
+            "Es la fuente guía de toda la clase; de ella se derivan todos los caracteres del contrato"
+          ],
+          [
+            "Régimen de intereses (compensatorios, moratorios y punitorios)",
+            "Distingue los tres tipos de interés y su eventual no acumulación",
+            "Base para resolver cualquier caso de mora e incumplimiento en el mutuo de dinero"
+          ],
+          [
+            "Régimen de anatocismo",
+            "Regla general de 6 meses y los dos supuestos judiciales de capitalización",
+            "Tema frecuente de trampa por desconocer los supuestos no pactados"
+          ],
+          [
+            "Plazos de prescripción",
+            "Plazos de 5, 3, 2 y 1 año según el tipo de acción",
+            "Permite resolver correctamente cualquier caso de reclamo tardío"
+          ],
+          [
+            "Fallos \"Samudio\" y \"La Razón\"",
+            "Fijación judicial de la tasa de interés moratoria (tasa activa Banco Nación)",
+            "Explican por qué la tasa aplicable dependía históricamente del fuero"
+          ]
+        ]
+      }
+    }
+  ]
+}

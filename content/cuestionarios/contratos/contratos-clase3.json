@@ -1,0 +1,428 @@
+{
+  "header": {
+    "title": "Contratos · Clase 3",
+    "sub": "Leasing, corretaje, concesión y distribución",
+    "meta": "11 ítems · 8 preguntas + 3 integradoras + 3 casos"
+  },
+  "storageKey": "contratos_clase3_progress",
+  "questions": [
+    {
+      "id": "P1",
+      "topic": "Leasing financiero, operativo y leaseback",
+      "priority": "alto",
+      "enunciado": "¿Qué distingue al leasing financiero del leasing operativo, y dónde encaja el leaseback en esa clasificación?",
+      "pista": "Financioso: dador adquiere de tercero por indicación del tomador. Operativo: bien ya es del dador. Leaseback: tomador vende su propio bien al dador y lo recibe de vuelta en leasing.",
+      "respuestaLibre": "En el leasing financiero (art. 1231 incs. a, b y c CCCN) el dador adquiere el bien de un tercero por indicación del tomador. En el leasing operativo (inc. d) el bien ya es propiedad del dador antes de vincularse con el tomador. El leaseback (inc. e) es un tercer género: el tomador vende su propio bien al dador, que se lo entrega nuevamente en leasing — funciona como mecanismo de autofinanciamiento.",
+      "opciones": [
+        "El leasing financiero y operativo son sinónimos; el leaseback es una compraventa común.",
+        "En el financiero el dador adquiere de un tercero por indicación del tomador; en el operativo el bien ya es del dador; el leaseback es cuando el tomador vende su propio bien al dador y lo recibe de vuelta en leasing.",
+        "El financiero solo aplica a bienes muebles; el operativo a inmuebles; el leaseback es una modalidad del operativo.",
+        "El financiero requiere intervención bancaria; el operativo no; el leaseback es una variante del financiero."
+      ],
+      "correcta": 1,
+      "explicacion": "Financioso: dador adquiere de tercero por indicación del tomador. Operativo: bien ya es del dador. Leaseback: tomador vende su propio bien al dador y lo recibe de vuelta.",
+      "errorTipico": "Tratar al leaseback como una simple compraventa, sin advertir que el vendedor conserva el uso del bien como tomador."
+    },
+    {
+      "id": "P2",
+      "topic": "Mora y desalojo en leasing inmobiliario",
+      "priority": "critico",
+      "enunciado": "Si un tomador de leasing sobre un inmueble adeuda un cuarto o más pero menos de tres cuartas partes del canon pactado, ¿qué procedimiento debe seguir el dador antes de poder pedir el desalojo?",
+      "pista": "Mora automática. Intimación con plazo no menor a 60 días. Recién después, demanda de desalojo con vista de 5 días.",
+      "respuestaLibre": "La mora es automática, sin necesidad de interpelación previa. El dador debe intimar al tomador al pago de los períodos adeudados con más sus intereses, otorgándole un plazo no menor a 60 días desde la notificación. Vencido ese plazo sin pago, recién ahí puede demandar el desalojo, dando previamente vista al tomador por 5 días.",
+      "opciones": [
+        "El dador puede demandar el desalojo directamente sin intimación previa.",
+        "La mora es automática; el dador debe intimidar al pago con plazo no menor a 60 días, y recién vencido ese plazo puede demandar el desalojo con vista previa de 5 días.",
+        "El dador debe intimidar al pago con plazo de 30 días y luego puede desalojar sin vista previa.",
+        "Se requiere siempre sentencia judicial previa que declare la mora antes de cualquier intimación."
+      ],
+      "correcta": 1,
+      "explicacion": "Mora automática. Intimación con plazo no menor a 60 días. Recién vencido ese plazo, demanda de desalojo con vista previa de 5 días.",
+      "errorTipico": "Aplicar directamente el tramo de 'menos de un cuarto' (vista de 5 días sin intimación previa de 60 días) a un tomador que ya pagó más de un cuarto del canon."
+    },
+    {
+      "id": "P3",
+      "topic": "Determinación de la comisión del corredor",
+      "priority": "medio",
+      "enunciado": "Si las partes no pactaron el monto de la comisión del corredor, ¿cómo se determina?",
+      "pista": "Uso del lugar de celebración → uso del lugar donde realizó su cometido → fija el juez.",
+      "respuestaLibre": "Se aplica el uso del lugar de celebración del contrato; en su defecto, el uso del lugar donde el corredor principalmente realizó su cometido; y si tampoco existe un uso determinado, la fija el juez.",
+      "opciones": [
+        "A falta de pacto, el corredor no tiene derecho a cobrar nada.",
+        "Se aplica el uso del lugar de celebración; en su defecto, el uso del lugar donde realizó su cometido; y si no existe uso, la fija el juez.",
+        "Siempre la fija el juez, sin importar los usos del lugar.",
+        "Se aplica automáticamente el 5% del valor de la operación."
+      ],
+      "correcta": 1,
+      "explicacion": "Se aplica el uso del lugar de celebración; en su defecto, el uso del lugar donde realizó su cometido; y si no existe uso, la fija el juez.",
+      "errorTipico": "Creer que, a falta de pacto, el corredor no tiene derecho a cobrar nada."
+    },
+    {
+      "id": "P4",
+      "topic": "Confidencialidad del corredor",
+      "priority": "critico",
+      "enunciado": "¿Por qué el incumplimiento del deber de confidencialidad del corredor genera responsabilidad objetiva, y no exige probar culpa o dolo?",
+      "pista": "Es una obligación de no hacer. Las obligaciones de no hacer tienen factor objetivo.",
+      "respuestaLibre": "No revelar información confidencial conocida por su intervención es una obligación de no hacer, y el régimen de las obligaciones de no hacer responde a un factor de atribución objetivo. Basta con que el corredor haya revelado o usado indebidamente la información para que responda, sin necesidad de indagar su intención. El deber está regulado en el art. 992 CCCN (no en los arts. 1391/1392 como aparecía en la transcripción de la clase).",
+      "opciones": [
+        "Porque el corredor siempre responde objetivamente por cualquier incumplimiento contractual.",
+        "Porque es una obligación de no hacer, cuyo régimen responde a un factor de atribución objetivo; basta con la revelación indebida, sin probar culpa o dolo.",
+        "Porque la ley exige prueba de dolo específico en todos los casos de corretaje.",
+        "Porque el corredor es un profesional liberal y responde por riesgo creado."
+      ],
+      "correcta": 1,
+      "explicacion": "Es una obligación de no hacer, cuyo régimen responde a un factor de atribución objetivo; basta con la revelación indebida, sin probar culpa o dolo. Art. 992 CCCN.",
+      "errorTipico": "Citar los arts. '1391' y '1392' CCCN para este deber — esos artículos pertenecen al capítulo de contratos bancarios; la numeración correcta es arts. 991 (buena fe, factor subjetivo) y 992 (confidencialidad, factor objetivo)."
+    },
+    {
+      "id": "P5",
+      "topic": "Exclusividad territorial en la concesión",
+      "priority": "alto",
+      "enunciado": "¿Es la exclusividad territorial un elemento esencial del contrato de concesión?",
+      "pista": "Es elemento natural, no esencial. Admite pacto en contrario (arts. 1503, 1504 inc. b, 1505 inc. b).",
+      "respuestaLibre": "No. Es un elemento natural, no esencial: admite pacto en contrario (arts. 1503, 1504 inc. b y 1505 inc. b). De existir, suele referirse al territorio, pero incluso así el concedente puede reservarse ventas directas a clientes especiales, como el Estado, diplomáticos o compradores de grandes volúmenes anuales.",
+      "opciones": [
+        "Sí, es un elemento esencial que no admite pacto en contrario.",
+        "No, es un elemento natural que admite pacto en contrario; el concedente puede reservarse ventas a clientes especiales.",
+        "Sí, pero solo cuando el concesionario es persona humana.",
+        "No existe la exclusividad en el contrato de concesión bajo ningún concepto."
+      ],
+      "correcta": 1,
+      "explicacion": "No, es elemento natural, no esencial. Admite pacto en contrario. El concedente puede reservarse ventas a clientes especiales (Estado, diplomáticos, grandes volúmenes).",
+      "errorTipico": "T4 — Dar por sentado que toda concesión es exclusiva por su sola naturaleza jurídica."
+    },
+    {
+      "id": "P6",
+      "topic": "Retribución del concesionario vs. comisión del corredor",
+      "priority": "critico",
+      "enunciado": "¿Por qué no es técnicamente correcto llamar 'comisión' a la retribución del concesionario?",
+      "pista": "El concesionario actúa a nombre y por cuenta propia, a riesgo propio. No media un negocio ajeno como el corredor. Su ganancia es el margen comercial.",
+      "respuestaLibre": "El concesionario actúa a nombre y por cuenta propia, comprando y revendiendo mercaderías a riesgo propio; no media un negocio ajeno como el corredor. Por eso su ganancia es, en principio, la diferencia entre el precio que paga al concedente y el que obtiene en la reventa ('margen comercial'), aunque el art. 1507 CCCN también admite que se pacte como comisión, margen sobre unidades o cantidades fijas.",
+      "opciones": [
+        "Porque el concesionario es un empleado del concedente y cobra salario.",
+        "Porque el concesionario actúa a nombre y por cuenta propia, a riesgo propio, y su ganancia es el margen comercial (art. 1507 CCCN), no la comisión del art. 1350 CCCN propia del corredor.",
+        "Porque la ley prohíbe expresamente llamar 'comisión' a cualquier retribución en contratos comerciales.",
+        "Porque el concesionario no tiene derecho a retribución, solo a las ganancias de la reventa."
+      ],
+      "correcta": 1,
+      "explicacion": "El concesionario actúa a nombre y por cuenta propia, a riesgo propio. Su ganancia es el margen comercial (art. 1507 CCCN), no la comisión del art. 1350 CCCN propia del corredor.",
+      "errorTipico": "T1 — Confundir esta retribución con la comisión del art. 1350 CCCN, que corresponde específicamente al corredor."
+    },
+    {
+      "id": "P7",
+      "topic": "Concesión vs. distribución",
+      "priority": "medio",
+      "enunciado": "¿Cuál es la diferencia esencial entre el contrato de concesión y el de distribución?",
+      "pista": "Concesión: tipificada (arts. 1502-1511). Distribución: atípica. Distribuidor tiene mayor autonomía y no comprende posventa.",
+      "respuestaLibre": "(a) La concesión está tipificada en el CCCN (arts. 1502 a 1511); la distribución es un contrato atípico, sin regulación propia. (b) El distribuidor tiene mayor autonomía frente al distribuido que el concesionario frente al concedente. (c) La actividad del distribuidor no comprende las obligaciones de posventa del producto, a diferencia de la del concesionario.",
+      "opciones": [
+        "Son contratos idénticos, solo cambia la denominación según la región.",
+        "La concesión está tipificada en el CCCN (arts. 1502-1511); la distribución es atípica. El distribuidor tiene mayor autonomía y no comprende obligaciones de posventa.",
+        "La distribución está tipificada y la concesión es atípica.",
+        "Ambas están tipificadas en el CCCN con el mismo régimen."
+      ],
+      "correcta": 1,
+      "explicacion": "Concesión: tipificada (arts. 1502-1511). Distribución: atípica. Distribuidor tiene mayor autonomía y no comprende obligaciones de posventa.",
+      "errorTipico": "T7 — Atribuirle a la distribución reglas propias de plazo o extinción, cuando en realidad se toman prestadas de la concesión por remisión del art. 1511 inc. b."
+    },
+    {
+      "id": "P8",
+      "topic": "Leasing y concurso preventivo",
+      "priority": "alto",
+      "enunciado": "Si el tomador de un leasing entra en concurso preventivo, ¿qué ocurre con el contrato?",
+      "pista": "El CCCN no regula expresamente los efectos del concurso. Regla práctica: el contrato sigue su curso. Quiebra: Ley 25.248.",
+      "respuestaLibre": "El CCCN no regula expresamente los efectos del concurso o la quiebra sobre el leasing; la regla práctica es que el contrato sigue su curso pese al concurso de cualquiera de las partes. El supuesto específico de la quiebra está regulado en la Ley de Leasing 25.248, no en el Código.",
+      "opciones": [
+        "El contrato se resuelve automáticamente al abrirse el concurso.",
+        "El CCCN no regula expresamente los efectos; la regla práctica es que el contrato sigue su curso. La quiebra se rige por la Ley 25.248.",
+        "El dador puede recuperar el bien de inmediato sin trámite alguno.",
+        "El contrato se suspende automáticamente hasta que el juez decida."
+      ],
+      "correcta": 1,
+      "explicacion": "El CCCN no regula expresamente los efectos; la regla práctica es que el contrato sigue su curso. La quiebra se rige por la Ley 25.248.",
+      "errorTipico": "T5 — Suponer que la apertura del concurso resuelve automáticamente el contrato o habilita al dador a recuperar el bien de inmediato."
+    },
+    {
+      "id": "INT-a",
+      "topic": "Integradora · Deber vulnerado por Ferretti",
+      "priority": "critico",
+      "contexto": "Mediante la intervención del corredor Bruno Ferretti, las empresas Aránzazu S.A. (vendedora) y Kowalski Hnos. S.A. (compradora) negocian la venta de un inmueble industrial. En el curso de la negociación, Ferretti toma conocimiento confidencial de que Aránzazu S.A. atraviesa una caída de rentabilidad y necesita vender con urgencia. Se lo revela a Kowalski Hnos. S.A., esperando que esta le encargue futuros negocios de intermediación.",
+      "enunciado": "(a) ¿Qué deber del corredor vulnera Ferretti con esa revelación, y en qué artículo del CCCN está regulado correctamente?",
+      "pista": "Deber de confidencialidad. Art. 992 CCCN (no 1391/1392).",
+      "respuestaLibre": "Vulnera el deber de confidencialidad del corredor, regulado en el art. 992 CCCN (la transcripción de la clase citó por error los arts. 1391/1392, que en realidad pertenecen al capítulo de contratos bancarios).",
+      "opciones": [
+        "Vulnera el deber de lealtad del art. 1350 CCCN, propio del mandato.",
+        "Vulnera el deber de confidencialidad del art. 992 CCCN (no los arts. 1391/1392 que pertenecen a contratos bancarios).",
+        "No vulnera ningún deber, porque la información era de dominio público.",
+        "Vulnera el deber de información del art. 1101 CCCN propio de los consumidores."
+      ],
+      "correcta": 1,
+      "explicacion": "Vulnera el deber de confidencialidad del art. 992 CCCN (no los arts. 1391/1392 que pertenecen a contratos bancarios).",
+      "errorTipico": "Citar los arts. '1391' y '1392' CCCN para este deber — esos artículos pertenecen al capítulo de contratos bancarios; la numeración correcta es art. 992."
+    },
+    {
+      "id": "INT-b",
+      "topic": "Integradora · Tipo de obligación y factor de atribución",
+      "priority": "critico",
+      "contexto": "Ferretti reveló a Kowalski Hnos. S.A. información confidencial conocida por su intervención como corredor, esperando futuros negocios de intermediación.",
+      "enunciado": "(b) ¿Qué tipo de obligación incumple y qué factor de atribución le resulta aplicable?",
+      "pista": "Obligación de no hacer. Factor objetivo.",
+      "respuestaLibre": "Es una obligación de no hacer —no revelar ni usar en beneficio propio o ajeno la información confidencial conocida por su intervención— y ese tipo de obligación responde a un factor de atribución objetivo, sin necesidad de probar culpa o dolo de Ferretti.",
+      "opciones": [
+        "Obligación de dar, con factor subjetivo que exige probar dolo.",
+        "Obligación de no hacer, con factor de atribución objetivo; basta con la revelación indebida, sin probar culpa o dolo.",
+        "Obligación de hacer, con factor objetivo que exige probar culpa grave.",
+        "Obligación de no hacer, pero con factor subjetivo que requiere probar mala fe."
+      ],
+      "correcta": 1,
+      "explicacion": "Obligación de no hacer, con factor de atribución objetivo; basta con la revelación indebida, sin probar culpa o dolo.",
+      "errorTipico": "Creer que, para responsabilizar a Ferretti, hace falta demostrar que actuó con mala fe o intención de dañar — al tratarse de una obligación de no hacer con factor objetivo, ese análisis subjetivo es innecesario."
+    },
+    {
+      "id": "INT-c",
+      "topic": "Integradora · Consecuencias para Ferretti",
+      "priority": "critico",
+      "contexto": "Ferretti reveló información confidencial de Aránzazu S.A. a Kowalski Hnos. S.A., generando un perjuicio a la vendedora.",
+      "enunciado": "(c) Si de esa revelación se deriva un perjuicio para Aránzazu S.A., ¿qué consecuencia jurídica puede seguirse para Ferretti?",
+      "pista": "Resarcimiento del daño + posible pérdida del derecho a cobrar la comisión (arts. 1347 y 1348 CCCN).",
+      "respuestaLibre": "Ferretti queda obligado a resarcir el daño causado a Aránzazu S.A. y puede además perder su derecho a cobrar la comisión pactada, dado que su conducta contraría los deberes que hacen a la imparcialidad de la mediación (arts. 1347 y 1348 CCCN).",
+      "opciones": [
+        "Solo debe devolver la comisión ya cobrada, sin resarcir otros daños.",
+        "Debe resarcir el daño causado y puede perder el derecho a cobrar la comisión pactada (arts. 1347 y 1348 CCCN).",
+        "No tiene ninguna consecuencia porque la información ya era conocida por Kowalski.",
+        "Solo responde si se prueba que actuó con dolo específico."
+      ],
+      "correcta": 1,
+      "explicacion": "Debe resarcir el daño causado y puede perder el derecho a cobrar la comisión pactada (arts. 1347 y 1348 CCCN).",
+      "errorTipico": "Creer que, para responsabilizar a Ferretti, hace falta demostrar que actuó con mala fe o intención de dañar."
+    },
+    {
+      "id": "C1",
+      "topic": "Caso 1 · El galgo que volvió a casa",
+      "priority": "alto",
+      "contexto": "Mariano Sasso es titular de una camioneta de alta gama que utiliza para su actividad profesional. Necesitado de liquidez, se la vende a Global Renting S.A. (empresa financiera) y esta, en el mismo acto, se la entrega nuevamente en leasing: Sasso sigue usando la camioneta mientras paga cánones mensuales, con la posibilidad de recomprarla al final del contrato.",
+      "enunciado": "¿Qué figura jurídica se configura en esta operación?",
+      "pista": "El vendedor conserva el uso del bien como tomador. Art. 1231 inc. e) CCCN.",
+      "respuestaLibre": "Se configura un leaseback (art. 1231 inc. e CCCN). Sasso vende el bien a Global Renting S.A., que se lo entrega de nuevo en leasing, permitiéndole autofinanciarse sin perder el uso de la camioneta.",
+      "opciones": [
+        "Una compraventa común con pago en cuotas.",
+        "Un leaseback (art. 1231 inc. e CCCN): Sasso vende el bien a Global Renting S.A., que se lo entrega de nuevo en leasing para autofinanciarse.",
+        "Un leasing financiero, porque Global Renting adquirió el bien por indicación de Sasso.",
+        "Un comodato, porque Sasso sigue usando la camioneta sin pagar cánones."
+      ],
+      "correcta": 1,
+      "explicacion": "Leaseback (art. 1231 inc. e CCCN): Sasso vende el bien a Global Renting S.A., que se lo entrega de nuevo en leasing para autofinanciarse.",
+      "errorTipico": "Confundir esta operación con una simple compraventa, sin advertir que el vendedor conserva el uso del bien como tomador; o clasificarla como leasing financiero."
+    },
+    {
+      "id": "C2",
+      "topic": "Caso 2 · La 'comisión' de AutoValle",
+      "priority": "alto",
+      "contexto": "La concesionaria AutoValle comercializa vehículos de la marca Kestrel bajo un contrato de concesión con Kestrel Argentina S.A., y factura mensualmente a la terminal un monto en concepto de 'comisión por unidad vendida'. Al analizar el contrato para el final, un estudiante sostiene que esa comisión se rige por el art. 1350 CCCN, igual que la comisión de un corredor.",
+      "enunciado": "¿Es correcto el razonamiento del estudiante?",
+      "pista": "AutoValle actúa a nombre y por cuenta propia, a riesgo propio. Art. 1507 CCCN, no art. 1350 CCCN.",
+      "respuestaLibre": "El estudiante se equivoca. El nombre comercial 'comisión' no determina el régimen aplicable: la retribución de AutoValle se rige por el art. 1507 CCCN, no por el art. 1350 CCCN, porque AutoValle actúa a riesgo propio y no media un negocio ajeno.",
+      "opciones": [
+        "Sí es correcto, porque ambas retribuciones se llaman 'comisión' y se rigen por el mismo artículo.",
+        "Es incorrecto: la retribución de AutoValle se rige por el art. 1507 CCCN (retribución del concesionario), no por el art. 1350 CCCN (comisión del corredor), porque AutoValle actúa a riesgo propio.",
+        "Es parcialmente correcto: el art. 1350 CCCN aplica solo si AutoValle es persona jurídica.",
+        "Es correcto, pero solo si AutoValle tiene exclusividad territorial."
+      ],
+      "correcta": 1,
+      "explicacion": "Incorrecto: la retribución de AutoValle se rige por el art. 1507 CCCN (retribución del concesionario), no por el art. 1350 CCCN (comisión del corredor), porque AutoValle actúa a riesgo propio.",
+      "errorTipico": "T1 — Confundir la comisión del corretaje con la retribución/diferencia comercial de la concesión por el solo hecho de que ambas se llamen coloquialmente 'comisión'."
+    },
+    {
+      "id": "C3",
+      "topic": "Caso 3 · El galpón de Herrajes del Sur",
+      "priority": "alto",
+      "contexto": "Herrajes del Sur SRL tomó en leasing operativo (art. 1231 inc. d) un galpón industrial de propiedad de Inverfin S.A., comprometiéndose a pagar 48 cánones mensuales. Tras abonar 20 cuotas, dejó de pagar durante cuatro meses consecutivos. Mientras Inverfin S.A. evaluaba iniciar el trámite de desalojo, Herrajes del Sur SRL se presentó en concurso preventivo. El abogado de Inverfin S.A. sostiene que, al haberse abierto el concurso, el contrato de leasing queda automáticamente resuelto y el galpón debe restituirse de inmediato.",
+      "enunciado": "¿Es correcto el razonamiento del abogado de Inverfin S.A.?",
+      "pista": "El concurso no resuelve automáticamente el leasing. El contrato sigue su curso. Debe seguirse el procedimiento del art. 1248 inc. b) (intimación 60 días).",
+      "respuestaLibre": "El abogado está equivocado. El concurso preventivo no resuelve automáticamente el leasing; el contrato sigue vigente y Inverfin S.A. debe cumplir el procedimiento del art. 1248 inc. b) (intimación con plazo no menor a 60 días) antes de poder demandar el desalojo, además de verificar su crédito en el concurso.",
+      "opciones": [
+        "Sí es correcto: el concurso resuelve automáticamente el contrato de leasing.",
+        "Es incorrecto: el concurso no resuelve automáticamente el leasing; Inverfin S.A. debe cumplir el procedimiento del art. 1248 inc. b) (intimación con plazo no menor a 60 días) y verificar su crédito en el concurso.",
+        "Es correcto, pero solo si Herrajes del Sur SRL adeuda más de tres cuartas partes del canon.",
+        "Es incorrecto porque el leasing operativo nunca se resuelve por concurso, solo el financiero."
+      ],
+      "correcta": 1,
+      "explicacion": "Incorrecto: el concurso no resuelve automáticamente el leasing; Inverfin S.A. debe cumplir el procedimiento del art. 1248 inc. b) (intimación con plazo no menor a 60 días) y verificar su crédito en el concurso.",
+      "errorTipico": "T5 — Suponer que el concurso o la quiebra de una de las partes extingue automáticamente el leasing, cuando la regla es la continuidad del contrato."
+    }
+  ],
+  "material": [
+    {
+      "id": "mat-p1",
+      "title": "1. Leasing financiero, operativo y leaseback",
+      "badges": [
+        { "text": "O1", "kind": "fuente" },
+        { "text": "Pareto", "kind": "pareto" }
+      ],
+      "enunciado": "¿Qué distingue al leasing financiero del leasing operativo, y dónde encaja el leaseback en esa clasificación?",
+      "respuesta": "<p><b>(a) Leasing financiero (art. 1231 incs. a, b y c CCCN):</b></p><p>El dador adquiere el bien de un tercero por indicación, especificación o sustitución del tomador en una compraventa que este ya había celebrado.</p><p style=\"margin-top:10px;\"><b>(b) Leasing operativo (art. 1231 inc. d):</b></p><p>El bien ya es propiedad del dador antes de vincularse con el tomador: no hay ninguna gestión de compra a un tercero.</p><p style=\"margin-top:10px;\"><b>(c) Leaseback (art. 1231 inc. e):</b></p><p>Es un tercer género: el tomador vende su propio bien al dador, que se lo entrega nuevamente en leasing — funciona como mecanismo de autofinanciamiento, no de adquisición de un bien nuevo.</p>",
+      "errorTipico": "Tratar al leaseback como una simple compraventa, sin advertir que el vendedor conserva el uso del bien como tomador."
+    },
+    {
+      "id": "mat-p2",
+      "title": "2. Mora y desalojo en leasing inmobiliario",
+      "badges": [
+        { "text": "S3", "kind": "fuente" },
+        { "text": "Cae siempre", "kind": "cae" }
+      ],
+      "enunciado": "Si un tomador de leasing sobre un inmueble adeuda un cuarto o más pero menos de tres cuartas partes del canon pactado, ¿qué procedimiento debe seguir el dador antes de poder pedir el desalojo?",
+      "respuesta": "<p><b>(a)</b> La mora es automática, sin necesidad de interpelación previa para que se produzca.</p><p style=\"margin-top:10px;\"><b>(b)</b> El dador debe intimar al tomador al pago de los períodos adeudados con más sus intereses, otorgándole un plazo <b>no menor a 60 días</b> desde la notificación.</p><p style=\"margin-top:10px;\"><b>(c)</b> Vencido ese plazo sin que se verifique el pago, recién ahí el dador puede demandar el desalojo, dando previamente vista al tomador por 5 días.</p>",
+      "errorTipico": "Aplicar directamente el tramo de 'menos de un cuarto' (vista de 5 días sin intimación previa de 60 días) a un tomador que ya pagó más de un cuarto del canon."
+    },
+    {
+      "id": "mat-p3",
+      "title": "3. Determinación de la comisión del corredor",
+      "badges": [
+        { "text": "O2", "kind": "fuente" }
+      ],
+      "enunciado": "Si las partes no pactaron el monto de la comisión del corredor, ¿cómo se determina?",
+      "respuesta": "<p>Se aplica el <b>uso del lugar de celebración del contrato</b>; en su defecto, el <b>uso del lugar donde el corredor principalmente realizó su cometido</b>; y si tampoco existe un uso determinado, la fija el <b>juez</b>.</p>",
+      "errorTipico": "Creer que, a falta de pacto, el corredor no tiene derecho a cobrar nada."
+    },
+    {
+      "id": "mat-p4",
+      "title": "4. Confidencialidad del corredor",
+      "badges": [
+        { "text": "S4", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "¿Por qué el incumplimiento del deber de confidencialidad del corredor genera responsabilidad objetiva, y no exige probar culpa o dolo?",
+      "respuesta": "<p>No revelar información confidencial conocida por su intervención es una <b>obligación de no hacer</b>, y el régimen de las obligaciones de no hacer responde a un <b>factor de atribución objetivo</b>. Basta con que el corredor haya revelado o usado indebidamente la información para que responda, sin necesidad de indagar su intención.</p><p style=\"margin-top:10px;\"><b>Nota de corrección:</b> El deber está regulado en el <b>art. 992 CCCN</b> (no en los arts. 1391/1392 como aparecía en la transcripción de la clase, que pertenecen al capítulo de contratos bancarios).</p>",
+      "errorTipico": "Citar los arts. '1391' y '1392' CCCN para este deber — esos artículos pertenecen al capítulo de contratos bancarios; la numeración correcta es arts. 991 (buena fe, factor subjetivo) y 992 (confidencialidad, factor objetivo)."
+    },
+    {
+      "id": "mat-p5",
+      "title": "5. Exclusividad territorial en la concesión",
+      "badges": [
+        { "text": "O3", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "¿Es la exclusividad territorial un elemento esencial del contrato de concesión?",
+      "respuesta": "<p><b>No.</b> Es un <b>elemento natural</b>, no esencial: admite pacto en contrario (arts. 1503, 1504 inc. b y 1505 inc. b). De existir, suele referirse al territorio, pero incluso así el concedente puede reservarse ventas directas a clientes especiales, como el Estado, diplomáticos o compradores de grandes volúmenes anuales.</p>",
+      "errorTipico": "T4 — Dar por sentado que toda concesión es exclusiva por su sola naturaleza jurídica."
+    },
+    {
+      "id": "mat-p6",
+      "title": "6. Retribución del concesionario vs. comisión del corredor",
+      "badges": [
+        { "text": "O3, D2", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "¿Por qué no es técnicamente correcto llamar 'comisión' a la retribución del concesionario?",
+      "respuesta": "<p>El concesionario actúa a <b>nombre y por cuenta propia</b>, comprando y revendiendo mercaderías a riesgo propio; no media un negocio ajeno como el corredor. Por eso su ganancia es, en principio, la <b>diferencia entre el precio que paga al concedente y el que obtiene en la reventa</b> ('margen comercial'), aunque el art. 1507 CCCN también admite que se pacte como comisión, margen sobre unidades o cantidades fijas.</p>",
+      "errorTipico": "T1 — Confundir esta retribución con la comisión del art. 1350 CCCN, que corresponde específicamente al corredor."
+    },
+    {
+      "id": "mat-p7",
+      "title": "7. Concesión vs. distribución",
+      "badges": [
+        { "text": "O4, D3", "kind": "fuente" }
+      ],
+      "enunciado": "¿Cuál es la diferencia esencial entre el contrato de concesión y el de distribución?",
+      "respuesta": "<p><b>(a)</b> La <b>concesión</b> está tipificada en el CCCN (arts. 1502 a 1511); la <b>distribución</b> es un contrato atípico, sin regulación propia, cuyo concepto fue moldeado por doctrina y jurisprudencia.</p><p style=\"margin-top:10px;\"><b>(b)</b> El distribuidor tiene <b>mayor autonomía</b> frente al distribuido que el concesionario frente al concedente.</p><p style=\"margin-top:10px;\"><b>(c)</b> La actividad del distribuidor <b>no comprende las obligaciones de posventa</b> del producto, a diferencia de la del concesionario.</p>",
+      "errorTipico": "T7 — Atribuirle a la distribución reglas propias de plazo o extinción, cuando en realidad se toman prestadas de la concesión por remisión del art. 1511 inc. b."
+    },
+    {
+      "id": "mat-p8",
+      "title": "8. Leasing y concurso preventivo",
+      "badges": [
+        { "text": "S2", "kind": "fuente" },
+        { "text": "Cae siempre", "kind": "cae" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "Si el tomador de un leasing entra en concurso preventivo, ¿qué ocurre con el contrato?",
+      "respuesta": "<p>El CCCN <b>no regula expresamente</b> los efectos del concurso o la quiebra sobre el leasing; la regla práctica es que <b>el contrato sigue su curso</b> pese al concurso de cualquiera de las partes.</p><p style=\"margin-top:10px;\">El supuesto específico de la quiebra está regulado en la <b>Ley de Leasing 25.248</b>, no en el Código.</p>",
+      "errorTipico": "T5 — Suponer que la apertura del concurso resuelve automáticamente el contrato o habilita al dador a recuperar el bien de inmediato."
+    },
+    {
+      "id": "mat-int",
+      "title": "Integradora · El corredor Ferretti",
+      "badges": [
+        { "text": "Cae siempre", "kind": "cae" }
+      ],
+      "contexto": "Mediante la intervención del corredor Bruno Ferretti, las empresas Aránzazu S.A. (vendedora) y Kowalski Hnos. S.A. (compradora) negocian la venta de un inmueble industrial. En el curso de la negociación, Ferretti toma conocimiento confidencial de que Aránzazu S.A. atraviesa una caída de rentabilidad y necesita vender con urgencia. Se lo revela a Kowalski Hnos. S.A., esperando que esta le encargue futuros negocios de intermediación.",
+      "enunciado": "(a) ¿Qué deber del corredor vulnera Ferretti con esa revelación, y en qué artículo del CCCN está regulado correctamente? (b) ¿Qué tipo de obligación incumple y qué factor de atribución le resulta aplicable? (c) Si de esa revelación se deriva un perjuicio para Aránzazu S.A., ¿qué consecuencia jurídica puede seguirse para Ferretti?",
+      "respuesta": "<p><b>(a)</b> Vulnera el <b>deber de confidencialidad</b> del corredor, regulado en el <b>art. 992 CCCN</b> (la transcripción de la clase citó por error los arts. 1391/1392, que en realidad pertenecen al capítulo de contratos bancarios).</p><p style=\"margin-top:10px;\"><b>(b)</b> Es una <b>obligación de no hacer</b> —no revelar ni usar en beneficio propio o ajeno la información confidencial conocida por su intervención— y ese tipo de obligación responde a un <b>factor de atribución objetivo</b>, sin necesidad de probar culpa o dolo de Ferretti.</p><p style=\"margin-top:10px;\"><b>(c)</b> Ferretti queda obligado a <b>resarcir el daño</b> causado a Aránzazu S.A. y puede además <b>perder su derecho a cobrar la comisión</b> pactada, dado que su conducta contraría los deberes que hacen a la imparcialidad de la mediación (arts. 1347 y 1348 CCCN).</p>",
+      "errorTipico": "Creer que, para responsabilizar a Ferretti, hace falta demostrar que actuó con mala fe o intención de dañar — al tratarse de una obligación de no hacer con factor objetivo, ese análisis subjetivo es innecesario."
+    },
+    {
+      "id": "mat-c1",
+      "title": "Caso 1 · El galgo que volvió a casa",
+      "badges": [
+        { "text": "Simple", "kind": "fuente" },
+        { "text": "O1", "kind": "fuente" },
+        { "text": "art. 1231 inc. e", "kind": "fuente" }
+      ],
+      "contexto": "Mariano Sasso es titular de una camioneta de alta gama que utiliza para su actividad profesional. Necesitado de liquidez, se la vende a Global Renting S.A. (empresa financiera) y esta, en el mismo acto, se la entrega nuevamente en leasing: Sasso sigue usando la camioneta mientras paga cánones mensuales, con la posibilidad de recomprarla al final del contrato.",
+      "respuesta": "<p><b>Figura jurídica:</b> Leaseback (sale and leaseback), art. 1231 inc. e) CCCN.</p><p style=\"margin-top:10px;\"><b>Razonamiento:</b></p><ol><li>Sasso es titular de un bien propio que decide vender.</li><li>El comprador (Global Renting S.A.) es, a la vez, quien se lo entrega nuevamente en leasing.</li><li>Sasso, ahora tomador, conserva el uso del bien y paga cánones con miras a recomprarlo — esa es la estructura típica del inciso e) del art. 1231.</li><li>La operación funciona como mecanismo de autofinanciamiento para Sasso, que obtiene liquidez sin perder el uso de la camioneta.</li></ol><p style=\"margin-top:10px;\"><b>Respuesta:</b> Se configura un leaseback (art. 1231 inc. e CCCN). Sasso vende el bien a Global Renting S.A., que se lo entrega de nuevo en leasing, permitiéndole autofinanciarse sin perder el uso de la camioneta.</p>",
+      "errorTipico": "Confundir esta operación con una simple compraventa, sin advertir que el vendedor conserva el uso del bien como tomador; o clasificarla como leasing financiero, que exige que el dador adquiera el bien de un tercero indicado por el tomador, no del propio tomador.",
+      "linkRel": "Relacionado con P1 del cuestionario."
+    },
+    {
+      "id": "mat-c2",
+      "title": "Caso 2 · La 'comisión' de AutoValle",
+      "badges": [
+        { "text": "Trampa", "kind": "trampa" },
+        { "text": "T1, O2, O3, D2", "kind": "fuente" },
+        { "text": "arts. 1350 y 1507 CCCN", "kind": "fuente" }
+      ],
+      "contexto": "La concesionaria AutoValle comercializa vehículos de la marca Kestrel bajo un contrato de concesión con Kestrel Argentina S.A., y factura mensualmente a la terminal un monto en concepto de 'comisión por unidad vendida'. Al analizar el contrato para el final, un estudiante sostiene que esa comisión se rige por el art. 1350 CCCN, igual que la comisión de un corredor.",
+      "respuesta": "<p><b>Figura jurídica:</b> Retribución del concesionario (art. 1507 CCCN), distinta de la comisión del corretaje (art. 1350 CCCN).</p><p style=\"margin-top:10px;\"><b>Razonamiento:</b></p><ol><li>El concesionario actúa a nombre y por cuenta propia, comprando y revendiendo los vehículos a su propio riesgo, no mediando un negocio ajeno como el corredor.</li><li>Por eso, aunque el contrato o la práctica comercial llamen 'comisión' a esa suma, técnicamente se trata de la retribución del art. 1507 CCCN, que puede consistir en un margen, una comisión o cantidades fijas, según lo pactado con el concedente.</li><li>El art. 1350 CCCN regula específicamente la comisión del corredor, que media —sin representar ni asumir riesgo propio— entre dos partes que no son él mismo.</li><li>La denominación comercial 'comisión' no cambia la naturaleza jurídica del vínculo: AutoValle no es un intermediario neutral, sino que compra y revende a su propio riesgo.</li></ol><p style=\"margin-top:10px;\"><b>Respuesta:</b> El estudiante se equivoca. El nombre comercial 'comisión' no determina el régimen aplicable: la retribución de AutoValle se rige por el art. 1507 CCCN, no por el art. 1350 CCCN, porque AutoValle actúa a riesgo propio y no media un negocio ajeno.</p>",
+      "errorTipico": "T1 — Confundir la comisión del corretaje con la retribución/diferencia comercial de la concesión por el solo hecho de que ambas se llamen coloquialmente 'comisión'.",
+      "linkRel": "Relacionado con P6 del cuestionario."
+    },
+    {
+      "id": "mat-c3",
+      "title": "Caso 3 · El galpón de Herrajes del Sur",
+      "badges": [
+        { "text": "Complejo", "kind": "fuente" },
+        { "text": "O1, S2, S3, T5, T6", "kind": "fuente" },
+        { "text": "arts. 1231, 1248, 1249; Ley 25.248", "kind": "fuente" }
+      ],
+      "contexto": "Herrajes del Sur SRL tomó en leasing operativo (art. 1231 inc. d) un galpón industrial de propiedad de Inverfin S.A., comprometiéndose a pagar 48 cánones mensuales. Tras abonar 20 cuotas, dejó de pagar durante cuatro meses consecutivos. Mientras Inverfin S.A. evaluaba iniciar el trámite de desalojo, Herrajes del Sur SRL se presentó en concurso preventivo. El abogado de Inverfin S.A. sostiene que, al haberse abierto el concurso, el contrato de leasing queda automáticamente resuelto y el galpón debe restituirse de inmediato.",
+      "respuesta": "<p><b>Figura jurídica:</b> Incumplimiento y mora en el leasing inmobiliario (art. 1248), y efecto del concurso preventivo sobre el contrato de leasing (S2).</p><p style=\"margin-top:10px;\"><b>Razonamiento:</b></p><ol><li>Herrajes del Sur SRL pagó 20 de 48 cuotas (algo más de un cuarto, menos de tres cuartas partes), por lo que corresponde el tramo intermedio del <b>art. 1248 inc. b)</b>: mora automática, con intimación por un plazo no menor a 60 días.</li><li>La apertura del concurso preventivo <b>no extingue automáticamente</b> el contrato de leasing: la regla general es que el contrato sigue su curso pese al concurso o la quiebra de cualquiera de las partes.</li><li>El régimen específico de los efectos de la quiebra sobre el leasing está en la <b>Ley de Leasing 25.248</b>, no en el CCCN, por lo que el abogado de Inverfin S.A. no puede fundar la resolución automática en el Código.</li><li>Inverfin S.A. debe seguir el procedimiento del art. 1248 (intimación, plazo, eventual desalojo) y, en paralelo, verificar su crédito por los cánones adeudados dentro del proceso concursal.</li></ol><p style=\"margin-top:10px;\"><b>Respuesta:</b> El abogado de Inverfin S.A. está equivocado. El concurso preventivo no resuelve automáticamente el leasing; el contrato sigue vigente y Inverfin S.A. debe cumplir el procedimiento del art. 1248 inc. b) (intimación con plazo no menor a 60 días) antes de poder demandar el desalojo, además de verificar su crédito en el concurso.</p>",
+      "errorTipico": "T5 — Suponer que el concurso o la quiebra de una de las partes extingue automáticamente el leasing, cuando la regla es la continuidad del contrato, con reenvío a la Ley 25.248 para los efectos específicos de la quiebra.",
+      "linkRel": "Relacionado con P8 del cuestionario.",
+      "contrafactico": "¿Cómo cambiaría el análisis si el galpón fuera reemplazado por una flota de camiones (bien mueble) en las mismas condiciones de mora? Si el objeto fuera un bien mueble, no correspondería el esquema escalonado del art. 1248 (pensado para inmuebles), sino el del art. 1249: ante la mora automática, Inverfin S.A. podría optar directamente por el secuestro del bien —previa interpelación por un plazo no menor a cinco días— o por la vía ejecutiva para el cobro del canon adeudado, sin el tramo de intimación de 60 días propio de los inmuebles. El concurso preventivo de Herrajes del Sur SRL seguiría sin resolver automáticamente el contrato, por la misma razón de S2."
+    },
+    {
+      "id": "mat-pareto",
+      "title": "Top Pareto",
+      "badges": [],
+      "table": {
+        "headers": ["Prioridad", "Pregunta", "Concepto clave"],
+        "rows": [
+          ["Crítico", "P2", "Tramos de mora del leasing inmobiliario (art. 1248)"],
+          ["Crítico", "P4", "Confidencialidad del corredor como obligación de no hacer (art. 992)"],
+          ["Crítico", "P6", "Comisión del corretaje vs. diferencia comercial de la concesión"],
+          ["Crítico", "Integradora", "Deber de confidencialidad aplicado a un caso concreto"],
+          ["Alto", "P1", "Leasing financiero, operativo y leaseback"],
+          ["Alto", "P5", "Exclusividad como elemento natural, no esencial"],
+          ["Alto", "P8", "Continuidad del leasing frente al concurso; reenvío a la Ley 25.248"]
+        ]
+      },
+      "respuesta": "Preguntas críticas: P2, P4, P6, Integradora. Alto: P1, P5, P8. Fuentes: art. 1231 (modalidades), arts. 1248-1249 (incumplimiento), art. 992 (confidencialidad), art. 1507 (retribución concesionario), Ley 25.248 (leasing y quiebra)."
+    },
+    {
+      "id": "mat-fuentes",
+      "title": "Fuentes clave",
+      "badges": [],
+      "table": {
+        "headers": ["Fuente", "Qué establece", "Por qué importa en examen"],
+        "rows": [
+          ["Art. 1231 CCCN", "Modalidades de elección del bien en el leasing", "Base para distinguir financiero, operativo y leaseback"],
+          ["Arts. 1248-1249 CCCN", "Incumplimiento y ejecución del leasing", "Esquemas distintos según el objeto sea inmueble o mueble; muy preguntado"],
+          ["Art. 992 CCCN", "Deber de confidencialidad en tratativas preliminares", "Corrige el error de cita de la transcripción (1391/1392) y funda la responsabilidad objetiva del corredor"],
+          ["Art. 1507 CCCN", "Retribución del concesionario", "Permite distinguir la 'comisión' impropia de la concesión de la comisión técnica del corretaje"],
+          ["Ley 25.248", "Régimen del leasing en caso de quiebra", "Suple el silencio del CCCN sobre ese punto puntual"]
+        ]
+      },
+      "respuesta": "Art. 1231 CCCN: modalidades de elección del bien (financiero, operativo, leaseback). Arts. 1248-1249 CCCN: incumplimiento y ejecución del leasing. Art. 992 CCCN: deber de confidencialidad del corredor. Art. 1507 CCCN: retribución del concesionario. Ley 25.248: régimen del leasing en caso de quiebra."
+    }
+  ]
+}
