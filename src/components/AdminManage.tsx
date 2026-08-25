@@ -443,7 +443,9 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
       contenido = data?.contenido;
     }
     if (!contenido || !Array.isArray(contenido.questions)) {
-      setMessage("Error: este cuestionario no tiene contenido editable (se subió como HTML). Reemplazalo por uno creado con contenido JSON.");
+      setJsonTargetArchivoId(archivo.id);
+      setTimeout(() => jsonFileInputRef.current?.click(), 0);
+      setMessage("Este cuestionario fue subido sin JSON editable. Elegí el archivo .json para poder editarlo.");
       return;
     }
     setEditandoCuestionario({ archivoId: archivo.id, nombre: archivo.nombre_display, contenido });
