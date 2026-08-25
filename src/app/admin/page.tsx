@@ -435,6 +435,27 @@ export default function AdminPage() {
   const rankColor = (i: number) =>
     i === 0 ? "var(--color-gold)" : i === 1 ? "var(--color-text)" : i === 2 ? "var(--color-text-muted)" : "var(--color-text-faint)";
 
+  const [regenerating, setRegenerating] = useState(false);
+  const [regenResult, setRegenResult] = useState("");
+
+  async function handleRegenerate() {
+    setRegenerating(true);
+    setRegenResult("");
+    try {
+      const res = await fetch("/api/admin/regenerate", { method: "POST" });
+      const data = await res.json();
+      if (data.ok) {
+        setRegenResult(`Regenerados: ${data.regenerated} cuestionarios` + (data.errors ? ` (${data.errors.length} errores)` : ""));
+      } else {
+        setRegenResult("Error: " + data.error);
+      }
+    } catch (e) {
+      setRegenResult("Error: " + String(e));
+    } finally {
+      setRegenerating(false);
+    }
+  }
+
   if (!authenticated) {
     return (
       <div
@@ -754,17 +775,42 @@ export default function AdminPage() {
           {/* Manage Tab */}
           {activeTab === "manage" && (
             <>
-              <h3
-                style={{
-                  fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                  fontWeight: 400,
-                  fontSize: "18px",
-                  color: "var(--color-text)",
-                  marginBottom: "16px",
-                }}
-              >
-                Materias
-              </h3>
+              <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
+                <h3
+                  style={{
+                    fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                    fontWeight: 400,
+                    fontSize: "18px",
+                    color: "var(--color-text)",
+                  }}
+                >
+                  Materias
+                </h3>
+                <button
+                  onClick={handleRegenerate}
+                  disabled={regenerating}
+                  style={{
+                    padding: "7px 14px",
+                    fontSize: "11px",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    background: "transparent",
+                    color: "var(--color-text-muted)",
+                    border: "1px solid var(--color-line)",
+                    borderRadius: 0,
+                    cursor: regenerating ? "not-allowed" : "pointer",
+                    opacity: regenerating ? 0.5 : 1,
+                  }}
+                >
+                  {regenerating ? "Regenerando..." : "Regenerar HTML"}
+                </button>
+              </div>
+              {regenResult && (
+                <div style={{ padding: "10px 14px", marginBottom: "16px", background: regenResult.startsWith("Error") ? "rgba(224,85,85,0.08)" : "rgba(185,154,98,0.08)", border: `1px solid ${regenResult.startsWith("Error") ? "rgba(224,85,85,0.3)" : "var(--color-gold-dim)"}`, borderRadius: 0 }}>
+                  <p style={{ fontSize: "12px", color: regenResult.startsWith("Error") ? "#E05555" : "var(--color-gold)" }}>{regenResult}</p>
+                </div>
+              )}
               <AdminMaterias />
               <h3
                 style={{
