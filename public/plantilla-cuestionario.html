@@ -7,25 +7,25 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #0f1724;
-    --bg-2: #182233;
-    --bg-3: #1f2c40;
-    --accent: #6b9bd1;
-    --accent-soft: #8bb3dc;
-    --accent-bg: rgba(107,155,209,0.10);
-    --border: #2a3a52;
-    --border-2: #223047;
-    --text: #e8f1f8;
-    --text-2: #c5d3e3;
-    --text-dim: #8a9bb2;
+    --bg: #191919;
+    --bg-2: #232323;
+    --bg-3: #2d2d2d;
+    --accent: #e0e0e0;
+    --accent-soft: #ffffff;
+    --accent-bg: rgba(255,255,255,0.06);
+    --border: #333333;
+    --border-2: #2a2a2a;
+    --text: #ebebeb;
+    --text-2: #cccccc;
+    --text-dim: #888888;
     --ok: #5fb88a;
     --ok-bg: rgba(95,184,138,0.12);
     --err: #e07a75;
     --err-bg: rgba(224,122,117,0.12);
     --warn: #e6b87b;
     --warn-bg: rgba(230,184,123,0.12);
-    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
-    --shadow-lg: 0 2px 8px rgba(0,0,0,0.35), 0 12px 32px rgba(0,0,0,0.25);
+    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.3);
+    --shadow-lg: 0 2px 8px rgba(0,0,0,0.5), 0 12px 32px rgba(0,0,0,0.35);
   }
   html, body {
     background: var(--bg);
@@ -39,7 +39,7 @@
   body {
     padding: 28px 24px 80px;
     background:
-      radial-gradient(ellipse at top, #1a2a42 0%, var(--bg) 55%),
+      radial-gradient(ellipse at top, #222222 0%, var(--bg) 55%),
       var(--bg);
   }
   .container { max-width: 1100px; margin: 0 auto; }
@@ -61,7 +61,7 @@
   header.expediente .logo {
     width: 42px; height: 42px;
     border-radius: 10px;
-    background: linear-gradient(135deg, var(--accent), #4a7fc1);
+    background: linear-gradient(135deg, var(--accent), #999999);
     display: flex; align-items: center; justify-content: center;
     color: white; font-weight: 600; font-size: 18px;
     font-family: Georgia, serif;
@@ -142,7 +142,7 @@
     transition: all .15s;
     letter-spacing: 0.2px;
   }
-  .btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(107,155,209,0.35); }
+  .btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(255,255,255,0.1); }
   .btn.secondary { background: var(--bg-3); color: var(--text-2); border-color: var(--border); font-weight: 500; }
   .btn.secondary:hover { background: var(--border); color: var(--text); box-shadow: none; transform: none; }
   .btn.ghost { background: transparent; color: var(--text-dim); border-color: transparent; padding: 8px 12px; font-size: 13px; font-weight: 500; }
