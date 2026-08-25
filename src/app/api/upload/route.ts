@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { promises as fs } from "fs";
+import path from "path";
+import { uploadToR2 } from "@/lib/r2";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
 import { validateAudioFile, validateDocumentFile } from "@/lib/fileValidation";
+import { CuestionarioData, generarCuestionarioHTML } from "@/lib/cuestionario";
 
 export async function POST(request: NextRequest) {
   if (!isAdminRequest(request.headers.get("cookie"))) {
@@ -76,12 +80,36 @@ export async function POST(request: NextRequest) {
     let nextOrden = (existingFiles?.[0]?.orden ?? -1) + 1;
 
     for (const item of items) {
-      if (item.storageKey) {
-        const fileName = String(item.storageKey).split("/").pop() || "";
+      let storageKey = item.storageKey || null;
+      let contenido: CuestionarioData | string | null = item.contenido || null;
+      let fileSize = item.fileSize || null;
+
+      if (item.tipo === "cuestionario" && contenido) {
+        const parsed = typeof contenido === "string" ? JSON.parse(contenido) : contenido;
+        if (!parsed || !Array.isArray(parsed.questions)) {
+          insertErrors.push(`"${item.nombre}": contenido de cuestionario inválido (sin questions[])`);
+          continue;
+        }
+        const plantillaPath = path.join(process.cwd(), "public", "plantilla-cuestionario.html");
+        const plantilla = await fs.readFile(plantillaPath, "utf-8");
+        const html = generarCuestionarioHTML(plantilla, parsed as CuestionarioData);
+        storageKey = `uploads/${Date.now()}-cuestionario-${Date.now()}.html`;
+        fileSize = Buffer.byteLength(html, "utf-8");
+        try {
+          await uploadToR2(storageKey, Buffer.from(html, "utf-8"), "text/html; charset=utf-8");
+        } catch (e) {
+          insertErrors.push(`"${item.nombre}": error al generar HTML — ${e instanceof Error ? e.message : String(e)}`);
+          continue;
+        }
+        contenido = parsed;
+      }
+
+      if (storageKey) {
+        const fileName = String(storageKey).split("/").pop() || "";
         const isAudio = item.tipo === "audio_clase" || item.tipo === "podcast";
         const validation = isAudio
-          ? validateAudioFile({ name: fileName, size: Number(item.fileSize) || 0, type: item.tipo === "audio_clase" || item.tipo === "podcast" ? "audio/mpeg" : undefined })
-          : validateDocumentFile({ name: fileName, size: Number(item.fileSize) || 0 });
+          ? validateAudioFile({ name: fileName, size: Number(fileSize) || 0, type: item.tipo === "audio_clase" || item.tipo === "podcast" ? "audio/mpeg" : undefined })
+          : validateDocumentFile({ name: fileName, size: Number(fileSize) || 0 });
         if (!validation.ok) {
           insertErrors.push(validation.error || "Archivo inválido");
           continue;
@@ -92,12 +120,12 @@ export async function POST(request: NextRequest) {
         clase_id: targetClaseId,
         tipo: item.tipo,
         nombre_display: item.nombre,
-        storage_key: item.storageKey || null,
+        storage_key: storageKey,
         youtube_url: item.youtubeUrl || null,
         cloudinary_url: item.cloudinaryUrl || null,
         contenido_texto: item.contenidoTexto || null,
-        contenido: item.contenido || null,
-        file_size: item.fileSize || null,
+        contenido,
+        file_size: fileSize,
         duration_seconds: item.durationSeconds || null,
         orden: nextOrden++,
       });

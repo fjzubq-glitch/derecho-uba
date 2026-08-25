@@ -7,7 +7,6 @@ import AdminManage from "@/components/AdminManage";
 import AdminMaterias from "@/components/AdminMaterias";
 import { ArrowLeft, BarChart3, Headphones, FileText, Shield, ChevronDown, Loader2 } from "@/components/icons";
 import { setAdminSession } from "@/lib/utils";
-import { generarCuestionarioHTML, fetchPlantilla } from "@/lib/cuestionario";
 
 interface Materia {
   id: string;
@@ -375,12 +374,7 @@ export default function AdminPage() {
           const up = await subirArchivo(item.archivo, item.tipo);
           processedItems.push({ tipo: item.tipo, nombre: item.nombre, storageKey: up.storageKey, fileSize: up.fileSize });
         } else if (item.contenido) {
-          const plantilla = await fetchPlantilla();
-          const parsed = JSON.parse(item.contenido);
-          const html = generarCuestionarioHTML(plantilla, parsed);
-          const file = new File([html], `cuestionario-${Date.now()}.html`, { type: "text/html" });
-          const up = await subirArchivo(file, item.tipo);
-          processedItems.push({ tipo: item.tipo, nombre: item.nombre, storageKey: up.storageKey, fileSize: up.fileSize, contenido: JSON.stringify(parsed) });
+          processedItems.push({ tipo: item.tipo, nombre: item.nombre, contenido: item.contenido });
         } else if (item.driveLink) {
           processedItems.push({
             tipo: item.tipo,
