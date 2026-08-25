@@ -48,54 +48,86 @@ const paragraphs = (s: string = "") =>
     .map((p) => `<p>${inline(p).replace(/\n/g, "<br>")}</p>`)
     .join("");
 
+const badgeClass = (kind?: MaterialBadge["kind"]) => {
+  switch (kind) {
+    case "fuente": return "fuente";
+    case "pareto": return "pareto";
+    case "trampa": return "trampa";
+    case "cae": return "cae";
+    default: return "fuente";
+  }
+};
+
 export function renderMaterial(material: MaterialSection[]): string {
   return material
     .map((m) => {
       const badges = (m.badges || [])
-        .map(
-          (b) =>
-            `<span class="badge ${b.kind || "info"}">${esc(b.text)}</span>`
-        )
+        .map((b) => `<span class="badge ${badgeClass(b.kind)}">${esc(b.text)}</span>`)
         .join("");
-      const enun = m.enunciado ? `<div class="enunciado-q">${inline(m.enunciado)}</div>` : "";
+      const enun = m.enunciado ? `<p class="enunciado-q">${inline(m.enunciado)}</p>` : "";
       const ctx = m.contexto
-        ? `<div class="contexto-caso"><span class="et">CASO</span>${inline(m.contexto)}</div>`
-        : "";
-      const resp = m.respuesta ? `<div class="respuesta">${paragraphs(m.respuesta)}</div>` : "";
-      const err = m.errorTipico
-        ? `<div class="error-detail"><b>⚠️ Error típico:</b> ${inline(m.errorTipico)}</div>`
+        ? `<div class="contexto-caso">${inline(m.contexto)}</div>`
         : "";
       const tbl = m.table
-        ? `<table class="tbl"><thead><tr>${m.table.headers
+        ? `<table><thead><tr>${m.table.headers
             .map((h) => `<th>${esc(h)}</th>`)
             .join("")}</tr></thead><tbody>${m.table.rows
             .map((r) => `<tr>${r.map((c) => `<td>${inline(c)}</td>`).join("")}</tr>`)
             .join("")}</tbody></table>`
         : "";
+      const resp = m.respuesta
+        ? `<details><summary>Ver resolución</summary><div class="detail-content">${paragraphs(m.respuesta)}</div></details>`
+        : "";
+      const err = m.errorTipico
+        ? `<details class="error-detail"><summary>Ver error típico</summary><div class="detail-content"><b>❌ Error típico:</b> ${inline(m.errorTipico)}</div></details>`
+        : "";
       const contra = m.contrafactual
-        ? `<div class="contrafactual"><span class="et">CONTRAFÁCTICO</span>${inline(m.contrafactual)}</div>`
+        ? `<div class="contrafactico"><b>Sub-escenario contrafáctico:</b> ${inline(m.contrafactual)}</div>`
         : "";
       const link = m.linkRel
-        ? `<div class="link-rel"><b>↪ Relacionado:</b> ${esc(m.linkRel)}</div>`
+        ? `<p class="link-rel">🔗 ${esc(m.linkRel)}</p>`
         : "";
-      return `<section class="mat-section">
-        <div class="section-head"><h3>${esc(m.title)}</h3>${badges}</div>
+      return `<div class="mat-section" id="${esc(m.id)}">
+        <div class="section-head"><h3>${esc(m.title)}</h3><div class="badges">${badges}</div></div>
         ${enun}${ctx}${resp}${tbl}${err}${contra}${link}
-      </section>`;
+      </div>`;
     })
+    .join("\n");
+}
+
+export function renderToc(material: MaterialSection[]): string {
+  const groups: Record<string, MaterialSection[]> = {};
+  material.forEach((m) => {
+    const isCaso = /^\s*Caso|^\s*Integradora|^\s*1\.\s*Caso/i.test(m.title);
+    const isMapa = /^\s*Top Pareto|^\s*Fuentes/i.test(m.title);
+    const key = isCaso ? "Casos" : isMapa ? "Mapas" : "Cuestionario";
+    (groups[key] = groups[key] || []).push(m);
+  });
+  const order = ["Cuestionario", "Casos", "Mapas"];
+  return order
+    .filter((g) => groups[g] && groups[g].length)
+    .map((g) => `<div class="toc-group"><div class="toc-group-title">${g}</div>${groups[g]
+      .map((m) => `<a href="#${esc(m.id)}">${esc(m.title)}</a>`)
+      .join("")}</div>`)
     .join("\n");
 }
 
 export function generarCuestionarioHTML(template: string, data: CuestionarioData): string {
   const key = data.storageKey || "quiz_progress";
+  const total = data.questions.length;
+  const casos = data.questions.filter((q) => /^(C|INT)/i.test(q.id)).length;
   return template
     .replace("__TITLE__", esc(data.header.title))
-    .replace("__HEADER_TITLE__", esc(data.header.title))
+    .replaceAll("__TITLE__", esc(data.header.title))
     .replace("__HEADER_SUB__", esc(data.header.sub))
     .replace("__HEADER_META__", esc(data.header.meta))
     .replace("__STORAGE_KEY__", key)
     .replace("__QUESTIONS__", JSON.stringify(data.questions, null, 2))
-    .replace("<!-- MATERIAL -->", renderMaterial(data.material));
+    .replace("__STAT_TOTAL__", String(total))
+    .replace("__STAT_CASES__", String(casos))
+    .replace("__MATERIAL_TITLE__", esc(data.header.sub))
+    .replace("__TOC__", renderToc(data.material))
+    .replace("__MATERIAL__", renderMaterial(data.material));
 }
 
 export async function fetchPlantilla(): Promise<string> {
