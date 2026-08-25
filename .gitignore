@@ -4,6 +4,7 @@ node_modules/
 .vercel
 *.tsbuildinfo
 server.log
+.auth-cookies.txt
 
 .vercel
 .env*
