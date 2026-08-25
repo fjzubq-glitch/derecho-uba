@@ -423,6 +423,24 @@ if (isTranscription(tipo)) {
               }}
             >
               {config.label}
+              {tipo === "cuestionario" && (
+                <span
+                  style={{
+                    background: "#22c55e",
+                    color: "#000",
+                    fontSize: "8px",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontWeight: 700,
+                    letterSpacing: "0.08em",
+                    padding: "1px 5px",
+                    borderRadius: "3px",
+                    lineHeight: "14px",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Admin
+                </span>
+              )}
               <div
                 className="flex items-end"
                 style={{ gap: "2px", height: "10px", opacity: isThisPlaying ? 1 : 0, transition: "opacity 0.2s ease" }}
