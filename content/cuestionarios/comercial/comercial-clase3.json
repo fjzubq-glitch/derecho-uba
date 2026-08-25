@@ -1,0 +1,453 @@
+{
+  "header": {
+    "title": "Comercial · Clase 3",
+    "sub": "Empresario, empresa, hacienda y transferencia de fondo de comercio",
+    "meta": "14 ítems · 8 preguntas + 3 integradoras + 3 casos"
+  },
+  "storageKey": "comercial_clase3_progress",
+  "questions": [
+    {
+      "id": "P1",
+      "topic": "Empresario vs. Empresa y status jurídico",
+      "priority": "critico",
+      "enunciado": "¿En qué se diferencian el empresario y la empresa, y qué status jurídico posee la empresa antes de su inscripción registral?",
+      "pista": "El empresario es persona humana; la empresa es organización económica. La empresa carece de personería propia hasta inscripción (o personería precaria, Ley 19.550 Sec. IV).",
+      "respuestaLibre": "El empresario es la persona humana titular de la empresa, que organiza los factores de producción (capital y trabajo) para crear y comercializar bienes y servicios, asumiendo riesgos y percibiendo ganancias. La empresa es la organización económica en sí misma, y carece de personería jurídica propia hasta su inscripción en el Registro Público (o hasta adquirir personería precaria conforme la Sección IV de la Ley 19.550); mientras tanto, quienes adquieren derechos y contraen obligaciones son sus titulares.",
+      "opciones": [
+        "El empresario es la organización económica y la empresa es la persona humana; ambas tienen personería jurídica desde el inicio de actividades.",
+        "El empresario es la persona humana que organiza capital y trabajo asumiendo riesgos; la empresa es la organización económica y carece de personería jurídica propia hasta su inscripción registral (o personería precaria, Ley 19.550 Sec. IV).",
+        "Empresario y empresa son sinónimos; ambos adquieren personería jurídica al comenzar la actividad económica.",
+        "El empresario es la persona jurídica titular; la empresa es la persona humana que trabaja en ella, y ambas tienen personería plena desde el inicio."
+      ],
+      "correcta": 1,
+      "explicacion": "El empresario es la persona humana titular que organiza capital y trabajo asumiendo riesgos. La empresa es la organización económica en sí misma, que carece de personería jurídica propia hasta inscripción registral (o personería precaria según Ley 19.550, Sección IV).",
+      "errorTipico": "Asumir que la empresa, por el solo hecho de operar, tiene personería jurídica propia y puede contraer obligaciones sin necesidad de inscripción registral."
+    },
+    {
+      "id": "P2",
+      "topic": "Empresa vs. establecimiento/hacienda",
+      "priority": "critico",
+      "enunciado": "¿Qué diferencia a la empresa del establecimiento o hacienda, y qué tipos de hacienda se distinguieron en clase?",
+      "pista": "La hacienda es sólo la faz material. La empresa incluye además elementos inmateriales (know-how, marcas, actividad organizada). Tipos de hacienda: estable y ocasional.",
+      "respuestaLibre": "El establecimiento o hacienda es solo la faz material y patrimonial (instalaciones, mercaderías, elementos físicos). La empresa abarca esa faz material y además los elementos inmateriales: la actividad económica organizada, el personal en trabajo subordinado, el know-how, las marcas y las patentes. Tipos de hacienda: (1) hacienda estable: espacio físico permanente (oficinas, locales, galpones); (2) hacienda ocasional: se constituye para un evento puntual, sin espacio físico permanente (ej. festival Lollapalooza, producciones de Live Nation).",
+      "opciones": [
+        "Empresa y hacienda son sinónimos; ambos incluyen solo elementos materiales y patrimoniales.",
+        "La empresa es solo la faz material; la hacienda incluye además elementos inmateriales como el know-how y las marcas.",
+        "La hacienda es solo la faz material y patrimonial (instalaciones, mercaderías); la empresa incluye además elementos inmateriales (actividad organizada, know-how, marcas, patentes). Tipos de hacienda: estable (espacio permanente) y ocasional (evento puntual, como Lollapalooza).",
+        "La empresa y la hacienda se diferencian solo por el tamaño: la empresa es grande y la hacienda es pequeña."
+      ],
+      "correcta": 2,
+      "explicacion": "La hacienda es la faz material y patrimonial; la empresa abarca además los elementos inmateriales (actividad organizada, know-how, marcas, patentes). Tipos de hacienda: estable (espacio permanente) y ocasional (evento puntual como Lollapalooza).",
+      "errorTipico": "Usar 'empresa' y 'hacienda' como sinónimos, ignorando que la primera incluye elementos inmateriales ausentes en la segunda."
+    },
+    {
+      "id": "P3",
+      "topic": "Art. 320 CCC y profesiones liberales",
+      "priority": "alto",
+      "enunciado": "El Código Civil y Comercial eliminó la figura del comerciante. ¿Qué criterio utiliza el art. 320 para identificar a quien está obligado a llevar contabilidad, y qué ocurre con las profesiones liberales?",
+      "pista": "El CCC eliminó al comerciante. Subsisten tres supuestos objetivos. Las profesiones liberales están excluidas, pero si se organizan como empresa, pierden la excepción.",
+      "respuestaLibre": "El CCC eliminó al comerciante como figura autónoma. Subsiste la obligación contable para quien: (i) realiza actividad económica organizada, (ii) es titular de una empresa, o (iii) es titular de un establecimiento comercial, industrial o de servicios. El art. 320 excluye expresamente de la obligación contable a las personas humanas que ejercen profesiones liberales y actividades agropecuarias y conexas no organizadas en forma de empresa. Sin embargo, si un profesional liberal organiza su actividad como empresa (con socios, empleados en relación de dependencia, etc.), pierde la excepción y queda comprendido en el art. 320.",
+      "opciones": [
+        "El CCC mantiene la figura del comerciante; las profesiones liberales siempre están excluidas de la obligación contable, sin importar cómo se organicen.",
+        "El CCC eliminó al comerciante; el art. 320 establece tres supuestos alternativos (actividad económica organizada, empresa o establecimiento). Las profesiones liberales están excluidas, pero si se organizan como empresa pierden la excepción.",
+        "El CCC eliminó al comerciante y toda obligación contable; las profesiones liberales quedan totalmente fuera del derecho comercial.",
+        "El art. 320 solo obliga a las personas jurídicas; las personas humanas están siempre excluidas."
+      ],
+      "correcta": 1,
+      "explicacion": "El CCC eliminó al comerciante. El art. 320 establece tres supuestos alternativos: actividad económica organizada, empresa o establecimiento. Las profesiones liberales están excluidas, pero si se organizan como empresa (con socios, empleados, etc.) pierden la excepción.",
+      "errorTipico": "Buscar la obligación contable en la figura derogada del 'comerciante' en lugar de verificar los supuestos objetivos del art. 320, o creer que la excepción de profesión liberal protege indefinidamente aunque esa actividad se organice como empresa."
+    },
+    {
+      "id": "P4",
+      "topic": "Modelo de utilidad vs. diseño industrial",
+      "priority": "alto",
+      "enunciado": "Diferenciar modelo de utilidad de modelo/diseño industrial, retomando el ejemplo dado en clase.",
+      "pista": "Modelo de utilidad = mejora funcional (ej. tapa plástica en tetrabrik). Diseño industrial = forma ornamental (ej. diseño de un termo o silla).",
+      "respuestaLibre": "El modelo de utilidad protege mejoras funcionales sobre objetos de uso práctico ya existentes; no requiere actividad inventiva absoluta, sino una contribución práctica (ejemplo de clase: la tapa plástica con diseño en cajas tipo tetrabrik, para conservar mejor líquidos). El modelo o diseño industrial protege planos, dibujos o formas que confieren carácter ornamental a un producto (ejemplo: el diseño de un termo, una silla o un mueble). Se inscribe en el INPI para otorgar derechos exclusivos a su creador.",
+      "opciones": [
+        "Modelo de utilidad y diseño industrial son sinónimos; ambos protegen la forma estética de un producto.",
+        "El modelo de utilidad protege la forma ornamental; el diseño industrial protege la mejora funcional.",
+        "El modelo de utilidad protege mejoras funcionales sobre objetos de uso práctico (ej. tapa plástica en tetrabrik); el diseño industrial protege formas ornamentales (ej. diseño de un termo o silla).",
+        "El modelo de utilidad protege invenciones absolutas; el diseño industrial protege mejoras prácticas."
+      ],
+      "correcta": 2,
+      "explicacion": "El modelo de utilidad protege mejoras funcionales (ej. tapa plástica en tetrabrik); el diseño industrial protege formas ornamentales (ej. diseño de un termo o silla). Se inscriben en el INPI.",
+      "errorTipico": "Confundir mejora funcional (modelo de utilidad) con forma ornamental (modelo/diseño industrial), tratándolos como sinónimos."
+    },
+    {
+      "id": "P5",
+      "topic": "Elementos NO transferidos por Ley 11.867",
+      "priority": "critico",
+      "enunciado": "¿Qué elementos del patrimonio de una empresa NO se transfieren automáticamente por el régimen de la Ley 11.867, y qué se requiere para incorporarlos a la transferencia?",
+      "pista": "Inmuebles, créditos, deudas, contratos y dinero en caja NO se transfieren automáticamente. Requieren estipulación expresa en el contrato de transferencia (y escritura pública para inmuebles).",
+      "respuestaLibre": "Los inmuebles no se transfieren por la Ley 11.867; su transmisión tramita mediante compraventa civil por escritura pública. Los créditos, deudas y contratos permanecen bajo titularidad del enajenante, salvo que el contrato de transferencia especifique expresamente cuáles se ceden al adquirente. El dinero en efectivo en caja sigue siendo del enajenante, salvo estipulación en contrario.",
+      "opciones": [
+        "Todos los elementos del patrimonio (incluidos inmuebles, créditos, deudas y contratos) se transfieren automáticamente junto con el fondo de comercio.",
+        "Solo los inmuebles quedan excluidos; todos los demás elementos se transfieren automáticamente.",
+        "Los inmuebles, créditos, deudas, contratos y dinero en efectivo en caja NO se transfieren automáticamente; requieren estipulación expresa en el contrato de transferencia (y escritura pública para inmuebles).",
+        "Solo los contratos de trabajo quedan excluidos; todos los demás elementos se transfieren automáticamente."
+      ],
+      "correcta": 2,
+      "explicacion": "Los inmuebles, créditos, deudas, contratos y dinero en efectivo en caja NO se transfieren automáticamente por la Ley 11.867; requieren estipulación expresa en el contrato de transferencia (y escritura pública para inmuebles).",
+      "errorTipico": "Creer que la totalidad del patrimonio de la empresa (incluidos inmuebles, créditos, deudas y contratos) se transmite automáticamente junto con el fondo de comercio."
+    },
+    {
+      "id": "P6",
+      "topic": "Contratos de trabajo en transferencia de fondo de comercio",
+      "priority": "critico",
+      "enunciado": "¿Qué ley regula la situación de los contratos de trabajo en una transferencia de fondo de comercio, y qué debe respetar el adquirente respecto de los trabajadores?",
+      "pista": "Rige la Ley de Contrato de Trabajo (Ley 20.744), NO la Ley 11.867. El adquirente debe respetar antigüedad, sueldo y derechos adquiridos.",
+      "respuestaLibre": "Rige la Ley de Contrato de Trabajo (Ley 20.744), que establece que la transferencia de un establecimiento no extingue los contratos de trabajo. El adquirente debe respetar la antigüedad, el sueldo y los derechos adquiridos de los trabajadores al momento de la transmisión. El trabajador disconforme puede ejercer las opciones que le otorga la legislación laboral.",
+      "opciones": [
+        "Rige la Ley 11.867, que extingue automáticamente los contratos de trabajo al transferirse el fondo de comercio.",
+        "Rige la Ley de Contrato de Trabajo (Ley 20.744): la transferencia no extingue los contratos; el adquirente debe respetar antigüedad, sueldo y derechos adquiridos.",
+        "Los contratos de trabajo se renegocian desde cero; el adquirente puede decidir si los mantiene o no.",
+        "Solo se mantienen los contratos de los trabajadores con más de 5 años de antigüedad."
+      ],
+      "correcta": 1,
+      "explicacion": "Rige la Ley de Contrato de Trabajo (Ley 20.744): la transferencia no extingue los contratos; el adquirente debe respetar antigüedad, sueldo y derechos adquiridos.",
+      "errorTipico": "Creer que la Ley 11.867 regula (o extingue) los contratos de trabajo al transferirse el fondo de comercio."
+    },
+    {
+      "id": "P7",
+      "topic": "Plazos de la Ley 11.867: edictos y oposición",
+      "priority": "critico",
+      "enunciado": "¿Cuáles son los plazos que fija la Ley 11.867 para la publicación de edictos y para la oposición de acreedores, y desde qué momento se computa el segundo?",
+      "pista": "Edictos: 5 días. Oposición: 10 días desde la ÚLTIMA publicación (no desde la primera).",
+      "respuestaLibre": "El enajenante debe publicar avisos durante 5 días en el Boletín Oficial de la jurisdicción correspondiente y en un diario de gran circulación. Los acreedores tienen 10 días para presentar oposición y exigir la retención de las sumas necesarias para el pago de sus créditos. Este plazo de oposición se computa a partir de la última publicación de edictos (quinto día).",
+      "opciones": [
+        "Edictos: 10 días. Oposición: 5 días desde la primera publicación.",
+        "Edictos: 5 días. Oposición: 10 días desde la primera publicación.",
+        "Edictos: 5 días. Oposición: 10 días desde la última publicación (quinto día).",
+        "Edictos: 15 días. Oposición: 30 días desde la última publicación."
+      ],
+      "correcta": 2,
+      "explicacion": "Edictos: 5 días en Boletín Oficial y diario de gran circulación. Oposición: 10 días desde la última publicación (quinto día).",
+      "errorTipico": "Confundir el plazo de publicación de edictos (5 días) con el plazo de oposición de acreedores (10 días), o computar este último desde la primera publicación en vez de la última."
+    },
+    {
+      "id": "P8",
+      "topic": "Etapas históricas del derecho comercial",
+      "priority": "critico",
+      "enunciado": "Ordenar cronológicamente las etapas subjetiva, objetiva, mixta y actual del derecho comercial, indicando el criterio orientativo de cada una.",
+      "pista": "Subjetiva (antigüedad–Revolución Francesa, quién) → Objetiva (1807, codificación napoleónica, qué) → Mixta (Revolución Industrial–años 80, cómo) → Actual (años 80–hoy, inclusivo: quién/qué/cómo + dónde).",
+      "respuestaLibre": "Orden cronológico: (1) Etapa subjetiva: desde la antigüedad hasta la Revolución Francesa; criterio 'quién' realizaba el acto (lex mercatoria). (2) Etapa objetiva: se origina en 1807 con la codificación napoleónica; criterio 'qué' acto se realiza (antiguo art. 8º del Código de Comercio). (3) Etapa mixta: desde la Revolución Industrial hasta mediados de los años 80; criterio 'cómo' se produce o comercializa. (4) Etapa actual: desde los años 80 hasta el presente; criterio inclusivo, integrando quién, qué y cómo, y sumando el 'dónde'.",
+      "opciones": [
+        "Objetiva (antigüedad) → Subjetiva (1807) → Actual (Revolución Industrial) → Mixta (años 80).",
+        "Subjetiva (antigüedad–Revolución Francesa, quién) → Objetiva (1807, qué) → Mixta (Revolución Industrial–años 80, cómo) → Actual (años 80–hoy, inclusivo + dónde).",
+        "Subjetiva (antigüedad–Revolución Industrial) → Objetiva (Revolución Francesa) → Mixta (años 80) → Actual (hoy).",
+        "Mixta (antigüedad) → Subjetiva (1807) → Objetiva (Revolución Industrial) → Actual (años 80)."
+      ],
+      "correcta": 1,
+      "explicacion": "Orden: Subjetiva (antigüedad–Revolución Francesa, quién) → Objetiva (1807, qué) → Mixta (Revolución Industrial–años 80, cómo) → Actual (años 80–hoy, inclusivo + dónde).",
+      "errorTipico": "Invertir el orden cronológico entre la Revolución Francesa (fin de la etapa subjetiva) y la Revolución Industrial (origen de la etapa mixta), como ocurrió en la duda planteada en clase."
+    },
+    {
+      "id": "INT-a",
+      "topic": "Integradora · Tipo de hacienda de Sabores del Sur",
+      "priority": "critico",
+      "contexto": "Fernando organiza una vez al año un evento gastronómico itinerante llamado 'Sabores del Sur', para el cual contrata un predio en Palermo por una semana —siguiendo el modelo de festivales como Lollapalooza—.",
+      "enunciado": "(a) ¿Qué tipo de hacienda tiene el emprendimiento de Fernando y por qué corresponde esa calificación?",
+      "pista": "Contrata un predio por tiempo determinado, sin espacio físico permanente. Es el ejemplo de clase de Lollapalooza/Live Nation.",
+      "respuestaLibre": "Se trata de una hacienda ocasional (o no estable): el emprendimiento funciona con actividad económica organizada, capital y trabajo subordinado, pero contrata un predio y lo habilita por un tiempo determinado, sin espacio físico permanente, tal como el ejemplo de clase del festival Lollapalooza y las producciones de Live Nation.",
+      "opciones": [
+        "Es una hacienda estable porque tiene un nombre comercial reconocido.",
+        "Es una hacienda ocasional (o no estable): funciona con actividad económica organizada, capital y trabajo subordinado, pero contrata un predio por tiempo determinado, sin espacio físico permanente (ej. Lollapalooza/Live Nation).",
+        "No es una hacienda porque no tiene local físico propio.",
+        "Es una hacienda estable porque organiza un evento una vez al año."
+      ],
+      "correcta": 1,
+      "explicacion": "Es una hacienda ocasional: funciona con actividad económica organizada, capital y trabajo subordinado, pero contrata un predio por tiempo determinado, sin espacio físico permanente (ej. Lollapalooza/Live Nation).",
+      "errorTipico": "Creer que, por tratarse de un evento breve y de una hacienda ocasional, el negocio 'no es una verdadera empresa' a efectos legales."
+    },
+    {
+      "id": "INT-b",
+      "topic": "Integradora · Valor llave y chef estrella",
+      "priority": "critico",
+      "contexto": "Para asegurar el éxito de la edición de este año, Fernando convocó como chef estrella a un profesional de trayectoria reconocida, cuyo prestigio atrae por sí solo a buena parte del público (de modo análogo al ejemplo de Narda Lepes o Donato de Santis mencionado en clase).",
+      "enunciado": "(b) ¿Qué componente del valor llave adquiere especial protagonismo en esta venta, dado el prestigio del chef contratado?",
+      "pista": "El factor personal y la actividad productiva del profesional convocado impactan directamente en el valor de mercado del negocio.",
+      "respuestaLibre": "Adquiere protagonismo el factor personal y la actividad productiva del profesional convocado: el prestigio del chef impacta directamente en el valor de mercado del negocio, como ocurre con chefs reconocidos según el ejemplo dado en clase.",
+      "opciones": [
+        "El valor de los muebles y equipos de cocina.",
+        "El factor personal y la actividad productiva del chef convocado: su prestigio impacta directamente en el valor de mercado del negocio.",
+        "El contrato de alquiler del predio.",
+        "La marca 'Sabores del Sur' registrada en el INPI."
+      ],
+      "correcta": 1,
+      "explicacion": "Adquiere protagonismo el factor personal y la actividad productiva del profesional convocado: el prestigio del chef impacta directamente en el valor de mercado del negocio.",
+      "errorTipico": "No identificar que el valor llave incluye elementos inmateriales como el prestigio profesional y la actividad productiva de personas clave."
+    },
+    {
+      "id": "INT-c",
+      "topic": "Integradora · Contratos de trabajo en la transferencia",
+      "priority": "critico",
+      "contexto": "Fernando emplea camareros y cocineros bajo relación de dependencia para el armado del evento y decide vender todo el emprendimiento a Valentina, quien planea continuar organizándolo el año próximo.",
+      "enunciado": "(c) Si Fernando transfiere el emprendimiento a Valentina, ¿qué ocurre con los contratos de trabajo de los camareros y cocineros?",
+      "pista": "Rige la LCT (Ley 20.744), no la Ley 11.867. Los contratos no se extinguen; Valentina debe asumirlos respetando antigüedad, sueldo y derechos adquiridos.",
+      "respuestaLibre": "Los contratos de trabajo no se extinguen por la transferencia. Al regirse por la LCT (Ley 20.744) y no por la Ley 11.867, Valentina, como adquirente, debe asumir las relaciones laborales respetando la antigüedad, el sueldo y los derechos adquiridos de camareros y cocineros.",
+      "opciones": [
+        "Los contratos se extinguen automáticamente al transferirse el emprendimiento.",
+        "Valentina puede decidir si los mantiene o no, sin obligación de respetar la antigüedad.",
+        "Los contratos no se extinguen; Valentina, como adquirente, debe asumirlos respetando antigüedad, sueldo y derechos adquiridos, conforme la LCT (Ley 20.744).",
+        "Solo se mantienen los contratos de los trabajadores con más de 2 años de antigüedad."
+      ],
+      "correcta": 2,
+      "explicacion": "Los contratos no se extinguen; Valentina, como adquirente, debe asumirlos respetando antigüedad, sueldo y derechos adquiridos, conforme la LCT (Ley 20.744).",
+      "errorTipico": "Creer que, por tratarse de un evento breve y de una hacienda ocasional, los trabajadores contratados para el evento pierden sus derechos adquiridos al transferirse el emprendimiento."
+    },
+    {
+      "id": "C1",
+      "topic": "Caso 1 · El estudio de Bruno",
+      "priority": "alto",
+      "contexto": "Bruno es abogado, matriculado en el Colegio Público de Abogados, y atiende consultas de forma individual como monotributista. Un año después se asocia con dos colegas y funda el estudio jurídico 'Bruno, Paz & Asociados', donde emplean a una secretaria y a dos abogados junior en relación de dependencia, organizan el trabajo por áreas y reparten las ganancias según su participación. Un cliente le pregunta a Bruno si, en esta nueva etapa, el estudio está obligado a llevar contabilidad como cualquier otro comerciante.",
+      "enunciado": "¿Está obligado el estudio 'Bruno, Paz & Asociados' a llevar contabilidad?",
+      "pista": "Como profesional individual, Bruno estaba excluido. Pero al organizarse como empresa (socios, empleados, organización por áreas), pierde la excepción y queda comprendido en el art. 320.",
+      "respuestaLibre": "Sí. El estudio 'Bruno, Paz & Asociados' está obligado a llevar contabilidad, porque la organización de capital y trabajo subordinado lo saca de la excepción de 'profesión liberal' individual y lo ubica como titular de una actividad económica organizada bajo el art. 320 CCC.",
+      "opciones": [
+        "No, porque Bruno y sus socios son profesionales liberales y están excluidos del art. 320.",
+        "Sí, porque la organización de capital y trabajo subordinado lo saca de la excepción de 'profesión liberal' individual y lo ubica como titular de una actividad económica organizada bajo el art. 320 CCC.",
+        "Solo está obligado si supera cierto monto de facturación anual.",
+        "Solo está obligado si se inscribe como sociedad anónima."
+      ],
+      "correcta": 1,
+      "explicacion": "Sí, porque la organización de capital y trabajo subordinado lo saca de la excepción de 'profesión liberal' individual y lo ubica como titular de una actividad económica organizada bajo el art. 320 CCC.",
+      "errorTipico": "Creer que la excepción del art. 320 para profesiones liberales protege indefinidamente a cualquier actividad ejercida por profesionales, incluso cuando esa actividad ya se organizó como empresa."
+    },
+    {
+      "id": "C2",
+      "topic": "Caso 2 · La duda de Andrea",
+      "priority": "alto",
+      "contexto": "Tomás, compañero de Andrea, prepara un resumen para el parcial y escribe: 'La etapa subjetiva del derecho comercial va desde la Revolución Francesa hasta la Revolución Industrial, cuando el criterio pasa a ser el sujeto que realiza el acto.' Antes de entregarlo, le pide a un compañero que revise si su afirmación es correcta.",
+      "enunciado": "¿Es correcta la afirmación de Tomás?",
+      "pista": "Tomás invierte el orden: la etapa subjetiva va desde la antigüedad HASTA la Revolución Francesa (no desde ella). Y el criterio subjetivo es de esa primera etapa, no de la que sigue a la Revolución Industrial.",
+      "respuestaLibre": "El resumen de Tomás contiene dos errores: invierte el período de la etapa subjetiva (que termina, no comienza, con la Revolución Francesa) y le atribuye erróneamente el criterio subjetivo a un lapso que en realidad corresponde al inicio de la etapa objetiva. La etapa subjetiva va desde la antigüedad hasta la Revolución Francesa; la etapa objetiva comienza en 1807 con la codificación napoleónica.",
+      "opciones": [
+        "Sí es correcta: la etapa subjetiva efectivamente va desde la Revolución Francesa hasta la Revolución Industrial.",
+        "Es incorrecta: invierte el período de la etapa subjetiva (que termina, no comienza, con la Revolución Francesa) y le atribuye erróneamente el criterio subjetivo a un lapso que corresponde al inicio de la etapa objetiva.",
+        "Es parcialmente correcta: solo falta mencionar la etapa mixta.",
+        "Es correcta, pero debería agregar que la etapa objetiva comienza en 1900."
+      ],
+      "correcta": 1,
+      "explicacion": "Es incorrecta: invierte el período de la etapa subjetiva (que termina, no comienza, con la Revolución Francesa) y le atribuye erróneamente el criterio subjetivo a un lapso que corresponde al inicio de la etapa objetiva.",
+      "errorTipico": "Invertir el orden cronológico entre la Revolución Francesa y la Revolución Industrial, exactamente el error que motivó la consulta de Andrea en clase."
+    },
+    {
+      "id": "C3",
+      "topic": "Caso 3 · La venta del festival",
+      "priority": "alto",
+      "contexto": "'Ritmo Sur' es un festival de música que se organiza una vez al año, contratando un predio en las afueras de la ciudad por diez días. Su titular, Joaquín, emplea personal de sonido, seguridad y logística bajo relación de dependencia durante ese período, y mantiene además un contrato de auspicio publicitario vigente con una marca de bebidas. Joaquín decide vender el fondo de comercio de 'Ritmo Sur' a la productora 'Vértice Live'. Publica los edictos correspondientes durante 5 días en el Boletín Oficial y en un diario de gran circulación, y entrega a Vértice Live la nómina de acreedores. Uno de los proveedores de sonido, con un crédito impago, se presenta a los 8 días de la última publicación exigiendo la retención de las sumas adeudadas. Vértice Live pretende, además, quedarse con el dinero en efectivo que hubiera en la caja del festival del año anterior y continuar el contrato de auspicio publicitario vigente.",
+      "enunciado": "¿Es válida la oposición del proveedor de sonido? ¿Puede Vértice Live quedarse con el dinero en caja y el contrato de auspicio? ¿Qué ocurre con los contratos de trabajo del personal del festival?",
+      "pista": "Oposición válida (dentro de los 10 días desde la última publicación). Dinero en caja y contrato de auspicio NO se transfieren automáticamente (requieren estipulación expresa). Contratos de trabajo se mantienen (LCT).",
+      "respuestaLibre": "La oposición del proveedor de sonido es válida: se presentó dentro del plazo de 10 días contados desde la última publicación de edictos. El dinero en caja y el contrato de auspicio NO se transmiten automáticamente a Vértice Live; requieren estipulación expresa. Los contratos laborales del personal del festival sí se mantienen, y Vértice Live debe asumirlos con todos los derechos adquiridos, conforme la LCT.",
+      "opciones": [
+        "La oposición es inválida porque se presentó después de los 5 días de edictos. Vértice Live puede quedarse con todo el patrimonio automáticamente.",
+        "La oposición es válida (dentro de los 10 días desde la última publicación). El dinero en caja y el contrato de auspicio NO se transmiten automáticamente; requieren estipulación expresa. Los contratos laborales se mantienen conforme la LCT.",
+        "La oposición es válida, pero Vértice Live no debe asumir los contratos de trabajo porque es un evento ocasional.",
+        "La oposición es inválida porque el proveedor no estaba en la nómina de acreedores."
+      ],
+      "correcta": 1,
+      "explicacion": "La oposición es válida (dentro de los 10 días desde la última publicación). El dinero en caja y el contrato de auspicio NO se transmiten automáticamente; requieren estipulación expresa. Los contratos laborales se mantienen conforme la LCT.",
+      "errorTipico": "Suponer que, por tratarse de un evento ocasional y no de un establecimiento estable, el procedimiento de la Ley 11.867 no se aplica, o que la compra del fondo de comercio arrastra automáticamente la caja y los contratos vigentes del vendedor."
+    }
+  ],
+  "material": [
+    {
+      "id": "mat-p1",
+      "title": "1. Empresario vs. Empresa y status jurídico previo a la inscripción",
+      "badges": [
+        { "text": "A1, A2", "kind": "fuente" },
+        { "text": "Pareto", "kind": "pareto" }
+      ],
+      "enunciado": "¿En qué se diferencian el empresario y la empresa, y qué status jurídico posee la empresa antes de su inscripción registral?",
+      "respuesta": "(a) El empresario: (1) Es la persona humana titular de la empresa, (2) que organiza los factores de producción —capital y trabajo— para crear y comercializar bienes y servicios, (3) asumiendo los riesgos y las pérdidas y percibiendo las ganancias. (b) ¿Puede la empresa adquirir derechos y contraer obligaciones antes de inscribirse? No. La empresa carece de personería jurídica propia hasta su inscripción en el Registro Público (o hasta adquirir personería precaria conforme la Sección IV de la Ley 19.550); mientras tanto, quienes adquieren derechos y contraen obligaciones son sus titulares.",
+      "table": {
+        "headers": ["Criterio", "Empresario", "Empresa"],
+        "rows": [
+          ["Naturaleza", "Persona humana", "Organización económica"],
+          ["Personería jurídica", "Titular de derechos y obligaciones", "Carece de personería propia hasta inscripción (o precaria, Ley 19.550 Sec. IV)"],
+          ["Función", "Organiza capital y trabajo, asume riesgos", "Es el objeto/instrumento de esa organización"]
+        ]
+      },
+      "errorTipico": "Asumir que la empresa, por el solo hecho de operar, tiene personería jurídica propia y puede contraer obligaciones sin necesidad de inscripción registral."
+    },
+    {
+      "id": "mat-p2",
+      "title": "2. Empresa vs. establecimiento/hacienda y tipos de hacienda",
+      "badges": [
+        { "text": "Clase", "kind": "fuente" },
+        { "text": "Pareto", "kind": "pareto" }
+      ],
+      "enunciado": "¿Qué diferencia a la empresa del establecimiento o hacienda, y qué tipos de hacienda se distinguieron en clase?",
+      "respuesta": "(a) Diferencia entre empresa y hacienda: (1) El establecimiento o hacienda es solo la faz material y patrimonial: instalaciones, mercaderías, elementos físicos. (2) La empresa abarca esa faz material y además los elementos inmateriales: la actividad económica organizada, el personal en trabajo subordinado, el know-how, las marcas y las patentes. (b) Tipos de hacienda según su estabilidad: (1) Hacienda estable: espacio físico permanente (oficinas, locales, galpones). (2) Hacienda ocasional: se constituye para un evento puntual, sin espacio físico permanente (ej. festival Lollapalooza, producciones de Live Nation, que contratan un predio por tiempo determinado). (c) Hacienda sin actividad empresaria: Puede existir hacienda sin actividad empresaria, por ejemplo en negocios paralizados transitoriamente por un proceso sucesorio o un conflicto gremial.",
+      "table": {
+        "headers": ["Criterio", "Empresa", "Hacienda/Establecimiento"],
+        "rows": [
+          ["Contenido", "Material + inmaterial (actividad, know-how, marcas)", "Solo faz material y patrimonial"],
+          ["Ejemplo estable", "—", "Oficinas, locales, galpones"],
+          ["Ejemplo ocasional", "—", "Festival Lollapalooza / Live Nation"]
+        ]
+      },
+      "errorTipico": "Usar 'empresa' y 'hacienda' como sinónimos, ignorando que la primera incluye elementos inmateriales ausentes en la segunda."
+    },
+    {
+      "id": "mat-p3",
+      "title": "3. Art. 320 CCC: eliminación del comerciante y profesiones liberales",
+      "badges": [
+        { "text": "A1", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "El Código Civil y Comercial eliminó la figura del comerciante. ¿Qué criterio utiliza el art. 320 para identificar a quien está obligado a llevar contabilidad, y qué ocurre con las profesiones liberales?",
+      "respuesta": "(a) Figura eliminada y supuestos vigentes: (1) El CCC eliminó al comerciante como figura autónoma. (2) Subsiste la obligación contable para quien: (i) realiza actividad económica organizada, (ii) es titular de una empresa, o (iii) es titular de un establecimiento comercial, industrial o de servicios. (3) La doctrina llama \"cuasi empresario\" a quien organiza actividad económica sin llegar a estructurar una empresa, equiparándolo funcionalmente al antiguo comerciante. (b) Profesiones liberales y actividades agropecuarias: El art. 320 excluye expresamente de la obligación contable a las personas humanas que ejercen: (1) Profesiones liberales. (2) Actividades agropecuarias y conexas (afines o parecidas) no organizadas en forma de empresa. (c) ¿El profesional liberal está exento de toda obligación registral? No de toda obligación: (1) Igual debe inscribirse en su colegio profesional, obtener la matrícula habilitante, abonarla y cumplir el código de ética. (2) Actúa como monotributista, salvo que sea empleado, socio o empresario de un estudio organizado, caso en el que pasa a responsable inscripto y sí queda comprendido en el art. 320.",
+      "errorTipico": "Buscar la obligación contable en la figura derogada del \"comerciante\" en lugar de verificar los supuestos objetivos del art. 320, o creer que la excepción de profesión liberal protege indefinidamente aunque esa actividad se organice como empresa."
+    },
+    {
+      "id": "mat-p4",
+      "title": "4. Modelo de utilidad vs. modelo/diseño industrial",
+      "badges": [
+        { "text": "Clase", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "Diferenciar modelo de utilidad de modelo/diseño industrial, retomando el ejemplo dado en clase.",
+      "respuesta": "(a) Modelo de utilidad: (1) Protege mejoras funcionales sobre objetos de uso práctico ya existentes. (2) No requiere actividad inventiva absoluta, sino una contribución práctica. (3) Ejemplo de clase: la tapa plástica con diseño en cajas tipo tetrabrik, para conservar mejor líquidos como leche o jugo. (b) Modelo o diseño industrial: (1) Protege planos, dibujos o formas que confieren carácter ornamental a un producto. (2) Ejemplo: el diseño de un termo, una silla o un mueble. (3) Se inscribe en el INPI para otorgar derechos exclusivos a su creador.",
+      "table": {
+        "headers": ["Criterio", "Modelo de utilidad", "Modelo/diseño industrial"],
+        "rows": [
+          ["Objeto protegido", "Mejora funcional", "Forma ornamental"],
+          ["Exigencia", "Contribución práctica (no inventiva absoluta)", "Carácter estético/ornamental"],
+          ["Ejemplo de clase", "Tapa plástica en caja tetrabrik", "Diseño de un termo, silla o mueble"]
+        ]
+      },
+      "errorTipico": "Confundir mejora funcional (modelo de utilidad) con forma ornamental (modelo/diseño industrial), tratándolos como sinónimos."
+    },
+    {
+      "id": "mat-p5",
+      "title": "5. Elementos NO transferidos por la Ley 11.867",
+      "badges": [
+        { "text": "A3", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" },
+        { "text": "Cae siempre", "kind": "cae" }
+      ],
+      "enunciado": "¿Qué elementos del patrimonio de una empresa NO se transfieren automáticamente por el régimen de la Ley 11.867, y qué se requiere para incorporarlos a la transferencia?",
+      "respuesta": "(a) Inmuebles: Los inmuebles no se transfieren por la Ley 11.867; su transmisión tramita mediante compraventa civil por escritura pública. (b) Créditos, deudas y contratos: Permanecen bajo titularidad del enajenante, salvo que el contrato de transferencia especifique expresamente cuáles se ceden al adquirente. (c) Dinero en efectivo en caja: Sigue siendo del enajenante, salvo estipulación en contrario.",
+      "errorTipico": "Creer que la totalidad del patrimonio de la empresa (incluidos inmuebles, créditos, deudas y contratos) se transmite automáticamente junto con el fondo de comercio."
+    },
+    {
+      "id": "mat-p6",
+      "title": "6. Contratos de trabajo en transferencia de fondo de comercio",
+      "badges": [
+        { "text": "A4", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" }
+      ],
+      "enunciado": "¿Qué ley regula la situación de los contratos de trabajo en una transferencia de fondo de comercio, y qué debe respetar el adquirente respecto de los trabajadores?",
+      "respuesta": "(a) Norma aplicable: Rige la Ley de Contrato de Trabajo (Ley 20.744), que establece que la transferencia de un establecimiento no extingue los contratos de trabajo. (b) Obligaciones del adquirente: (1) Debe respetar la antigüedad, el sueldo y los derechos adquiridos de los trabajadores al momento de la transmisión. (2) El trabajador disconforme puede ejercer las opciones que le otorga la legislación laboral.",
+      "errorTipico": "Creer que la Ley 11.867 regula (o extingue) los contratos de trabajo al transferirse el fondo de comercio."
+    },
+    {
+      "id": "mat-p7",
+      "title": "7. Plazos de la Ley 11.867: edictos y oposición",
+      "badges": [
+        { "text": "A3", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" },
+        { "text": "Cae siempre", "kind": "cae" }
+      ],
+      "enunciado": "¿Cuáles son los plazos que fija la Ley 11.867 para la publicación de edictos y para la oposición de acreedores, y desde qué momento se computa el segundo?",
+      "respuesta": "(a) Publicación de edictos: El enajenante debe publicar avisos durante 5 días en el Boletín Oficial de la jurisdicción correspondiente y en un diario de gran circulación. (b) Plazo de oposición: Los acreedores tienen 10 días para presentar oposición y exigir la retención de las sumas necesarias para el pago de sus créditos. (c) Cómputo del plazo de oposición: Se computa a partir de la última publicación de edictos (quinto día).",
+      "errorTipico": "Confundir el plazo de publicación de edictos (5 días) con el plazo de oposición de acreedores (10 días), o computar este último desde la primera publicación en vez de la última."
+    },
+    {
+      "id": "mat-p8",
+      "title": "8. Orden cronológico de las etapas del derecho comercial",
+      "badges": [
+        { "text": "Clase", "kind": "fuente" },
+        { "text": "Trampa", "kind": "trampa" },
+        { "text": "Pareto", "kind": "pareto" }
+      ],
+      "enunciado": "Ordenar cronológicamente las etapas subjetiva, objetiva, mixta y actual del derecho comercial, indicando el criterio orientativo de cada una.",
+      "respuesta": "(a) Primera etapa — Subjetiva: Desde la antigüedad hasta la Revolución Francesa. Criterio orientativo: quién realizaba el acto (lex mercatoria aplicada según el sujeto). (b) Segunda etapa — Objetiva: Se origina en 1807 con la codificación napoleónica, tomada como referencia por la Argentina (cuyo antiguo art. 8º enumeraba taxativamente los actos de comercio). Criterio orientativo: qué acto se realiza. (c) Tercera etapa — Mixta: Desde la Revolución Industrial hasta mediados de los años 80; conviven la codificación con leyes supletorias para los negocios no previstos. Criterio orientativo: cómo se produce o comercializa. (d) Etapa actual: Desde los años 80 hasta el presente, impulsada por Internet y la comercialización instantánea. Criterio orientativo: inclusivo, integrando quién, qué y cómo, y sumando el dónde.",
+      "errorTipico": "Invertir el orden cronológico entre la Revolución Francesa (fin de la etapa subjetiva) y la Revolución Industrial (origen de la etapa mixta), como ocurrió en la duda planteada en clase."
+    },
+    {
+      "id": "mat-int",
+      "title": "Integradora · \"Sabores del Sur\" de Fernando",
+      "badges": [
+        { "text": "Cae siempre", "kind": "cae" }
+      ],
+      "contexto": "Fernando organiza una vez al año un evento gastronómico itinerante llamado \"Sabores del Sur\", para el cual contrata un predio en Palermo por una semana —siguiendo el modelo de festivales como Lollapalooza—. Para asegurar el éxito de la edición de este año, convocó como chef estrella a un profesional de trayectoria reconocida, cuyo prestigio atrae por sí solo a buena parte del público (de modo análogo al ejemplo de Narda Lepes o Donato de Santis mencionado en clase). Fernando emplea camareros y cocineros bajo relación de dependencia para el armado del evento y decide vender todo el emprendimiento a Valentina, quien planea continuar organizándolo el año próximo.",
+      "respuesta": "(a) Se trata de una hacienda ocasional (o no estable): el emprendimiento funciona con actividad económica organizada, capital y trabajo subordinado, pero contrata un predio y lo habilita por un tiempo determinado, sin espacio físico permanente, tal como el ejemplo de clase del festival Lollapalooza y las producciones de Live Nation. (b) Adquiere protagonismo el factor personal y la actividad productiva del profesional convocado: el prestigio del chef impacta directamente en el valor de mercado del negocio, como ocurre con chefs reconocidos según el ejemplo dado en clase. (c) Los contratos de trabajo no se extinguen por la transferencia. Al regirse por la LCT (Ley 20.744) y no por la Ley 11.867, Valentina, como adquirente, debe asumir las relaciones laborales respetando la antigüedad, el sueldo y los derechos adquiridos de camareros y cocineros.",
+      "errorTipico": "Creer que, por tratarse de un evento breve y de una hacienda ocasional, el negocio \"no es una verdadera empresa\" a efectos legales, o que los trabajadores contratados para el evento pierden sus derechos adquiridos al transferirse el emprendimiento a Valentina."
+    },
+    {
+      "id": "mat-c1",
+      "title": "Caso 1 · El estudio de Bruno",
+      "badges": [
+        { "text": "Simple", "kind": "fuente" },
+        { "text": "O1, D3, D8, S2", "kind": "fuente" },
+        { "text": "A1", "kind": "fuente" }
+      ],
+      "contexto": "Bruno es abogado, matriculado en el Colegio Público de Abogados, y atiende consultas de forma individual como monotributista. Un año después se asocia con dos colegas y funda el estudio jurídico \"Bruno, Paz & Asociados\", donde emplean a una secretaria y a dos abogados junior en relación de dependencia, organizan el trabajo por áreas y reparten las ganancias según su participación. Un cliente le pregunta a Bruno si, en esta nueva etapa, el estudio está obligado a llevar contabilidad como cualquier otro comerciante.",
+      "respuesta": "Figura jurídica: Exclusión de profesiones liberales del art. 320 CCC (O1) frente a la actividad económica organizada / empresario. Razonamiento: (1) Como profesional individual, Bruno encuadra en la excepción del art. 320: ejerce una profesión liberal, actividad que la norma excluye expresamente de la obligación contable, aunque igual debe cumplir con la matrícula, el pago del colegio profesional y el código de ética. (2) Al fundar el estudio con socios, empleados en relación de dependencia y organización del trabajo por áreas, la actividad deja de ser el ejercicio individual de una profesión liberal y pasa a ser una actividad económica organizada. (3) Bruno y sus socios pasan de monotributistas a responsables inscriptos, y el estudio queda comprendido en los supuestos del art. 320 que sí generan obligación contable (titularidad de una empresa o de un establecimiento de servicios). Respuesta: Sí. El estudio \"Bruno, Paz & Asociados\" está obligado a llevar contabilidad, porque la organización de capital y trabajo subordinado lo saca de la excepción de \"profesión liberal\" individual y lo ubica como titular de una actividad económica organizada bajo el art. 320 CCC.",
+      "errorTipico": "Creer que la excepción del art. 320 para profesiones liberales protege indefinidamente a cualquier actividad ejercida por profesionales, incluso cuando esa actividad ya se organizó como empresa."
+    },
+    {
+      "id": "mat-c2",
+      "title": "Caso 2 · La duda de Andrea",
+      "badges": [
+        { "text": "Trampa (T1)", "kind": "trampa" },
+        { "text": "O4, T1", "kind": "fuente" }
+      ],
+      "contexto": "Tomás, compañero de Andrea, prepara un resumen para el parcial y escribe: \"La etapa subjetiva del derecho comercial va desde la Revolución Francesa hasta la Revolución Industrial, cuando el criterio pasa a ser el sujeto que realiza el acto.\" Antes de entregarlo, le pide a un compañero que revise si su afirmación es correcta.",
+      "respuesta": "Figura jurídica: Periodización histórica del derecho comercial (O4): etapas subjetiva y objetiva. Razonamiento: (1) La etapa subjetiva no va \"desde la Revolución Francesa hasta la Revolución Industrial\", sino desde la antigüedad hasta la Revolución Francesa. (2) El criterio subjetivo (quién realiza el acto) corresponde precisamente a esta primera etapa, no a la que sigue a la Revolución Industrial. (3) La etapa objetiva comienza en 1807 con la codificación napoleónica —anterior, de hecho, a la Revolución Industrial— y su criterio orientativo es qué acto se realiza, no quién lo realiza. Respuesta: El resumen de Tomás contiene dos errores: invierte el período de la etapa subjetiva (que termina, no comienza, con la Revolución Francesa) y le atribuye erróneamente el criterio subjetivo a un lapso que en realidad corresponde al inicio de la etapa objetiva.",
+      "errorTipico": "Invertir el orden cronológico entre la Revolución Francesa y la Revolución Industrial, exactamente el error que motivó la consulta de Andrea en clase."
+    },
+    {
+      "id": "mat-c3",
+      "title": "Caso 3 · La venta del festival",
+      "badges": [
+        { "text": "Complejo", "kind": "fuente" },
+        { "text": "O1, O3, S2, D5, D7", "kind": "fuente" },
+        { "text": "A3, A4", "kind": "fuente" }
+      ],
+      "contexto": "\"Ritmo Sur\" es un festival de música que se organiza una vez al año, contratando un predio en las afueras de la ciudad por diez días. Su titular, Joaquín, emplea personal de sonido, seguridad y logística bajo relación de dependencia durante ese período, y mantiene además un contrato de auspicio publicitario vigente con una marca de bebidas. Joaquín decide vender el fondo de comercio de \"Ritmo Sur\" a la productora \"Vértice Live\". Publica los edictos correspondientes durante 5 días en el Boletín Oficial y en un diario de gran circulación, y entrega a Vértice Live la nómina de acreedores. Uno de los proveedores de sonido, con un crédito impago, se presenta a los 8 días de la última publicación exigiendo la retención de las sumas adeudadas. Vértice Live pretende, además, quedarse con el dinero en efectivo que hubiera en la caja del festival del año anterior y continuar el contrato de auspicio publicitario vigente.",
+      "respuesta": "Figura jurídica: Transferencia de fondo de comercio (O3) sobre una empresa con hacienda ocasional (O1/D5), con incidencia de la LCT sobre los contratos de trabajo (S2) y de las exclusiones legales del art. 1º de la Ley 11.867 (D7). Razonamiento: (1) \"Ritmo Sur\" constituye una empresa con hacienda ocasional: cuenta con actividad económica organizada, capital y trabajo subordinado, pero contrata el predio por un tiempo determinado para un evento puntual, igual que el ejemplo de Lollapalooza/Live Nation visto en clase. (2) La oposición del proveedor de sonido es válida en cuanto al fondo: se presentó dentro del plazo de 10 días contados desde la última publicación de edictos, por lo que Vértice Live debe retener las sumas necesarias para cubrir ese crédito antes de que la transferencia pueda inscribirse válidamente. (3) El dinero en efectivo en caja no se transfiere automáticamente por la Ley 11.867; sigue siendo de titularidad de Joaquín salvo que se estipule expresamente lo contrario en el contrato de transferencia. (4) El contrato de auspicio publicitario tampoco se transfiere de pleno derecho: al ser un contrato del enajenante, permanece bajo su titularidad salvo cesión expresa pactada entre las partes. (5) Respecto del personal contratado para el evento, sus contratos de trabajo no se extinguen por la transferencia; Vértice Live, como adquirente, debe asumirlos respetando antigüedad, sueldo y derechos adquiridos, conforme la LCT y no la Ley 11.867.",
+      "errorTipico": "Suponer que, por tratarse de un evento ocasional y no de un establecimiento estable, el procedimiento de la Ley 11.867 no se aplica, o que la compra del fondo de comercio arrastra automáticamente la caja y los contratos vigentes del vendedor.",
+      "contrafactual": "Si Joaquín no hubiera publicado los edictos exigidos por la Ley 11.867 y, aun así, hubiera firmado e inscripto la transferencia con Vértice Live, ¿podría el proveedor de sonido impago hacer valer su crédito contra la productora adquirente? Resolución contrafáctica: Sí. La omisión del procedimiento de publicación de edictos y del plazo de oposición priva de eficacia a la transferencia frente a los acreedores del enajenante: al no haberse dado la oportunidad de oponerse y exigir la retención de su crédito, el proveedor conserva la posibilidad de accionar contra Vértice Live como adquirente, ya que el cumplimiento del procedimiento de la Ley 11.867 es precisamente lo que protege a los acreedores y condiciona la oponibilidad válida de la operación frente a terceros."
+    },
+    {
+      "id": "mat-pareto",
+      "title": "Top Pareto",
+      "badges": [],
+      "respuesta": "Preguntas críticas: P1 (Empresario vs. Empresa), P2 (Empresa vs. Hacienda y tipos), P5 (Elementos excluidos Ley 11.867), P6 (Contratos de trabajo en transferencia), P7 (Plazos Ley 11.867), P8 (Etapas históricas), Integradora (Hacienda ocasional + valor llave + contratos). Preguntas de alto nivel: P3 (Profesiones liberales + art. 320), P4 (Modelo de utilidad vs. diseño industrial).",
+      "table": {
+        "headers": ["Prioridad", "Pregunta", "Concepto clave"],
+        "rows": [
+          ["Crítico", "P1", "Empresario vs. Empresa (personería jurídica)"],
+          ["Crítico", "P2", "Empresa vs. Hacienda/Establecimiento (y tipos de hacienda)"],
+          ["Crítico", "P5", "Elementos excluidos del fondo de comercio"],
+          ["Crítico", "P6", "Contratos de trabajo en la transferencia (LCT)"],
+          ["Crítico", "P7", "Plazos del procedimiento de transferencia (Ley 11.867)"],
+          ["Crítico", "P8", "Etapas históricas del derecho comercial"],
+          ["Crítico", "Integradora", "Hacienda ocasional + valor llave + contratos de trabajo"],
+          ["Alto", "P3", "Sujetos obligados a llevar contabilidad + profesiones liberales"],
+          ["Alto", "P4", "Modelo de utilidad vs. Modelo/diseño industrial"]
+        ]
+      }
+    },
+    {
+      "id": "mat-fuentes",
+      "title": "Fuentes clave",
+      "badges": [],
+      "respuesta": "Art. 320 CCC: sujetos obligados a llevar contabilidad y exclusiones (profesiones liberales, actividades agropecuarias no organizadas como empresa). Ley 19.550, Sección IV: régimen de personería jurídica precaria para sociedades no inscriptas. Ley 11.867: régimen de transferencia de fondo de comercio: elementos, exclusiones y procedimiento (edictos, oposición, inscripción). Ley 20.744 — LCT: continuidad de los contratos de trabajo en caso de transferencia del establecimiento. Antiguo art. 8º Código de Comercio (derogado): enumeración taxativa de actos de comercio (etapa objetiva).",
+      "table": {
+        "headers": ["Fuente", "Qué establece", "Por qué importa en examen"],
+        "rows": [
+          ["Art. 320 CCC (A1)", "Sujetos obligados a llevar contabilidad y exclusiones", "Fue la lectura asignada como tarea; estructura la delimitación empresario/empresa/comerciante"],
+          ["Ley 19.550, Sección IV (A2)", "Régimen de personería jurídica precaria para sociedades no inscriptas", "Explica cómo actúa una empresa antes de su inscripción registral"],
+          ["Ley 11.867 (A3)", "Régimen de transferencia de fondo de comercio: elementos, exclusiones y procedimiento", "Fuente normativa central del bloque más extenso de la clase; alta probabilidad de pregunta de procedimiento"],
+          ["Ley 20.744 — LCT (A4)", "Continuidad de los contratos de trabajo en caso de transferencia", "Trampa recurrente: se suele buscar esta regulación erróneamente en la Ley 11.867"],
+          ["Antiguo art. 8º Cód. Comercio (A5, derogado)", "Enumeración taxativa de actos de comercio (etapa objetiva)", "Clave para entender el origen histórico del criterio objetivo, hoy superado pero examinable en el repaso histórico"]
+        ]
+      }
+    }
+  ]
+}
