@@ -1,4 +1,10 @@
 import VolverBoton from "@/components/VolverBoton";
+import { cookies } from "next/headers";
+import { isAdminRequest, SESSION_COOKIE_NAME } from "@/lib/auth";
+import { getSupabaseAdmin } from "@/lib/supabase";
+import { getObjectBuffer } from "@/lib/r2";
+
+export const dynamic = "force-dynamic";
 
 export default async function VisorPage({
   params,
@@ -6,6 +12,46 @@ export default async function VisorPage({
   params: Promise<{ archivoId: string }>;
 }) {
   const { archivoId } = await params;
+  const cookie = (await cookies()).get(SESSION_COOKIE_NAME)?.value ?? null;
+  const esAdmin = isAdminRequest(cookie);
+
+  const { data: archivo } = await getSupabaseAdmin()
+    .from("archivos")
+    .select("storage_key, youtube_url, cloudinary_url, tipo, contenido_texto, nombre_display")
+    .eq("id", archivoId)
+    .single();
+
+  const iframeSandbox = "allow-scripts allow-same-origin allow-forms allow-popups allow-modals";
+
+  let iframeSrc: string | null = null;
+  let iframeSrcDoc: string | null = null;
+  let errorMsg: string | null = null;
+
+  if (archivo) {
+    if (archivo.tipo === "cuestionario") {
+      // Solo el administrador puede ver el cuestionario. Se resuelve en el
+      // servidor (que sí lee la cookie) y se embebe con srcDoc, evitando
+      // dependencias de que la cookie viaje en la subpetición del iframe.
+      if (!esAdmin) {
+        errorMsg = "No autorizado";
+      } else if (archivo.storage_key) {
+        try {
+          const buf = await getObjectBuffer(archivo.storage_key);
+          iframeSrcDoc = buf.toString("utf-8");
+        } catch (e) {
+          errorMsg = e instanceof Error ? e.message : "Error al leer el archivo";
+        }
+      } else if (archivo.contenido_texto) {
+        iframeSrcDoc = archivo.contenido_texto;
+      } else {
+        errorMsg = "Cuestionario sin contenido";
+      }
+    } else {
+      iframeSrc = `/api/stream/${archivoId}`;
+    }
+  } else {
+    errorMsg = "Archivo no encontrado";
+  }
 
   return (
     <div
@@ -37,18 +83,47 @@ export default async function VisorPage({
           background: "#ffffff",
         }}
       >
-        <iframe
-          src={`/api/stream/${archivoId}`}
-          title="Web interactiva"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
-          style={{
-            width: "100%",
-            height: "100%",
-            border: "none",
-            display: "block",
-            background: "#ffffff",
-          }}
-        />
+        {errorMsg ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              color: "var(--color-text-faint)",
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "14px",
+            }}
+          >
+            {errorMsg}
+          </div>
+        ) : iframeSrcDoc !== null ? (
+          <iframe
+            title="Web interactiva"
+            sandbox={iframeSandbox}
+            srcDoc={iframeSrcDoc}
+            style={{
+              width: "100%",
+              height: "100%",
+              border: "none",
+              display: "block",
+              background: "#ffffff",
+            }}
+          />
+        ) : iframeSrc ? (
+          <iframe
+            src={iframeSrc}
+            title="Web interactiva"
+            sandbox={iframeSandbox}
+            style={{
+              width: "100%",
+              height: "100%",
+              border: "none",
+              display: "block",
+              background: "#ffffff",
+            }}
+          />
+        ) : null}
       </div>
     </div>
   );
