@@ -5,6 +5,8 @@ import { supabase } from "@/lib/supabase";
 import { formatFechaLocal } from "@/lib/utils";
 import { useEscapeKey } from "@/lib/useEscapeKey";
 import { Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical, Link2, ChevronUp, ChevronDown } from "@/components/icons";
+import CuestionarioEditor from "@/components/CuestionarioEditor";
+import type { CuestionarioData } from "@/lib/cuestionario";
 
 interface Archivo {
   id: string;
@@ -16,6 +18,7 @@ interface Archivo {
   play_count: number;
   nota: string | null;
   orden: number;
+  contenido?: CuestionarioData | null;
 }
 
 interface Materia {
@@ -81,6 +84,8 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const [message, setMessage] = useState("");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [filtroMateria, setFiltroMateria] = useState("todas");
+  const [editandoCuestionario, setEditandoCuestionario] = useState<{ archivoId: string; nombre: string; contenido: CuestionarioData } | null>(null);
+  const [cuestionarioSaving, setCuestionarioSaving] = useState(false);
 
   const cerrarReplace = () => {
     setReplacing(null);
@@ -402,6 +407,44 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     } finally {
       setProcessing(false);
     }
+  }
+
+  async function handleGuardarCuestionario(contenido: CuestionarioData) {
+    if (!editandoCuestionario) return;
+    setCuestionarioSaving(true);
+    try {
+      const res = await fetch(`/api/admin/cuestionario/${editandoCuestionario.archivoId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contenido }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setMessage("Cuestionario guardado correctamente");
+        setEditandoCuestionario(null);
+        loadClases();
+      } else {
+        setMessage("Error: " + data.error);
+      }
+    } catch (err) {
+      setMessage("Error: " + String(err));
+    } finally {
+      setCuestionarioSaving(false);
+    }
+  }
+
+  async function abrirEditorCuestionario(archivo: Archivo) {
+    setMessage("");
+    let contenido = archivo.contenido;
+    if (!contenido || !Array.isArray(contenido.questions)) {
+      const { data } = await supabase.from("archivos").select("contenido").eq("id", archivo.id).single();
+      contenido = data?.contenido;
+    }
+    if (!contenido || !Array.isArray(contenido.questions)) {
+      setMessage("Error: este cuestionario no tiene contenido editable (se subió como HTML). Reemplazalo por uno creado con contenido JSON.");
+      return;
+    }
+    setEditandoCuestionario({ archivoId: archivo.id, nombre: archivo.nombre_display, contenido });
   }
 
   async function handleReorder(archivos: Archivo[], index: number, direction: "up" | "down") {
@@ -968,11 +1011,17 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                             : []),
                           {
                             label: "Editar",
-                            onClick: () => setEditing({
-                              tipo: archivo.tipo as EditData["tipo"],
-                              id: archivo.id,
-                              data: { nombre_display: archivo.nombre_display, nota: archivo.nota || "" }
-                            }),
+                            onClick: () => {
+                              if (archivo.tipo === "cuestionario") {
+                                abrirEditorCuestionario(archivo);
+                              } else {
+                                setEditing({
+                                  tipo: archivo.tipo as EditData["tipo"],
+                                  id: archivo.id,
+                                  data: { nombre_display: archivo.nombre_display, nota: archivo.nota || "" }
+                                });
+                              }
+                            },
                           },
                           {
                             label: "Borrar",
@@ -1001,6 +1050,33 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
               )}
             </div>
           )))}
+        </div>
+      )}
+
+      {/* Cuestionario Content Editor Modal */}
+      {editandoCuestionario && (
+        <div style={{ ...modalBackdrop, alignItems: "flex-start" }} onClick={(e) => { if (e.target === e.currentTarget && !cuestionarioSaving) setEditandoCuestionario(null); }}>
+          <div style={{ ...modalCard, maxWidth: "720px", maxHeight: "92vh", display: "flex", flexDirection: "column" }} onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h3 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 500, fontSize: "18px", color: "var(--color-text)" }}>
+                  Editar cuestionario
+                </h3>
+                <p style={{ fontSize: "12px", color: "var(--color-text-muted)", marginTop: "2px" }}>{editandoCuestionario.nombre}</p>
+              </div>
+              <button onClick={() => setEditandoCuestionario(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)" }}>
+                <X style={{ width: "18px", height: "18px" }} />
+              </button>
+            </div>
+            <div style={{ flex: 1, minHeight: 0 }}>
+              <CuestionarioEditor
+                contenido={editandoCuestionario.contenido}
+                onSave={handleGuardarCuestionario}
+                onCancel={() => setEditandoCuestionario(null)}
+                saving={cuestionarioSaving}
+              />
+            </div>
+          </div>
         </div>
       )}
 

@@ -12,6 +12,7 @@ interface UploadItem {
   driveLink?: string;
   cloudinaryUrl?: string;
   textoContenido?: string;
+  contenido?: string;
 }
 
 interface ClaseExistente {
@@ -61,6 +62,47 @@ const sectionHeaderStyle: React.CSSProperties = {
   gap: "10px",
 };
 
+const CUESTIONARIO_EJEMPLO = JSON.stringify(
+  {
+    header: {
+      title: "Contratos · Clase 1",
+      sub: "CCC — Unidad 1 · Relación y contrato de consumo",
+      meta: "8 ítems · 3 casos · Pareto +80%",
+    },
+    storageKey: "contratos_clase1_progress",
+    questions: [
+      {
+        id: "p1",
+        topic: "O1 · art. 1092 CCC",
+        priority: "critico",
+        enunciado: "¿Qué significa que un consumidor sea destinatario final?",
+        pista: "Pensá en si el bien reingresa al mercado.",
+        respuestaLibre: "Adquiere el bien para consumo propio, sin reinsertarlo en la cadena.",
+        opciones: [
+          "Es destinatario final si lo usa para consumo propio, sin volver al mercado.",
+          "Lo es aunque el bien reingrese transformado a la cadena.",
+        ],
+        correcta: 0,
+        explicacion: "El destinatario final no reinserta el bien al mercado.",
+        errorTipico: "Creer que basta con pagar para ser consumidor.",
+        contexto: "",
+      },
+    ],
+    material: [
+      {
+        id: "mat-p1",
+        title: "1. Destinatario final (art. 1092 CCC)",
+        badges: [{ text: "O1", kind: "fuente" }, { text: "Pareto", kind: "pareto" }],
+        enunciado: "El consumidor adquiere el bien para consumo propio.",
+        respuesta: "Ser destinatario final implica consumo propio, familiar o social, sin volver al mercado.",
+        errorTipico: "Dar por sentada la calidad de consumidor por solo haber pagado.",
+      },
+    ],
+  },
+  null,
+  2
+);
+
 export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminUploadProps) {
   const [modo, setModo] = useState<"nueva" | "existente">("nueva");
   const [materiaId, setMateriaId] = useState(materias[0]?.id || "");
@@ -93,9 +135,8 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const [punteoDropHover, setPunteoDropHover] = useState(false);
 
   const [cuestionarioNombre, setCuestionarioNombre] = useState("");
-  const [cuestionarioFile, setCuestionarioFile] = useState<File | null>(null);
-  const cuestionarioInputRef = useRef<HTMLInputElement>(null);
-  const [cuestionarioDropHover, setCuestionarioDropHover] = useState(false);
+  const [cuestionarioContenido, setCuestionarioContenido] = useState("");
+  const [cuestionarioError, setCuestionarioError] = useState("");
 
   const [enlaceNombre, setEnlaceNombre] = useState("");
   const [enlaceUrl, setEnlaceUrl] = useState("");
@@ -119,7 +160,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     (transcripcionMethod === "texto" && transcripcionTexto.trim() !== "");
   const hasArchivo = archivoFile !== null || (archivoUseLink && archivoLink.trim() !== "");
   const hasPunteo = punteoFile !== null || (punteoUseLink && punteoLink.trim() !== "");
-  const hasCuestionario = cuestionarioFile !== null;
+  const hasCuestionario = cuestionarioContenido.trim() !== "";
   const hasEnlace = enlaceUrl.trim() !== "";
   const hasClaseYoutube = claseYoutubeItems.some((i) => i.url.trim() !== "");
 
@@ -202,6 +243,19 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     setErrores({});
     setUploading(true);
 
+    if (hasCuestionario) {
+      try {
+        const d = JSON.parse(cuestionarioContenido);
+        if (!d || !Array.isArray(d.questions) || d.questions.length === 0) {
+          throw new Error("El contenido debe tener questions[] con al menos una pregunta");
+        }
+      } catch (err) {
+        setUploading(false);
+        setResultMsg({ text: "Cuestionario: JSON inválido — " + (err as Error).message, isError: true });
+        return;
+      }
+    }
+
     const items: UploadItem[] = [];
 
     if (useCloudinary && cloudinaryUrl) {
@@ -235,7 +289,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     }
 
     if (hasCuestionario) {
-      items.push({ tipo: "cuestionario", nombre: cuestionarioNombre || `Cuestionario Clase ${claseNumero}`, archivo: cuestionarioFile as File });
+      items.push({ tipo: "cuestionario", nombre: cuestionarioNombre || `Cuestionario Clase ${claseNumero}`, contenido: cuestionarioContenido });
     }
 
     if (hasEnlace) {
@@ -290,7 +344,8 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     setPunteoLink("");
     setPunteoUseLink(false);
     setCuestionarioNombre("");
-    setCuestionarioFile(null);
+    setCuestionarioContenido("");
+    setCuestionarioError("");
     setEnlaceNombre("");
     setEnlaceUrl("");
     setClaseYoutubeItems([{ nombre: "", url: "" }]);
@@ -930,26 +985,47 @@ Clase Virtual
           />
 
           <div className="space-y-3">
-            <DropZone
-              file={cuestionarioFile}
-              onFile={(f) => setCuestionarioFile(f)}
-              onClear={() => setCuestionarioFile(null)}
-              hover={cuestionarioDropHover}
-              onHover={setCuestionarioDropHover}
-              inputRef={cuestionarioInputRef}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setCuestionarioContenido(CUESTIONARIO_EJEMPLO);
+                  setCuestionarioError("");
+                }}
+                style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-gold)", padding: "9px 14px", cursor: "pointer", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" }}
+              >
+                Cargar ejemplo
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  try {
+                    const d = JSON.parse(cuestionarioContenido);
+                    if (!d.questions || !Array.isArray(d.questions)) throw new Error("Falta questions[]");
+                    setCuestionarioError("");
+                  } catch (err) {
+                    setCuestionarioError("JSON inválido: " + (err as Error).message);
+                  }
+                }}
+                style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", padding: "9px 14px", cursor: "pointer", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" }}
+              >
+                Validar
+              </button>
+            </div>
+            <textarea
+              value={cuestionarioContenido}
+              onChange={(e) => setCuestionarioContenido(e.target.value)}
+              placeholder='Pegá el contenido del cuestionario en formato JSON: { "header": {...}, "questions": [...], "material": [...] }'
+              aria-label="Contenido del cuestionario en JSON"
+              rows={10}
+              spellCheck={false}
+              style={{ ...inputStyle, resize: "vertical", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px", lineHeight: 1.5 }}
             />
-            <input
-              ref={cuestionarioInputRef}
-              type="file"
-              accept=".html,.htm,text/html"
-              onChange={(e) => {
-                const f = e.target.files?.[0] || null;
-                if (f) setCuestionarioFile(f);
-              }}
-              style={{ display: "none" }}
-            />
+            {cuestionarioError && (
+              <p style={{ fontSize: "11px", color: "#E05555", fontFamily: "var(--font-inter)" }}>{cuestionarioError}</p>
+            )}
             <p style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
-              Archivo HTML. Solo visible para el administrador, no aparece para estudiantes.
+              Solo visible para el administrador. El HTML se genera automáticamente desde este contenido y se puede editar campo por campo después.
             </p>
           </div>
         </div>

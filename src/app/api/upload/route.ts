@@ -96,6 +96,7 @@ export async function POST(request: NextRequest) {
         youtube_url: item.youtubeUrl || null,
         cloudinary_url: item.cloudinaryUrl || null,
         contenido_texto: item.contenidoTexto || null,
+        contenido: item.contenido || null,
         file_size: item.fileSize || null,
         duration_seconds: item.durationSeconds || null,
         orden: nextOrden++,

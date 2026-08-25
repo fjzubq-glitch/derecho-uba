@@ -7,6 +7,7 @@ import AdminManage from "@/components/AdminManage";
 import AdminMaterias from "@/components/AdminMaterias";
 import { ArrowLeft, BarChart3, Headphones, FileText, Shield, ChevronDown, Loader2 } from "@/components/icons";
 import { setAdminSession } from "@/lib/utils";
+import { generarCuestionarioHTML, fetchPlantilla } from "@/lib/cuestionario";
 
 interface Materia {
   id: string;
@@ -301,11 +302,55 @@ export default function AdminPage() {
       driveLink?: string;
       cloudinaryUrl?: string;
       textoContenido?: string;
+      contenido?: string;
     }>,
     claseId?: string
   ): Promise<{ ok: boolean; error?: string }> {
     try {
       const processedItems = [];
+
+      const subirArchivo = async (archivo: File, tipo: string): Promise<{ storageKey: string; fileSize: number }> => {
+        const CHUNK_SIZE = 1024 * 1024;
+        const sessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        const totalParts = Math.ceil(archivo.size / CHUNK_SIZE);
+        for (let i = 0; i < totalParts; i++) {
+          const start = i * CHUNK_SIZE;
+          const end = Math.min(start + CHUNK_SIZE, archivo.size);
+          const slice = archivo.slice(start, end);
+          const base64 = await new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve((reader.result as string).split(",")[1]);
+            reader.onerror = () => resolve("");
+            reader.readAsDataURL(slice);
+          });
+          const partRes = await fetch("/api/upload-chunk", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sessionId, partNumber: i + 1, data: base64 }),
+          });
+          if (!partRes.ok) {
+            const errBody = await partRes.text();
+            throw new Error(`Part ${i + 1}/${totalParts} failed: ${errBody}`);
+          }
+        }
+        const finalKey = `uploads/${Date.now()}-${archivo.name}`;
+        const assemRes = await fetch("/api/upload-assemble", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            totalParts,
+            finalKey,
+            contentType: inferirContentType(archivo),
+            fileType: tipo,
+          }),
+        });
+        if (!assemRes.ok) {
+          const errBody = await assemRes.text();
+          throw new Error(`Assembly failed: ${errBody}`);
+        }
+        return { storageKey: finalKey, fileSize: archivo.size };
+      };
 
       for (const item of items) {
         if (item.tipo === "transcripcion" && item.textoContenido) {
@@ -327,55 +372,15 @@ export default function AdminPage() {
             cloudinaryUrl: item.cloudinaryUrl,
           });
         } else if (item.archivo) {
-          const CHUNK_SIZE = 1024 * 1024;
-          const sessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-          const totalParts = Math.ceil(item.archivo.size / CHUNK_SIZE);
-
-          for (let i = 0; i < totalParts; i++) {
-            const start = i * CHUNK_SIZE;
-            const end = Math.min(start + CHUNK_SIZE, item.archivo.size);
-            const slice = item.archivo.slice(start, end);
-            const base64 = await new Promise<string>((resolve) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve((reader.result as string).split(",")[1]);
-              reader.onerror = () => resolve("");
-              reader.readAsDataURL(slice);
-            });
-
-            const partRes = await fetch("/api/upload-chunk", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ sessionId, partNumber: i + 1, data: base64 }),
-            });
-            if (!partRes.ok) {
-              const errBody = await partRes.text();
-              throw new Error(`Part ${i + 1}/${totalParts} failed: ${errBody}`);
-            }
-          }
-
-          const finalKey = `uploads/${Date.now()}-${item.archivo.name}`;
-          const assemRes = await fetch("/api/upload-assemble", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              sessionId,
-              totalParts,
-              finalKey,
-              contentType: inferirContentType(item.archivo),
-              fileType: item.tipo,
-            }),
-          });
-          if (!assemRes.ok) {
-            const errBody = await assemRes.text();
-            throw new Error(`Assembly failed: ${errBody}`);
-          }
-
-          processedItems.push({
-            tipo: item.tipo,
-            nombre: item.nombre,
-            storageKey: finalKey,
-            fileSize: item.archivo.size,
-          });
+          const up = await subirArchivo(item.archivo, item.tipo);
+          processedItems.push({ tipo: item.tipo, nombre: item.nombre, storageKey: up.storageKey, fileSize: up.fileSize });
+        } else if (item.contenido) {
+          const plantilla = await fetchPlantilla();
+          const parsed = JSON.parse(item.contenido);
+          const html = generarCuestionarioHTML(plantilla, parsed);
+          const file = new File([html], `cuestionario-${Date.now()}.html`, { type: "text/html" });
+          const up = await subirArchivo(file, item.tipo);
+          processedItems.push({ tipo: item.tipo, nombre: item.nombre, storageKey: up.storageKey, fileSize: up.fileSize, contenido: JSON.stringify(parsed) });
         } else if (item.driveLink) {
           processedItems.push({
             tipo: item.tipo,

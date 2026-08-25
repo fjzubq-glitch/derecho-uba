@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS archivos (
   cloudinary_url TEXT,
   youtube_thumbnail TEXT,
   contenido_texto TEXT,
+  contenido jsonb,
   nota TEXT,
   file_size BIGINT,
   duration_seconds INT,
