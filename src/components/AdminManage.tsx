@@ -1004,6 +1004,28 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                           </button>
                         </div>
                       )}
+                      {archivo.tipo === "cuestionario" && (
+                        <button
+                          onClick={() => setDeleting({ tipo: archivo.tipo, id: archivo.id, nombre: archivo.nombre_display })}
+                          style={{
+                            background: "none",
+                            border: "1px solid rgba(224, 85, 85, 0.35)",
+                            color: "#E05555",
+                            cursor: "pointer",
+                            padding: "6px 10px",
+                            fontSize: "10px",
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                            transition: "background 0.2s ease, color 0.2s ease",
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = "#E05555"; e.currentTarget.style.color = "#fff"; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "#E05555"; }}
+                          title="Borrar este cuestionario"
+                        >
+                          Borrar
+                        </button>
+                      )}
                       <KebabMenu
                         menuKey={`archivo-${archivo.id}`}
                         items={[
@@ -1256,6 +1278,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
               >
                 ¿Estás seguro de que querés eliminar <span style={{ color: "var(--color-text)", fontWeight: 500 }}>&quot;{deleting.nombre}&quot;</span>?
                 {deleting.tipo === "clase" && " Se eliminarán todos los archivos asociados."}
+                {deleting.tipo === "cuestionario" && " Se borra solo el cuestionario (y su HTML). La clase y el resto del contenido no se modifican."}
                 <br />
                 <br />
                 Esta acción no se puede deshacer.
