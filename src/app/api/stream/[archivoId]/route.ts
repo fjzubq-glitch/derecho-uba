@@ -53,6 +53,12 @@ export async function GET(
       if (val) headers[key] = val;
     }
 
+    // Los cuestionarios son HTML interactivos: forzar el content-type para
+    // que el iframe los renderice aunque R2 los haya guardado con otro tipo
+    if (archivo.tipo === "cuestionario") {
+      headers["content-type"] = "text/html; charset=utf-8";
+    }
+
     if (isDownload && !range) {
       const ext = (archivo.storage_key.split(".").pop() || "mp3").toLowerCase();
       const base = (archivo.nombre_display || "audio").replace(/[^\wÁÉÍÓÚáéíóúñÑ -]/g, "").trim() || "audio";

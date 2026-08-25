@@ -259,6 +259,36 @@ export default function AdminPage() {
     }
   }
 
+  function inferirContentType(file: File): string {
+    const type = file.type;
+    if (type && type !== "application/octet-stream") return type;
+    const ext = (file.name.split(".").pop() || "").toLowerCase();
+    const map: Record<string, string> = {
+      html: "text/html",
+      htm: "text/html",
+      pdf: "application/pdf",
+      mp3: "audio/mpeg",
+      wav: "audio/wav",
+      m4a: "audio/mp4",
+      aac: "audio/aac",
+      mp4: "video/mp4",
+      webm: "video/webm",
+      ogg: "audio/ogg",
+      txt: "text/plain",
+      doc: "application/msword",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ppt: "application/vnd.ms-powerpoint",
+      pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      xls: "application/vnd.ms-excel",
+      xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      zip: "application/zip",
+      json: "application/json",
+      js: "text/javascript",
+      css: "text/css",
+    };
+    return map[ext] || type || "application/octet-stream";
+  }
+
   async function handleUpload(
     materiaId: string,
     claseNumero: number,
@@ -331,7 +361,7 @@ export default function AdminPage() {
               sessionId,
               totalParts,
               finalKey,
-              contentType: item.archivo.type || "audio/mpeg",
+              contentType: inferirContentType(item.archivo),
               fileType: item.tipo,
             }),
           });
