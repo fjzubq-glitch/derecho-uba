@@ -137,6 +137,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const [cuestionarioNombre, setCuestionarioNombre] = useState("");
   const [cuestionarioContenido, setCuestionarioContenido] = useState("");
   const [cuestionarioError, setCuestionarioError] = useState("");
+  const jsonUploadInputRef = useRef<HTMLInputElement>(null);
 
   const [enlaceNombre, setEnlaceNombre] = useState("");
   const [enlaceUrl, setEnlaceUrl] = useState("");
@@ -988,6 +989,13 @@ Clase Virtual
             <div className="flex items-center gap-3">
               <button
                 type="button"
+                onClick={() => jsonUploadInputRef.current?.click()}
+                style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-gold)", padding: "9px 14px", cursor: "pointer", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" }}
+              >
+                Cargar archivo
+              </button>
+              <button
+                type="button"
                 onClick={() => {
                   setCuestionarioContenido(CUESTIONARIO_EJEMPLO);
                   setCuestionarioError("");
@@ -1012,6 +1020,35 @@ Clase Virtual
                 Validar
               </button>
             </div>
+            <input
+              ref={jsonUploadInputRef}
+              type="file"
+              accept=".json,application/json"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    const text = ev.target?.result;
+                    if (typeof text === "string") {
+                      setCuestionarioContenido(text);
+                      setCuestionarioError("");
+                      try {
+                        const d = JSON.parse(text);
+                        if (!d.questions || !Array.isArray(d.questions)) {
+                          setCuestionarioError("El archivo no tiene questions[] válido");
+                        }
+                      } catch {
+                        setCuestionarioError("El archivo no es JSON válido");
+                      }
+                    }
+                  };
+                  reader.readAsText(file);
+                }
+                e.target.value = "";
+              }}
+            />
             <textarea
               value={cuestionarioContenido}
               onChange={(e) => setCuestionarioContenido(e.target.value)}
