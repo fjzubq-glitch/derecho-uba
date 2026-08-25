@@ -29,17 +29,14 @@ function normalize(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
-function extractMateriaClase(title: string): { materia: string; clase: string } | null {
-  const match = title.match(/(comercial|contratos|civil)\D*(?:clase)?\s*(\d+)/i);
-  if (!match) return null;
-  return { materia: match[1].toLowerCase(), clase: match[2] };
+function extractClase(title: string): string | null {
+  const match = title.match(/clase\s*(\d+)/i);
+  return match ? match[1] : null;
 }
 
-function matchByMateriaClase(title: string, nombreDisplay: string): boolean {
-  const tc = extractMateriaClase(title);
-  const nc = extractMateriaClase(nombreDisplay);
-  if (tc && nc && tc.materia === nc.materia && tc.clase === nc.clase) return true;
-  return false;
+function extractMateria(title: string): string | null {
+  const match = title.match(/(comercial|contratos|civil)/i);
+  return match ? match[1].toLowerCase() : null;
 }
 
 export async function POST() {
@@ -66,11 +63,17 @@ export async function POST() {
 
     for (const json of jsonFiles) {
       const title = json.data.header.title;
-      const titleNorm = normalize(title);
 
       const match = archivos?.find(a => {
         const name = a.nombre_display || "";
-        if (matchByMateriaClase(title, name)) return true;
+        const titleClase = extractClase(title);
+        const nameClase = extractClase(name);
+        if (titleClase && nameClase && titleClase === nameClase) {
+          const titleMat = extractMateria(title);
+          const nameMat = extractMateria(name);
+          if (!titleMat || !nameMat || titleMat === nameMat) return true;
+        }
+        const titleNorm = normalize(title);
         const nameNorm = normalize(name);
         return nameNorm.includes(titleNorm) || titleNorm.includes(nameNorm);
       });
