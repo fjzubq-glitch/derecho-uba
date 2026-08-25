@@ -86,6 +86,8 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const [filtroMateria, setFiltroMateria] = useState("todas");
   const [editandoCuestionario, setEditandoCuestionario] = useState<{ archivoId: string; nombre: string; contenido: CuestionarioData } | null>(null);
   const [cuestionarioSaving, setCuestionarioSaving] = useState(false);
+  const jsonFileInputRef = useRef<HTMLInputElement>(null);
+  const [jsonTargetArchivoId, setJsonTargetArchivoId] = useState<string | null>(null);
 
   const cerrarReplace = () => {
     setReplacing(null);
@@ -445,6 +447,27 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
       return;
     }
     setEditandoCuestionario({ archivoId: archivo.id, nombre: archivo.nombre_display, contenido });
+  }
+
+  async function handleAdjuntarJson(file: File) {
+    if (!jsonTargetArchivoId) return;
+    try {
+      const text = await file.text();
+      const contenido = JSON.parse(text) as CuestionarioData;
+      if (!contenido.header || !Array.isArray(contenido.questions)) {
+        setMessage("Error: el archivo no tiene el formato correcto (falta header o questions).");
+        return;
+      }
+      const archivo = clases.flatMap((c) => c.archivos).find((a) => a.id === jsonTargetArchivoId);
+      setEditandoCuestionario({
+        archivoId: jsonTargetArchivoId,
+        nombre: archivo?.nombre_display || file.name,
+        contenido,
+      });
+    } catch {
+      setMessage("Error: no se pudo leer el archivo JSON. Asegurate de que sea un JSON válido.");
+    }
+    setJsonTargetArchivoId(null);
   }
 
   async function handleReorder(archivos: Archivo[], index: number, direction: "up" | "down") {
@@ -1023,6 +1046,15 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                               }
                             },
                           },
+                          ...(archivo.tipo === "cuestionario"
+                            ? [{
+                                label: "Adjuntar JSON",
+                                onClick: () => {
+                                  setJsonTargetArchivoId(archivo.id);
+                                  setTimeout(() => jsonFileInputRef.current?.click(), 0);
+                                },
+                              }]
+                            : []),
                           {
                             label: "Borrar",
                             danger: true,
@@ -1483,6 +1515,18 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
           </div>
         </div>
       )}
+
+      <input
+        ref={jsonFileInputRef}
+        type="file"
+        accept=".json,application/json"
+        style={{ display: "none" }}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleAdjuntarJson(file);
+          e.target.value = "";
+        }}
+      />
     </div>
   );
 }
