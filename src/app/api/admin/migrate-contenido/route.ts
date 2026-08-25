@@ -29,6 +29,19 @@ function normalize(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
+function extractMateriaClase(title: string): { materia: string; clase: string } | null {
+  const match = title.match(/(comercial|contratos|civil)\D*(?:clase)?\s*(\d+)/i);
+  if (!match) return null;
+  return { materia: match[1].toLowerCase(), clase: match[2] };
+}
+
+function matchByMateriaClase(title: string, nombreDisplay: string): boolean {
+  const tc = extractMateriaClase(title);
+  const nc = extractMateriaClase(nombreDisplay);
+  if (tc && nc && tc.materia === nc.materia && tc.clase === nc.clase) return true;
+  return false;
+}
+
 export async function POST() {
   try {
     const contentDir = path.join(process.cwd(), "content", "cuestionarios");
@@ -57,7 +70,9 @@ export async function POST() {
 
       const match = archivos?.find(a => {
         const name = a.nombre_display || "";
-        return normalize(name).includes(titleNorm) || titleNorm.includes(normalize(name));
+        if (matchByMateriaClase(title, name)) return true;
+        const nameNorm = normalize(name);
+        return nameNorm.includes(titleNorm) || titleNorm.includes(nameNorm);
       });
 
       if (!match || !match.storage_key) {

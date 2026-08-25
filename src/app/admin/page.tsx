@@ -467,6 +467,7 @@ export default function AdminPage() {
       if (data.ok) {
         setMigrateResult(`Migrados: ${data.migrated}/${data.total} cuestionarios`);
         if (data.results) setMigrateResult((prev) => prev + "\n" + data.results.join("\n"));
+        if (data.dbNames) setMigrateResult((prev) => prev + "\n\nArchivos en BD:\n" + data.dbNames.map((d: { name: string; key: string }) => `  ${d.name} → ${d.key}`).join("\n"));
       } else {
         setMigrateResult("Error: " + data.error);
       }
