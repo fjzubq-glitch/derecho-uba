@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { getObjectStream } from "@/lib/r2";
 import { ipFromRequest, isRateLimited } from "@/lib/simpleRateLimit";
+import { isAdminRequest, SESSION_COOKIE_NAME } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
@@ -16,6 +17,11 @@ export async function GET(
     .single();
 
   if (error || !archivo) {
+    return new Response("File not found", { status: 404 });
+  }
+
+  // Los cuestionarios solo son accesibles para el administrador
+  if (archivo.tipo === "cuestionario" && !isAdminRequest(request.cookies.get(SESSION_COOKIE_NAME)?.value ?? null)) {
     return new Response("File not found", { status: 404 });
   }
 

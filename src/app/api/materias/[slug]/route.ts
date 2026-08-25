@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { isAdminRequest } from "@/lib/auth";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
+  // Los cuestionarios solo se envían al administrador
+  const esAdmin = isAdminRequest(request.headers.get("cookie"));
   const supabase = getSupabaseAdmin();
 
   const { data: materia } = await supabase
@@ -38,7 +41,8 @@ export async function GET(
         .eq("clase_id", c.id)
         .order("orden")
         .order("created_at");
-      return { ...c, archivos: archivos || [] };
+      const visibles = (archivos || []).filter((a) => esAdmin || a.tipo !== "cuestionario");
+      return { ...c, archivos: visibles };
     })
   );
 
