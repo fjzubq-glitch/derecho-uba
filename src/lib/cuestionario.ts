@@ -76,7 +76,7 @@ export function renderMaterial(material: MaterialSection[]): string {
             .join("")}</tbody></table>`
         : "";
       const resp = m.respuesta
-        ? `<details><summary>Ver resolución</summary><div class="detail-content">${paragraphs(m.respuesta)}</div></details>`
+        ? `<details><summary>Ver resolución</summary><div class="detail-content">${paragraphs(m.respuesta)}${tbl}</div></details>`
         : "";
       const err = m.errorTipico
         ? `<details class="error-detail"><summary>Ver error típico</summary><div class="detail-content"><b>❌ Error típico:</b> ${inline(m.errorTipico)}</div></details>`
@@ -89,7 +89,7 @@ export function renderMaterial(material: MaterialSection[]): string {
         : "";
       return `<div class="mat-section" id="${esc(m.id)}">
         <div class="section-head"><h3>${esc(m.title)}</h3><div class="badges">${badges}</div></div>
-        ${enun}${ctx}${resp}${tbl}${err}${contra}${link}
+        ${enun}${ctx}${resp}${err}${contra}${link}
       </div>`;
     })
     .join("\n");
