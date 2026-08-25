@@ -82,7 +82,7 @@ export async function POST() {
       }
     }
 
-    return NextResponse.json({ ok: true, migrated, total: jsonFiles.length, results });
+    return NextResponse.json({ ok: true, migrated, total: jsonFiles.length, results, dbNames: archivos?.map(a => ({ id: a.id, name: a.nombre_display, key: a.storage_key })) });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json({ ok: false, error: msg }, { status: 500 });
