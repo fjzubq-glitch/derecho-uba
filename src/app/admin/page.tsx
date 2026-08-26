@@ -299,7 +299,7 @@ export default function AdminPage() {
     claseTitulo: string,
     claseFecha: string,
     items: Array<{
-      tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
+      tipo: "audio_clase" | "clase_youtube" | "video_resumen" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
       nombre: string;
       archivo?: File;
       driveLink?: string;
@@ -425,12 +425,13 @@ export default function AdminPage() {
   const POR_TIPO_LABELS: Record<string, string> = {
     audio_clase: "Audio de clase",
     clase_youtube: "Clase grabada (YouTube)",
+    video_resumen: "Video Resumen",
     transcripcion: "Transcripción",
     archivo: "Archivos",
     enlace: "Enlaces",
   };
 
-  const POR_TIPO_ORDER = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace"];
+  const POR_TIPO_ORDER = ["audio_clase", "clase_youtube", "video_resumen", "transcripcion", "archivo", "enlace"];
 
   const rankColor = (i: number) =>
     i === 0 ? "var(--color-gold)" : i === 1 ? "var(--color-text)" : i === 2 ? "var(--color-text-muted)" : "var(--color-text-faint)";
@@ -1501,10 +1502,11 @@ export default function AdminPage() {
                             <span style={{ width: "58px", textAlign: "right" }}>Total</span>
                           </div>
                           {materiasStats.map((mat, i) => {
-                            const MAT_TIPOS: Array<[string, number]> = [
-                              ["audio_clase", 52],
-                              ["clase_youtube", 52],
-                              ["transcripcion", 58],
+                              const MAT_TIPOS: Array<[string, number]> = [
+                                ["audio_clase", 42],
+                                ["clase_youtube", 42],
+                                ["video_resumen", 58],
+                                ["transcripcion", 58],
                               ["archivo", 50],
                               ["enlace", 50],
                             ];

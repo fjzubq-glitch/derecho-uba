@@ -6,7 +6,7 @@ import { formatFechaLocal } from "@/lib/utils";
 import { Upload, FileText, X, Check, Loader2, Headphones, Link2, Play } from "@/components/icons";
 
 interface UploadItem {
-  tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
+  tipo: "audio_clase" | "clase_youtube" | "video_resumen" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
   nombre: string;
   archivo?: File;
   driveLink?: string;
@@ -107,6 +107,9 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const [cloudinaryUrl, setCloudinaryUrl] = useState("");
   const [useCloudinary, setUseCloudinary] = useState(false);
 
+  const [videoResumenUrl, setVideoResumenUrl] = useState("");
+  const [videoResumenNombre, setVideoResumenNombre] = useState("");
+
   const [audioDropHover, setAudioDropHover] = useState(false);
   const [resultMsg, setResultMsg] = useState<{ text: string; isError: boolean } | null>(null);
   const [errores, setErrores] = useState<Record<string, string>>({});
@@ -119,8 +122,9 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const hasCuestionario = cuestionarioContenido.trim() !== "";
   const hasEnlace = enlaceUrl.trim() !== "";
   const hasClaseYoutube = claseYoutubeItems.some((i) => i.url.trim() !== "");
+  const hasVideoResumen = videoResumenUrl.trim() !== "";
 
-  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasEnlace, hasClaseYoutube, hasCuestionario].filter(Boolean).length;
+  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasEnlace, hasClaseYoutube, hasVideoResumen, hasCuestionario].filter(Boolean).length;
   useEffect(() => {
     if (materias.length > 0 && !materiaId) {
       setMateriaId(materias[0].id);
@@ -260,6 +264,10 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
       }
     });
 
+    if (hasVideoResumen && videoResumenUrl.trim()) {
+      items.push({ tipo: "video_resumen", nombre: videoResumenNombre || `Video Resumen ${claseNumero}`, driveLink: videoResumenUrl.trim() });
+    }
+
     if (items.length === 0) {
       setResultMsg({ text: "Cargá al menos un archivo", isError: true });
       setUploading(false);
@@ -304,6 +312,8 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     setEnlaceNombre("");
     setEnlaceUrl("");
     setClaseYoutubeItems([{ nombre: "", url: "" }]);
+    setVideoResumenUrl("");
+    setVideoResumenNombre("");
   };
 
   function Radio({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
@@ -784,6 +794,36 @@ Clase Virtual
           </div>
         </div>
 
+        {/* Video Resumen */}
+        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
+          <h3 style={sectionHeaderStyle}>
+            <Play style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+            Video Resumen
+          </h3>
+
+          <div className="space-y-3">
+            <p style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
+              Subí el video a YouTube y pegá el enlace. Se reproduce inline en la web.
+            </p>
+            <input
+              type="text"
+              value={videoResumenNombre}
+              onChange={(e) => setVideoResumenNombre(e.target.value)}
+              placeholder="Nombre (ej: Resumen Clase 3)"
+              aria-label="Nombre del video resumen"
+              style={inputStyle}
+            />
+            <input
+              type="url"
+              value={videoResumenUrl}
+              onChange={(e) => setVideoResumenUrl(e.target.value)}
+              placeholder="https://youtube.com/watch?v=..."
+              aria-label="URL de YouTube del video resumen"
+              style={inputStyle}
+            />
+          </div>
+        </div>
+
         {/* Transcripción */}
         <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
           <h3 style={sectionHeaderStyle}>
@@ -1057,6 +1097,7 @@ Clase Virtual
           {[
             { label: "Audio", ready: hasAudio },
             { label: "Clase Virtual", ready: hasClaseYoutube },
+            { label: "Video Resumen", ready: hasVideoResumen },
             { label: "Transcripción", ready: hasTranscripcion },
             { label: "Archivo adjunto", ready: hasArchivo },
             { label: "Enlace", ready: hasEnlace },
@@ -1095,10 +1136,10 @@ Clase Virtual
           style={{
             fontFamily: "var(--font-ibm-plex-mono)",
             fontSize: "12px",
-            color: loadedCount === 6 ? "var(--color-gold)" : "var(--color-text-muted)",
+            color: loadedCount === 7 ? "var(--color-gold)" : "var(--color-text-muted)",
           }}
         >
-          {loadedCount}/6 cargados
+          {loadedCount}/7 cargados
         </span>
       </div>
 

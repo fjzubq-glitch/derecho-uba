@@ -36,7 +36,7 @@ interface MateriaData {
   nombre: string;
 }
 
-type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
+type CardTipo = "audio_clase" | "clase_youtube" | "video_resumen" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
 
 function isHtmlArchivo(a: Archivo | null): boolean {
   if (!a || !a.storage_key) return false;
@@ -72,6 +72,11 @@ const CARD_CONFIG: Record<CardTipo, {
     label: "CLASE VIRTUAL",
     subtitle: () => "Ver clase grabada",
   },
+  video_resumen: {
+    icon: <Play style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
+    label: "VIDEO RESUMEN",
+    subtitle: () => "Ver resumen en video",
+  },
   transcripcion: {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "TRANSCRIPCIÓN",
@@ -94,7 +99,7 @@ const CARD_CONFIG: Record<CardTipo, {
   },
 };
 
-const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario"];
+const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "video_resumen", "transcripcion", "archivo", "enlace", "cuestionario"];
 
 export default function ClaseNumeroPage() {
   const params = useParams();
@@ -216,6 +221,11 @@ async function loadData() {
     return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : null;
   }
 
+  function youtubeEmbedUrl(url: string): string | null {
+    const id = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1];
+    return id ? `https://www.youtube.com/embed/${id}` : null;
+  }
+
   const { title: materiaTitle } = materia ? splitName(materia.nombre) : { title: "" };
 
 function getArchivos(tipo: CardTipo): Archivo[] {
@@ -301,6 +311,8 @@ if (isTranscription(tipo)) {
           window.open(archivo.youtube_url, "_blank");
           trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
+      } else if (tipo === "video_resumen") {
+        // Inline embed — no action needed on card click
       } else if (isEnlace(tipo)) {
         if (archivo.youtube_url) {
           window.open(archivo.youtube_url, "_blank");
@@ -355,6 +367,102 @@ if (isTranscription(tipo)) {
 
   function renderArchivoCard(tipo: CardTipo, archivo: Archivo, isThisPlaying: boolean, cardIndex: number) {
     const config = CARD_CONFIG[tipo];
+
+    // Video resumen: render inline YouTube embed
+    if (tipo === "video_resumen" && archivo.youtube_url) {
+      const embedUrl = youtubeEmbedUrl(archivo.youtube_url);
+      if (embedUrl) {
+        return (
+          <article
+            key={archivo.id}
+            className="card-reveal"
+            style={{
+              background: "var(--color-card)",
+              padding: "28px 24px",
+              opacity: 1,
+              animationDelay: `${cardIndex * 55}ms`,
+              border: "1px solid var(--color-line-soft)",
+              gridColumn: "1 / -1",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <div
+                className="flex items-center justify-center flex-shrink-0"
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  border: "1px solid var(--color-gold-dim)",
+                }}
+              >
+                {config.icon}
+              </div>
+              <div>
+                <p
+                  style={{
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "9px",
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "var(--color-gold)",
+                  }}
+                >
+                  {config.label}
+                </p>
+                <p
+                  style={{
+                    fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                    fontWeight: 500,
+                    fontSize: "18px",
+                    color: "var(--color-text)",
+                  }}
+                >
+                  {archivo.nombre_display}
+                </p>
+              </div>
+            </div>
+            <div
+              style={{
+                position: "relative",
+                paddingBottom: "56.25%",
+                height: 0,
+                overflow: "hidden",
+                border: "1px solid var(--color-line-soft)",
+              }}
+            >
+              <iframe
+                src={embedUrl}
+                title={archivo.nombre_display}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  border: 0,
+                }}
+              />
+            </div>
+            {archivo.nota && (
+              <p
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "11px",
+                  color: "var(--color-gold)",
+                  fontStyle: "italic",
+                  marginTop: "12px",
+                }}
+              >
+                {archivo.nota}
+              </p>
+            )}
+          </article>
+        );
+      }
+    }
+
     const youtubeThumb = archivo.youtube_url ? youtubeThumbUrl(archivo.youtube_url) : null;
     const isActive = playingArchivoId === archivo.id;
 
