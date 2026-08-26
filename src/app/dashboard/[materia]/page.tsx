@@ -452,7 +452,6 @@ const enlaces = useMemo(() =>
                           {tieneRecurso(clase, "audio_clase") && <Headphones style={{ width: "12px", height: "12px" }} />}
                           {tieneRecurso(clase, "clase_youtube") && <Play style={{ width: "12px", height: "12px" }} />}
                           {tieneRecurso(clase, "transcripcion") && <FileText style={{ width: "12px", height: "12px" }} />}
-                          {tieneRecurso(clase, "punteo_clase") && <FileText style={{ width: "12px", height: "12px", color: "var(--color-gold)" }} />}
                           {(tieneRecurso(clase, "archivo") || tieneRecurso(clase, "enlace")) && (
                             <Link2 style={{ width: "12px", height: "12px" }} />
                           )}

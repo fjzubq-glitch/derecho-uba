@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     const fileName = finalKey.split("/").pop() || finalKey;
 
-    const KNOWN_TYPES = ["audio_clase", "podcast", "transcripcion", "archivo", "punteo_clase", "enlace", "cuestionario"];
+    const KNOWN_TYPES = ["audio_clase", "podcast", "transcripcion", "archivo", "enlace", "cuestionario"];
     if (!KNOWN_TYPES.includes(fileType)) {
       return NextResponse.json({ error: "fileType inválido" }, { status: 400 });
     }

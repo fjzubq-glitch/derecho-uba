@@ -6,7 +6,7 @@ import { formatFechaLocal } from "@/lib/utils";
 import { Upload, FileText, X, Check, Loader2, Headphones, Link2, Play } from "@/components/icons";
 
 interface UploadItem {
-  tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "punteo_clase" | "enlace" | "cuestionario";
+  tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
   nombre: string;
   archivo?: File;
   driveLink?: string;
@@ -88,13 +88,6 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const archivoInputRef = useRef<HTMLInputElement>(null);
   const [archivoDropHover, setArchivoDropHover] = useState(false);
 
-  const [punteoNombre, setPunteoNombre] = useState("");
-  const [punteoFile, setPunteoFile] = useState<File | null>(null);
-  const [punteoLink, setPunteoLink] = useState("");
-  const [punteoUseLink, setPunteoUseLink] = useState(false);
-  const punteoInputRef = useRef<HTMLInputElement>(null);
-  const [punteoDropHover, setPunteoDropHover] = useState(false);
-
   const [cuestionarioNombre, setCuestionarioNombre] = useState("");
   const [cuestionarioContenido, setCuestionarioContenido] = useState("");
   const [cuestionarioError, setCuestionarioError] = useState("");
@@ -123,12 +116,11 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     (transcripcionMethod === "drive" && transcripcionDriveLink.trim() !== "") ||
     (transcripcionMethod === "texto" && transcripcionTexto.trim() !== "");
   const hasArchivo = archivoFile !== null || (archivoUseLink && archivoLink.trim() !== "");
-  const hasPunteo = punteoFile !== null || (punteoUseLink && punteoLink.trim() !== "");
   const hasCuestionario = cuestionarioContenido.trim() !== "";
   const hasEnlace = enlaceUrl.trim() !== "";
   const hasClaseYoutube = claseYoutubeItems.some((i) => i.url.trim() !== "");
 
-  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasPunteo, hasEnlace, hasClaseYoutube, hasCuestionario].filter(Boolean).length;
+  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasEnlace, hasClaseYoutube, hasCuestionario].filter(Boolean).length;
   useEffect(() => {
     if (materias.length > 0 && !materiaId) {
       setMateriaId(materias[0].id);
@@ -250,14 +242,6 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
       }
     }
 
-    if (hasPunteo) {
-      if (punteoUseLink && punteoLink) {
-        items.push({ tipo: "punteo_clase", nombre: punteoNombre || `Punteo Clase ${claseNumero}`, driveLink: punteoLink });
-      } else if (punteoFile) {
-        items.push({ tipo: "punteo_clase", nombre: punteoNombre || `Punteo Clase ${claseNumero}`, archivo: punteoFile });
-      }
-    }
-
     if (hasCuestionario) {
       if (cuestionarioModo === "html") {
         items.push({ tipo: "cuestionario", nombre: cuestionarioNombre || `Cuestionario Clase ${claseNumero}`, html: cuestionarioContenido });
@@ -313,10 +297,6 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     setArchivoFile(null);
     setArchivoLink("");
     setArchivoUseLink(false);
-    setPunteoNombre("");
-    setPunteoFile(null);
-    setPunteoLink("");
-    setPunteoUseLink(false);
     setCuestionarioNombre("");
     setCuestionarioContenido("");
     setCuestionarioError("");
@@ -599,9 +579,9 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
           }}
         >
           <div className="flex flex-wrap items-center gap-4">
-            {["audio_clase", "clase_youtube", "transcripcion", "punteo_clase", "archivo"].map((tipo) => {
+            {["audio_clase", "clase_youtube", "transcripcion", "archivo"].map((tipo) => {
               const exist = (clasesExistentes.find((c) => c.id === claseSeleccionada)?.archivos || []).some((a) => a.tipo === tipo);
-              const label = tipo === "audio_clase" ? "Audio" : tipo === "clase_youtube" ? "Clase Virtual" : tipo === "transcripcion" ? "Transcripción" : tipo === "punteo_clase" ? "Punteo" : "Archivo";
+              const label = tipo === "audio_clase" ? "Audio" : tipo === "clase_youtube" ? "Clase Virtual" : tipo === "transcripcion" ? "Transcripción" : "Archivo";
               return (
                 <div key={tipo} className="flex items-center gap-2">
                   <div
@@ -834,59 +814,6 @@ Clase Virtual
               rows={6}
               style={{ ...inputStyle, resize: "none", lineHeight: 1.6 }}
             />
-          )}
-        </div>
-
-        {/* Punteo de clase */}
-        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
-          <h3 style={sectionHeaderStyle}>
-            <FileText style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
-            Punteo de clase
-          </h3>
-
-          <input
-            type="text"
-            value={punteoNombre}
-            onChange={(e) => setPunteoNombre(e.target.value)}
-            placeholder="Nombre del punteo (ej: Punteo Clase 1)"
-            aria-label="Nombre del punteo"
-            style={{ ...inputStyle, marginBottom: "16px" }}
-          />
-
-          <div className="flex flex-wrap gap-4 mb-4">
-            <Radio checked={!punteoUseLink} onChange={() => setPunteoUseLink(false)} label="Subir archivo desde PC" />
-            <Radio checked={punteoUseLink} onChange={() => setPunteoUseLink(true)} label="Link externo" />
-          </div>
-
-          {punteoUseLink ? (
-            <input
-              type="url"
-              value={punteoLink}
-              onChange={(e) => setPunteoLink(e.target.value)}
-              placeholder="https://drive.google.com/file/d/..."
-              aria-label="Link externo del punteo"
-              style={inputStyle}
-            />
-          ) : (
-            <div className="space-y-3">
-              <DropZone
-                file={punteoFile}
-                onFile={(f) => setPunteoFile(f)}
-                onClear={() => setPunteoFile(null)}
-                hover={punteoDropHover}
-                onHover={setPunteoDropHover}
-                inputRef={punteoInputRef}
-              />
-              <input
-                ref={punteoInputRef}
-                type="file"
-                onChange={(e) => {
-                  const f = e.target.files?.[0] || null;
-                  if (f) setPunteoFile(f);
-                }}
-                style={{ display: "none" }}
-              />
-            </div>
           )}
         </div>
 
@@ -1131,7 +1058,6 @@ Clase Virtual
             { label: "Audio", ready: hasAudio },
             { label: "Clase Virtual", ready: hasClaseYoutube },
             { label: "Transcripción", ready: hasTranscripcion },
-            { label: "Punteo de clase", ready: hasPunteo },
             { label: "Archivo adjunto", ready: hasArchivo },
             { label: "Enlace", ready: hasEnlace },
             { label: "Cuestionario", ready: hasCuestionario },
@@ -1169,10 +1095,10 @@ Clase Virtual
           style={{
             fontFamily: "var(--font-ibm-plex-mono)",
             fontSize: "12px",
-            color: loadedCount === 7 ? "var(--color-gold)" : "var(--color-text-muted)",
+            color: loadedCount === 6 ? "var(--color-gold)" : "var(--color-text-muted)",
           }}
         >
-          {loadedCount}/7 cargados
+          {loadedCount}/6 cargados
         </span>
       </div>
 

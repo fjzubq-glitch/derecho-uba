@@ -42,7 +42,7 @@ interface Clase {
 }
 
 interface EditData {
-  tipo: "clase" | "archivo" | "punteo_clase" | "cuestionario";
+  tipo: "clase" | "archivo" | "cuestionario";
   id: string;
   data: Record<string, string | number>;
 }
@@ -295,7 +295,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
           setProcessing(false);
           return;
         }
-      } else if (replacing.tipo === "archivo" || replacing.tipo === "punteo_clase" || replacing.tipo === "cuestionario") {
+      } else if (replacing.tipo === "archivo" || replacing.tipo === "cuestionario") {
         if (newFile) {
           const formData = new FormData();
           formData.append("archivoId", replacing.archivoId);
@@ -486,7 +486,6 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     audio_clase: <Headphones style={{ width: "14px", height: "14px" }} />,
     clase_youtube: <Play style={{ width: "14px", height: "14px" }} />,
     transcripcion: <FileText style={{ width: "14px", height: "14px" }} />,
-    punteo_clase: <FileText style={{ width: "14px", height: "14px" }} />,
     archivo: <FileText style={{ width: "14px", height: "14px" }} />,
     cuestionario: <Check style={{ width: "14px", height: "14px" }} />,
     enlace: <Link2 style={{ width: "14px", height: "14px" }} />,
@@ -497,14 +496,13 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     audio_clase: "Audio de clase",
     clase_youtube: "Clase Virtual",
     transcripcion: "Transcripción",
-    punteo_clase: "Punteo de clase",
     archivo: "Archivo adjunto",
     cuestionario: "Cuestionario interactivo",
     enlace: "Enlace útil",
     youtube: "YouTube",
   };
 
-  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo" || tipo === "punteo_clase" || tipo === "cuestionario";
+  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo" || tipo === "cuestionario";
 
   const actionBtnStyle: React.CSSProperties = {
     padding: "6px 12px",
@@ -963,7 +961,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                           </p>
                         )}
                       </div>
-                      {(archivo.tipo === "archivo" || archivo.tipo === "punteo_clase") && (
+                      {(archivo.tipo === "archivo") && (
                         <div className="flex flex-col" style={{ gap: "2px" }}>
                           <button
                             onClick={() => handleReorder(clase.archivos, idx, "up")}
@@ -1407,7 +1405,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 </>
               )}
 
-              {(replacing.tipo === "archivo" || replacing.tipo === "punteo_clase" || replacing.tipo === "cuestionario") && (
+              {(replacing.tipo === "archivo" || replacing.tipo === "cuestionario") && (
                 <div>
                   <label style={labelStyle}>Archivo nuevo (o pegá un link)</label>
                   <div

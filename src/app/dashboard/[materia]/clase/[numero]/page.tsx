@@ -36,7 +36,7 @@ interface MateriaData {
   nombre: string;
 }
 
-type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "punteo_clase" | "archivo" | "enlace" | "cuestionario";
+type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
 
 function isHtmlArchivo(a: Archivo | null): boolean {
   if (!a || !a.storage_key) return false;
@@ -77,11 +77,6 @@ const CARD_CONFIG: Record<CardTipo, {
     label: "TRANSCRIPCIÓN",
     subtitle: () => "Ver documento completo",
   },
-  punteo_clase: {
-    icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
-    label: "PUNTEO DE CLASE",
-    subtitle: (a) => (isHtmlArchivo(a) ? "Ver web interactiva" : "Abrir punteo"),
-  },
   archivo: {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "ARCHIVO",
@@ -99,7 +94,7 @@ const CARD_CONFIG: Record<CardTipo, {
   },
 };
 
-const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "punteo_clase", "archivo", "enlace", "cuestionario"];
+const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario"];
 
 export default function ClaseNumeroPage() {
   const params = useParams();
@@ -311,7 +306,7 @@ if (isTranscription(tipo)) {
           window.open(archivo.youtube_url, "_blank");
           trackActivity({ tipo: "enlace_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
-  } else if (tipo === "archivo" || tipo === "punteo_clase") {
+  } else if (tipo === "archivo") {
         if (archivo.youtube_url) {
           window.open(archivo.youtube_url, "_blank");
           trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
@@ -709,9 +704,9 @@ if (isTranscription(tipo)) {
   }
 
    // Orden fijo de las cards en todas las clases:
-  // 1° audio o video de la clase, 2° transcripción, 3° punteo, 4° resto
+  // 1° audio o video de la clase, 2° transcripción, 3° resto
   // El cuestionario solo se muestra al administrador
-  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "punteo_clase", "archivo", "enlace", ...(esAdmin ? (["cuestionario"] as CardTipo[]) : [])];
+  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", ...(esAdmin ? (["cuestionario"] as CardTipo[]) : [])];
 
   if (loading) {
     return (

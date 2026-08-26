@@ -295,7 +295,7 @@ export default function AdminPage() {
     claseTitulo: string,
     claseFecha: string,
     items: Array<{
-      tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "punteo_clase" | "enlace" | "cuestionario";
+      tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
       nombre: string;
       archivo?: File;
       driveLink?: string;
@@ -422,12 +422,11 @@ export default function AdminPage() {
     audio_clase: "Audio de clase",
     clase_youtube: "Clase grabada (YouTube)",
     transcripcion: "Transcripción",
-    punteo_clase: "Punteo de clase",
     archivo: "Archivos",
     enlace: "Enlaces",
   };
 
-  const POR_TIPO_ORDER = ["audio_clase", "clase_youtube", "transcripcion", "punteo_clase", "archivo", "enlace"];
+  const POR_TIPO_ORDER = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace"];
 
   const rankColor = (i: number) =>
     i === 0 ? "var(--color-gold)" : i === 1 ? "var(--color-text)" : i === 2 ? "var(--color-text-muted)" : "var(--color-text-faint)";
@@ -1408,7 +1407,6 @@ export default function AdminPage() {
                                 ["audio_clase", 42],
                                 ["clase_youtube", 42],
                                 ["transcripcion", 58],
-                                ["punteo_clase", 50],
                                 ["archivo", 50],
                                 ["enlace", 42],
                               ];
@@ -1556,7 +1554,6 @@ export default function AdminPage() {
                                 [`${mat.porTipo.audio_clase || 0} audio`, (mat.porTipo.audio_clase || 0) > 0],
                                 [`${mat.porTipo.clase_youtube || 0} video`, (mat.porTipo.clase_youtube || 0) > 0],
                                 [`${mat.porTipo.transcripcion || 0} transcrip.`, (mat.porTipo.transcripcion || 0) > 0],
-                                [`${mat.porTipo.punteo_clase || 0} punteo`, (mat.porTipo.punteo_clase || 0) > 0],
                                 [`${mat.porTipo.archivo || 0} archivos`, (mat.porTipo.archivo || 0) > 0],
                                 [`${mat.porTipo.enlace || 0} enlaces`, (mat.porTipo.enlace || 0) > 0],
                               ].map(([label, activo]) => (
@@ -1816,9 +1813,6 @@ export default function AdminPage() {
                                   <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "70px", textAlign: "right", flexShrink: 0 }}>
                                     {est.porTipo.transcripcion || 0} <span style={{ color: "var(--color-text-faint)" }}>transcripción</span>
                                   </span>
-                                   <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "48px", textAlign: "right", flexShrink: 0 }}>
-                                     {est.porTipo.punteo_clase || 0} <span style={{ color: "var(--color-text-faint)" }}>punteo</span>
-                                   </span>
                                    <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "48px", textAlign: "right", flexShrink: 0 }}>
                                      {est.porTipo.archivo || 0} <span style={{ color: "var(--color-text-faint)" }}>archivos</span>
                                    </span>

@@ -32,7 +32,7 @@ export async function PUT(request: NextRequest) {
       if (error) throw error;
     }
 
-    if (tipo === "archivo" || tipo === "punteo_clase" || tipo === "cuestionario") {
+    if (tipo === "archivo" || tipo === "cuestionario") {
       const updateData: Record<string, string> = { nombre_display: data.nombre_display };
       if (data.nota !== undefined) updateData.nota = data.nota;
 
@@ -160,7 +160,7 @@ export async function DELETE(request: NextRequest) {
       if (error) throw error;
     }
 
-    if (tipo === "archivo" || tipo === "punteo_clase" || tipo === "cuestionario") {
+    if (tipo === "archivo" || tipo === "cuestionario") {
       const { data: archivo } = await getSupabaseAdmin()
         .from("archivos")
         .select("storage_key")
