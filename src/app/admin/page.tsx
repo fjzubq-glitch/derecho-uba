@@ -1430,14 +1430,14 @@ export default function AdminPage() {
                               <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Clases</th>
                               <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Personas</th>
                               <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Audio</th>
-                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Video</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Virtual</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Resumen</th>
                               <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Textos</th>
                               <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Total</th>
                             </tr>
                           </thead>
                           <tbody>
                             {materiasStats.map((mat, i) => {
-                              const videoCount = (mat.porTipo.clase_youtube || 0) + (mat.porTipo.video_resumen || 0);
                               return (
                                 <tr
                                   key={mat.id}
@@ -1509,10 +1509,21 @@ export default function AdminPage() {
                                       textAlign: "right",
                                       fontFamily: "var(--font-ibm-plex-mono)",
                                       fontSize: "12px",
-                                      color: videoCount > 0 ? "var(--color-text)" : "var(--color-text-faint)",
+                                      color: (mat.porTipo.clase_youtube || 0) > 0 ? "var(--color-text)" : "var(--color-text-faint)",
                                     }}
                                   >
-                                    {videoCount}
+                                    {mat.porTipo.clase_youtube || 0}
+                                  </td>
+                                  <td
+                                    style={{
+                                      padding: "12px 0",
+                                      textAlign: "right",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      color: (mat.porTipo.video_resumen || 0) > 0 ? "var(--color-text)" : "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {mat.porTipo.video_resumen || 0}
                                   </td>
                                   <td
                                     style={{
@@ -1547,7 +1558,6 @@ export default function AdminPage() {
                       {/* Móvil: cards apiladas */}
                       <div className="sm:hidden">
                         {materiasStats.map((mat, i) => {
-                          const videoCount = (mat.porTipo.clase_youtube || 0) + (mat.porTipo.video_resumen || 0);
                           return (
                             <div
                               key={mat.id}
@@ -1608,9 +1618,14 @@ export default function AdminPage() {
                                     {mat.porTipo.audio_clase} audio
                                   </span>
                                 )}
-                                {videoCount > 0 && (
+                                {(mat.porTipo.clase_youtube || 0) > 0 && (
                                   <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
-                                    {videoCount} video
+                                    {mat.porTipo.clase_youtube} virtual
+                                  </span>
+                                )}
+                                {(mat.porTipo.video_resumen || 0) > 0 && (
+                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
+                                    {mat.porTipo.video_resumen} resumen
                                   </span>
                                 )}
                                 {(mat.porTipo.transcripcion || 0) > 0 && (
