@@ -1,4 +1,5 @@
 import VolverBoton from "@/components/VolverBoton";
+import Link from "next/link";
 import { cookies } from "next/headers";
 import { isAdminRequest, SESSION_COOKIE_NAME, verifyVisorToken } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
@@ -79,6 +80,32 @@ export default async function VisorPage({
         }}
       >
         <VolverBoton />
+        {archivo?.tipo === "cuestionario" && (
+          <Link
+            href="/"
+            style={{
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "11px",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "var(--color-gold)",
+              textDecoration: "none",
+              padding: "8px 16px",
+              border: "1px solid var(--color-gold-dim)",
+              transition: "background 0.2s ease, border-color 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(185, 154, 98, 0.12)";
+              e.currentTarget.style.borderColor = "var(--color-gold)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+            }}
+          >
+            Inicio
+          </Link>
+        )}
       </div>
       <div
         style={{

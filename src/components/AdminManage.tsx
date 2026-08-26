@@ -438,19 +438,14 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     setMessage("");
     setCuestionarioSaving(true);
     try {
-      if (archivo.storage_key) {
-        const res = await fetch(`/api/stream/${archivo.id}`);
-        if (res.ok) {
-          const html = await res.text();
-          setEditandoCuestionario({ archivoId: archivo.id, nombre: archivo.nombre_display, html });
-          return;
-        }
-      }
-      if (archivo.contenido_texto) {
-        setEditandoCuestionario({ archivoId: archivo.id, nombre: archivo.nombre_display, html: archivo.contenido_texto });
+      const res = await fetch(`/api/admin/cuestionario/${archivo.id}/html`);
+      if (res.ok) {
+        const html = await res.text();
+        setEditandoCuestionario({ archivoId: archivo.id, nombre: archivo.nombre_display, html });
         return;
       }
-      setMessage("Este cuestionario no tiene HTML en R2 para editar.");
+      const err = await res.json().catch(() => ({}));
+      setMessage("No se pudo cargar el HTML: " + (err.error || res.statusText));
     } catch (e) {
       setMessage("Error al abrir el editor: " + String(e));
     } finally {
