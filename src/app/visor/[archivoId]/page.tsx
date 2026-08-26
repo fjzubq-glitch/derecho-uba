@@ -2,7 +2,7 @@ import VolverBoton from "@/components/VolverBoton";
 import { cookies } from "next/headers";
 import { isAdminRequest, SESSION_COOKIE_NAME, verifyVisorToken } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
-import { getObjectBuffer } from "@/lib/r2";
+import { getObjectStream } from "@/lib/r2";
 
 export const dynamic = "force-dynamic";
 
@@ -40,8 +40,12 @@ export default async function VisorPage({
         errorMsg = "No autorizado";
       } else if (archivo.storage_key) {
         try {
-          const buf = await getObjectBuffer(archivo.storage_key);
-          iframeSrcDoc = buf.toString("utf-8");
+          const r2Res = await getObjectStream(archivo.storage_key);
+          if (!r2Res.ok) {
+            errorMsg = `R2: ${r2Res.status}`;
+          } else {
+            iframeSrcDoc = await r2Res.text();
+          }
         } catch (e) {
           errorMsg = e instanceof Error ? e.message : "Error al leer el archivo";
         }

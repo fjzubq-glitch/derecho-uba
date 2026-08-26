@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
-import { getObjectBuffer } from "@/lib/r2";
+import { getObjectStream } from "@/lib/r2";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!isAdminRequest(request.headers.get("cookie"))) {
@@ -21,10 +21,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     if (archivo.storage_key) {
       try {
-        const buf = await getObjectBuffer(archivo.storage_key);
-        return new NextResponse(buf.toString("utf-8"), {
-          headers: { "Content-Type": "text/html; charset=utf-8" },
-        });
+        const r2Res = await getObjectStream(archivo.storage_key);
+        if (r2Res.ok) {
+          return new NextResponse(r2Res.body, {
+            headers: { "Content-Type": "text/html; charset=utf-8" },
+          });
+        }
       } catch {
         // R2 no tiene el archivo, intentar contenido_texto
       }
