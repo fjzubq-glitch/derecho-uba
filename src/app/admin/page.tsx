@@ -1739,12 +1739,6 @@ export default function AdminPage() {
                         <span style={{ width: "28px", flexShrink: 0 }}>#</span>
                         <span style={{ width: "32px", flexShrink: 0 }} />
                         <span className="flex-1 min-w-0">Nombre</span>
-                        <span style={{ width: "44px", textAlign: "right", flexShrink: 0 }}>Visitas</span>
-                        <span className="hidden sm:block" style={{ width: "56px", textAlign: "right", flexShrink: 0 }}>Clases</span>
-                        <span className="hidden lg:block" style={{ width: "36px", textAlign: "right", flexShrink: 0 }}>Audio</span>
-                        <span className="hidden lg:block" style={{ width: "44px", textAlign: "right", flexShrink: 0 }}>Video</span>
-                        <span className="hidden lg:block" style={{ width: "70px", textAlign: "right", flexShrink: 0 }}>Transcrip.</span>
-                        <span className="hidden lg:block" style={{ width: "48px", textAlign: "right", flexShrink: 0 }}>Archivos</span>
                         <span style={{ width: "40px", textAlign: "right", flexShrink: 0 }}>Total</span>
                         <span style={{ width: "14px", flexShrink: 0 }} />
                       </div>
@@ -1824,49 +1818,13 @@ export default function AdminPage() {
                                       marginTop: "2px",
                                     }}
                                   >
-                                    Última actividad: {est.ultima_actividad ? new Date(est.ultima_actividad).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" }) : "—"}
-                                  </p>
-                                  <p
-                                    className="sm:hidden"
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: "6px",
-                                      fontFamily: "var(--font-ibm-plex-mono)",
-                                      fontSize: "10px",
-                                      color: "var(--color-text-muted)",
-                                      marginTop: "3px",
-                                      overflow: "hidden",
-                                      whiteSpace: "nowrap",
-                                    }}
-                                  >
-                                    <span className="flex-shrink-0">{est.visitas} visitas</span>
-                                    <span className="flex-shrink-0" style={{ color: "var(--color-text-faint)" }}>·</span>
-                                    <span className="flex-shrink-0">{est.total} materiales</span>
+                                    {est.ultima_actividad ? new Date(est.ultima_actividad).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" }) : "—"}
                                   </p>
                                 </div>
                                 <div
                                   className="hidden sm:flex items-center gap-3 flex-shrink-0"
                                   style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px" }}
                                 >
-                                  <span style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right", flexShrink: 0 }}>
-                                    {est.visitas} <span style={{ color: "var(--color-text-faint)" }}>visitas</span>
-                                  </span>
-                                  <span className="hidden md:block" style={{ color: "var(--color-text-muted)", minWidth: "56px", textAlign: "right", flexShrink: 0 }}>
-                                    {est.clasesVistas || 0} <span style={{ color: "var(--color-text-faint)" }}>clases</span>
-                                  </span>
-                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "36px", textAlign: "right", flexShrink: 0 }}>
-                                    {est.porTipo.audio_clase || 0} <span style={{ color: "var(--color-text-faint)" }}>audio</span>
-                                  </span>
-                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "44px", textAlign: "right", flexShrink: 0 }}>
-                                    {est.porTipo.clase_youtube || 0} <span style={{ color: "var(--color-text-faint)" }}>video</span>
-                                  </span>
-                                  <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "70px", textAlign: "right", flexShrink: 0 }}>
-                                    {est.porTipo.transcripcion || 0} <span style={{ color: "var(--color-text-faint)" }}>transcripción</span>
-                                  </span>
-                                   <span className="hidden lg:block" style={{ color: "var(--color-text-muted)", minWidth: "48px", textAlign: "right", flexShrink: 0 }}>
-                                     {est.porTipo.archivo || 0} <span style={{ color: "var(--color-text-faint)" }}>archivos</span>
-                                   </span>
                                    <span
                                      style={{
                                        color: "var(--color-gold)",
