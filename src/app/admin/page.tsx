@@ -1444,7 +1444,7 @@ export default function AdminPage() {
                     </article>
                   )}
 
-                  {/* Desglose por materia */}
+                  {/* Actividad por materia */}
                   {materiasStats.length > 0 && (
                     <article
                       style={{
@@ -1473,10 +1473,10 @@ export default function AdminPage() {
                           lineHeight: 1.6,
                         }}
                       >
-                        Lo que se consumió en cada materia, ordenado por uso total.
+                        Personas que interactuaron y contenido consumido, ordenado por uso total.
                       </p>
                       <div className="hidden sm:block" style={{ overflowX: "auto" }}>
-                        <div style={{ minWidth: "860px" }}>
+                        <div style={{ minWidth: "700px" }}>
                           {/* Encabezado */}
                           <div
                             className="flex items-center gap-4"
@@ -1492,23 +1492,22 @@ export default function AdminPage() {
                           >
                             <span style={{ width: "28px", flexShrink: 0 }}>#</span>
                             <span className="flex-1 min-w-0">Materia</span>
-                            <span style={{ width: "56px", textAlign: "right" }}>Visitas</span>
-                            <span style={{ width: "52px", textAlign: "right" }}>Alumnos</span>
-                             <span style={{ width: "42px", textAlign: "right" }}>Audio</span>
-                             <span style={{ width: "42px", textAlign: "right" }}>Video</span>
-                             <span style={{ width: "58px", textAlign: "right" }}>Transcrip.</span>
-                             <span style={{ width: "50px", textAlign: "right" }}>Punteo</span>
-                             <span style={{ width: "50px", textAlign: "right" }}>Archivos</span>
-                             <span style={{ width: "42px", textAlign: "right" }}>Enlaces</span>
+                            <span style={{ width: "72px", textAlign: "right" }}>Personas</span>
+                            <span style={{ width: "52px", textAlign: "right" }}>Audio</span>
+                            <span style={{ width: "52px", textAlign: "right" }}>Virtual</span>
+                            <span style={{ width: "58px", textAlign: "right" }}>Transcrip.</span>
+                            <span style={{ width: "50px", textAlign: "right" }}>Archivos</span>
+                            <span style={{ width: "50px", textAlign: "right" }}>Enlaces</span>
+                            <span style={{ width: "58px", textAlign: "right" }}>Total</span>
                           </div>
                           {materiasStats.map((mat, i) => {
-                              const MAT_TIPOS: Array<[string, number]> = [
-                                ["audio_clase", 42],
-                                ["clase_youtube", 42],
-                                ["transcripcion", 58],
-                                ["archivo", 50],
-                                ["enlace", 42],
-                              ];
+                            const MAT_TIPOS: Array<[string, number]> = [
+                              ["audio_clase", 52],
+                              ["clase_youtube", 52],
+                              ["transcripcion", 58],
+                              ["archivo", 50],
+                              ["enlace", 50],
+                            ];
                             return (
                               <div
                                 key={mat.id}
@@ -1556,22 +1555,12 @@ export default function AdminPage() {
                                 </div>
                                 <span
                                   style={{
-                                    width: "56px",
+                                    width: "72px",
                                     textAlign: "right",
                                     fontFamily: "var(--font-ibm-plex-mono)",
-                                    fontSize: "11px",
-                                    color: "var(--color-text-muted)",
-                                  }}
-                                >
-                                  {mat.visitas}
-                                </span>
-                                <span
-                                  style={{
-                                    width: "52px",
-                                    textAlign: "right",
-                                    fontFamily: "var(--font-ibm-plex-mono)",
-                                    fontSize: "11px",
-                                    color: "var(--color-text-muted)",
+                                    fontSize: "12px",
+                                    fontWeight: 500,
+                                    color: mat.estudiantes > 0 ? "var(--color-gold)" : "var(--color-text-faint)",
                                   }}
                                 >
                                   {mat.estudiantes}
@@ -1591,6 +1580,18 @@ export default function AdminPage() {
                                     {mat.porTipo[key] || 0}
                                   </span>
                                 ))}
+                                <span
+                                  style={{
+                                    width: "58px",
+                                    textAlign: "right",
+                                    fontFamily: "var(--font-ibm-plex-mono)",
+                                    fontSize: "12px",
+                                    fontWeight: 500,
+                                    color: mat.consumo > 0 ? "var(--color-gold)" : "var(--color-text-faint)",
+                                  }}
+                                >
+                                  {mat.consumo}
+                                </span>
                               </div>
                             );
                           })}
@@ -1637,40 +1638,40 @@ export default function AdminPage() {
                               <span
                                 style={{
                                   fontFamily: "var(--font-ibm-plex-mono)",
-                                  fontSize: "13px",
+                                  fontSize: "12px",
                                   fontWeight: 500,
                                   color: "var(--color-gold)",
                                   flexShrink: 0,
                                 }}
                               >
-                                {mat.consumo}
+                                {mat.estudiantes} personas
                               </span>
                             </div>
-                            <div className="flex flex-wrap items-center gap-1.5 mt-2" style={{ paddingLeft: "28px" }}>
-                              {[
-                                [`${mat.visitas} visitas`, mat.visitas > 0],
-                                [`${mat.estudiantes} alumnos`, mat.estudiantes > 0],
-                                [`${mat.porTipo.audio_clase || 0} audio`, (mat.porTipo.audio_clase || 0) > 0],
-                                [`${mat.porTipo.clase_youtube || 0} video`, (mat.porTipo.clase_youtube || 0) > 0],
-                                [`${mat.porTipo.transcripcion || 0} transcrip.`, (mat.porTipo.transcripcion || 0) > 0],
-                                [`${mat.porTipo.archivo || 0} archivos`, (mat.porTipo.archivo || 0) > 0],
-                                [`${mat.porTipo.enlace || 0} enlaces`, (mat.porTipo.enlace || 0) > 0],
-                              ].map(([label, activo]) => (
+                            <div className="flex flex-wrap gap-x-4 gap-y-1" style={{ marginTop: "6px", paddingLeft: "36px" }}>
+                              {Object.entries(mat.porTipo).filter(([, v]) => v > 0).map(([key, val]) => (
                                 <span
-                                  key={label as string}
+                                  key={key}
                                   style={{
-                                    padding: "2px 8px",
-                                    background: "var(--color-card-hover)",
-                                    border: "1px solid var(--color-line)",
                                     fontFamily: "var(--font-ibm-plex-mono)",
-                                    fontSize: "9px",
-                                    color: activo ? "var(--color-text-muted)" : "var(--color-text-faint)",
-                                    whiteSpace: "nowrap",
+                                    fontSize: "10px",
+                                    color: "var(--color-text-muted)",
                                   }}
                                 >
-                                  {label as string}
+                                  {val} {POR_TIPO_LABELS[key] || key}
                                 </span>
                               ))}
+                              {mat.consumo > 0 && (
+                                <span
+                                  style={{
+                                    fontFamily: "var(--font-ibm-plex-mono)",
+                                    fontSize: "10px",
+                                    color: "var(--color-gold)",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  {mat.consumo} total
+                                </span>
+                              )}
                             </div>
                           </div>
                         ))}
