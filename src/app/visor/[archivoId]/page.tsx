@@ -16,7 +16,6 @@ export default async function VisorPage({
   const { archivoId } = await params;
   const sp = await searchParams;
   const token = typeof sp.t === "string" ? sp.t : null;
-  const back = typeof sp.back === "string" ? sp.back : null;
   const cookie = (await cookies()).get(SESSION_COOKIE_NAME)?.value ?? null;
   const esAdmin = verifyVisorToken(token, archivoId) || isAdminRequest(cookie);
 
@@ -84,24 +83,6 @@ export default async function VisorPage({
         }}
       >
         <VolverBoton />
-        {archivo?.tipo === "cuestionario" && (
-          <a
-            href={back || "/"}
-            style={{
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "11px",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "var(--color-gold)",
-              textDecoration: "none",
-              padding: "8px 16px",
-              border: "1px solid var(--color-gold-dim)",
-              transition: "background 0.2s ease, border-color 0.2s ease",
-            }}
-          >
-            Volver a la clase
-          </a>
-        )}
       </div>
       <div
         style={{
