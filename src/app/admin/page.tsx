@@ -953,7 +953,7 @@ export default function AdminPage() {
                           color: "var(--color-text-faint)",
                         }}
                       >
-                        Personas registradas
+                        Ingresaron al portal
                       </span>
                       <div
                         style={{
@@ -968,7 +968,36 @@ export default function AdminPage() {
                         {String(totalRegistradosAllTime).padStart(2, "0")}
                       </div>
                       <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                        Total que han entrado al portal
+                        Total histórico, nunca baja
+                      </p>
+                    </div>
+
+                    <div style={{ background: "var(--color-card)", padding: "24px 26px" }}>
+                      <span
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "9px",
+                          letterSpacing: "0.14em",
+                          textTransform: "uppercase",
+                          color: "var(--color-text-faint)",
+                        }}
+                      >
+                        Activas en el período
+                      </span>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "36px",
+                          fontWeight: 500,
+                          lineHeight: 1.1,
+                          color: "var(--color-text)",
+                          margin: "10px 0 6px",
+                        }}
+                      >
+                        {String(visitantesUnicos).padStart(2, "0")}
+                      </div>
+                      <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
+                        Últimos {periodo === "all" ? "todo el historial" : `${periodo} días`}
                       </p>
                     </div>
 
@@ -1040,7 +1069,7 @@ export default function AdminPage() {
                           color: "var(--color-text-faint)",
                         }}
                       >
-                        Alumnos activos
+                        Activas en el período
                       </span>
                       <div
                         style={{
@@ -1048,14 +1077,14 @@ export default function AdminPage() {
                           fontSize: "36px",
                           fontWeight: 500,
                           lineHeight: 1.1,
-                          color: "var(--color-gold)",
+                          color: "var(--color-text)",
                           margin: "10px 0 6px",
                         }}
                       >
                         {String(alumnosActivos).padStart(2, "0")}
                       </div>
                       <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                        Con actividad en los últimos {periodo === "all" ? "todo el historial" : `${periodo} días`}
+                        De {totalRegistradosAllTime} que ingresaron
                       </p>
                     </div>
 
@@ -1694,7 +1723,7 @@ export default function AdminPage() {
                             margin: 0,
                           }}
                         >
-                          Estudiantes registrados
+                          Estudiantes que ingresaron
                           <span
                             style={{
                               fontFamily: "var(--font-ibm-plex-mono)",
@@ -1705,7 +1734,7 @@ export default function AdminPage() {
                               marginLeft: "12px",
                             }}
                           >
-                            {estudiantes.length} personas
+                            {totalRegistradosAllTime} total · {estudiantes.length} en período
                           </span>
                         </h3>
                         <span
