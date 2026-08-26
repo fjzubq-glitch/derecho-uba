@@ -96,11 +96,11 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // ── All-time: total de personas registradas (sin filtro de tiempo) ──
+    // ── All-time: total de personas registradas (solo tipo usuario_registrado) ──
     const { data: allTimeData } = await supabase
       .from("actividad")
       .select("nombre, materia_slug")
-      .neq("tipo", "heartbeat")
+      .eq("tipo", "usuario_registrado")
       .not("nombre", "is", null)
       .limit(200000);
 
