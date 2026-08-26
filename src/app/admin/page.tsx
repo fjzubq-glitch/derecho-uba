@@ -1792,7 +1792,6 @@ export default function AdminPage() {
                         <span className="hidden lg:block" style={{ width: "36px", textAlign: "right", flexShrink: 0 }}>Audio</span>
                         <span className="hidden lg:block" style={{ width: "44px", textAlign: "right", flexShrink: 0 }}>Video</span>
                         <span className="hidden lg:block" style={{ width: "70px", textAlign: "right", flexShrink: 0 }}>Transcrip.</span>
-                        <span className="hidden lg:block" style={{ width: "48px", textAlign: "right", flexShrink: 0 }}>Punteo</span>
                         <span className="hidden lg:block" style={{ width: "48px", textAlign: "right", flexShrink: 0 }}>Archivos</span>
                         <span style={{ width: "40px", textAlign: "right", flexShrink: 0 }}>Total</span>
                         <span style={{ width: "14px", flexShrink: 0 }} />
