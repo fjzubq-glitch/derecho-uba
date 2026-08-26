@@ -1427,7 +1427,6 @@ export default function AdminPage() {
                             >
                               <th style={{ textAlign: "left", padding: "8px 0", fontWeight: 500 }}>#</th>
                               <th style={{ textAlign: "left", padding: "8px 0", fontWeight: 500 }}>Materia</th>
-                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Clases</th>
                               <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Personas</th>
                               <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Audio</th>
                               <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Virtual</th>
@@ -1468,17 +1467,6 @@ export default function AdminPage() {
                                     >
                                       {mat.nombre}
                                     </p>
-                                  </td>
-                                  <td
-                                    style={{
-                                      padding: "12px 0",
-                                      textAlign: "right",
-                                      fontFamily: "var(--font-ibm-plex-mono)",
-                                      fontSize: "12px",
-                                      color: "var(--color-text-muted)",
-                                    }}
-                                  >
-                                    {mat.total_clases}
                                   </td>
                                   <td
                                     style={{
@@ -1610,9 +1598,6 @@ export default function AdminPage() {
                                 className="flex flex-wrap gap-x-4 gap-y-1"
                                 style={{ marginTop: "6px", paddingLeft: "36px" }}
                               >
-                                <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
-                                  {mat.total_clases} clases
-                                </span>
                                 {(mat.porTipo.audio_clase || 0) > 0 && (
                                   <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
                                     {mat.porTipo.audio_clase} audio
