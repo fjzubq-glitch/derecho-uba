@@ -96,6 +96,41 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // ── All-time: total de personas registradas (sin filtro de tiempo) ──
+    const { data: allTimeData } = await supabase
+      .from("actividad")
+      .select("nombre, materia_slug")
+      .neq("tipo", "heartbeat")
+      .not("nombre", "is", null)
+      .limit(200000);
+
+    const allTimeNombres = new Set<string>();
+    const allTimePorMateria: Record<string, Set<string>> = {};
+    for (const ev of allTimeData || []) {
+      const key = (ev.nombre || "").trim().toLowerCase();
+      if (!key) continue;
+      allTimeNombres.add(key);
+      if (ev.materia_slug) {
+        if (!allTimePorMateria[ev.materia_slug]) allTimePorMateria[ev.materia_slug] = new Set();
+        allTimePorMateria[ev.materia_slug].add(key);
+      }
+    }
+
+    const totalRegistradosAllTime = allTimeNombres.size;
+
+    // Nombres de materias
+    const materiaNombreMapAllTime = new Map(
+      (materias || []).filter((m) => m.slug).map((m) => [m.slug as string, m.nombre || ""]),
+    );
+
+    const registradosPorMateria = Object.entries(allTimePorMateria)
+      .map(([slug, personas]) => ({
+        slug,
+        materia: materiaNombreMapAllTime.get(slug) || slug,
+        personas: personas.size,
+      }))
+      .sort((a, b) => b.personas - a.personas);
+
     return NextResponse.json({
       stats: {
         totalClases: clasesCount || 0,
@@ -111,6 +146,8 @@ export async function GET(request: NextRequest) {
       contenidoPorTipo: resumen.contenidoPorTipo,
       materiasStats: resumen.materiasStats,
       contenidoPopular,
+      totalRegistradosAllTime,
+      registradosPorMateria,
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);

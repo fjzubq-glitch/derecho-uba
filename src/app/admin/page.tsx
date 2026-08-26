@@ -124,6 +124,8 @@ export default function AdminPage() {
   const [contenidoPorTipo, setContenidoPorTipo] = useState<ContenidoPorTipo[]>([]);
   const [materiasStats, setMateriasStats] = useState<MateriaStats[]>([]);
   const [contenidoPopular, setContenidoPopular] = useState<ContenidoPopular[]>([]);
+  const [totalRegistradosAllTime, setTotalRegistradosAllTime] = useState(0);
+  const [registradosPorMateria, setRegistradosPorMateria] = useState<Array<{ slug: string; materia: string; personas: number }>>([]);
   const [periodo, setPeriodo] = useState<Periodo>("7");
   const [busquedaEstudiante, setBusquedaEstudiante] = useState("");
   const [estudiantesAbiertos, setEstudiantesAbiertos] = useState(false);
@@ -218,6 +220,8 @@ export default function AdminPage() {
       if (data.estudiantes) setEstudiantes(data.estudiantes);
       if (data.materiasStats) setMateriasStats(data.materiasStats);
       if (data.contenidoPopular) setContenidoPopular(data.contenidoPopular);
+      setTotalRegistradosAllTime(data.totalRegistradosAllTime || 0);
+      setRegistradosPorMateria(data.registradosPorMateria || []);
     } catch (e) {
       console.error("Error loading admin data:", e);
     }
@@ -949,7 +953,7 @@ export default function AdminPage() {
                           color: "var(--color-text-faint)",
                         }}
                       >
-                        Estudiantes únicos
+                        Personas registradas
                       </span>
                       <div
                         style={{
@@ -961,10 +965,10 @@ export default function AdminPage() {
                           margin: "10px 0 6px",
                         }}
                       >
-                        {String(visitantesUnicos).padStart(2, "0")}
+                        {String(totalRegistradosAllTime).padStart(2, "0")}
                       </div>
                       <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                        Personas registradas que entraron al portal
+                        Total que han entrado al portal
                       </p>
                     </div>
 
@@ -1051,7 +1055,7 @@ export default function AdminPage() {
                         {String(alumnosActivos).padStart(2, "0")}
                       </div>
                       <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                        Con nombre, de {estudiantes.length} que entraron
+                        Con actividad en los últimos {periodo === "all" ? "todo el historial" : `${periodo} días`}
                       </p>
                     </div>
 
@@ -1344,6 +1348,72 @@ export default function AdminPage() {
                       })}
                     </div>
                   </article>
+
+                  {/* Personas por materia (all-time) */}
+                  {registradosPorMateria.length > 0 && (
+                    <article
+                      style={{
+                        background: "var(--color-card)",
+                        border: "1px solid var(--color-line-soft)",
+                        padding: "28px 30px",
+                        borderRadius: 0,
+                      }}
+                    >
+                      <h3
+                        style={{
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontWeight: 400,
+                          fontSize: "20px",
+                          color: "var(--color-text)",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        Personas por materia
+                      </h3>
+                      <p style={{ fontSize: "12px", color: "var(--color-text-muted)", marginBottom: "20px", lineHeight: 1.6 }}>
+                        Cuántas personas distintas interactuaron con cada materia (total histórico).
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)" }}>
+                        {registradosPorMateria.map((m) => (
+                          <div key={m.slug} style={{ background: "var(--color-card)", padding: "20px 24px" }}>
+                            <p
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "9px",
+                                letterSpacing: "0.14em",
+                                textTransform: "uppercase",
+                                color: "var(--color-gold)",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              {m.materia}
+                            </p>
+                            <div
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "28px",
+                                fontWeight: 500,
+                                lineHeight: 1,
+                                color: "var(--color-text)",
+                              }}
+                            >
+                              {m.personas}
+                            </div>
+                            <div
+                              style={{
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "10px",
+                                color: "var(--color-text-faint)",
+                                marginTop: "8px",
+                              }}
+                            >
+                              {m.personas === 1 ? "persona" : "personas"}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </article>
+                  )}
 
                   {/* Desglose por materia */}
                   {materiasStats.length > 0 && (
