@@ -1379,72 +1379,6 @@ export default function AdminPage() {
                     </div>
                   </article>
 
-                  {/* Personas por materia (all-time) */}
-                  {registradosPorMateria.length > 0 && (
-                    <article
-                      style={{
-                        background: "var(--color-card)",
-                        border: "1px solid var(--color-line-soft)",
-                        padding: "28px 30px",
-                        borderRadius: 0,
-                      }}
-                    >
-                      <h3
-                        style={{
-                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                          fontWeight: 400,
-                          fontSize: "20px",
-                          color: "var(--color-text)",
-                          marginBottom: "4px",
-                        }}
-                      >
-                        Personas por materia
-                      </h3>
-                      <p style={{ fontSize: "12px", color: "var(--color-text-muted)", marginBottom: "20px", lineHeight: 1.6 }}>
-                        Cuántas personas distintas interactuaron con cada materia (total histórico).
-                      </p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)" }}>
-                        {registradosPorMateria.map((m) => (
-                          <div key={m.slug} style={{ background: "var(--color-card)", padding: "20px 24px" }}>
-                            <p
-                              style={{
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "9px",
-                                letterSpacing: "0.14em",
-                                textTransform: "uppercase",
-                                color: "var(--color-gold)",
-                                marginBottom: "10px",
-                              }}
-                            >
-                              {m.materia}
-                            </p>
-                            <div
-                              style={{
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "28px",
-                                fontWeight: 500,
-                                lineHeight: 1,
-                                color: "var(--color-text)",
-                              }}
-                            >
-                              {m.personas}
-                            </div>
-                            <div
-                              style={{
-                                fontFamily: "var(--font-ibm-plex-mono)",
-                                fontSize: "10px",
-                                color: "var(--color-text-faint)",
-                                marginTop: "8px",
-                              }}
-                            >
-                              {m.personas === 1 ? "persona" : "personas"}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </article>
-                  )}
-
                   {/* Actividad por materia */}
                   {materiasStats.length > 0 && (
                     <article
@@ -1474,68 +1408,172 @@ export default function AdminPage() {
                           lineHeight: 1.6,
                         }}
                       >
-                        Personas que interactuaron y contenido consumido, ordenado por uso total.
+                        Personas, contenido y uso total por materia.
                       </p>
+
+                      {/* Desktop */}
                       <div className="hidden sm:block" style={{ overflowX: "auto" }}>
-                        <div style={{ minWidth: "700px" }}>
-                          {/* Encabezado */}
-                          <div
-                            className="flex items-center gap-4"
-                            style={{
-                              padding: "8px 0",
-                              borderBottom: "1px solid var(--color-line)",
-                              fontFamily: "var(--font-ibm-plex-mono)",
-                              fontSize: "9px",
-                              letterSpacing: "0.12em",
-                              textTransform: "uppercase",
-                              color: "var(--color-text-faint)",
-                            }}
-                          >
-                            <span style={{ width: "28px", flexShrink: 0 }}>#</span>
-                            <span className="flex-1 min-w-0">Materia</span>
-                            <span style={{ width: "72px", textAlign: "right" }}>Personas</span>
-                            <span style={{ width: "52px", textAlign: "right" }}>Audio</span>
-                            <span style={{ width: "52px", textAlign: "right" }}>Virtual</span>
-                            <span style={{ width: "58px", textAlign: "right" }}>Transcrip.</span>
-                            <span style={{ width: "50px", textAlign: "right" }}>Archivos</span>
-                            <span style={{ width: "50px", textAlign: "right" }}>Enlaces</span>
-                            <span style={{ width: "58px", textAlign: "right" }}>Total</span>
-                          </div>
-                          {materiasStats.map((mat, i) => {
-                              const MAT_TIPOS: Array<[string, number]> = [
-                                ["audio_clase", 42],
-                                ["clase_youtube", 42],
-                                ["video_resumen", 58],
-                                ["transcripcion", 58],
-                              ["archivo", 50],
-                              ["enlace", 50],
-                            ];
-                            return (
-                              <div
-                                key={mat.id}
-                                className="flex items-center gap-4"
-                                style={{
-                                  padding: "11px 0",
-                                  borderBottom:
-                                    i < materiasStats.length - 1 ? "1px solid var(--color-line-soft)" : "none",
-                                }}
-                              >
-                                <span
+                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                          <thead>
+                            <tr
+                              style={{
+                                borderBottom: "1px solid var(--color-line)",
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "9px",
+                                letterSpacing: "0.12em",
+                                textTransform: "uppercase",
+                                color: "var(--color-text-faint)",
+                              }}
+                            >
+                              <th style={{ textAlign: "left", padding: "8px 0", fontWeight: 500 }}>#</th>
+                              <th style={{ textAlign: "left", padding: "8px 0", fontWeight: 500 }}>Materia</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Clases</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Personas</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Audio</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Video</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Textos</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {materiasStats.map((mat, i) => {
+                              const videoCount = (mat.porTipo.clase_youtube || 0) + (mat.porTipo.video_resumen || 0);
+                              return (
+                                <tr
+                                  key={mat.id}
                                   style={{
-                                    fontFamily: "var(--font-ibm-plex-mono)",
-                                    fontSize: "13px",
-                                    fontWeight: 700,
-                                    color: rankColor(i),
-                                    width: "28px",
-                                    flexShrink: 0,
+                                    borderBottom: i < materiasStats.length - 1 ? "1px solid var(--color-line-soft)" : "none",
                                   }}
                                 >
-                                  {String(i + 1).padStart(2, "0")}
-                                </span>
-                                <div className="flex-1 min-w-0">
+                                  <td
+                                    style={{
+                                      padding: "12px 0",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "13px",
+                                      fontWeight: 700,
+                                      color: rankColor(i),
+                                      width: "28px",
+                                    }}
+                                  >
+                                    {String(i + 1).padStart(2, "0")}
+                                  </td>
+                                  <td style={{ padding: "12px 12px 12px 0" }}>
+                                    <p
+                                      style={{
+                                        fontSize: "14px",
+                                        fontWeight: 500,
+                                        color: i === 0 ? "var(--color-gold)" : "var(--color-text)",
+                                        margin: 0,
+                                      }}
+                                    >
+                                      {mat.nombre}
+                                    </p>
+                                  </td>
+                                  <td
+                                    style={{
+                                      padding: "12px 0",
+                                      textAlign: "right",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      color: "var(--color-text-muted)",
+                                    }}
+                                  >
+                                    {mat.total_clases}
+                                  </td>
+                                  <td
+                                    style={{
+                                      padding: "12px 0",
+                                      textAlign: "right",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      fontWeight: 500,
+                                      color: mat.estudiantes > 0 ? "var(--color-gold)" : "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {mat.estudiantes}
+                                  </td>
+                                  <td
+                                    style={{
+                                      padding: "12px 0",
+                                      textAlign: "right",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      color: (mat.porTipo.audio_clase || 0) > 0 ? "var(--color-text)" : "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {mat.porTipo.audio_clase || 0}
+                                  </td>
+                                  <td
+                                    style={{
+                                      padding: "12px 0",
+                                      textAlign: "right",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      color: videoCount > 0 ? "var(--color-text)" : "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {videoCount}
+                                  </td>
+                                  <td
+                                    style={{
+                                      padding: "12px 0",
+                                      textAlign: "right",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      color: (mat.porTipo.transcripcion || 0) > 0 ? "var(--color-text)" : "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {mat.porTipo.transcripcion || 0}
+                                  </td>
+                                  <td
+                                    style={{
+                                      padding: "12px 0",
+                                      textAlign: "right",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      fontWeight: 500,
+                                      color: mat.consumo > 0 ? "var(--color-gold)" : "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {mat.consumo}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Móvil: cards apiladas */}
+                      <div className="sm:hidden">
+                        {materiasStats.map((mat, i) => {
+                          const videoCount = (mat.porTipo.clase_youtube || 0) + (mat.porTipo.video_resumen || 0);
+                          return (
+                            <div
+                              key={mat.id}
+                              style={{
+                                padding: "14px 0",
+                                borderBottom: i < materiasStats.length - 1 ? "1px solid var(--color-line-soft)" : "none",
+                              }}
+                            >
+                              <div className="flex items-center justify-between gap-3">
+                                <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                  <span
+                                    style={{
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      fontWeight: 700,
+                                      color: rankColor(i),
+                                      flexShrink: 0,
+                                    }}
+                                  >
+                                    {String(i + 1).padStart(2, "0")}
+                                  </span>
                                   <p
                                     style={{
-                                      fontSize: "14px",
+                                      flex: 1,
+                                      minWidth: 0,
+                                      fontSize: "13px",
                                       fontWeight: 500,
                                       color: i === 0 ? "var(--color-gold)" : "var(--color-text)",
                                       overflow: "hidden",
@@ -1545,138 +1583,50 @@ export default function AdminPage() {
                                   >
                                     {mat.nombre}
                                   </p>
-                                  <span
-                                    style={{
-                                      fontFamily: "var(--font-ibm-plex-mono)",
-                                      fontSize: "9px",
-                                      color: "var(--color-text-faint)",
-                                    }}
-                                  >
-                                    {mat.total_clases} clases
-                                  </span>
                                 </div>
                                 <span
                                   style={{
-                                    width: "72px",
-                                    textAlign: "right",
                                     fontFamily: "var(--font-ibm-plex-mono)",
                                     fontSize: "12px",
                                     fontWeight: 500,
-                                    color: mat.estudiantes > 0 ? "var(--color-gold)" : "var(--color-text-faint)",
-                                  }}
-                                >
-                                  {mat.estudiantes}
-                                </span>
-                                {MAT_TIPOS.map(([key, width]) => (
-                                  <span
-                                    key={key}
-                                    style={{
-                                      width: `${width}px`,
-                                      textAlign: "right",
-                                      fontFamily: "var(--font-ibm-plex-mono)",
-                                      fontSize: "12px",
-                                      fontWeight: 500,
-                                      color: (mat.porTipo[key] || 0) > 0 ? "var(--color-text)" : "var(--color-text-faint)",
-                                    }}
-                                  >
-                                    {mat.porTipo[key] || 0}
-                                  </span>
-                                ))}
-                                <span
-                                  style={{
-                                    width: "58px",
-                                    textAlign: "right",
-                                    fontFamily: "var(--font-ibm-plex-mono)",
-                                    fontSize: "12px",
-                                    fontWeight: 500,
-                                    color: mat.consumo > 0 ? "var(--color-gold)" : "var(--color-text-faint)",
-                                  }}
-                                >
-                                  {mat.consumo}
-                                </span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                      {/* Vista móvil: materia como fila compacta */}
-                      <div className="sm:hidden">
-                        {materiasStats.map((mat, i) => (
-                          <div
-                            key={mat.id}
-                            style={{
-                              padding: "12px 0",
-                              borderBottom: i < materiasStats.length - 1 ? "1px solid var(--color-line-soft)" : "none",
-                            }}
-                          >
-                            <div className="flex items-center justify-between gap-3">
-                              <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                                <span
-                                  style={{
-                                    fontFamily: "var(--font-ibm-plex-mono)",
-                                    fontSize: "12px",
-                                    fontWeight: 700,
-                                    color: rankColor(i),
+                                    color: "var(--color-gold)",
                                     flexShrink: 0,
                                   }}
                                 >
-                                  {String(i + 1).padStart(2, "0")}
+                                  {mat.estudiantes} personas
                                 </span>
-                                <p
-                                  style={{
-                                    flex: 1,
-                                    minWidth: 0,
-                                    fontSize: "13px",
-                                    fontWeight: 500,
-                                    color: i === 0 ? "var(--color-gold)" : "var(--color-text)",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
-                                  }}
-                                >
-                                  {mat.nombre}
-                                </p>
                               </div>
-                              <span
-                                style={{
-                                  fontFamily: "var(--font-ibm-plex-mono)",
-                                  fontSize: "12px",
-                                  fontWeight: 500,
-                                  color: "var(--color-gold)",
-                                  flexShrink: 0,
-                                }}
+                              <div
+                                className="flex flex-wrap gap-x-4 gap-y-1"
+                                style={{ marginTop: "6px", paddingLeft: "36px" }}
                               >
-                                {mat.estudiantes} personas
-                              </span>
-                            </div>
-                            <div className="flex flex-wrap gap-x-4 gap-y-1" style={{ marginTop: "6px", paddingLeft: "36px" }}>
-                              {Object.entries(mat.porTipo).filter(([, v]) => v > 0).map(([key, val]) => (
-                                <span
-                                  key={key}
-                                  style={{
-                                    fontFamily: "var(--font-ibm-plex-mono)",
-                                    fontSize: "10px",
-                                    color: "var(--color-text-muted)",
-                                  }}
-                                >
-                                  {val} {POR_TIPO_LABELS[key] || key}
+                                <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
+                                  {mat.total_clases} clases
                                 </span>
-                              ))}
-                              {mat.consumo > 0 && (
-                                <span
-                                  style={{
-                                    fontFamily: "var(--font-ibm-plex-mono)",
-                                    fontSize: "10px",
-                                    color: "var(--color-gold)",
-                                    fontWeight: 500,
-                                  }}
-                                >
-                                  {mat.consumo} total
-                                </span>
-                              )}
+                                {(mat.porTipo.audio_clase || 0) > 0 && (
+                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
+                                    {mat.porTipo.audio_clase} audio
+                                  </span>
+                                )}
+                                {videoCount > 0 && (
+                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
+                                    {videoCount} video
+                                  </span>
+                                )}
+                                {(mat.porTipo.transcripcion || 0) > 0 && (
+                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
+                                    {mat.porTipo.transcripcion} transcrip.
+                                  </span>
+                                )}
+                                {mat.consumo > 0 && (
+                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-gold)", fontWeight: 500 }}>
+                                    {mat.consumo} total
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </article>
                   )}
