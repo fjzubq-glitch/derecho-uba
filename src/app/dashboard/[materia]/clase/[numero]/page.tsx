@@ -160,6 +160,10 @@ export default function ClaseNumeroPage() {
     return archivo.cloudinary_url || `/api/stream/${archivo.id}`;
   }
 
+  function isAudioUrl(url: string): boolean {
+    return /\.(mp3|wav|ogg|aac|m4a|mp4|webm|m4a)(\?|$)/i.test(url) || /\/video\/upload\//i.test(url);
+  }
+
   async function guardarOffline(archivo: Archivo) {
     try {
       setOfflineError(null);
@@ -343,8 +347,20 @@ if (isTranscription(tipo)) {
         }
       } else if (tipo === "material_privado") {
         if (archivo.youtube_url) {
-          window.open(archivo.youtube_url, "_blank");
-          trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+          if (isAudioUrl(archivo.youtube_url)) {
+            play({
+              id: archivo.id,
+              nombre: archivo.nombre_display,
+              tipo: archivo.tipo,
+              src: archivo.youtube_url,
+              materiaSlug,
+              claseNumero: clase?.numero ?? 0,
+              durationGuess: archivo.duration_seconds || 0,
+            });
+          } else {
+            window.open(archivo.youtube_url, "_blank");
+            trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+          }
         } else if (archivo.storage_key) {
           window.open(`/api/stream/${archivo.id}`, "_blank");
           trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
