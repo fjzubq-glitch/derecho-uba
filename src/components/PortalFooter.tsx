@@ -1,8 +1,12 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 
 export default function PortalFooter() {
+  const pathname = usePathname();
+  if (pathname.startsWith("/visor")) return null;
+
   return (
     <footer className="border-t mt-auto" style={{ borderColor: "var(--color-line-soft)" }}>
       <div
