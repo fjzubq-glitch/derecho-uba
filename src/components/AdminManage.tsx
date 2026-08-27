@@ -155,7 +155,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
 
       const claseIds = rawClases.map((c) => c.id);
 
-      let archivosMap: Record<string, Archivo[]> = {};
+      const archivosMap: Record<string, Archivo[]> = {};
       if (claseIds.length > 0) {
         const { data: todosArchivos } = await supabase
           .from("archivos")

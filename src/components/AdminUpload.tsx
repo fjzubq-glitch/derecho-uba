@@ -161,7 +161,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     const clases: ClaseExistente[] = (data || []).map((c: { id: string; numero: number; titulo: string; fecha: string | null }) => ({ ...c, archivos: [] }));
 
     const claseIds = clases.map((c) => c.id);
-    let archivosMap: Record<string, Array<{ tipo: string }>> = {};
+    const archivosMap: Record<string, Array<{ tipo: string }>> = {};
     if (claseIds.length > 0) {
       const { data: todosArchivos } = await supabase
         .from("archivos")
