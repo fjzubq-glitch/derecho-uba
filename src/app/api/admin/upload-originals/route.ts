@@ -1,15 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { uploadToR2 } from "@/lib/r2";
+import { isAdminRequest, SESSION_COOKIE_NAME } from "@/lib/auth";
 
 const SLUG_MAP: Record<string, string> = {
   "contratos-ii": "contratos",
   "derecho-comercial": "comercial",
 };
 
-export async function POST() {
+export async function POST(request: NextRequest) {
+  if (!isAdminRequest(request.cookies.get(SESSION_COOKIE_NAME)?.value ?? null)) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const supabase = getSupabaseAdmin();
     const { data: archivos, error } = await supabase

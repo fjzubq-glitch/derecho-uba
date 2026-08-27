@@ -1,11 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { uploadToR2 } from "@/lib/r2";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { CuestionarioData, generarCuestionarioHTML } from "@/lib/cuestionario";
+import { isAdminRequest, SESSION_COOKIE_NAME } from "@/lib/auth";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
+  if (!isAdminRequest(request.cookies.get(SESSION_COOKIE_NAME)?.value ?? null)) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const { data: archivos, error } = await getSupabaseAdmin()
       .from("archivos")

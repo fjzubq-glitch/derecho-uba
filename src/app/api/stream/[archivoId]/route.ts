@@ -82,6 +82,9 @@ export async function PUT(
   { params }: { params: Promise<{ archivoId: string }> }
 ) {
   try {
+    if (!isAdminRequest(request.cookies.get(SESSION_COOKIE_NAME)?.value ?? null)) {
+      return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    }
     if (isRateLimited(`stream-put:${ipFromRequest(request)}`, 300, 60 * 60 * 1000)) {
       return Response.json({ ok: false, error: "Too many requests" }, { status: 429 });
     }
