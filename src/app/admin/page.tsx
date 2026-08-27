@@ -297,7 +297,7 @@ export default function AdminPage() {
     claseTitulo: string,
     claseFecha: string,
     items: Array<{
-      tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
+      tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado";
       nombre: string;
       archivo?: File;
       driveLink?: string;
@@ -426,9 +426,10 @@ export default function AdminPage() {
     transcripcion: "Transcripción",
     archivo: "Archivos",
     enlace: "Enlaces",
+    material_privado: "Material privado",
   };
 
-  const POR_TIPO_ORDER = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace"];
+  const POR_TIPO_ORDER = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "material_privado"];
 
   const rankColor = (i: number) =>
     i === 0 ? "var(--color-gold)" : i === 1 ? "var(--color-text)" : i === 2 ? "var(--color-text-muted)" : "var(--color-text-faint)";

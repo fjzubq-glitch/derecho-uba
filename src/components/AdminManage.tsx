@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatFechaLocal } from "@/lib/utils";
 import { useEscapeKey } from "@/lib/useEscapeKey";
-import { Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical, Link2, ChevronUp, ChevronDown } from "@/components/icons";
+import { Calendar, Headphones, FileText, Play, ExternalLink, Loader2, X, Check, Upload, MoreVertical, Link2, ChevronUp, ChevronDown, Lock } from "@/components/icons";
 import HtmlEditor from "@/components/HtmlEditor";
 import type { CuestionarioData } from "@/lib/cuestionario";
 
@@ -42,7 +42,7 @@ interface Clase {
 }
 
 interface EditData {
-  tipo: "clase" | "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
+  tipo: "clase" | "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado";
   id: string;
   data: Record<string, string | number>;
 }
@@ -500,6 +500,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     archivo: <FileText style={{ width: "14px", height: "14px" }} />,
     cuestionario: <Check style={{ width: "14px", height: "14px" }} />,
     enlace: <Link2 style={{ width: "14px", height: "14px" }} />,
+    material_privado: <Lock style={{ width: "14px", height: "14px" }} />,
     youtube: <ExternalLink style={{ width: "14px", height: "14px" }} />,
   };
 
@@ -510,10 +511,11 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     archivo: "Archivo adjunto",
     cuestionario: "Cuestionario interactivo",
     enlace: "Enlace útil",
+    material_privado: "Material privado",
     youtube: "YouTube",
   };
 
-  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo" || tipo === "cuestionario";
+  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo" || tipo === "cuestionario" || tipo === "material_privado";
 
   const actionBtnStyle: React.CSSProperties = {
     padding: "6px 12px",

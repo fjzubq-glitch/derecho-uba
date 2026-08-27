@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { trackActivity } from "@/lib/tracking";
-import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2, Lock } from "@/components/icons";
 import { formatDuration, formatFechaLocal } from "@/lib/utils";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
 import { useAudio } from "@/components/AudioProvider";
@@ -36,7 +36,7 @@ interface MateriaData {
   nombre: string;
 }
 
-type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
+type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado";
 
 function isHtmlArchivo(a: Archivo | null): boolean {
   if (!a || !a.storage_key) return false;
@@ -91,6 +91,11 @@ const CARD_CONFIG: Record<CardTipo, {
     icon: <Check style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "CUESTIONARIO INTERACTIVO",
     subtitle: () => "Abrir cuestionario",
+  },
+  material_privado: {
+    icon: <Lock style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
+    label: "MATERIAL PRIVADO",
+    subtitle: () => "Solo administrador",
   },
 };
 
@@ -707,7 +712,7 @@ if (isTranscription(tipo)) {
    // Orden fijo de las cards en todas las clases:
   // 1° audio o video de la clase, 2° transcripción, 3° resto
   // El cuestionario solo se muestra al administrador
-  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", ...(esAdmin ? (["cuestionario"] as CardTipo[]) : [])];
+  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", ...(esAdmin ? (["cuestionario", "material_privado"] as CardTipo[]) : [])];
 
   if (loading) {
     return (
@@ -840,7 +845,7 @@ if (isTranscription(tipo)) {
           </div>
 
           {/* Cards de contenido */}
-          {clase.archivos.filter((a) => esAdmin || a.tipo !== "cuestionario").length === 0 ? (
+          {clase.archivos.filter((a) => esAdmin || (a.tipo !== "cuestionario" && a.tipo !== "material_privado")).length === 0 ? (
             <div
               style={{
                 padding: "80px 48px",

@@ -3,10 +3,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatFechaLocal } from "@/lib/utils";
-import { Upload, FileText, X, Check, Loader2, Headphones, Link2, Play } from "@/components/icons";
+import { Upload, FileText, X, Check, Loader2, Headphones, Link2, Play, Lock } from "@/components/icons";
 
 interface UploadItem {
-  tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
+  tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado";
   nombre: string;
   archivo?: File;
   driveLink?: string;
@@ -98,6 +98,13 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const [enlaceNombre, setEnlaceNombre] = useState("");
   const [enlaceUrl, setEnlaceUrl] = useState("");
 
+  const [materialPrivadoNombre, setMaterialPrivadoNombre] = useState("");
+  const [materialPrivadoFile, setMaterialPrivadoFile] = useState<File | null>(null);
+  const [materialPrivadoLink, setMaterialPrivadoLink] = useState("");
+  const [materialPrivadoUseLink, setMaterialPrivadoUseLink] = useState(false);
+  const materialPrivadoInputRef = useRef<HTMLInputElement>(null);
+  const [materialPrivadoDropHover, setMaterialPrivadoDropHover] = useState(false);
+
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [youtubeNombre, setYoutubeNombre] = useState("");
   const [useYoutube, setUseYoutube] = useState(false);
@@ -119,8 +126,9 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const hasCuestionario = cuestionarioContenido.trim() !== "";
   const hasEnlace = enlaceUrl.trim() !== "";
   const hasClaseYoutube = claseYoutubeItems.some((i) => i.url.trim() !== "");
+  const hasMaterialPrivado = materialPrivadoFile !== null || (materialPrivadoUseLink && materialPrivadoLink.trim() !== "");
 
-  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasEnlace, hasClaseYoutube, hasCuestionario].filter(Boolean).length;
+  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasEnlace, hasClaseYoutube, hasCuestionario, hasMaterialPrivado].filter(Boolean).length;
   useEffect(() => {
     if (materias.length > 0 && !materiaId) {
       setMateriaId(materias[0].id);
@@ -266,6 +274,14 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
       items.push({ tipo: "enlace", nombre: enlaceNombre || `Enlace útil`, driveLink: enlaceUrl });
     }
 
+    if (hasMaterialPrivado) {
+      if (materialPrivadoUseLink && materialPrivadoLink) {
+        items.push({ tipo: "material_privado", nombre: materialPrivadoNombre || `Material privado`, driveLink: materialPrivadoLink });
+      } else if (materialPrivadoFile) {
+        items.push({ tipo: "material_privado", nombre: materialPrivadoNombre || `Material privado`, archivo: materialPrivadoFile });
+      }
+    }
+
     claseYoutubeItems.forEach((item, idx) => {
       if (item.url.trim()) {
         items.push({ tipo: "clase_youtube", nombre: item.nombre.trim() || `Clase Virtual ${claseYoutubeItems.filter((i) => i.url.trim()).length > 1 ? idx + 1 : ""}`.trim(), driveLink: item.url.trim() });
@@ -315,6 +331,10 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     setCuestionarioModo("json");
     setEnlaceNombre("");
     setEnlaceUrl("");
+    setMaterialPrivadoNombre("");
+    setMaterialPrivadoFile(null);
+    setMaterialPrivadoLink("");
+    setMaterialPrivadoUseLink(false);
     setClaseYoutubeItems([{ nombre: "", url: "" }]);
   };
 
@@ -1047,6 +1067,63 @@ Clase Virtual
             />
           </div>
         </div>
+
+        {/* Material privado (solo admin) */}
+        <div style={{ padding: "24px", border: "1px dashed var(--color-gold-dim)", borderRadius: 0 }}>
+          <h3 style={sectionHeaderStyle}>
+            <Lock style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+            Material privado
+          </h3>
+
+          <input
+            type="text"
+            value={materialPrivadoNombre}
+            onChange={(e) => setMaterialPrivadoNombre(e.target.value)}
+            placeholder="Nombre del material (infografía, archivo especial, etc.)"
+            aria-label="Nombre del material privado"
+            style={{ ...inputStyle, marginBottom: "16px" }}
+          />
+
+          <div className="flex flex-wrap gap-4 mb-4">
+            <Radio checked={!materialPrivadoUseLink} onChange={() => setMaterialPrivadoUseLink(false)} label="Subir archivo desde PC" />
+            <Radio checked={materialPrivadoUseLink} onChange={() => setMaterialPrivadoUseLink(true)} label="Link externo" />
+          </div>
+
+          {materialPrivadoUseLink ? (
+            <input
+              type="url"
+              value={materialPrivadoLink}
+              onChange={(e) => setMaterialPrivadoLink(e.target.value)}
+              placeholder="https://drive.google.com/file/d/..."
+              aria-label="Link externo del material privado"
+              style={inputStyle}
+            />
+          ) : (
+            <div className="space-y-3">
+              <DropZone
+                file={materialPrivadoFile}
+                onFile={(f) => setMaterialPrivadoFile(f)}
+                onClear={() => setMaterialPrivadoFile(null)}
+                hover={materialPrivadoDropHover}
+                onHover={setMaterialPrivadoDropHover}
+                inputRef={materialPrivadoInputRef}
+              />
+              <input
+                ref={materialPrivadoInputRef}
+                type="file"
+                onChange={(e) => {
+                  const f = e.target.files?.[0] || null;
+                  if (f) setMaterialPrivadoFile(f);
+                }}
+                style={{ display: "none" }}
+              />
+            </div>
+          )}
+          <p style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginTop: "8px" }}>
+            Solo visible para el administrador. Ideal para infografías, archivos especiales, etc.
+          </p>
+        </div>
+
         </div>
       </div>
 
@@ -1073,6 +1150,7 @@ Clase Virtual
             { label: "Archivo adjunto", ready: hasArchivo },
             { label: "Enlace", ready: hasEnlace },
             { label: "Cuestionario", ready: hasCuestionario },
+            { label: "Material privado", ready: hasMaterialPrivado },
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-2">
               <div
@@ -1110,7 +1188,7 @@ Clase Virtual
             color: loadedCount === 7 ? "var(--color-gold)" : "var(--color-text-muted)",
           }}
         >
-          {loadedCount}/6 cargados
+          {loadedCount}/7 cargados
         </span>
       </div>
 
