@@ -99,7 +99,7 @@ const CARD_CONFIG: Record<CardTipo, {
   },
 };
 
-const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "video_resumen", "transcripcion", "archivo", "enlace", "cuestionario"];
+const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario", "video_resumen"];
 
 export default function ClaseNumeroPage() {
   const params = useParams();
@@ -814,7 +814,7 @@ if (isTranscription(tipo)) {
    // Orden fijo de las cards en todas las clases:
   // 1° audio o video de la clase, 2° transcripción, 3° resto
   // El cuestionario solo se muestra al administrador
-  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "video_resumen", "transcripcion", "archivo", "enlace", ...(esAdmin ? (["cuestionario"] as CardTipo[]) : [])];
+  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", ...(esAdmin ? (["cuestionario"] as CardTipo[]) : []), "video_resumen"];
 
   if (loading) {
     return (
