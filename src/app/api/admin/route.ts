@@ -32,7 +32,7 @@ export async function PUT(request: NextRequest) {
       if (error) throw error;
     }
 
-    if (tipo === "archivo" || tipo === "cuestionario") {
+    if (tipo !== "clase") {
       const updateData: Record<string, string> = { nombre_display: data.nombre_display };
       if (data.nota !== undefined) updateData.nota = data.nota;
 
