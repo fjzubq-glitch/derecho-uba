@@ -546,6 +546,8 @@ export default function AdminPanel() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {clasesDelCuaderno.map((clase, i) => {
                   const claseArchivos = archivosFiltrados.filter((a) => a.clase_numero === clase.numero);
+                  const claseFichas = filtradas.filter((f) => f.clase_id === clase.id);
+                  const tieneContenido = claseArchivos.length > 0 || claseFichas.length > 0;
 
                   return (
                     <article
@@ -582,6 +584,11 @@ export default function AdminPanel() {
                               {formatFechaLocal(clase.fecha)}
                             </div>
                           ) : <div />}
+                          {claseFichas.length > 0 && (
+                            <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
+                              <StickyNote style={{ width: "12px", height: "12px" }} />
+                            </div>
+                          )}
                           {claseArchivos.length > 0 && (
                             <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
                               {claseArchivos.some((a) => a.tipo === "cuestionario") && <Check style={{ width: "12px", height: "12px" }} />}
@@ -591,8 +598,43 @@ export default function AdminPanel() {
                         </div>
                         <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} className="group-hover:translate-x-[3px]" />
                       </div>
-                      {claseArchivos.length > 0 && (
+                      {tieneContenido && (
                         <div style={{ borderTop: "1px solid var(--color-line-soft)", paddingTop: "12px", marginTop: "14px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                          {claseFichas.map((f) => (
+                            <div
+                              key={f.id}
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => setVistaFicha(f)}
+                              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setVistaFicha(f); } }}
+                              className="flex items-center justify-between gap-2"
+                              style={{ padding: "8px 12px", background: "var(--color-ink)", border: "1px solid var(--color-line-soft)", cursor: "pointer", transition: "background 0.2s ease, border-color 0.2s ease" }}
+                              onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-ink)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+                            >
+                              <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                <div className="flex items-center justify-center flex-shrink-0" style={{ width: "28px", height: "28px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)" }}>
+                                  <StickyNote style={{ width: "12px", height: "12px", color: "var(--color-gold)" }} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "8px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-gold)", display: "block", marginBottom: "2px" }}>
+                                    FICHA
+                                  </span>
+                                  <p style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "13px", lineHeight: 1.25, color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                    {f.titulo}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-0.5 flex-shrink-0">
+                                <button onClick={(e) => { e.stopPropagation(); setVistaFicha(null); abrirEditar(f); }} title="Editar" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-muted)" }}>
+                                  <Edit3 style={{ width: "12px", height: "12px" }} />
+                                </button>
+                                <button onClick={(e) => { e.stopPropagation(); borrarFicha(f.id); }} title="Borrar" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-faint)" }}>
+                                  <Trash2 style={{ width: "12px", height: "12px" }} />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
                           {claseArchivos.map((a) => (
                             <div
                               key={a.id}
@@ -642,13 +684,15 @@ export default function AdminPanel() {
             </section>
           )}
 
-          {/* Fichas de estudio */}
+          {/* Fichas sin clase */}
+          {filtradas.filter((f) => !f.clase_id).length > 0 && (
           <section>
             <h3 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 400, fontSize: "18px", color: "var(--color-text)", marginBottom: "14px" }}>
-              Fichas de estudio <span style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "8px" }}>{filtradas.length}</span>
+              Fichas sin clase <span style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "8px" }}>{filtradas.filter((f) => !f.clase_id).length}</span>
             </h3>
-            {renderFichas(filtradas)}
+            {renderFichas(filtradas.filter((f) => !f.clase_id))}
           </section>
+          )}
         </div>
       ) : (
         /* ════════ LISTA DE CUADERNOS ════════ */

@@ -427,6 +427,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .tiptap a:hover {
   text-decoration: underline;
 }
+.tiptap mark {
+  background: rgba(185, 154, 98, 0.3);
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 2px;
+}
 .tiptap:focus {
   border-color: var(--color-gold-dim);
 }
@@ -517,6 +523,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .ficha-view a {
   color: var(--color-gold);
   text-decoration: none;
+}
+.ficha-view mark {
+  background: rgba(185, 154, 98, 0.3);
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 2px;
 }
 .ficha-view hr {
   border: none;

@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Loader2, Check, X, Bold, Italic, List, ListOrdered, Heading2, Heading3, Undo, Redo, Quote, Code, Minus } from "@/components/icons";
+import Highlight from "@tiptap/extension-highlight";
+import { Loader2, Check, X, Bold, Italic, List, ListOrdered, Heading2, Heading3, Undo, Redo, Quote, Code, Minus, Highlight as HighlightIcon } from "@/components/icons";
 
 const btnStyle: React.CSSProperties = {
   background: "none",
@@ -56,6 +57,7 @@ export default function FichaEditor({
       StarterKit.configure({
         heading: { levels: [2, 3] },
       }),
+      Highlight,
     ],
     content: initialContenido,
     editorProps: {
@@ -105,6 +107,13 @@ export default function FichaEditor({
           onClick={() => editor.chain().focus().toggleItalic().run()}
         >
           <Italic style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Resaltar"
+          active={editor.isActive("highlight")}
+          onClick={() => editor.chain().focus().toggleHighlight().run()}
+        >
+          <HighlightIcon style={{ width: "15px", height: "15px" }} />
         </ToolbarButton>
         <ToolbarButton
           title="Encabezado 2"
