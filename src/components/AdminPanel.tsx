@@ -213,18 +213,29 @@ export default function AdminPanel() {
   const renderFichas = (items: Ficha[]) =>
     items.length === 0 ? (
       <p style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
-        Todavía no creaste ninguna ficha en este cuaderno. Tocá “Nueva ficha”.
+        Todavía no creaste ninguna ficha en este cuaderno. Tocá &quot;Nueva ficha&quot;.
       </p>
     ) : (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)", border: "1px solid var(--color-line-soft)" }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map((f) => (
-          <div key={f.id} style={{ background: "var(--color-card)", padding: "20px 22px", display: "flex", flexDirection: "column", gap: "8px", minHeight: "140px" }}>
+          <div
+            key={f.id}
+            className="card-reveal card-hover"
+            style={{ background: "var(--color-card)", padding: "28px 24px", display: "flex", flexDirection: "column", gap: "10px", minHeight: "150px", border: "1px solid var(--color-line-soft)", transition: "background 0.25s ease, border-color 0.25s ease" }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+          >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-3 flex-1" style={{ cursor: "pointer" }} onClick={() => setVistaFicha(f)}>
-                <div className="flex items-center justify-center" style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}>
-                  <StickyNote style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+                <div className="flex items-center justify-center flex-shrink-0" style={{ width: "40px", height: "40px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)" }}>
+                  <StickyNote style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
                 </div>
-                <h4 style={{ fontFamily: "var(--font-fraunces), serif", fontSize: "16px", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3 }}>{f.titulo}</h4>
+                <div className="flex-1 min-w-0">
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)", display: "block", marginBottom: "6px" }}>
+                    FICHA
+                  </span>
+                  <h4 style={{ fontFamily: "var(--font-fraunces), serif", fontSize: "18px", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3, overflowWrap: "break-word" }}>{f.titulo}</h4>
+                </div>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
                 <button onClick={() => abrirEditar(f)} title="Editar" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-muted)" }}>
@@ -234,12 +245,6 @@ export default function AdminPanel() {
                   <Trash2 style={{ width: "14px", height: "14px" }} />
                 </button>
               </div>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "auto" }}>
-              <BookOpen style={{ width: "13px", height: "13px", color: "var(--color-gold-dim)" }} />
-              <span style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
-                {f.materia_nombre || "Sin materia"}
-              </span>
             </div>
           </div>
         ))}
@@ -263,7 +268,7 @@ export default function AdminPanel() {
     const clasesOrdenadas = Array.from(clasesMap.entries()).sort(([a], [b]) => a - b);
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         {clasesOrdenadas.map(([num, clase]) => {
           const cuestionarios = clase.archivos.filter((a) => a.tipo === "cuestionario");
           const materiales = clase.archivos.filter((a) => a.tipo === "material_privado");
@@ -274,31 +279,32 @@ export default function AdminPanel() {
               <div
                 className="flex items-center gap-3 mb-4"
                 style={{
-                  padding: "12px 16px",
+                  padding: "14px 18px",
                   background: "var(--color-card)",
                   border: "1px solid var(--color-line-soft)",
+                  borderBottom: "2px solid var(--color-gold-dim)",
                   borderRadius: 0,
                 }}
               >
                 <div
                   className="flex items-center justify-center"
-                  style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}
+                  style={{ width: "40px", height: "40px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}
                 >
-                  <FileText style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+                  <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
                 </div>
                 <div>
-                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)" }}>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)" }}>
                     Clase {num}
                   </span>
                   {clase.titulo && (
-                    <p style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 500, fontSize: "18px", color: "var(--color-text)", lineHeight: 1.3 }}>
+                    <p style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 500, fontSize: "20px", color: "var(--color-text)", lineHeight: 1.3 }}>
                       {clase.titulo}
                     </p>
                   )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)", border: "1px solid var(--color-line-soft)" }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {todos.map((a) => (
                   <div
                     key={a.id}
@@ -442,24 +448,27 @@ export default function AdminPanel() {
             <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "20px", color: "var(--color-text)", marginBottom: "16px" }}>
               Cuadernos <span style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "10px" }}>{cuadernos.length}</span>
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)", border: "1px solid var(--color-line-soft)" }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {cuadernos.map((m) => (
                 <button
                   key={m.id}
                   onClick={() => setCuadernoActualId(m.id)}
-                  style={{ background: "var(--color-card)", padding: "24px 22px", textAlign: "left", cursor: "pointer", border: "none", display: "flex", flexDirection: "column", gap: "10px", minHeight: "150px", width: "100%" }}
+                  className="card-reveal card-hover"
+                  style={{ background: "var(--color-card)", padding: "28px 24px", textAlign: "left", cursor: "pointer", border: "1px solid var(--color-line-soft)", display: "flex", flexDirection: "column", gap: "12px", minHeight: "160px", width: "100%", transition: "background 0.25s ease, border-color 0.25s ease" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex items-center justify-center" style={{ width: "40px", height: "40px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}>
                       <BookOpen style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
                     </div>
-                    <h4 style={{ fontFamily: "var(--font-fraunces), serif", fontSize: "18px", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3 }}>{m.nombre}</h4>
+                    <h4 style={{ fontFamily: "var(--font-fraunces), serif", fontSize: "20px", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3 }}>{m.nombre}</h4>
                   </div>
                   <div className="flex flex-wrap gap-2" style={{ marginTop: "auto" }}>
-                    <span style={{ fontSize: "11px", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", border: "1px solid var(--color-line-soft)", padding: "3px 10px" }}>
+                    <span style={{ fontSize: "11px", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", border: "1px solid var(--color-line-soft)", padding: "4px 12px" }}>
                       {m.fichaCount} fichas
                     </span>
-                    <span style={{ fontSize: "11px", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", border: "1px solid var(--color-line-soft)", padding: "3px 10px" }}>
+                    <span style={{ fontSize: "11px", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", border: "1px solid var(--color-line-soft)", padding: "4px 12px" }}>
                       {m.archivoCount} material
                     </span>
                   </div>
