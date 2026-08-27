@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
+import { TextStyle } from "@tiptap/extension-text-style";
+import Color from "@tiptap/extension-color";
 import { Loader2, Check, X, Bold, Italic, List, ListOrdered, Heading2, Heading3, Undo, Redo, Quote, Code, Minus, Highlight as HighlightIcon } from "@/components/icons";
 
 const btnStyle: React.CSSProperties = {
@@ -58,6 +60,8 @@ export default function FichaEditor({
         heading: { levels: [2, 3] },
       }),
       Highlight,
+      TextStyle,
+      Color,
     ],
     content: initialContenido,
     editorProps: {
@@ -115,6 +119,53 @@ export default function FichaEditor({
         >
           <HighlightIcon style={{ width: "15px", height: "15px" }} />
         </ToolbarButton>
+        <span style={{ width: "1px", height: "20px", background: "var(--color-line-soft)", margin: "0 4px", alignSelf: "center" }} />
+        {[
+          { color: "#E05555", label: "Rojo" },
+          { color: "#D4769A", label: "Rosa" },
+          { color: "#B99A62", label: "Dorado" },
+          { color: "#6B9E78", label: "Verde" },
+          { color: "#5B8DB8", label: "Azul" },
+          { color: "#9B7ED8", label: "Violeta" },
+        ].map((c) => (
+          <button
+            key={c.color}
+            type="button"
+            title={c.label}
+            onClick={() => editor.chain().focus().setColor(c.color).run()}
+            style={{
+              width: "18px",
+              height: "18px",
+              borderRadius: "50%",
+              background: c.color,
+              border: editor.isActive("textStyle", { color: c.color }) ? "2px solid var(--color-text)" : "2px solid transparent",
+              cursor: "pointer",
+              padding: 0,
+              transition: "border-color 0.15s ease, transform 0.15s ease",
+              flexShrink: 0,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.2)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+          />
+        ))}
+        <button
+          type="button"
+          title="Color normal"
+          onClick={() => editor.chain().focus().unsetColor().run()}
+          style={{
+            width: "18px",
+            height: "18px",
+            borderRadius: "50%",
+            background: "var(--color-text)",
+            border: !editor.isActive("textStyle") ? "2px solid var(--color-gold)" : "2px solid transparent",
+            cursor: "pointer",
+            padding: 0,
+            transition: "border-color 0.15s ease, transform 0.15s ease",
+            flexShrink: 0,
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.2)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+        />
         <ToolbarButton
           title="Encabezado 2"
           active={editor.isActive("heading", { level: 2 })}

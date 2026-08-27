@@ -868,18 +868,18 @@ export default function AdminPanel() {
       {/* Vista de ficha modal */}
       {vistaFicha && (
         <div style={MODAL_STYLE} onClick={(e) => { if (e.target === e.currentTarget) setVistaFicha(null); }}>
-          <div style={{ ...MODAL_BOX, maxWidth: "640px" }}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 500, fontSize: "22px", color: "var(--color-text)" }}>{vistaFicha.titulo}</h3>
-              <button onClick={() => setVistaFicha(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)" }}>
+          <div style={{ ...MODAL_BOX, maxWidth: "780px", padding: "40px 48px 36px" }}>
+            <div className="flex items-center justify-between mb-2">
+              <h3 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "28px", lineHeight: 1.2, color: "var(--color-text)" }}>{vistaFicha.titulo}</h3>
+              <button onClick={() => setVistaFicha(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)", flexShrink: 0 }}>
                 <X style={{ width: "20px", height: "20px" }} />
               </button>
             </div>
-            <div style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginBottom: "16px" }}>
+            <div style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginBottom: "32px", letterSpacing: "0.02em" }}>
               {vistaFicha.materia_nombre || "Sin materia"} · Actualizada {new Date(vistaFicha.updated_at).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })}
             </div>
             <div className="ficha-view" dangerouslySetInnerHTML={{ __html: vistaFicha.contenido }} />
-            <div className="flex justify-end gap-3" style={{ marginTop: "24px", borderTop: "1px solid var(--color-line-soft)", paddingTop: "16px" }}>
+            <div className="flex justify-end gap-3" style={{ marginTop: "32px", borderTop: "1px solid var(--color-line-soft)", paddingTop: "20px" }}>
               <button onClick={() => { const f = vistaFicha; setVistaFicha(null); abrirEditar(f); }} style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", padding: "10px 20px", cursor: "pointer", fontFamily: "var(--font-inter)" }}>
                 Editar
               </button>
