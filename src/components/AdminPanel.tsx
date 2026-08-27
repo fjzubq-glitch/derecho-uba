@@ -125,6 +125,7 @@ export default function AdminPanel() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [confirmState, setConfirmState] = useState<{ message: string; onConfirm: () => void } | null>(null);
   const [claseExpandida, setClaseExpandida] = useState<string | null>(null);
+  const [fechasExpandida, setFechasExpandida] = useState(false);
 
   const cargar = useCallback(async () => {
     const res = await fetch("/api/admin/panel");
@@ -480,16 +481,21 @@ export default function AdminPanel() {
           {fechasDelCuaderno.length > 0 && (
             <div className="md:w-[calc((100%-16px)/2)] lg:w-[calc((100%-32px)/3)]" style={{ marginTop: "8px" }}>
               <div
+                role="button"
+                tabIndex={0}
+                onClick={() => setFechasExpandida(!fechasExpandida)}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setFechasExpandida(!fechasExpandida); } }}
                 style={{
-                  background: "var(--color-card)",
-                  border: "1px solid var(--color-line-soft)",
+                  background: fechasExpandida ? "var(--color-card-hover)" : "var(--color-card)",
+                  border: `1px solid ${fechasExpandida ? "var(--color-gold-dim)" : "var(--color-line-soft)"}`,
                   borderTop: "2px solid var(--color-gold-dim)",
                   borderRadius: 0,
                   padding: "24px 26px 20px",
                   transition: "border-color 0.25s ease, background 0.25s ease",
+                  cursor: "pointer",
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-line-soft)"; e.currentTarget.style.background = "var(--color-card)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = fechasExpandida ? "var(--color-gold-dim)" : "var(--color-line-soft)"; e.currentTarget.style.background = fechasExpandida ? "var(--color-card-hover)" : "var(--color-card)"; }}
               >
                 <div className="flex items-center justify-between gap-4 mb-4">
                   <div className="flex items-center gap-2.5 min-w-0">
@@ -498,10 +504,13 @@ export default function AdminPanel() {
                       Fechas importantes
                     </p>
                   </div>
-                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", color: "var(--color-text-faint)" }}>
-                    <span className="clase-num">{String(fechasDelCuaderno.length).padStart(2, "0")}</span>{" "}
-                    FECHAS
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", color: "var(--color-text-faint)" }}>
+                      <span className="clase-num">{String(fechasDelCuaderno.length).padStart(2, "0")}</span>{" "}
+                      FECHAS
+                    </span>
+                    <ArrowRight style={{ width: "14px", height: "14px", color: "var(--color-gold)", flexShrink: 0, transform: fechasExpandida ? "rotate(90deg)" : "none", transition: "transform 0.2s ease" }} />
+                  </div>
                 </div>
                 {(() => {
                   const pf = fechasDelCuaderno.find((f) => diasHasta(f.fecha) >= 0);
@@ -535,6 +544,24 @@ export default function AdminPanel() {
                   );
                 })()}
               </div>
+              {fechasExpandida && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px", padding: "12px 16px", background: "var(--color-ink)", border: "1px solid var(--color-line-soft)", borderTop: "none", animation: "fadeIn 0.2s ease" }}>
+                  {fechasDelCuaderno.map((f) => {
+                    const d = diasHasta(f.fecha);
+                    return (
+                      <div key={f.id} className="flex items-center justify-between gap-3" style={{ padding: "8px 12px", background: "var(--color-card)", border: "1px solid var(--color-line-soft)" }}>
+                        <div className="flex-1 min-w-0">
+                          <p style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "13px", color: "var(--color-text)" }}>{f.titulo}</p>
+                          <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}>{formatearFechaCorta(f.fecha, true)}</span>
+                        </div>
+                        <span style={{ padding: "2px 8px", border: `1px solid ${d >= 0 && d <= 7 ? "var(--color-stamp)" : "var(--color-gold-dim)"}`, fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: d >= 0 && d <= 7 ? "var(--color-stamp)" : "var(--color-gold)", flexShrink: 0 }}>
+                          {d < 0 ? "Pasó" : countdownLabel(d)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
