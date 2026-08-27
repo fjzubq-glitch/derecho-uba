@@ -95,6 +95,7 @@ export default function AdminPanel() {
   const [guardando, setGuardando] = useState(false);
   const [vistaFicha, setVistaFicha] = useState<Ficha | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [confirmState, setConfirmState] = useState<{ message: string; onConfirm: () => void } | null>(null);
 
   const cargar = useCallback(async () => {
     const res = await fetch("/api/admin/panel");
@@ -146,16 +147,26 @@ export default function AdminPanel() {
     }
   };
 
-  const borrarFicha = async (id: string) => {
-    if (!window.confirm("¿Seguro que querés borrar esta ficha?")) return;
-    const res = await fetch(`/api/fichas/${id}`, { method: "DELETE" });
-    if (res.ok) await cargar();
+  const borrarFicha = (id: string) => {
+    setConfirmState({
+      message: "¿Seguro que querés borrar esta ficha? Esta acción no se puede deshacer.",
+      onConfirm: async () => {
+        setConfirmState(null);
+        const res = await fetch(`/api/fichas/${id}`, { method: "DELETE" });
+        if (res.ok) await cargar();
+      },
+    });
   };
 
-  const borrarArchivo = async (id: string) => {
-    if (!window.confirm("¿Seguro que querés borrar este elemento?")) return;
-    const res = await fetch(`/api/admin?id=${id}&tipo=archivo`, { method: "DELETE" });
-    if (res.ok) await cargar();
+  const borrarArchivo = (id: string) => {
+    setConfirmState({
+      message: "¿Seguro que querés borrar este elemento? Esta acción no se puede deshacer.",
+      onConfirm: async () => {
+        setConfirmState(null);
+        const res = await fetch(`/api/admin?id=${id}&tipo=archivo`, { method: "DELETE" });
+        if (res.ok) await cargar();
+      },
+    });
   };
 
   const abrirVisor = (a: PanelArchivo) => {
@@ -281,10 +292,10 @@ export default function AdminPanel() {
                 background: "var(--color-ink-2)",
                 border: "1px solid var(--color-line-soft)",
                 borderRadius: "2px",
-                padding: "20px 24px 24px",
+                padding: "24px 28px 28px",
               }}
             >
-              <div className="flex items-center gap-3 mb-5">
+              <div className="flex items-center gap-3 mb-6" style={{ paddingBottom: "16px", borderBottom: "1px solid var(--color-line-soft)" }}>
                 <div
                   className="flex items-center justify-center"
                   style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}
@@ -555,6 +566,37 @@ export default function AdminPanel() {
               </button>
               <button onClick={() => setVistaFicha(null)} style={{ background: "var(--color-gold)", color: "var(--color-ink)", border: "none", padding: "10px 20px", cursor: "pointer", fontFamily: "var(--font-inter)" }}>
                 Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm modal */}
+      {confirmState && (
+        <div style={MODAL_STYLE} onClick={(e) => { if (e.target === e.currentTarget) setConfirmState(null); }}>
+          <div style={{ ...MODAL_BOX, maxWidth: "420px", textAlign: "center" }}>
+            <div style={{ width: "48px", height: "48px", borderRadius: "50%", border: "1px solid var(--color-stamp)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+              <Trash2 style={{ width: "20px", height: "20px", color: "var(--color-stamp)" }} />
+            </div>
+            <p style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "18px", color: "var(--color-text)", marginBottom: "8px" }}>
+              Confirmar borrado
+            </p>
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "var(--color-text-muted)", marginBottom: "28px", lineHeight: 1.5 }}>
+              {confirmState.message}
+            </p>
+            <div className="flex items-center justify-center gap-3">
+              <button
+                onClick={() => setConfirmState(null)}
+                style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", padding: "10px 24px", cursor: "pointer", fontFamily: "var(--font-inter)", fontSize: "13px" }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmState.onConfirm}
+                style={{ background: "var(--color-stamp)", color: "#fff", border: "none", padding: "10px 24px", cursor: "pointer", fontFamily: "var(--font-inter)", fontSize: "13px", fontWeight: 500 }}
+              >
+                Borrar
               </button>
             </div>
           </div>
