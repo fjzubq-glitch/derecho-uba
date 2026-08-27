@@ -1,10 +1,10 @@
 ﻿"use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import AdminUpload from "@/components/AdminUpload";
-import AdminManage from "@/components/AdminManage";
-import AdminMaterias from "@/components/AdminMaterias";
+const AdminUpload = React.lazy(() => import("@/components/AdminUpload"));
+const AdminManage = React.lazy(() => import("@/components/AdminManage"));
+const AdminMaterias = React.lazy(() => import("@/components/AdminMaterias"));
 import { ArrowLeft, BarChart3, Headphones, FileText, Shield, ChevronDown, Loader2 } from "@/components/icons";
 import { setAdminSession } from "@/lib/utils";
 
@@ -789,7 +789,9 @@ export default function AdminPage() {
 
           {/* Upload Tab */}
           {activeTab === "upload" && (
-            <AdminUpload materias={materias} onSubmit={handleUpload} claseInicial={claseEditar} />
+            <Suspense fallback={<div className="flex items-center gap-2" style={{ padding: "24px 0", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px" }}><Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> Cargando…</div>}>
+              <AdminUpload materias={materias} onSubmit={handleUpload} claseInicial={claseEditar} />
+            </Suspense>
           )}
 
           {/* Manage Tab */}
@@ -855,7 +857,9 @@ export default function AdminPage() {
                   <p style={{ fontSize: "12px", color: migrateResult.startsWith("Error") ? "#E05555" : "#5fb88a" }}>{migrateResult}</p>
                 </div>
               )}
-              <AdminMaterias />
+              <Suspense fallback={<div className="flex items-center gap-2" style={{ padding: "16px 0", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px" }}><Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> Cargando…</div>}>
+                <AdminMaterias />
+              </Suspense>
               <h3
                 style={{
                   fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
@@ -867,12 +871,14 @@ export default function AdminPage() {
               >
                 Clases
               </h3>
-              <AdminManage
-                onEditarClase={(claseId, materiaId) => {
-                  setClaseEditar({ claseId, materiaId });
-                  setActiveTab("upload");
-                }}
-              />
+              <Suspense fallback={<div className="flex items-center gap-2" style={{ padding: "16px 0", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px" }}><Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> Cargando…</div>}>
+                <AdminManage
+                  onEditarClase={(claseId, materiaId) => {
+                    setClaseEditar({ claseId, materiaId });
+                    setActiveTab("upload");
+                  }}
+                />
+              </Suspense>
             </>
           )}
 
