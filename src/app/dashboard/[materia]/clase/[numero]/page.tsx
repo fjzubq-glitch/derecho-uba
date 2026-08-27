@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { trackActivity } from "@/lib/tracking";
-import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2, ChevronUp } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
 import { formatDuration, formatFechaLocal } from "@/lib/utils";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
 import { useAudio } from "@/components/AudioProvider";
@@ -75,7 +75,7 @@ const CARD_CONFIG: Record<CardTipo, {
   video_resumen: {
     icon: <Play style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "VIDEO RESUMEN",
-    subtitle: () => "Ver resumen en video",
+    subtitle: () => "",
   },
   transcripcion: {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
@@ -126,8 +126,6 @@ export default function ClaseNumeroPage() {
 
   // Transcription expand
   const [openTranscripcion, setOpenTranscripcion] = useState(false);
-  // Video resumen expand
-  const [expandedVideoResumen, setExpandedVideoResumen] = useState<string | null>(null);
   // Solo el admin ve las cards de cuestionario
   const [esAdmin, setEsAdmin] = useState(false);
 
@@ -314,9 +312,7 @@ if (isTranscription(tipo)) {
           trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
       } else if (tipo === "video_resumen") {
-        if (archivo.youtube_url) {
-          setExpandedVideoResumen(expandedVideoResumen === archivo.id ? null : archivo.id);
-        }
+        // YouTube embed handles its own playback
       } else if (isEnlace(tipo)) {
         if (archivo.youtube_url) {
           window.open(archivo.youtube_url, "_blank");
@@ -552,73 +548,36 @@ if (isTranscription(tipo)) {
           </div>
         )}
 
-        {/* Video resumen: thumbnail or inline embed */}
+        {/* Video resumen: embed YouTube directly */}
         {tipo === "video_resumen" && archivo.youtube_url && (() => {
-          const isPlaying = expandedVideoResumen === archivo.id;
           const embedUrl = youtubeEmbedUrl(archivo.youtube_url);
-          if (isPlaying && embedUrl) {
-            return (
-              <div
-                style={{
-                  position: "relative",
-                  paddingBottom: "56.25%",
-                  height: 0,
-                  overflow: "hidden",
-                  marginTop: "12px",
-                  borderRadius: "4px",
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <iframe
-                  src={`${embedUrl}?autoplay=1`}
-                  title={archivo.nombre_display}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    border: 0,
-                  }}
-                />
-              </div>
-            );
-          }
+          if (!embedUrl) return null;
           return (
-            <div className="mt-4" style={{ cursor: "pointer" }} onClick={(e) => { e.stopPropagation(); handleCardClick(archivo); }}>
-              <div style={{ position: "relative" }}>
-                <Image
-                  src={youtubeThumb || ""}
-                  alt=""
-                  width={320}
-                  height={180}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderRadius: "4px",
-                    border: "1px solid var(--color-line-soft)",
-                  }}
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    width: "48px",
-                    height: "48px",
-                    borderRadius: "50%",
-                    background: "rgba(0,0,0,0.6)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Play style={{ width: "20px", height: "20px", color: "#fff", marginLeft: "2px" }} fill="#fff" />
-                </div>
-              </div>
+            <div
+              style={{
+                position: "relative",
+                paddingBottom: "56.25%",
+                height: 0,
+                overflow: "hidden",
+                marginTop: "12px",
+                borderRadius: "4px",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <iframe
+                src={embedUrl}
+                title={archivo.nombre_display}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  border: 0,
+                }}
+              />
             </div>
           );
         })()}
