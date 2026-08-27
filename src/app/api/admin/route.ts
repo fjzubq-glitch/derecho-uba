@@ -35,6 +35,7 @@ export async function PUT(request: NextRequest) {
     if (tipo !== "clase") {
       const updateData: Record<string, string> = { nombre_display: data.nombre_display };
       if (data.nota !== undefined) updateData.nota = data.nota;
+      if (data.youtube_url !== undefined) updateData.youtube_url = data.youtube_url;
 
       const { error } = await getSupabaseAdmin()
         .from("archivos")

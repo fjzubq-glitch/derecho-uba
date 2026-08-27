@@ -42,7 +42,7 @@ interface Clase {
 }
 
 interface EditData {
-  tipo: "clase" | "archivo" | "cuestionario";
+  tipo: "clase" | "audio_clase" | "clase_youtube" | "video_resumen" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
   id: string;
   data: Record<string, string | number>;
 }
@@ -1046,7 +1046,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                                 setEditing({
                                   tipo: archivo.tipo as EditData["tipo"],
                                   id: archivo.id,
-                                  data: { nombre_display: archivo.nombre_display, nota: archivo.nota || "" }
+                                  data: { nombre_display: archivo.nombre_display, nota: archivo.nota || "", youtube_url: archivo.youtube_url || "" }
                                 });
                               }
                             },
@@ -1188,6 +1188,19 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                       style={inputStyle}
                     />
                   </div>
+                  {editing.tipo === "video_resumen" && (
+                    <div>
+                      <label htmlFor="manage-youtube" style={labelStyle}>URL de YouTube</label>
+                      <input
+                        id="manage-youtube"
+                        type="url"
+                        value={(editing.data.youtube_url as string) || ""}
+                        onChange={(e) => setEditing({ ...editing, data: { ...editing.data, youtube_url: e.target.value } })}
+                        placeholder="https://youtube.com/watch?v=..."
+                        style={inputStyle}
+                      />
+                    </div>
+                  )}
                   <div>
                     <label htmlFor="manage-nota" style={labelStyle}>Nota (opcional)</label>
                     <textarea
