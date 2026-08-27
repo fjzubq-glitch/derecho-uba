@@ -419,6 +419,7 @@ export default function AdminPanel() {
         </div>
       )}
 
+      {!cuadernoActualId && (
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div style={{ flex: 1, minWidth: "240px", maxWidth: "420px" }}>
           <label style={labelStyle}>Buscar</label>
@@ -428,13 +429,12 @@ export default function AdminPanel() {
               type="text"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              placeholder={cuadernoActual ? `Buscar en ${cuadernoActual.nombre}…` : "Buscar cuaderno, ficha, materia…"}
+              placeholder="Buscar cuaderno, ficha, materia…"
               aria-label="Buscar"
               style={{ ...inputStyle, paddingLeft: "38px" }}
             />
           </div>
         </div>
-        {!cuadernoActualId && (
         <button
           onClick={abrirNueva}
           style={{ background: "var(--color-gold)", color: "var(--color-ink)", border: "none", padding: "10px 18px", cursor: "pointer", fontFamily: "var(--font-inter)", fontSize: "13px", display: "flex", alignItems: "center", gap: "8px", fontWeight: 500 }}
@@ -442,21 +442,21 @@ export default function AdminPanel() {
           <Plus style={{ width: "16px", height: "16px" }} />
           Nueva ficha
         </button>
-        )}
       </div>
+      )}
 
       {cuadernoActualId ? (
         /* ════════ CUADERNO (detalle) ════════ */
-        <div className="space-y-10">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <div className="flex items-center gap-3">
+        <div className="space-y-12">
+          <div className="flex items-center justify-between flex-wrap gap-4" style={{ padding: "8px 0 16px", borderBottom: "1px solid var(--color-line-soft)" }}>
+            <div className="flex items-center gap-4">
               <button
                 onClick={() => { setCuadernoActualId(null); setBusqueda(""); }}
                 style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", padding: "8px 14px", cursor: "pointer", fontFamily: "var(--font-inter)", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}
               >
                 <ArrowLeft style={{ width: "14px", height: "14px" }} /> Volver
               </button>
-              <h3 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 400, fontSize: "24px", color: "var(--color-text)" }}>
+              <h3 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 400, fontSize: "26px", color: "var(--color-text)" }}>
                 {cuadernoActual?.nombre}
               </h3>
             </div>
@@ -471,7 +471,7 @@ export default function AdminPanel() {
 
           {/* Fechas Importantes */}
           {fechasDelCuaderno.length > 0 && (
-            <div className="md:w-[calc((100%-16px)/2)] lg:w-[calc((100%-32px)/3)]">
+            <div className="md:w-[calc((100%-16px)/2)] lg:w-[calc((100%-32px)/3)]" style={{ marginTop: "8px" }}>
               <div
                 style={{
                   background: "var(--color-card)",
@@ -534,7 +534,7 @@ export default function AdminPanel() {
           {/* Clases */}
           {clasesDelCuaderno.length > 0 && (
             <section>
-              <h3 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 400, fontSize: "18px", color: "var(--color-text)", marginBottom: "16px" }}>
+              <h3 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 400, fontSize: "18px", color: "var(--color-text)", marginBottom: "20px" }}>
                 Clases <span style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "8px" }}>{clasesDelCuaderno.length}</span>
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
