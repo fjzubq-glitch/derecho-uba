@@ -216,11 +216,6 @@ async function loadData() {
     return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : null;
   }
 
-  function youtubeEmbedUrl(url: string): string | null {
-    const id = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1];
-    return id ? `https://www.youtube.com/embed/${id}` : null;
-  }
-
   const { title: materiaTitle } = materia ? splitName(materia.nombre) : { title: "" };
 
 function getArchivos(tipo: CardTipo): Archivo[] {
