@@ -582,8 +582,14 @@ export default function AdminPanel() {
                           {claseArchivos.map((a) => (
                             <div
                               key={a.id}
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => abrirVisor(a)}
+                              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrirVisor(a); } }}
                               className="flex items-center justify-between gap-2"
-                              style={{ padding: "8px 12px", background: "var(--color-ink)", border: "1px solid var(--color-line-soft)" }}
+                              style={{ padding: "8px 12px", background: "var(--color-ink)", border: "1px solid var(--color-line-soft)", cursor: "pointer", transition: "background 0.2s ease, border-color 0.2s ease" }}
+                              onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-ink)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
                             >
                               <div className="flex items-center gap-2.5 flex-1 min-w-0">
                                 <div className="flex items-center justify-center flex-shrink-0" style={{ width: "28px", height: "28px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)" }}>
