@@ -550,14 +550,13 @@ export default function AdminPanel() {
                   return (
                     <article
                       key={clase.id}
-                      className="card-reveal card-hover flex flex-col"
+                      className="group card-reveal card-hover flex flex-col"
                       style={{
                         background: "var(--color-card)",
                         padding: "28px 24px",
                         animationDelay: `${i * 50}ms`,
-                        transition: "background 0.25s ease, transform 0.25s ease, border-color 0.25s ease",
+                        transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease",
                         border: "1px solid var(--color-line-soft)",
-                        cursor: "default",
                       }}
                       onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
@@ -566,25 +565,34 @@ export default function AdminPanel() {
                         <span>Clase {clase.numero.toString().padStart(2, "0")}</span>
                       </div>
                       <div className="flex-1">
-                        <h4 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "20px", lineHeight: 1.2, color: "var(--color-text)", marginBottom: "12px" }}>
+                        <h3 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 500, fontSize: "20px", lineHeight: 1.2, color: "var(--color-text)", marginBottom: "12px" }}>
                           {clase.tema || clase.titulo}
-                        </h4>
+                        </h3>
                         {clase.tema && clase.titulo && (
                           <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--color-text-faint)", marginTop: "-6px", marginBottom: "12px" }}>
                             {clase.titulo}
                           </p>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 mb-3" style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}>
-                        {clase.fecha ? (
-                          <>
-                            <Calendar style={{ width: "14px", height: "14px" }} />
-                            {formatFechaLocal(clase.fecha)}
-                          </>
-                        ) : null}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          {clase.fecha ? (
+                            <div className="flex items-center gap-2" style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}>
+                              <Calendar style={{ width: "14px", height: "14px" }} />
+                              {formatFechaLocal(clase.fecha)}
+                            </div>
+                          ) : <div />}
+                          {claseArchivos.length > 0 && (
+                            <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
+                              {claseArchivos.some((a) => a.tipo === "cuestionario") && <Check style={{ width: "12px", height: "12px" }} />}
+                              {claseArchivos.some((a) => a.tipo === "material_privado") && <Lock style={{ width: "12px", height: "12px" }} />}
+                            </div>
+                          )}
+                        </div>
+                        <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} className="group-hover:translate-x-[3px]" />
                       </div>
-                      {claseArchivos.length > 0 ? (
-                        <div style={{ borderTop: "1px solid var(--color-line-soft)", paddingTop: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                      {claseArchivos.length > 0 && (
+                        <div style={{ borderTop: "1px solid var(--color-line-soft)", paddingTop: "12px", marginTop: "14px", display: "flex", flexDirection: "column", gap: "8px" }}>
                           {claseArchivos.map((a) => (
                             <div
                               key={a.id}
@@ -625,12 +633,6 @@ export default function AdminPanel() {
                               </div>
                             </div>
                           ))}
-                        </div>
-                      ) : (
-                        <div style={{ borderTop: "1px solid var(--color-line-soft)", paddingTop: "12px" }}>
-                          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)", fontStyle: "italic" }}>
-                            Sin material aún
-                          </p>
                         </div>
                       )}
                     </article>
