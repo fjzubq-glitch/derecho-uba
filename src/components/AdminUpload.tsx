@@ -1111,6 +1111,7 @@ Clase Virtual
               <input
                 ref={materialPrivadoInputRef}
                 type="file"
+                accept=".jpg,.jpeg,.png,.gif,.webp,.jfif,.svg,.pdf,.doc,.docx,.txt,.ppt,.pptx"
                 onChange={(e) => {
                   const f = e.target.files?.[0] || null;
                   if (f) setMaterialPrivadoFile(f);

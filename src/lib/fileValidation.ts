@@ -1,6 +1,6 @@
 const ALLOWED_AUDIO_TYPES = new Set(["audio/mpeg", "audio/mp3", "audio/wav", "audio/ogg", "audio/aac", "audio/m4a", "audio/mp4", "video/mp4", "video/webm", "audio/webm", "audio/x-m4a"]);
 const ALLOWED_AUDIO_EXT = /\.(mp3|wav|ogg|aac|m4a|mp4|webm)$/i;
-const ALLOWED_DOC_EXT = /\.(pdf|doc|docx|txt|md|xls|xlsx|ppt|pptx|html?)$/i;
+const ALLOWED_DOC_EXT = /\.(pdf|doc|docx|txt|md|xls|xlsx|ppt|pptx|html?|jpg|jpeg|png|gif|webp|jfif|svg)$/i;
 
 export const MAX_AUDIO_SIZE = 300 * 1024 * 1024; // 300 MB
 export const MAX_DOC_SIZE = 50 * 1024 * 1024; // 50 MB
@@ -34,7 +34,7 @@ export function validateDocumentFile(file: { name: string; size: number }): File
     return { ok: false, error: `El archivo supera el máximo de ${MAX_DOC_SIZE / (1024 * 1024)} MB` };
   }
   if (!ALLOWED_DOC_EXT.test(file.name)) {
-    return { ok: false, error: "Formato de archivo no soportado (usa pdf, doc, txt, xls, ppt o html)" };
+    return { ok: false, error: "Formato de archivo no soportado (usa pdf, doc, txt, jpg, png, gif o html)" };
   }
   return { ok: true };
 }
