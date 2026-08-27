@@ -99,7 +99,7 @@ const CARD_CONFIG: Record<CardTipo, {
   },
 };
 
-const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario"];
+const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario", "material_privado"];
 
 export default function ClaseNumeroPage() {
   const params = useParams();
@@ -341,6 +341,11 @@ if (isTranscription(tipo)) {
           window.open(url, "_blank");
           trackActivity({ tipo: "quiz_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
+      } else if (tipo === "material_privado") {
+        if (archivo.storage_key) {
+          window.open(`/api/stream/${archivo.id}`, "_blank");
+          trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+        }
   } else if (isAudioTipo(tipo)) {
        handleAudioAction(archivo);
      }
@@ -421,7 +426,7 @@ if (isTranscription(tipo)) {
               }}
             >
               {config.label}
-              {tipo === "cuestionario" && (
+              {(tipo === "cuestionario" || tipo === "material_privado") && (
                 <span
                   style={{
                     background: "#22c55e",
