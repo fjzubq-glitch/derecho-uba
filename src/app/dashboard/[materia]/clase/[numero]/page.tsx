@@ -534,7 +534,7 @@ if (isTranscription(tipo)) {
           )}
         </div>
 
-        {/* Thumbnail YouTube or inline embed for video_resumen */}
+        {/* Thumbnail YouTube */}
         {youtubeThumb && tipo !== "video_resumen" && (
           <div className="mt-4">
             <Image
@@ -565,7 +565,6 @@ if (isTranscription(tipo)) {
                   height: 0,
                   overflow: "hidden",
                   marginTop: "12px",
-                  border: "1px solid var(--color-line-soft)",
                   borderRadius: "4px",
                 }}
                 onClick={(e) => e.stopPropagation()}
@@ -584,37 +583,6 @@ if (isTranscription(tipo)) {
                     border: 0,
                   }}
                 />
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const iframe = e.currentTarget.closest('[style*="padding-bottom"]')?.querySelector('iframe');
-                    if (iframe) {
-                      const src = iframe.getAttribute('src') || '';
-                      if (src.includes('minimize=1')) {
-                        iframe.setAttribute('src', src.replace('minimize=1', 'minimize=0'));
-                      } else {
-                        iframe.setAttribute('src', src + '&minimize=1');
-                      }
-                    }
-                  }}
-                  style={{
-                    position: "absolute",
-                    top: "8px",
-                    right: "8px",
-                    background: "rgba(0,0,0,0.6)",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: "6px",
-                    borderRadius: "4px",
-                    zIndex: 10,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  title="Expandir"
-                >
-                  <ChevronUp style={{ width: "16px", height: "16px", color: "#fff" }} />
-                </button>
               </div>
             );
           }
