@@ -124,6 +124,7 @@ export default function AdminPanel() {
   const [vistaFicha, setVistaFicha] = useState<Ficha | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [confirmState, setConfirmState] = useState<{ message: string; onConfirm: () => void } | null>(null);
+  const [claseExpandida, setClaseExpandida] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
     const res = await fetch("/api/admin/panel");
@@ -548,81 +549,82 @@ export default function AdminPanel() {
                   const claseArchivos = archivosFiltrados.filter((a) => a.clase_numero === clase.numero);
                   const claseFichas = filtradas.filter((f) => f.clase_id === clase.id);
                   const tieneContenido = claseArchivos.length > 0 || claseFichas.length > 0;
+                  const expandida = claseExpandida === clase.id;
 
                   return (
-                    <article
-                      key={clase.id}
-                      className="group card-reveal card-hover flex flex-col"
-                      style={{
-                        background: "var(--color-card)",
-                        padding: "28px 24px",
-                        animationDelay: `${i * 50}ms`,
-                        transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease",
-                        border: "1px solid var(--color-line-soft)",
-                      }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
-                    >
-                      <div style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)", marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
-                        <span>Clase {clase.numero.toString().padStart(2, "0")}</span>
-                      </div>
-                      <div className="flex-1">
-                        <h3 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 500, fontSize: "20px", lineHeight: 1.2, color: "var(--color-text)", marginBottom: "12px" }}>
-                          {clase.tema || clase.titulo}
-                        </h3>
-                        {clase.tema && clase.titulo && (
-                          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--color-text-faint)", marginTop: "-6px", marginBottom: "12px" }}>
-                            {clase.titulo}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {clase.fecha ? (
-                            <div className="flex items-center gap-2" style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}>
-                              <Calendar style={{ width: "14px", height: "14px" }} />
-                              {formatFechaLocal(clase.fecha)}
-                            </div>
-                          ) : <div />}
-                          {claseFichas.length > 0 && (
-                            <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
-                              <StickyNote style={{ width: "12px", height: "12px" }} />
-                            </div>
-                          )}
-                          {claseArchivos.length > 0 && (
-                            <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
-                              {claseArchivos.some((a) => a.tipo === "cuestionario") && <Check style={{ width: "12px", height: "12px" }} />}
-                              {claseArchivos.some((a) => a.tipo === "material_privado") && <Lock style={{ width: "12px", height: "12px" }} />}
-                            </div>
+                    <div key={clase.id} className="flex flex-col">
+                      <article
+                        className="group card-reveal card-hover flex flex-col cursor-pointer"
+                        onClick={() => setClaseExpandida(expandida ? null : clase.id)}
+                        tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setClaseExpandida(expandida ? null : clase.id); } }}
+                        style={{
+                          background: expandida ? "var(--color-card-hover)" : "var(--color-card)",
+                          padding: "28px 24px",
+                          animationDelay: `${i * 50}ms`,
+                          transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease",
+                          border: `1px solid ${expandida ? "var(--color-gold-dim)" : "var(--color-line-soft)"}`,
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = expandida ? "var(--color-card-hover)" : "var(--color-card)"; e.currentTarget.style.borderColor = expandida ? "var(--color-gold-dim)" : "var(--color-line-soft)"; }}
+                      >
+                        <div style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)", marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                          <span>Clase {clase.numero.toString().padStart(2, "0")}</span>
+                        </div>
+                        <div className="flex-1">
+                          <h3 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 500, fontSize: "20px", lineHeight: 1.2, color: "var(--color-text)", marginBottom: "12px" }}>
+                            {clase.tema || clase.titulo}
+                          </h3>
+                          {clase.tema && clase.titulo && (
+                            <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--color-text-faint)", marginTop: "-6px", marginBottom: "12px" }}>
+                              {clase.titulo}
+                            </p>
                           )}
                         </div>
-                        <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} className="group-hover:translate-x-[3px]" />
-                      </div>
-                      {tieneContenido && (
-                        <div style={{ borderTop: "1px solid var(--color-line-soft)", paddingTop: "12px", marginTop: "14px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            {clase.fecha ? (
+                              <div className="flex items-center gap-2" style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}>
+                                <Calendar style={{ width: "14px", height: "14px" }} />
+                                {formatFechaLocal(clase.fecha)}
+                              </div>
+                            ) : <div />}
+                            {claseFichas.length > 0 && (
+                              <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
+                                <StickyNote style={{ width: "12px", height: "12px" }} />
+                              </div>
+                            )}
+                            {claseArchivos.length > 0 && (
+                              <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
+                                {claseArchivos.some((a) => a.tipo === "cuestionario") && <Check style={{ width: "12px", height: "12px" }} />}
+                                {claseArchivos.some((a) => a.tipo === "material_privado") && <Lock style={{ width: "12px", height: "12px" }} />}
+                              </div>
+                            )}
+                          </div>
+                          <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0, transform: expandida ? "rotate(90deg)" : "none", transition: "transform 0.2s ease" }} />
+                        </div>
+                      </article>
+                      {expandida && tieneContenido && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "6px", padding: "12px 16px", background: "var(--color-ink)", border: "1px solid var(--color-line-soft)", borderTop: "none", animation: "fadeIn 0.2s ease" }}>
                           {claseFichas.map((f) => (
                             <div
                               key={f.id}
                               role="button"
                               tabIndex={0}
-                              onClick={() => setVistaFicha(f)}
+                              onClick={(e) => { e.stopPropagation(); setVistaFicha(f); }}
                               onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setVistaFicha(f); } }}
                               className="flex items-center justify-between gap-2"
-                              style={{ padding: "8px 12px", background: "var(--color-ink)", border: "1px solid var(--color-line-soft)", cursor: "pointer", transition: "background 0.2s ease, border-color 0.2s ease" }}
+                              style={{ padding: "8px 12px", background: "var(--color-card)", border: "1px solid var(--color-line-soft)", cursor: "pointer", transition: "background 0.2s ease, border-color 0.2s ease" }}
                               onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
-                              onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-ink)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
                             >
                               <div className="flex items-center gap-2.5 flex-1 min-w-0">
                                 <div className="flex items-center justify-center flex-shrink-0" style={{ width: "28px", height: "28px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)" }}>
                                   <StickyNote style={{ width: "12px", height: "12px", color: "var(--color-gold)" }} />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "8px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-gold)", display: "block", marginBottom: "2px" }}>
-                                    FICHA
-                                  </span>
-                                  <p style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "13px", lineHeight: 1.25, color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                    {f.titulo}
-                                  </p>
+                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "8px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-gold)", display: "block", marginBottom: "2px" }}>FICHA</span>
+                                  <p style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "13px", lineHeight: 1.25, color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.titulo}</p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-0.5 flex-shrink-0">
@@ -640,12 +642,12 @@ export default function AdminPanel() {
                               key={a.id}
                               role="button"
                               tabIndex={0}
-                              onClick={() => abrirVisor(a)}
+                              onClick={(e) => { e.stopPropagation(); abrirVisor(a); }}
                               onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrirVisor(a); } }}
                               className="flex items-center justify-between gap-2"
-                              style={{ padding: "8px 12px", background: "var(--color-ink)", border: "1px solid var(--color-line-soft)", cursor: "pointer", transition: "background 0.2s ease, border-color 0.2s ease" }}
+                              style={{ padding: "8px 12px", background: "var(--color-card)", border: "1px solid var(--color-line-soft)", cursor: "pointer", transition: "background 0.2s ease, border-color 0.2s ease" }}
                               onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
-                              onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-ink)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
                             >
                               <div className="flex items-center gap-2.5 flex-1 min-w-0">
                                 <div className="flex items-center justify-center flex-shrink-0" style={{ width: "28px", height: "28px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)" }}>
@@ -658,9 +660,7 @@ export default function AdminPanel() {
                                   <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "8px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-gold)", display: "block", marginBottom: "2px" }}>
                                     {a.tipo === "cuestionario" ? "CUESTIONARIO" : "MATERIAL PRIVADO"}
                                   </span>
-                                  <p style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "13px", lineHeight: 1.25, color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                    {a.nombre_display}
-                                  </p>
+                                  <p style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "13px", lineHeight: 1.25, color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.nombre_display}</p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-0.5 flex-shrink-0">
@@ -677,7 +677,7 @@ export default function AdminPanel() {
                           ))}
                         </div>
                       )}
-                    </article>
+                    </div>
                   );
                 })}
               </div>
