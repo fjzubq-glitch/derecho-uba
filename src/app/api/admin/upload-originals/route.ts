@@ -28,7 +28,7 @@ export async function POST() {
       : { data: [] };
 
     const claseMap = new Map(
-      (clases || []).map((c: { id: string; numero: number; materias?: { slug?: string } }) => [c.id, { slug: c.materias?.slug || "", numero: c.numero }])
+      (clases || []).map((c: { id: string; numero: number; materias: { slug?: string }[] }) => [c.id, { slug: c.materias?.[0]?.slug || "", numero: c.numero }])
     );
 
     const originalsDir = path.join(process.cwd(), "content", "cuestionarios");
