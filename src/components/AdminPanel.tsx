@@ -275,29 +275,28 @@ export default function AdminPanel() {
           const todos = [...cuestionarios, ...materiales];
 
           return (
-            <div key={num}>
-              <div
-                className="flex items-center gap-3 mb-4"
-                style={{
-                  padding: "14px 18px",
-                  background: "var(--color-card)",
-                  border: "1px solid var(--color-line-soft)",
-                  borderBottom: "2px solid var(--color-gold-dim)",
-                  borderRadius: 0,
-                }}
-              >
+            <div
+              key={num}
+              style={{
+                background: "var(--color-ink-2)",
+                border: "1px solid var(--color-line-soft)",
+                borderRadius: "2px",
+                padding: "20px 24px 24px",
+              }}
+            >
+              <div className="flex items-center gap-3 mb-5">
                 <div
                   className="flex items-center justify-center"
-                  style={{ width: "40px", height: "40px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}
+                  style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}
                 >
-                  <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
+                  <FileText style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
                 </div>
                 <div>
                   <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)" }}>
                     Clase {num}
                   </span>
                   {clase.titulo && (
-                    <p style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 500, fontSize: "20px", color: "var(--color-text)", lineHeight: 1.3 }}>
+                    <p style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "18px", color: "var(--color-text)", lineHeight: 1.3 }}>
                       {clase.titulo}
                     </p>
                   )}
@@ -306,7 +305,7 @@ export default function AdminPanel() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {todos.map((a) => (
-                  <div
+                  <article
                     key={a.id}
                     role="button"
                     tabIndex={0}
@@ -318,7 +317,7 @@ export default function AdminPanel() {
                       padding: "28px 24px",
                       cursor: "pointer",
                       border: "1px solid var(--color-line-soft)",
-                      transition: "background 0.25s ease, border-color 0.25s ease",
+                      transition: "background 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
                     }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
@@ -335,7 +334,7 @@ export default function AdminPanel() {
                           <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)", display: "block", marginBottom: "6px" }}>
                             {a.tipo === "cuestionario" ? "CUESTIONARIO" : "MATERIAL PRIVADO"}
                           </span>
-                          <p style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 500, fontSize: "18px", lineHeight: 1.25, color: "var(--color-text)", overflowWrap: "break-word" }}>
+                          <p style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "18px", lineHeight: 1.25, color: "var(--color-text)", overflowWrap: "break-word" }}>
                             {a.nombre_display}
                           </p>
                         </div>
@@ -351,7 +350,7 @@ export default function AdminPanel() {
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </article>
                 ))}
               </div>
             </div>
