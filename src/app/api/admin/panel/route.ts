@@ -14,7 +14,7 @@ export async function GET(request: Request) {
       .from("fichas")
       .select("id, titulo, contenido, materia_id, tags, created_at, updated_at")
       .order("updated_at", { ascending: false }),
-    supabase.from("materias").select("id, nombre, slug").order("nombre"),
+    supabase.from("materias").select("id, nombre, slug, comision, catedra, anio, turno").order("nombre"),
     supabase
       .from("archivos")
       .select("id, tipo, nombre_display, storage_key, youtube_url, cloudinary_url, nota, play_count, clase_id, created_at")
@@ -70,5 +70,15 @@ export async function GET(request: Request) {
 
   const fechas = fechasRes.data || [];
 
-  return NextResponse.json({ fichas, archivos: archivosConClase, materias: materiasRes.data || [], clases, fechas });
+  const clasesPorMateria = new Map<string, number>();
+  for (const c of clasesRes.data || []) {
+    clasesPorMateria.set(c.materia_id, (clasesPorMateria.get(c.materia_id) || 0) + 1);
+  }
+
+  const materias = (materiasRes.data || []).map((m) => ({
+    ...m,
+    total_clases: clasesPorMateria.get(m.id) || 0,
+  }));
+
+  return NextResponse.json({ fichas, archivos: archivosConClase, materias, clases, fechas });
 }

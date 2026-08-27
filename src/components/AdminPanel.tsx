@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { ArrowLeft, Check, FileText, Loader2, Lock, Plus, Search, StickyNote, Trash2, Edit3, X, BookOpen, Calendar } from "@/components/icons";
+import { ArrowLeft, Check, FileText, Loader2, Lock, Plus, Search, StickyNote, Trash2, Edit3, X, Calendar, Shield, ArrowRight } from "@/components/icons";
 import FichaEditor from "@/components/FichaEditor";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
 import { formatFechaLocal } from "@/lib/utils";
@@ -32,6 +32,11 @@ interface MateriaRef {
   id: string;
   nombre: string;
   slug: string;
+  comision: string | null;
+  catedra: string | null;
+  anio: string | null;
+  turno: string | null;
+  total_clases: number;
 }
 
 interface Ficha {
@@ -646,39 +651,104 @@ export default function AdminPanel() {
         /* ════════ LISTA DE CUADERNOS ════════ */
         <div className="space-y-10">
           <section>
-            <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "20px", color: "var(--color-text)", marginBottom: "16px" }}>
-              Cuadernos <span style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "10px" }}>{cuadernos.length}</span>
+            <h3 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 400, fontSize: "20px", color: "var(--color-text)", marginBottom: "16px" }}>
+              Mis cuadernos <span style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "10px" }}>{cuadernos.length} materias</span>
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {cuadernos.map((m) => (
-                <button
-                  key={m.id}
-                  onClick={() => setCuadernoActualId(m.id)}
-                  className="card-reveal card-hover"
-                  style={{ background: "var(--color-card)", padding: "28px 24px", textAlign: "left", cursor: "pointer", border: "1px solid var(--color-line-soft)", display: "flex", flexDirection: "column", gap: "12px", minHeight: "160px", width: "100%", transition: "background 0.25s ease, border-color 0.25s ease" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center" style={{ width: "40px", height: "40px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}>
-                      <BookOpen style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
+            <div
+              className="grid grid-cols-1 md:grid-cols-3 overflow-hidden"
+              style={{ background: "var(--color-line-soft)", gap: "1px", borderRadius: 0 }}
+            >
+              {cuadernos.map((m, i) => {
+                const metaLine = [m.anio && `Año ${m.anio}`, m.comision && `Comisión ${m.comision}`, m.turno, m.catedra].filter(Boolean).join(" · ");
+
+                return (
+                  <article
+                    key={m.id}
+                    onClick={() => setCuadernoActualId(m.id)}
+                    className="group card-reveal card-hover flex flex-col cursor-pointer"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setCuadernoActualId(m.id); } }}
+                    style={{
+                      background: "var(--color-card)",
+                      padding: "28px 26px",
+                      borderRadius: 0,
+                      animationDelay: `${i * 60}ms`,
+                      transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-card-hover)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-card)")}
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="flex items-center justify-center"
+                          style={{ width: "38px", height: "38px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", transition: "border-color 0.25s ease" }}
+                        >
+                          <Shield style={{ width: "17px", height: "17px", color: "var(--color-gold)", opacity: 0.75 }} />
+                        </div>
+                        <span className="clase">
+                          Clase{" "}
+                          <span className="clase-num">
+                            {String(i + 1).padStart(2, "0")}/{String(cuadernos.length).padStart(2, "0")}
+                          </span>
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <div style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "28px", fontWeight: 500, lineHeight: 1, color: "var(--color-text)" }}>
+                          {m.total_clases}
+                        </div>
+                        <div className="mt-1" style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>
+                          Clases
+                        </div>
+                      </div>
                     </div>
-                    <h4 style={{ fontFamily: "var(--font-fraunces), serif", fontSize: "20px", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3 }}>{m.nombre}</h4>
-                  </div>
-                  <div className="flex flex-wrap gap-2" style={{ marginTop: "auto" }}>
-                    <span style={{ fontSize: "11px", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", border: "1px solid var(--color-line-soft)", padding: "4px 12px" }}>
-                      {m.fichaCount} fichas
-                    </span>
-                    <span style={{ fontSize: "11px", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", border: "1px solid var(--color-line-soft)", padding: "4px 12px" }}>
-                      {m.archivoCount} material
-                    </span>
-                  </div>
-                </button>
-              ))}
+
+                    <h3
+                      className="mb-2"
+                      style={{
+                        fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                        fontWeight: 500,
+                        fontSize: "18px",
+                        lineHeight: 1.3,
+                        color: "var(--color-text)",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {m.nombre}
+                    </h3>
+
+                    <div
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "12px",
+                        color: "var(--color-text-faint)",
+                        letterSpacing: "0.01em",
+                        marginBottom: "20px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {metaLine || "Sin datos de cursada"}
+                    </div>
+
+                    <div
+                      className="flex items-center gap-2 mt-auto pt-4 border-t card-link"
+                      style={{ borderColor: "var(--color-line-soft)", fontSize: "13px", fontWeight: 500 }}
+                    >
+                      Ver contenido
+                      <ArrowRight style={{ width: "14px", height: "14px", transition: "transform 0.2s ease" }} className="group-hover:translate-x-[3px]" />
+                    </div>
+                  </article>
+                );
+              })}
             </div>
             {cuadernos.length === 0 && (
               <p style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
-                No hay materias en la web. Creá materias desde “Gestionar contenido”.
+                No hay materias en la web. Creá materias desde &quot;Gestionar contenido&quot;.
               </p>
             )}
           </section>
