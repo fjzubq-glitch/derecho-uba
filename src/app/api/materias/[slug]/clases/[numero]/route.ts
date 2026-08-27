@@ -39,7 +39,7 @@ export async function GET(
     .order("orden")
     .order("created_at");
 
-  const visibles = (archivos || []).filter((a) => esAdmin || a.tipo !== "cuestionario");
+  const visibles = (archivos || []).filter((a) => esAdmin || (a.tipo !== "cuestionario" && a.tipo !== "material_privado"));
 
   const { data: vecinos } = await supabase
     .from("clases")

@@ -1,0 +1,186 @@
+"use client";
+
+import React, { useState } from "react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { Loader2, Check, X, Bold, Italic, List, ListOrdered, Heading2, Heading3, Undo, Redo, Quote, Code, Minus } from "@/components/icons";
+
+const btnStyle: React.CSSProperties = {
+  background: "none",
+  border: "1px solid transparent",
+  color: "var(--color-text-muted)",
+  padding: "6px 8px",
+  cursor: "pointer",
+  borderRadius: "4px",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+function ToolbarButton({ active, onClick, title, children }: {
+  active?: boolean;
+  onClick: () => void;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      className={`tb-btn${active ? " is-active" : ""}`}
+      onClick={onClick}
+      title={title}
+      style={btnStyle}
+    >
+      {children}
+    </button>
+  );
+}
+
+export default function FichaEditor({
+  initialTitulo,
+  initialContenido,
+  onSave,
+  onCancel,
+  saving,
+}: {
+  initialTitulo: string;
+  initialContenido: string;
+  onSave: (t: string, c: string) => Promise<void>;
+  onCancel: () => void;
+  saving: boolean;
+}) {
+  const [titulo, setTitulo] = useState(initialTitulo);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        heading: { levels: [2, 3] },
+      }),
+    ],
+    content: initialContenido,
+    editorProps: {
+      attributes: {
+        class: "tiptap",
+        style: "min-height:320px",
+      },
+    },
+  });
+
+  if (!editor) {
+    return null;
+  }
+
+  return (
+    <div className="space-y-4">
+      <input
+        type="text"
+        value={titulo}
+        onChange={(e) => setTitulo(e.target.value)}
+        placeholder="Título de la ficha"
+        aria-label="Título de la ficha"
+        style={{
+          width: "100%",
+          background: "var(--color-ink)",
+          border: "1px solid var(--color-line-soft)",
+          borderRadius: 0,
+          padding: "12px 16px",
+          fontSize: "16px",
+          fontFamily: "var(--font-fraunces), serif",
+          color: "var(--color-text)",
+          outline: "none",
+        }}
+      />
+
+      <div className="ficha-toolbar" style={{ display: "flex", flexWrap: "wrap", gap: "4px", border: "1px solid var(--color-line-soft)", borderBottom: "none", padding: "8px", background: "var(--color-ink)" }}>
+        <ToolbarButton
+          title="Negrita"
+          active={editor.isActive("bold")}
+          onClick={() => editor.chain().focus().toggleBold().run()}
+        >
+          <Bold style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Cursiva"
+          active={editor.isActive("italic")}
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+        >
+          <Italic style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Encabezado 2"
+          active={editor.isActive("heading", { level: 2 })}
+          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+        >
+          <Heading2 style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Encabezado 3"
+          active={editor.isActive("heading", { level: 3 })}
+          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+        >
+          <Heading3 style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Lista con viñetas"
+          active={editor.isActive("bulletList")}
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+        >
+          <List style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Lista numerada"
+          active={editor.isActive("orderedList")}
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        >
+          <ListOrdered style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Cita"
+          active={editor.isActive("blockquote")}
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        >
+          <Quote style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Código"
+          active={editor.isActive("codeBlock")}
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+        >
+          <Code style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Línea separadora"
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        >
+          <Minus style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <span style={{ flex: 1 }} />
+        <ToolbarButton title="Deshacer" onClick={() => editor.chain().focus().undo().run()}>
+          <Undo style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <ToolbarButton title="Rehacer" onClick={() => editor.chain().focus().redo().run()}>
+          <Redo style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+      </div>
+
+      <div style={{ border: "1px solid var(--color-line-soft)", background: "var(--color-ink)" }}>
+        <EditorContent editor={editor} />
+      </div>
+
+      <div className="flex justify-end gap-3" style={{ paddingTop: "12px" }}>
+        <button onClick={onCancel} style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", padding: "10px 20px", cursor: "pointer", fontFamily: "var(--font-inter)" }}>
+          <X style={{ width: "14px", height: "14px", display: "inline-block", verticalAlign: "middle", marginRight: "6px" }} />
+          Cancelar
+        </button>
+        <button
+          onClick={() => onSave(titulo, editor.getHTML())}
+          disabled={saving}
+          style={{ background: "var(--color-gold)", color: "var(--color-ink)", border: "none", padding: "10px 20px", cursor: saving ? "not-allowed" : "pointer", fontFamily: "var(--font-inter)", display: "flex", alignItems: "center", gap: "8px", opacity: saving ? 0.6 : 1 }}
+        >
+          {saving ? <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} /> : <Check style={{ width: "14px", height: "14px" }} />}
+          Guardar
+        </button>
+      </div>
+    </div>
+  );
+}

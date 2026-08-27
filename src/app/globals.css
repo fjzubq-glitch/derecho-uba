@@ -334,3 +334,192 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0.7);
   cursor: pointer;
 }
+
+/* ── TipTap ficha editor ── */
+.tiptap {
+  outline: none;
+  min-height: 320px;
+  padding: 16px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+.tiptap > * + * {
+  margin-top: 0.75em;
+}
+.tiptap h1 {
+  font-family: var(--font-fraunces), serif;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 1em 0 0.5em;
+}
+.tiptap h2 {
+  font-family: var(--font-fraunces), serif;
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 1em 0 0.5em;
+}
+.tiptap h3 {
+  font-family: var(--font-fraunces), serif;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 1em 0 0.5em;
+}
+.tiptap p {
+  margin: 0.5em 0;
+}
+.tiptap ul,
+.tiptap ol {
+  padding-left: 1.4em;
+  margin: 0.5em 0;
+}
+.tiptap ul {
+  list-style: disc;
+}
+.tiptap ol {
+  list-style: decimal;
+}
+.tiptap li {
+  margin: 0.25em 0;
+}
+.tiptap strong {
+  font-weight: 700;
+  color: var(--color-text);
+}
+.tiptap blockquote {
+  border-left: 3px solid var(--color-gold-dim);
+  padding-left: 12px;
+  margin: 1em 0;
+  color: var(--color-text-muted);
+}
+.tiptap code {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 13px;
+}
+.tiptap pre {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  color: var(--color-text);
+}
+.tiptap pre code {
+  background: none;
+  padding: 0;
+  font-size: 13px;
+}
+.tiptap hr {
+  border: none;
+  border-top: 1px solid var(--color-line-soft);
+  margin: 1.5em 0;
+}
+.tiptap a {
+  color: var(--color-gold);
+  text-decoration: none;
+}
+.tiptap a:hover {
+  text-decoration: underline;
+}
+.tiptap:focus {
+  border-color: var(--color-gold-dim);
+}
+.ficha-toolbar .tb-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--color-text-muted);
+  padding: 6px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s ease, color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ficha-toolbar .tb-btn:hover {
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--color-text);
+}
+.ficha-toolbar .tb-btn.is-active {
+  background: var(--color-gold-dim);
+  color: var(--color-ink);
+}
+
+/* ── Render de ficha (vista) ── */
+.ficha-view {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+.ficha-view > * + * {
+  margin-top: 0.75em;
+}
+.ficha-view h1 {
+  font-family: var(--font-fraunces), serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 1em 0 0.5em;
+}
+.ficha-view h2 {
+  font-family: var(--font-fraunces), serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 1em 0 0.5em;
+}
+.ficha-view h3 {
+  font-family: var(--font-fraunces), serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 1em 0 0.5em;
+}
+.ficha-view ul {
+  list-style: disc;
+  padding-left: 1.4em;
+  margin: 0.5em 0;
+}
+.ficha-view ol {
+  list-style: decimal;
+  padding-left: 1.4em;
+  margin: 0.5em 0;
+}
+.ficha-view li {
+  margin: 0.25em 0;
+}
+.ficha-view strong {
+  font-weight: 700;
+}
+.ficha-view blockquote {
+  border-left: 3px solid var(--color-gold-dim);
+  padding-left: 12px;
+  margin: 1em 0;
+  color: var(--color-text-muted);
+}
+.ficha-view code {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 13px;
+}
+.ficha-view pre {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+  padding: 12px 16px;
+  overflow-x: auto;
+}
+.ficha-view a {
+  color: var(--color-gold);
+  text-decoration: none;
+}
+.ficha-view hr {
+  border: none;
+  border-top: 1px solid var(--color-line-soft);
+  margin: 1.5em 0;
+}
