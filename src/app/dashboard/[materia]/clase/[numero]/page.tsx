@@ -314,7 +314,9 @@ if (isTranscription(tipo)) {
           trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
       } else if (tipo === "video_resumen") {
-        // Inline embed — no action needed on card click
+        if (archivo.youtube_url) {
+          setExpandedVideoResumen(expandedVideoResumen === archivo.id ? null : archivo.id);
+        }
       } else if (isEnlace(tipo)) {
         if (archivo.youtube_url) {
           window.open(archivo.youtube_url, "_blank");
@@ -532,8 +534,8 @@ if (isTranscription(tipo)) {
           )}
         </div>
 
-        {/* Thumbnail YouTube */}
-        {youtubeThumb && (
+        {/* Thumbnail YouTube or inline embed for video_resumen */}
+        {youtubeThumb && tipo !== "video_resumen" && (
           <div className="mt-4">
             <Image
               src={youtubeThumb}
@@ -550,72 +552,105 @@ if (isTranscription(tipo)) {
           </div>
         )}
 
-        {/* Video resumen expand button */}
-        {tipo === "video_resumen" && archivo.youtube_url && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setExpandedVideoResumen(expandedVideoResumen === archivo.id ? null : archivo.id);
-            }}
-            className="flex items-center gap-2 mt-4"
-            style={{
-              background: "none",
-              border: "1px solid var(--color-gold-dim)",
-              padding: "8px 14px",
-              cursor: "pointer",
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "11px",
-              color: "var(--color-gold)",
-              transition: "border-color 0.2s ease, background 0.2s ease",
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold)"; e.currentTarget.style.background = "rgba(212, 175, 55, 0.08)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.background = "none"; }}
-          >
-            {expandedVideoResumen === archivo.id ? (
-              <>
-                <ChevronUp style={{ width: "14px", height: "14px" }} />
-                Colapsar
-              </>
-            ) : (
-              <>
-                <Play style={{ width: "14px", height: "14px" }} fill="var(--color-gold)" />
-                Ver video resumen
-              </>
-            )}
-          </button>
-        )}
-
-        {/* Video resumen expanded embed */}
-        {tipo === "video_resumen" && expandedVideoResumen === archivo.id && archivo.youtube_url && (() => {
+        {/* Video resumen: thumbnail or inline embed */}
+        {tipo === "video_resumen" && archivo.youtube_url && (() => {
+          const isPlaying = expandedVideoResumen === archivo.id;
           const embedUrl = youtubeEmbedUrl(archivo.youtube_url);
-          if (!embedUrl) return null;
-          return (
-            <div
-              style={{
-                position: "relative",
-                paddingBottom: "56.25%",
-                height: 0,
-                overflow: "hidden",
-                marginTop: "16px",
-                border: "1px solid var(--color-line-soft)",
-                borderRadius: "4px",
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <iframe
-                src={embedUrl}
-                title={archivo.nombre_display}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
+          if (isPlaying && embedUrl) {
+            return (
+              <div
                 style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  border: 0,
+                  position: "relative",
+                  paddingBottom: "56.25%",
+                  height: 0,
+                  overflow: "hidden",
+                  marginTop: "12px",
+                  border: "1px solid var(--color-line-soft)",
+                  borderRadius: "4px",
                 }}
-              />
+                onClick={(e) => e.stopPropagation()}
+              >
+                <iframe
+                  src={`${embedUrl}?autoplay=1`}
+                  title={archivo.nombre_display}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    border: 0,
+                  }}
+                />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const iframe = e.currentTarget.closest('[style*="padding-bottom"]')?.querySelector('iframe');
+                    if (iframe) {
+                      const src = iframe.getAttribute('src') || '';
+                      if (src.includes('minimize=1')) {
+                        iframe.setAttribute('src', src.replace('minimize=1', 'minimize=0'));
+                      } else {
+                        iframe.setAttribute('src', src + '&minimize=1');
+                      }
+                    }
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: "8px",
+                    right: "8px",
+                    background: "rgba(0,0,0,0.6)",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: "6px",
+                    borderRadius: "4px",
+                    zIndex: 10,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  title="Expandir"
+                >
+                  <ChevronUp style={{ width: "16px", height: "16px", color: "#fff" }} />
+                </button>
+              </div>
+            );
+          }
+          return (
+            <div className="mt-4" style={{ cursor: "pointer" }} onClick={(e) => { e.stopPropagation(); handleCardClick(archivo); }}>
+              <div style={{ position: "relative" }}>
+                <Image
+                  src={youtubeThumb || ""}
+                  alt=""
+                  width={320}
+                  height={180}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    borderRadius: "4px",
+                    border: "1px solid var(--color-line-soft)",
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "50%",
+                    background: "rgba(0,0,0,0.6)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Play style={{ width: "20px", height: "20px", color: "#fff", marginLeft: "2px" }} fill="#fff" />
+                </div>
+              </div>
             </div>
           );
         })()}
