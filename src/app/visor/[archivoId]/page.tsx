@@ -75,8 +75,8 @@ export default async function VisorPage({
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "16px",
-          padding: "14px 20px",
+          gap: "12px",
+          padding: "8px 16px",
           borderBottom: "1px solid var(--color-gold-dim)",
           flexShrink: 0,
           background: "var(--color-card)",
