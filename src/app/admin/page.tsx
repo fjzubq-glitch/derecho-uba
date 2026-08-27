@@ -125,7 +125,6 @@ export default function AdminPage() {
   const [materiasStats, setMateriasStats] = useState<MateriaStats[]>([]);
   const [contenidoPopular, setContenidoPopular] = useState<ContenidoPopular[]>([]);
   const [totalRegistradosAllTime, setTotalRegistradosAllTime] = useState(0);
-  const [registradosPorMateria, setRegistradosPorMateria] = useState<Array<{ slug: string; materia: string; personas: number }>>([]);
   const [periodo, setPeriodo] = useState<Periodo>("7");
   const [busquedaEstudiante, setBusquedaEstudiante] = useState("");
   const [estudiantesAbiertos, setEstudiantesAbiertos] = useState(false);
@@ -221,7 +220,6 @@ export default function AdminPage() {
       if (data.materiasStats) setMateriasStats(data.materiasStats);
       if (data.contenidoPopular) setContenidoPopular(data.contenidoPopular);
       setTotalRegistradosAllTime(data.totalRegistradosAllTime || 0);
-      setRegistradosPorMateria(data.registradosPorMateria || []);
     } catch (e) {
       console.error("Error loading admin data:", e);
     }
