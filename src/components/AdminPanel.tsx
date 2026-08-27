@@ -552,9 +552,9 @@ export default function AdminPanel() {
                   const expandida = claseExpandida === clase.id;
 
                   return (
-                    <div key={clase.id} className="flex flex-col">
+                    <div key={clase.id} className="flex flex-col h-full">
                       <article
-                        className="group card-reveal card-hover flex flex-col cursor-pointer"
+                        className="group card-reveal card-hover flex flex-col cursor-pointer h-full"
                         onClick={() => setClaseExpandida(expandida ? null : clase.id)}
                         tabIndex={0}
                         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setClaseExpandida(expandida ? null : clase.id); } }}
