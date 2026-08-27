@@ -55,6 +55,7 @@ interface PanelArchivo {
   play_count: number;
   clase_id: string | null;
   created_at: string;
+  materia_id: string | null;
   materia_nombre: string | null;
   materia_slug: string | null;
   clase_numero: number | null;
@@ -88,6 +89,7 @@ export default function AdminPanel() {
   const [archivos, setArchivos] = useState<PanelArchivo[]>([]);
   const [materias, setMaterias] = useState<MateriaRef[]>([]);
   const [busqueda, setBusqueda] = useState("");
+  const [selectedMateria, setSelectedMateria] = useState<string | null>(null);
 
   const [editorAbierto, setEditorAbierto] = useState<{ id: string | null; titulo: string; contenido: string; materiaId: string } | null>(null);
   const [guardando, setGuardando] = useState(false);
@@ -114,7 +116,7 @@ export default function AdminPanel() {
   }, [cargar]);
 
   const abrirNueva = () => {
-    setEditorAbierto({ id: null, titulo: "", contenido: "", materiaId: materias[0]?.id ?? "" });
+    setEditorAbierto({ id: null, titulo: "", contenido: "", materiaId: selectedMateria ?? materias[0]?.id ?? "" });
   };
 
   const abrirEditar = (f: Ficha) => {
@@ -180,6 +182,7 @@ export default function AdminPanel() {
   };
 
   const filtradas = fichas.filter((f) => {
+    if (selectedMateria && f.materia_id !== selectedMateria) return false;
     const q = busqueda.toLowerCase();
     return (
       f.titulo.toLowerCase().includes(q) ||
@@ -188,9 +191,15 @@ export default function AdminPanel() {
     );
   });
 
-  const archivosFiltrados = archivos.filter((a) =>
-    busqueda ? a.nombre_display.toLowerCase().includes(busqueda.toLowerCase()) || (a.materia_nombre || "").toLowerCase().includes(busqueda.toLowerCase()) : true
-  );
+  const cuadernos = materias.map((m) => ({
+    ...m,
+    count: fichas.filter((f) => f.materia_id === m.id).length,
+  }));
+
+  const archivosFiltrados = archivos.filter((a) => {
+    if (selectedMateria && a.materia_id !== selectedMateria) return false;
+    return busqueda ? a.nombre_display.toLowerCase().includes(busqueda.toLowerCase()) || (a.materia_nombre || "").toLowerCase().includes(busqueda.toLowerCase()) : true;
+  });
 
   if (loading) {
     return (
@@ -231,6 +240,53 @@ export default function AdminPanel() {
           Nueva ficha
         </button>
       </div>
+
+      {/* Cuadernos (notebooks por materia) */}
+      <section>
+        <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "20px", color: "var(--color-text)", marginBottom: "16px" }}>
+          Cuadernos
+          <span style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "10px" }}>{cuadernos.length}</span>
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setSelectedMateria(null)}
+            style={{
+              padding: "8px 14px",
+              fontSize: "12px",
+              fontFamily: "var(--font-inter)",
+              cursor: "pointer",
+              border: "1px solid var(--color-line-soft)",
+              background: selectedMateria === null ? "var(--color-gold)" : "var(--color-card)",
+              color: selectedMateria === null ? "var(--color-ink)" : "var(--color-text-muted)",
+              borderRadius: 0,
+            }}
+          >
+            Todas las fichas{fichas.length ? ` (${fichas.length})` : ""}
+          </button>
+          {cuadernos.map((m) => (
+            <button
+              key={m.id}
+              onClick={() => setSelectedMateria(m.id)}
+              style={{
+                padding: "8px 14px",
+                fontSize: "12px",
+                fontFamily: "var(--font-inter)",
+                cursor: "pointer",
+                border: "1px solid var(--color-line-soft)",
+                background: selectedMateria === m.id ? "var(--color-gold)" : "var(--color-card)",
+                color: selectedMateria === m.id ? "var(--color-ink)" : "var(--color-text-muted)",
+                borderRadius: 0,
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              {m.nombre}
+              <span style={{ fontSize: "11px", opacity: 0.7 }}>{m.count > 0 ? m.count : ""}</span>
+            </button>
+          ))}
+        </div>
+      </section>
 
       {/* Fichas */}
       <section>
