@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { ArrowLeft, Check, ExternalLink, Loader2, Lock, Plus, Search, StickyNote, Trash2, Edit3, X, BookOpen } from "@/components/icons";
+import { ArrowLeft, Check, FileText, Loader2, Lock, Plus, Search, StickyNote, Trash2, Edit3, X, BookOpen } from "@/components/icons";
 import FichaEditor from "@/components/FichaEditor";
 
 const inputStyle: React.CSSProperties = {
@@ -246,48 +246,114 @@ export default function AdminPanel() {
       </div>
     );
 
-  const renderArchivos = (items: PanelArchivo[]) =>
-    items.length === 0 ? (
-      <p style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
-        Todavía no hay material ni cuestionarios en este cuaderno.
-      </p>
-    ) : (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)", border: "1px solid var(--color-line-soft)" }}>
-        {items.map((a) => (
-          <div key={a.id} style={{ background: "var(--color-card)", padding: "20px 22px", display: "flex", flexDirection: "column", gap: "8px" }}>
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-3 flex-1">
-                <div className="flex items-center justify-center" style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}>
-                  {a.tipo === "cuestionario" ? <Check style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} /> : <Lock style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />}
+  const renderArchivos = (items: PanelArchivo[]) => {
+    if (items.length === 0) {
+      return <p style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>Todavía no hay material ni cuestionarios en este cuaderno.</p>;
+    }
+
+    const clasesMap = new Map<number, { titulo: string; archivos: PanelArchivo[] }>();
+    for (const a of items) {
+      const num = a.clase_numero ?? 9999;
+      if (!clasesMap.has(num)) {
+        clasesMap.set(num, { titulo: a.clase_titulo || "", archivos: [] });
+      }
+      clasesMap.get(num)!.archivos.push(a);
+    }
+
+    const clasesOrdenadas = Array.from(clasesMap.entries()).sort(([a], [b]) => a - b);
+
+    return (
+      <div className="space-y-6">
+        {clasesOrdenadas.map(([num, clase]) => {
+          const cuestionarios = clase.archivos.filter((a) => a.tipo === "cuestionario");
+          const materiales = clase.archivos.filter((a) => a.tipo === "material_privado");
+          const todos = [...cuestionarios, ...materiales];
+
+          return (
+            <div key={num}>
+              <div
+                className="flex items-center gap-3 mb-4"
+                style={{
+                  padding: "12px 16px",
+                  background: "var(--color-card)",
+                  border: "1px solid var(--color-line-soft)",
+                  borderRadius: 0,
+                }}
+              >
+                <div
+                  className="flex items-center justify-center"
+                  style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}
+                >
+                  <FileText style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
                 </div>
-                <span style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                  {a.tipo === "cuestionario" ? "Cuestionario" : "Material privado"}
-                </span>
+                <div>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)" }}>
+                    Clase {num}
+                  </span>
+                  {clase.titulo && (
+                    <p style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 500, fontSize: "18px", color: "var(--color-text)", lineHeight: 1.3 }}>
+                      {clase.titulo}
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-1 flex-shrink-0">
-                {a.tipo === "cuestionario" && (
-                  <button onClick={() => abrirCuestionarioHtml(a.id)} title="Ver HTML" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-muted)" }}>
-                    <Edit3 style={{ width: "14px", height: "14px" }} />
-                  </button>
-                )}
-                <button onClick={() => abrirVisor(a)} title="Abrir" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-muted)" }}>
-                  <ExternalLink style={{ width: "14px", height: "14px" }} />
-                </button>
-                <button onClick={() => borrarArchivo(a.id)} title="Borrar" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-faint)" }}>
-                  <Trash2 style={{ width: "14px", height: "14px" }} />
-                </button>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)", border: "1px solid var(--color-line-soft)" }}>
+                {todos.map((a) => (
+                  <div
+                    key={a.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => abrirVisor(a)}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrirVisor(a); } }}
+                    className="card-reveal card-hover"
+                    style={{
+                      background: "var(--color-card)",
+                      padding: "28px 24px",
+                      cursor: "pointer",
+                      border: "1px solid var(--color-line-soft)",
+                      transition: "background 0.25s ease, border-color 0.25s ease",
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="flex items-center justify-center flex-shrink-0" style={{ width: "40px", height: "40px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)" }}>
+                          {a.tipo === "cuestionario"
+                            ? <Check style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
+                            : <Lock style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
+                          }
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)", display: "block", marginBottom: "6px" }}>
+                            {a.tipo === "cuestionario" ? "CUESTIONARIO" : "MATERIAL PRIVADO"}
+                          </span>
+                          <p style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 500, fontSize: "18px", lineHeight: 1.25, color: "var(--color-text)", overflowWrap: "break-word" }}>
+                            {a.nombre_display}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {a.tipo === "cuestionario" && (
+                          <button onClick={(e) => { e.stopPropagation(); abrirCuestionarioHtml(a.id); }} title="Ver HTML" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-muted)" }}>
+                            <Edit3 style={{ width: "14px", height: "14px" }} />
+                          </button>
+                        )}
+                        <button onClick={(e) => { e.stopPropagation(); borrarArchivo(a.id); }} title="Borrar" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-faint)" }}>
+                          <Trash2 style={{ width: "14px", height: "14px" }} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-            <h4 style={{ fontFamily: "var(--font-fraunces), serif", fontSize: "16px", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3 }}>
-              {a.nombre_display}
-            </h4>
-            <div style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginTop: "auto" }}>
-              {a.materia_nombre || "Sin materia"}{a.clase_numero ? ` · Clase ${a.clase_numero}` : ""}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     );
+  };
 
   if (loading) {
     return (
@@ -364,7 +430,7 @@ export default function AdminPanel() {
 
           <section>
             <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "18px", color: "var(--color-text)", marginBottom: "14px" }}>
-              Material privado y cuestionarios <span style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "8px" }}>{archivosFiltrados.length}</span>
+              Contenido por clase <span style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "8px" }}>{archivosFiltrados.length}</span>
             </h3>
             {renderArchivos(archivosFiltrados)}
           </section>
