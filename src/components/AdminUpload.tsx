@@ -152,15 +152,27 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
 
     const clases: ClaseExistente[] = (data || []).map((c: { id: string; numero: number; titulo: string; fecha: string | null }) => ({ ...c, archivos: [] }));
 
-    const clasesConArchivos = await Promise.all(
-      clases.map(async (c) => {
-        const { data: archivos } = await supabase
-          .from("archivos")
-          .select("tipo")
-          .eq("clase_id", c.id);
-        return { ...c, archivos: archivos || [] };
-      })
-    );
+    const claseIds = clases.map((c) => c.id);
+    let archivosMap: Record<string, Array<{ tipo: string }>> = {};
+    if (claseIds.length > 0) {
+      const { data: todosArchivos } = await supabase
+        .from("archivos")
+        .select("tipo, clase_id")
+        .in("clase_id", claseIds);
+
+      if (todosArchivos) {
+        for (const a of todosArchivos) {
+          const cid = a.clase_id as string;
+          if (!archivosMap[cid]) archivosMap[cid] = [];
+          archivosMap[cid].push({ tipo: a.tipo });
+        }
+      }
+    }
+
+    const clasesConArchivos = clases.map((c) => ({
+      ...c,
+      archivos: archivosMap[c.id] || [],
+    }));
 
     setClasesExistentes(clasesConArchivos);
     setCargandoClases(false);

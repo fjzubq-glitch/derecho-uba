@@ -144,35 +144,46 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
       .order("numero");
 
     if (clasesData) {
-      const clasesWithFiles = await Promise.all(
-        (clasesData as unknown as Array<{
-          id: string;
-          numero: number;
-          titulo: string;
-          tema: string | null;
-          fecha: string | null;
-          materias?: { id: string; nombre: string; slug: string } | null;
-        }>).map(async (c) => {
-          const { data: archivos } = await supabase
-            .from("archivos")
-            .select("*")
-            .eq("clase_id", c.id)
-            .order("orden")
-            .order("created_at");
+      const rawClases = clasesData as unknown as Array<{
+        id: string;
+        numero: number;
+        titulo: string;
+        tema: string | null;
+        fecha: string | null;
+        materias?: { id: string; nombre: string; slug: string } | null;
+      }>;
 
-          return {
-            id: c.id,
-            numero: c.numero,
-            titulo: c.titulo,
-            tema: c.tema,
-            fecha: c.fecha,
-            materia_id: c.materias?.id || "",
-            materia_nombre: c.materias?.nombre || "",
-            materia_slug: c.materias?.slug || "",
-            archivos: archivos || [],
-          };
-        })
-      );
+      const claseIds = rawClases.map((c) => c.id);
+
+      let archivosMap: Record<string, Archivo[]> = {};
+      if (claseIds.length > 0) {
+        const { data: todosArchivos } = await supabase
+          .from("archivos")
+          .select("*")
+          .in("clase_id", claseIds)
+          .order("orden")
+          .order("created_at");
+
+        if (todosArchivos) {
+          for (const a of todosArchivos) {
+            const cid = a.clase_id as string;
+            if (!archivosMap[cid]) archivosMap[cid] = [];
+            archivosMap[cid].push(a as unknown as Archivo);
+          }
+        }
+      }
+
+      const clasesWithFiles = rawClases.map((c) => ({
+        id: c.id,
+        numero: c.numero,
+        titulo: c.titulo,
+        tema: c.tema,
+        fecha: c.fecha,
+        materia_id: c.materias?.id || "",
+        materia_nombre: c.materias?.nombre || "",
+        materia_slug: c.materias?.slug || "",
+        archivos: archivosMap[c.id] || [],
+      }));
       setClases(clasesWithFiles);
     }
 
