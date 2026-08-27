@@ -161,7 +161,7 @@ export async function DELETE(request: NextRequest) {
       if (error) throw error;
     }
 
-    if (tipo === "archivo" || tipo === "cuestionario") {
+    if (tipo !== "clase") {
       const { data: archivo } = await getSupabaseAdmin()
         .from("archivos")
         .select("storage_key")
