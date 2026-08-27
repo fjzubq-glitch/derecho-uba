@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { ArrowLeft, Check, FileText, Loader2, Lock, Plus, Search, StickyNote, Trash2, Edit3, X, BookOpen } from "@/components/icons";
+import { ArrowLeft, Check, FileText, Loader2, Lock, Plus, Search, StickyNote, Trash2, Edit3, X, BookOpen, Calendar } from "@/components/icons";
 import FichaEditor from "@/components/FichaEditor";
+import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
+import { formatFechaLocal } from "@/lib/utils";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -62,6 +64,24 @@ interface PanelArchivo {
   clase_titulo: string | null;
 }
 
+interface PanelClase {
+  id: string;
+  materia_id: string;
+  numero: number;
+  titulo: string;
+  tema: string | null;
+  fecha: string | null;
+  materia_nombre: string | null;
+  materia_slug: string | null;
+}
+
+interface PanelFecha {
+  id: string;
+  materia_id: string;
+  titulo: string;
+  fecha: string;
+}
+
 const MODAL_STYLE: React.CSSProperties = {
   position: "fixed",
   inset: 0,
@@ -88,6 +108,8 @@ export default function AdminPanel() {
   const [fichas, setFichas] = useState<Ficha[]>([]);
   const [archivos, setArchivos] = useState<PanelArchivo[]>([]);
   const [materias, setMaterias] = useState<MateriaRef[]>([]);
+  const [clases, setClases] = useState<PanelClase[]>([]);
+  const [fechas, setFechas] = useState<PanelFecha[]>([]);
   const [busqueda, setBusqueda] = useState("");
   const [cuadernoActualId, setCuadernoActualId] = useState<string | null>(null);
 
@@ -108,6 +130,8 @@ export default function AdminPanel() {
     setFichas(data.fichas || []);
     setArchivos(data.archivos || []);
     setMaterias(data.materias || []);
+    setClases(data.clases || []);
+    setFechas(data.fechas || []);
     setErrorMsg(null);
     setLoading(false);
   }, []);
@@ -220,6 +244,14 @@ export default function AdminPanel() {
 
   const fichasSinMateria = fichas.filter((f) => !f.materia_id);
   const archivosSinMateria = archivos.filter((a) => !a.materia_id);
+
+  const clasesDelCuaderno = cuadernoActualId
+    ? clases.filter((c) => c.materia_id === cuadernoActualId).sort((a, b) => a.numero - b.numero)
+    : [];
+
+  const fechasDelCuaderno = cuadernoActualId
+    ? fechas.filter((f) => f.materia_id === cuadernoActualId).sort((a, b) => a.fecha.localeCompare(b.fecha))
+    : [];
 
   const renderFichas = (items: Ficha[]) =>
     items.length === 0 ? (
@@ -415,7 +447,7 @@ export default function AdminPanel() {
 
       {cuadernoActualId ? (
         /* ════════ CUADERNO (detalle) ════════ */
-        <div className="space-y-8">
+        <div className="space-y-10">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
               <button
@@ -424,7 +456,7 @@ export default function AdminPanel() {
               >
                 <ArrowLeft style={{ width: "14px", height: "14px" }} /> Volver
               </button>
-              <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "24px", color: "var(--color-text)" }}>
+              <h3 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 400, fontSize: "24px", color: "var(--color-text)" }}>
                 {cuadernoActual?.nombre}
               </h3>
             </div>
@@ -437,18 +469,135 @@ export default function AdminPanel() {
             </button>
           </div>
 
+          {/* Fechas Importantes */}
+          {fechasDelCuaderno.length > 0 && (
+            <div className="md:w-[calc((100%-16px)/2)] lg:w-[calc((100%-32px)/3)]">
+              <div
+                style={{
+                  background: "var(--color-card)",
+                  border: "1px solid var(--color-line-soft)",
+                  borderTop: "2px solid var(--color-gold-dim)",
+                  borderRadius: 0,
+                  padding: "24px 26px 20px",
+                  transition: "border-color 0.25s ease, background 0.25s ease",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-line-soft)"; e.currentTarget.style.background = "var(--color-card)"; }}
+              >
+                <div className="flex items-center justify-between gap-4 mb-4">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <Calendar style={{ width: "14px", height: "14px", color: "var(--color-gold)", flexShrink: 0 }} />
+                    <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--color-gold)" }}>
+                      Fechas importantes
+                    </p>
+                  </div>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", color: "var(--color-text-faint)" }}>
+                    <span className="clase-num">{String(fechasDelCuaderno.length).padStart(2, "0")}</span>{" "}
+                    FECHAS
+                  </span>
+                </div>
+                {(() => {
+                  const pf = fechasDelCuaderno.find((f) => diasHasta(f.fecha) >= 0);
+                  if (!pf) return null;
+                  const dias = diasHasta(pf.fecha);
+                  return (
+                    <div className="pt-4" style={{ borderTop: "1px solid var(--color-line-soft)" }}>
+                      <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--color-stamp)" }}>
+                        Próxima fecha
+                      </p>
+                      <p style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "19px", lineHeight: 1.25, color: "var(--color-text)", marginTop: "6px" }}>
+                        {pf.titulo}
+                      </p>
+                      <div className="flex items-center gap-3 mt-2.5 flex-wrap">
+                        <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px", color: "var(--color-text-muted)" }}>
+                          {formatearFechaCorta(pf.fecha, true)}
+                        </span>
+                        <span style={{
+                          padding: "3px 10px",
+                          border: `1px solid ${dias <= 7 ? "var(--color-stamp)" : "var(--color-gold-dim)"}`,
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "10px",
+                          letterSpacing: "0.1em",
+                          textTransform: "uppercase",
+                          color: dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
+                        }}>
+                          {countdownLabel(dias)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          )}
+
+          {/* Clases */}
+          {clasesDelCuaderno.length > 0 && (
+            <section>
+              <h3 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 400, fontSize: "18px", color: "var(--color-text)", marginBottom: "16px" }}>
+                Clases <span style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "8px" }}>{clasesDelCuaderno.length}</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {clasesDelCuaderno.map((clase, i) => {
+                  const claseArchivos = archivosFiltrados.filter((a) => a.clase_numero === clase.numero);
+                  const tieneCuestionario = claseArchivos.some((a) => a.tipo === "cuestionario");
+                  const tieneMaterial = claseArchivos.some((a) => a.tipo === "material_privado");
+
+                  return (
+                    <article
+                      key={clase.id}
+                      className="card-reveal card-hover flex flex-col"
+                      style={{
+                        background: "var(--color-card)",
+                        padding: "28px 24px",
+                        animationDelay: `${i * 50}ms`,
+                        transition: "background 0.25s ease, transform 0.25s ease, border-color 0.25s ease",
+                        border: "1px solid var(--color-line-soft)",
+                        cursor: "default",
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+                    >
+                      <div style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)", marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span>Clase {clase.numero.toString().padStart(2, "0")}</span>
+                      </div>
+                      <div className="flex-1">
+                        <h4 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "20px", lineHeight: 1.2, color: "var(--color-text)", marginBottom: "12px" }}>
+                          {clase.tema || clase.titulo}
+                        </h4>
+                        {clase.tema && clase.titulo && (
+                          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--color-text-faint)", marginTop: "-6px", marginBottom: "12px" }}>
+                            {clase.titulo}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          {clase.fecha ? (
+                            <div className="flex items-center gap-2" style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}>
+                              <Calendar style={{ width: "14px", height: "14px" }} />
+                              {formatFechaLocal(clase.fecha)}
+                            </div>
+                          ) : <div />}
+                          <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
+                            {tieneCuestionario && <Check style={{ width: "12px", height: "12px" }} />}
+                            {tieneMaterial && <Lock style={{ width: "12px", height: "12px" }} />}
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* Fichas de estudio */}
           <section>
-            <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "18px", color: "var(--color-text)", marginBottom: "14px" }}>
+            <h3 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 400, fontSize: "18px", color: "var(--color-text)", marginBottom: "14px" }}>
               Fichas de estudio <span style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "8px" }}>{filtradas.length}</span>
             </h3>
             {renderFichas(filtradas)}
-          </section>
-
-          <section>
-            <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "18px", color: "var(--color-text)", marginBottom: "14px" }}>
-              Contenido por clase <span style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "8px" }}>{archivosFiltrados.length}</span>
-            </h3>
-            {renderArchivos(archivosFiltrados)}
           </section>
         </div>
       ) : (

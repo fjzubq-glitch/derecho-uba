@@ -9,7 +9,7 @@ export async function GET(request: Request) {
 
   const supabase = getSupabaseAdmin();
 
-  const [fichasRes, materiasRes, archivosRes] = await Promise.all([
+  const [fichasRes, materiasRes, archivosRes, clasesRes, fechasRes] = await Promise.all([
     supabase
       .from("fichas")
       .select("id, titulo, contenido, materia_id, tags, created_at, updated_at")
@@ -20,9 +20,17 @@ export async function GET(request: Request) {
       .select("id, tipo, nombre_display, storage_key, youtube_url, cloudinary_url, nota, play_count, clase_id, created_at")
       .in("tipo", ["cuestionario", "material_privado"])
       .order("created_at", { ascending: false }),
+    supabase
+      .from("clases")
+      .select("id, materia_id, numero, titulo, tema, fecha")
+      .order("numero"),
+    supabase
+      .from("materia_fechas")
+      .select("id, materia_id, titulo, fecha")
+      .order("fecha"),
   ]);
 
-  if (fichasRes.error || materiasRes.error || archivosRes.error) {
+  if (fichasRes.error || materiasRes.error || archivosRes.error || clasesRes.error || fechasRes.error) {
     return NextResponse.json({ error: "Error al cargar datos" }, { status: 500 });
   }
 
@@ -54,5 +62,13 @@ export async function GET(request: Request) {
     materia_slug: f.materia_id ? materiasMap.get(f.materia_id)?.slug ?? null : null,
   }));
 
-  return NextResponse.json({ fichas, archivos: archivosConClase, materias: materiasRes.data || [] });
+  const clases = (clasesRes.data || []).map((c) => ({
+    ...c,
+    materia_nombre: materiasMap.get(c.materia_id)?.nombre ?? null,
+    materia_slug: materiasMap.get(c.materia_id)?.slug ?? null,
+  }));
+
+  const fechas = fechasRes.data || [];
+
+  return NextResponse.json({ fichas, archivos: archivosConClase, materias: materiasRes.data || [], clases, fechas });
 }
