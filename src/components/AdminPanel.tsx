@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { Check, ExternalLink, Loader2, Lock, Plus, Search, StickyNote, Trash2, Edit3, X, BookOpen } from "@/components/icons";
+import { ArrowLeft, Check, ExternalLink, Loader2, Lock, Plus, Search, StickyNote, Trash2, Edit3, X, BookOpen } from "@/components/icons";
 import FichaEditor from "@/components/FichaEditor";
 
 const inputStyle: React.CSSProperties = {
@@ -89,7 +89,7 @@ export default function AdminPanel() {
   const [archivos, setArchivos] = useState<PanelArchivo[]>([]);
   const [materias, setMaterias] = useState<MateriaRef[]>([]);
   const [busqueda, setBusqueda] = useState("");
-  const [selectedMateria, setSelectedMateria] = useState<string | null>(null);
+  const [cuadernoActualId, setCuadernoActualId] = useState<string | null>(null);
 
   const [editorAbierto, setEditorAbierto] = useState<{ id: string | null; titulo: string; contenido: string; materiaId: string } | null>(null);
   const [guardando, setGuardando] = useState(false);
@@ -116,7 +116,7 @@ export default function AdminPanel() {
   }, [cargar]);
 
   const abrirNueva = () => {
-    setEditorAbierto({ id: null, titulo: "", contenido: "", materiaId: selectedMateria ?? materias[0]?.id ?? "" });
+    setEditorAbierto({ id: null, titulo: "", contenido: "", materiaId: cuadernoActualId ?? materias[0]?.id ?? "" });
   };
 
   const abrirEditar = (f: Ficha) => {
@@ -181,25 +181,113 @@ export default function AdminPanel() {
     window.open(`/api/admin/cuestionario/${id}/html`, "_blank");
   };
 
-  const filtradas = fichas.filter((f) => {
-    if (selectedMateria && f.materia_id !== selectedMateria) return false;
-    const q = busqueda.toLowerCase();
-    return (
-      f.titulo.toLowerCase().includes(q) ||
-      (f.materia_nombre || "").toLowerCase().includes(q) ||
-      (f.tags || []).join(" ").toLowerCase().includes(q)
-    );
-  });
-
   const cuadernos = materias.map((m) => ({
     ...m,
-    count: fichas.filter((f) => f.materia_id === m.id).length,
+    fichaCount: fichas.filter((f) => f.materia_id === m.id).length,
+    archivoCount: archivos.filter((a) => a.materia_id === m.id).length,
   }));
 
-  const archivosFiltrados = archivos.filter((a) => {
-    if (selectedMateria && a.materia_id !== selectedMateria) return false;
-    return busqueda ? a.nombre_display.toLowerCase().includes(busqueda.toLowerCase()) || (a.materia_nombre || "").toLowerCase().includes(busqueda.toLowerCase()) : true;
-  });
+  const cuadernoActual = materias.find((m) => m.id === cuadernoActualId) ?? null;
+
+  const filtradas = cuadernoActualId
+    ? fichas.filter((f) => f.materia_id === cuadernoActualId)
+    : fichas.filter((f) => {
+        const q = busqueda.toLowerCase();
+        return (
+          f.titulo.toLowerCase().includes(q) ||
+          (f.materia_nombre || "").toLowerCase().includes(q) ||
+          (f.tags || []).join(" ").toLowerCase().includes(q)
+        );
+      });
+
+  const archivosFiltrados = cuadernoActualId
+    ? archivos.filter((a) => a.materia_id === cuadernoActualId)
+    : archivos.filter((a) => {
+        const q = busqueda.toLowerCase();
+        return q ? a.nombre_display.toLowerCase().includes(q) || (a.materia_nombre || "").toLowerCase().includes(q) : true;
+      });
+
+  const fichasSinMateria = fichas.filter((f) => !f.materia_id);
+  const archivosSinMateria = archivos.filter((a) => !a.materia_id);
+
+  const renderFichas = (items: Ficha[]) =>
+    items.length === 0 ? (
+      <p style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
+        Todavía no creaste ninguna ficha en este cuaderno. Tocá “Nueva ficha”.
+      </p>
+    ) : (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)", border: "1px solid var(--color-line-soft)" }}>
+        {items.map((f) => (
+          <div key={f.id} style={{ background: "var(--color-card)", padding: "20px 22px", display: "flex", flexDirection: "column", gap: "8px", minHeight: "140px" }}>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-3 flex-1" style={{ cursor: "pointer" }} onClick={() => setVistaFicha(f)}>
+                <div className="flex items-center justify-center" style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}>
+                  <StickyNote style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+                </div>
+                <h4 style={{ fontFamily: "var(--font-fraunces), serif", fontSize: "16px", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3 }}>{f.titulo}</h4>
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <button onClick={() => abrirEditar(f)} title="Editar" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-muted)" }}>
+                  <Edit3 style={{ width: "14px", height: "14px" }} />
+                </button>
+                <button onClick={() => borrarFicha(f.id)} title="Borrar" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-faint)" }}>
+                  <Trash2 style={{ width: "14px", height: "14px" }} />
+                </button>
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "auto" }}>
+              <BookOpen style={{ width: "13px", height: "13px", color: "var(--color-gold-dim)" }} />
+              <span style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
+                {f.materia_nombre || "Sin materia"}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+
+  const renderArchivos = (items: PanelArchivo[]) =>
+    items.length === 0 ? (
+      <p style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
+        Todavía no hay material ni cuestionarios en este cuaderno.
+      </p>
+    ) : (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)", border: "1px solid var(--color-line-soft)" }}>
+        {items.map((a) => (
+          <div key={a.id} style={{ background: "var(--color-card)", padding: "20px 22px", display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-3 flex-1">
+                <div className="flex items-center justify-center" style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}>
+                  {a.tipo === "cuestionario" ? <Check style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} /> : <Lock style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />}
+                </div>
+                <span style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                  {a.tipo === "cuestionario" ? "Cuestionario" : "Material privado"}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                {a.tipo === "cuestionario" && (
+                  <button onClick={() => abrirCuestionarioHtml(a.id)} title="Ver HTML" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-muted)" }}>
+                    <Edit3 style={{ width: "14px", height: "14px" }} />
+                  </button>
+                )}
+                <button onClick={() => abrirVisor(a)} title="Abrir" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-muted)" }}>
+                  <ExternalLink style={{ width: "14px", height: "14px" }} />
+                </button>
+                <button onClick={() => borrarArchivo(a.id)} title="Borrar" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-faint)" }}>
+                  <Trash2 style={{ width: "14px", height: "14px" }} />
+                </button>
+              </div>
+            </div>
+            <h4 style={{ fontFamily: "var(--font-fraunces), serif", fontSize: "16px", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3 }}>
+              {a.nombre_display}
+            </h4>
+            <div style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginTop: "auto" }}>
+              {a.materia_nombre || "Sin materia"}{a.clase_numero ? ` · Clase ${a.clase_numero}` : ""}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
 
   if (loading) {
     return (
@@ -226,12 +314,13 @@ export default function AdminPanel() {
               type="text"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Buscar ficha, materia…"
+              placeholder={cuadernoActual ? `Buscar en ${cuadernoActual.nombre}…` : "Buscar cuaderno, ficha, materia…"}
               aria-label="Buscar"
               style={{ ...inputStyle, paddingLeft: "38px" }}
             />
           </div>
         </div>
+        {!cuadernoActualId && (
         <button
           onClick={abrirNueva}
           style={{ background: "var(--color-gold)", color: "var(--color-ink)", border: "none", padding: "10px 18px", cursor: "pointer", fontFamily: "var(--font-inter)", fontSize: "13px", display: "flex", alignItems: "center", gap: "8px", fontWeight: 500 }}
@@ -239,148 +328,106 @@ export default function AdminPanel() {
           <Plus style={{ width: "16px", height: "16px" }} />
           Nueva ficha
         </button>
+        )}
       </div>
 
-      {/* Cuadernos (notebooks por materia) */}
-      <section>
-        <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "20px", color: "var(--color-text)", marginBottom: "16px" }}>
-          Cuadernos
-          <span style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "10px" }}>{cuadernos.length}</span>
-        </h3>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setSelectedMateria(null)}
-            style={{
-              padding: "8px 14px",
-              fontSize: "12px",
-              fontFamily: "var(--font-inter)",
-              cursor: "pointer",
-              border: "1px solid var(--color-line-soft)",
-              background: selectedMateria === null ? "var(--color-gold)" : "var(--color-card)",
-              color: selectedMateria === null ? "var(--color-ink)" : "var(--color-text-muted)",
-              borderRadius: 0,
-            }}
-          >
-            Todas las fichas{fichas.length ? ` (${fichas.length})` : ""}
-          </button>
-          {cuadernos.map((m) => (
-            <button
-              key={m.id}
-              onClick={() => setSelectedMateria(m.id)}
-              style={{
-                padding: "8px 14px",
-                fontSize: "12px",
-                fontFamily: "var(--font-inter)",
-                cursor: "pointer",
-                border: "1px solid var(--color-line-soft)",
-                background: selectedMateria === m.id ? "var(--color-gold)" : "var(--color-card)",
-                color: selectedMateria === m.id ? "var(--color-ink)" : "var(--color-text-muted)",
-                borderRadius: 0,
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
-              {m.nombre}
-              <span style={{ fontSize: "11px", opacity: 0.7 }}>{m.count > 0 ? m.count : ""}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* Fichas */}
-      <section>
-        <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "20px", color: "var(--color-text)", marginBottom: "16px" }}>
-          Fichas de estudio
-          <span style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "10px" }}>{filtradas.length}</span>
-        </h3>
-        {filtradas.length === 0 ? (
-          <p style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
-            {busqueda ? "Sin resultados." : "Todavía no creaste ninguna ficha. Tocá “Nueva ficha” para empezar."}
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)", border: "1px solid var(--color-line-soft)" }}>
-            {filtradas.map((f) => (
-              <div
-                key={f.id}
-                style={{ background: "var(--color-card)", padding: "20px 22px", display: "flex", flexDirection: "column", gap: "8px", minHeight: "140px" }}
+      {cuadernoActualId ? (
+        /* ════════ CUADERNO (detalle) ════════ */
+        <div className="space-y-8">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => { setCuadernoActualId(null); setBusqueda(""); }}
+                style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", padding: "8px 14px", cursor: "pointer", fontFamily: "var(--font-inter)", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}
               >
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-3 flex-1" style={{ cursor: "pointer" }} onClick={() => setVistaFicha(f)}>
-                    <div className="flex items-center justify-center" style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}>
-                      <StickyNote style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
-                    </div>
-                    <h4 style={{ fontFamily: "var(--font-fraunces), serif", fontSize: "16px", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3 }}>{f.titulo}</h4>
-                  </div>
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <button onClick={() => abrirEditar(f)} title="Editar" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-muted)" }}>
-                      <Edit3 style={{ width: "14px", height: "14px" }} />
-                    </button>
-                    <button onClick={() => borrarFicha(f.id)} title="Borrar" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-faint)" }}>
-                      <Trash2 style={{ width: "14px", height: "14px" }} />
-                    </button>
-                  </div>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "auto" }}>
-                  <BookOpen style={{ width: "13px", height: "13px", color: "var(--color-gold-dim)" }} />
-                  <span style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
-                    {f.materia_nombre || "Sin materia"}
-                  </span>
-                </div>
-              </div>
-            ))}
+                <ArrowLeft style={{ width: "14px", height: "14px" }} /> Volver
+              </button>
+              <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "24px", color: "var(--color-text)" }}>
+                {cuadernoActual?.nombre}
+              </h3>
+            </div>
+            <button
+              onClick={abrirNueva}
+              style={{ background: "var(--color-gold)", color: "var(--color-ink)", border: "none", padding: "10px 18px", cursor: "pointer", fontFamily: "var(--font-inter)", fontSize: "13px", display: "flex", alignItems: "center", gap: "8px", fontWeight: 500 }}
+            >
+              <Plus style={{ width: "16px", height: "16px" }} />
+              Nueva ficha
+            </button>
           </div>
-        )}
-      </section>
 
-      {/* Material privado y cuestionarios */}
-      <section>
-        <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "20px", color: "var(--color-text)", marginBottom: "16px" }}>
-          Material privado y cuestionarios
-          <span style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "10px" }}>{archivosFiltrados.length}</span>
-        </h3>
-        {archivosFiltrados.length === 0 ? (
-          <p style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
-            {busqueda ? "Sin resultados." : "Subí cuestionarios y material privado desde “Subir contenido”."}
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)", border: "1px solid var(--color-line-soft)" }}>
-            {archivosFiltrados.map((a) => (
-              <div key={a.id} style={{ background: "var(--color-card)", padding: "20px 22px", display: "flex", flexDirection: "column", gap: "8px" }}>
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className="flex items-center justify-center" style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}>
-                      {a.tipo === "cuestionario" ? <Check style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} /> : <Lock style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />}
+          <section>
+            <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "18px", color: "var(--color-text)", marginBottom: "14px" }}>
+              Fichas de estudio <span style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "8px" }}>{filtradas.length}</span>
+            </h3>
+            {renderFichas(filtradas)}
+          </section>
+
+          <section>
+            <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "18px", color: "var(--color-text)", marginBottom: "14px" }}>
+              Material privado y cuestionarios <span style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "8px" }}>{archivosFiltrados.length}</span>
+            </h3>
+            {renderArchivos(archivosFiltrados)}
+          </section>
+        </div>
+      ) : (
+        /* ════════ LISTA DE CUADERNOS ════════ */
+        <div className="space-y-10">
+          <section>
+            <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "20px", color: "var(--color-text)", marginBottom: "16px" }}>
+              Cuadernos <span style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginLeft: "10px" }}>{cuadernos.length}</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: "1px", background: "var(--color-line-soft)", border: "1px solid var(--color-line-soft)" }}>
+              {cuadernos.map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => setCuadernoActualId(m.id)}
+                  style={{ background: "var(--color-card)", padding: "24px 22px", textAlign: "left", cursor: "pointer", border: "none", display: "flex", flexDirection: "column", gap: "10px", minHeight: "150px", width: "100%" }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center" style={{ width: "40px", height: "40px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", flexShrink: 0 }}>
+                      <BookOpen style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
                     </div>
-                    <span style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                      {a.tipo === "cuestionario" ? "Cuestionario" : "Material privado"}
+                    <h4 style={{ fontFamily: "var(--font-fraunces), serif", fontSize: "18px", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3 }}>{m.nombre}</h4>
+                  </div>
+                  <div className="flex flex-wrap gap-2" style={{ marginTop: "auto" }}>
+                    <span style={{ fontSize: "11px", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", border: "1px solid var(--color-line-soft)", padding: "3px 10px" }}>
+                      {m.fichaCount} fichas
+                    </span>
+                    <span style={{ fontSize: "11px", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", border: "1px solid var(--color-line-soft)", padding: "3px 10px" }}>
+                      {m.archivoCount} material
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    {a.tipo === "cuestionario" && (
-                      <button onClick={() => abrirCuestionarioHtml(a.id)} title="Ver HTML" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-muted)" }}>
-                        <Edit3 style={{ width: "14px", height: "14px" }} />
-                      </button>
-                    )}
-                    <button onClick={() => abrirVisor(a)} title="Abrir" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-muted)" }}>
-                      <ExternalLink style={{ width: "14px", height: "14px" }} />
-                    </button>
-                    <button onClick={() => borrarArchivo(a.id)} title="Borrar" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-faint)" }}>
-                      <Trash2 style={{ width: "14px", height: "14px" }} />
-                    </button>
-                  </div>
+                </button>
+              ))}
+            </div>
+            {cuadernos.length === 0 && (
+              <p style={{ fontSize: "13px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)" }}>
+                No hay materias en la web. Creá materias desde “Gestionar contenido”.
+              </p>
+            )}
+          </section>
+
+          {(fichasSinMateria.length > 0 || archivosSinMateria.length > 0) && (
+            <section>
+              <h3 style={{ fontFamily: "var(--font-fraunces), serif", fontWeight: 400, fontSize: "20px", color: "var(--color-text)", marginBottom: "16px" }}>
+                Sin asignar a una materia
+              </h3>
+              {fichasSinMateria.length > 0 && (
+                <div style={{ marginBottom: "24px" }}>
+                  <span style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Fichas</span>
+                  <div style={{ marginTop: "8px" }}>{renderFichas(fichasSinMateria)}</div>
                 </div>
-                <h4 style={{ fontFamily: "var(--font-fraunces), serif", fontSize: "16px", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3 }}>
-                  {a.nombre_display}
-                </h4>
-                <div style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginTop: "auto" }}>
-                  {a.materia_nombre || "Sin materia"}{a.clase_numero ? ` · Clase ${a.clase_numero}` : ""}
+              )}
+              {archivosSinMateria.length > 0 && (
+                <div>
+                  <span style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Material y cuestionarios</span>
+                  <div style={{ marginTop: "8px" }}>{renderArchivos(archivosSinMateria)}</div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+              )}
+            </section>
+          )}
+        </div>
+      )}
 
       {/* Editor modal */}
       {editorAbierto && (
