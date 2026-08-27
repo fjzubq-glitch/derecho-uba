@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { trackActivity } from "@/lib/tracking";
-import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2, ChevronUp } from "@/components/icons";
 import { formatDuration, formatFechaLocal } from "@/lib/utils";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
 import { useAudio } from "@/components/AudioProvider";
@@ -99,7 +99,7 @@ const CARD_CONFIG: Record<CardTipo, {
   },
 };
 
-const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario", "video_resumen"];
+const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "video_resumen", "archivo", "enlace", "cuestionario"];
 
 export default function ClaseNumeroPage() {
   const params = useParams();
@@ -126,6 +126,8 @@ export default function ClaseNumeroPage() {
 
   // Transcription expand
   const [openTranscripcion, setOpenTranscripcion] = useState(false);
+  // Video resumen expand
+  const [expandedVideoResumen, setExpandedVideoResumen] = useState<string | null>(null);
   // Solo el admin ve las cards de cuestionario
   const [esAdmin, setEsAdmin] = useState(false);
 
@@ -368,101 +370,6 @@ if (isTranscription(tipo)) {
   function renderArchivoCard(tipo: CardTipo, archivo: Archivo, isThisPlaying: boolean, cardIndex: number) {
     const config = CARD_CONFIG[tipo];
 
-    // Video resumen: render inline YouTube embed
-    if (tipo === "video_resumen" && archivo.youtube_url) {
-      const embedUrl = youtubeEmbedUrl(archivo.youtube_url);
-      if (embedUrl) {
-        return (
-          <article
-            key={archivo.id}
-            className="card-reveal"
-            style={{
-              background: "var(--color-card)",
-              padding: "28px 24px",
-              opacity: 1,
-              animationDelay: `${cardIndex * 55}ms`,
-              border: "1px solid var(--color-line-soft)",
-              gridColumn: "1 / -1",
-            }}
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <div
-                className="flex items-center justify-center flex-shrink-0"
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  border: "1px solid var(--color-gold-dim)",
-                }}
-              >
-                {config.icon}
-              </div>
-              <div>
-                <p
-                  style={{
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "9px",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "var(--color-gold)",
-                  }}
-                >
-                  {config.label}
-                </p>
-                <p
-                  style={{
-                    fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                    fontWeight: 500,
-                    fontSize: "18px",
-                    color: "var(--color-text)",
-                  }}
-                >
-                  {archivo.nombre_display}
-                </p>
-              </div>
-            </div>
-            <div
-              style={{
-                position: "relative",
-                paddingBottom: "56.25%",
-                height: 0,
-                overflow: "hidden",
-                border: "1px solid var(--color-line-soft)",
-              }}
-            >
-              <iframe
-                src={embedUrl}
-                title={archivo.nombre_display}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  border: 0,
-                }}
-              />
-            </div>
-            {archivo.nota && (
-              <p
-                style={{
-                  fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "11px",
-                  color: "var(--color-gold)",
-                  fontStyle: "italic",
-                  marginTop: "12px",
-                }}
-              >
-                {archivo.nota}
-              </p>
-            )}
-          </article>
-        );
-      }
-    }
-
     const youtubeThumb = archivo.youtube_url ? youtubeThumbUrl(archivo.youtube_url) : null;
     const isActive = playingArchivoId === archivo.id;
 
@@ -643,6 +550,76 @@ if (isTranscription(tipo)) {
           </div>
         )}
 
+        {/* Video resumen expand button */}
+        {tipo === "video_resumen" && archivo.youtube_url && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setExpandedVideoResumen(expandedVideoResumen === archivo.id ? null : archivo.id);
+            }}
+            className="flex items-center gap-2 mt-4"
+            style={{
+              background: "none",
+              border: "1px solid var(--color-gold-dim)",
+              padding: "8px 14px",
+              cursor: "pointer",
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "11px",
+              color: "var(--color-gold)",
+              transition: "border-color 0.2s ease, background 0.2s ease",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold)"; e.currentTarget.style.background = "rgba(212, 175, 55, 0.08)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.background = "none"; }}
+          >
+            {expandedVideoResumen === archivo.id ? (
+              <>
+                <ChevronUp style={{ width: "14px", height: "14px" }} />
+                Colapsar
+              </>
+            ) : (
+              <>
+                <Play style={{ width: "14px", height: "14px" }} fill="var(--color-gold)" />
+                Ver video resumen
+              </>
+            )}
+          </button>
+        )}
+
+        {/* Video resumen expanded embed */}
+        {tipo === "video_resumen" && expandedVideoResumen === archivo.id && archivo.youtube_url && (() => {
+          const embedUrl = youtubeEmbedUrl(archivo.youtube_url);
+          if (!embedUrl) return null;
+          return (
+            <div
+              style={{
+                position: "relative",
+                paddingBottom: "56.25%",
+                height: 0,
+                overflow: "hidden",
+                marginTop: "16px",
+                border: "1px solid var(--color-line-soft)",
+                borderRadius: "4px",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <iframe
+                src={embedUrl}
+                title={archivo.nombre_display}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  border: 0,
+                }}
+              />
+            </div>
+          );
+        })()}
+
         {/* Audio player inline */}
         {isAudioTipo(tipo) && playingArchivoId === archivo.id && (
           <div className="mt-4 pt-4 border-t" style={{ borderColor: "var(--color-line-soft)" }}>
@@ -814,7 +791,7 @@ if (isTranscription(tipo)) {
    // Orden fijo de las cards en todas las clases:
   // 1° audio o video de la clase, 2° transcripción, 3° resto
   // El cuestionario solo se muestra al administrador
-  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", ...(esAdmin ? (["cuestionario"] as CardTipo[]) : []), "video_resumen"];
+  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "video_resumen", "archivo", "enlace", ...(esAdmin ? (["cuestionario"] as CardTipo[]) : [])];
 
   if (loading) {
     return (
