@@ -42,7 +42,7 @@ interface Clase {
 }
 
 interface EditData {
-  tipo: "clase" | "audio_clase" | "clase_youtube" | "video_resumen" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
+  tipo: "clase" | "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
   id: string;
   data: Record<string, string | number>;
 }
@@ -485,7 +485,6 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const TIPO_ICONS: Record<string, React.ReactNode> = {
     audio_clase: <Headphones style={{ width: "14px", height: "14px" }} />,
     clase_youtube: <Play style={{ width: "14px", height: "14px" }} />,
-    video_resumen: <Play style={{ width: "14px", height: "14px" }} />,
     transcripcion: <FileText style={{ width: "14px", height: "14px" }} />,
     archivo: <FileText style={{ width: "14px", height: "14px" }} />,
     cuestionario: <Check style={{ width: "14px", height: "14px" }} />,
@@ -496,7 +495,6 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const TIPO_LABELS: Record<string, string> = {
     audio_clase: "Audio de clase",
     clase_youtube: "Clase Virtual",
-    video_resumen: "Video Resumen",
     transcripcion: "Transcripción",
     archivo: "Archivo adjunto",
     cuestionario: "Cuestionario interactivo",
@@ -504,7 +502,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     youtube: "YouTube",
   };
 
-  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "video_resumen" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo" || tipo === "cuestionario";
+  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo" || tipo === "cuestionario";
 
   const actionBtnStyle: React.CSSProperties = {
     padding: "6px 12px",
@@ -1188,19 +1186,6 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                       style={inputStyle}
                     />
                   </div>
-                  {editing.tipo === "video_resumen" && (
-                    <div>
-                      <label htmlFor="manage-youtube" style={labelStyle}>URL de YouTube</label>
-                      <input
-                        id="manage-youtube"
-                        type="url"
-                        value={(editing.data.youtube_url as string) || ""}
-                        onChange={(e) => setEditing({ ...editing, data: { ...editing.data, youtube_url: e.target.value } })}
-                        placeholder="https://youtube.com/watch?v=..."
-                        style={inputStyle}
-                      />
-                    </div>
-                  )}
                   <div>
                     <label htmlFor="manage-nota" style={labelStyle}>Nota (opcional)</label>
                     <textarea

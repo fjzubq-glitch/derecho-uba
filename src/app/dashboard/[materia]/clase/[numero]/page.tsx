@@ -36,7 +36,7 @@ interface MateriaData {
   nombre: string;
 }
 
-type CardTipo = "audio_clase" | "clase_youtube" | "video_resumen" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
+type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario";
 
 function isHtmlArchivo(a: Archivo | null): boolean {
   if (!a || !a.storage_key) return false;
@@ -72,11 +72,6 @@ const CARD_CONFIG: Record<CardTipo, {
     label: "CLASE VIRTUAL",
     subtitle: () => "Ver clase grabada",
   },
-  video_resumen: {
-    icon: <Play style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
-    label: "VIDEO RESUMEN",
-    subtitle: () => "",
-  },
   transcripcion: {
     icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />,
     label: "TRANSCRIPCIÓN",
@@ -99,7 +94,7 @@ const CARD_CONFIG: Record<CardTipo, {
   },
 };
 
-const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "video_resumen", "archivo", "enlace", "cuestionario"];
+const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario"];
 
 export default function ClaseNumeroPage() {
   const params = useParams();
@@ -311,8 +306,6 @@ if (isTranscription(tipo)) {
           window.open(archivo.youtube_url, "_blank");
           trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
-      } else if (tipo === "video_resumen") {
-        // YouTube embed handles its own playback
       } else if (isEnlace(tipo)) {
         if (archivo.youtube_url) {
           window.open(archivo.youtube_url, "_blank");
@@ -531,7 +524,7 @@ if (isTranscription(tipo)) {
         </div>
 
         {/* Thumbnail YouTube */}
-        {youtubeThumb && tipo !== "video_resumen" && (
+        {youtubeThumb && (
           <div className="mt-4">
             <Image
               src={youtubeThumb}
@@ -547,40 +540,6 @@ if (isTranscription(tipo)) {
             />
           </div>
         )}
-
-        {/* Video resumen: embed YouTube directly */}
-        {tipo === "video_resumen" && archivo.youtube_url && (() => {
-          const embedUrl = youtubeEmbedUrl(archivo.youtube_url);
-          if (!embedUrl) return null;
-          return (
-            <div
-              style={{
-                position: "relative",
-                paddingBottom: "56.25%",
-                height: 0,
-                overflow: "hidden",
-                marginTop: "12px",
-                borderRadius: "4px",
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <iframe
-                src={embedUrl}
-                title={archivo.nombre_display}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  border: 0,
-                }}
-              />
-            </div>
-          );
-        })()}
 
         {/* Audio player inline */}
         {isAudioTipo(tipo) && playingArchivoId === archivo.id && (
@@ -753,7 +712,7 @@ if (isTranscription(tipo)) {
    // Orden fijo de las cards en todas las clases:
   // 1° audio o video de la clase, 2° transcripción, 3° resto
   // El cuestionario solo se muestra al administrador
-  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "video_resumen", "archivo", "enlace", ...(esAdmin ? (["cuestionario"] as CardTipo[]) : [])];
+  const tipos: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", ...(esAdmin ? (["cuestionario"] as CardTipo[]) : [])];
 
   if (loading) {
     return (
