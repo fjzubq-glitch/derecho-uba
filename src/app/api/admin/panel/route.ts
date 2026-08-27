@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   const [fichasRes, materiasRes, archivosRes, clasesRes, fechasRes] = await Promise.all([
     supabase
       .from("fichas")
-      .select("id, titulo, contenido, materia_id, tags, created_at, updated_at")
+      .select("id, titulo, contenido, materia_id, clase_id, tags, created_at, updated_at")
       .order("updated_at", { ascending: false }),
     supabase.from("materias").select("id, nombre, slug, comision, catedra, anio, turno").order("nombre"),
     supabase
@@ -56,11 +56,27 @@ export async function GET(request: Request) {
     })
   );
 
-  const fichas = (fichasRes.data || []).map((f) => ({
-    ...f,
-    materia_nombre: f.materia_id ? materiasMap.get(f.materia_id)?.nombre ?? null : null,
-    materia_slug: f.materia_id ? materiasMap.get(f.materia_id)?.slug ?? null : null,
-  }));
+  const fichasRaw = fichasRes.data || [];
+
+  const fichas = await Promise.all(
+    fichasRaw.map(async (f) => {
+      let clase_numero: number | null = null;
+      if (f.clase_id) {
+        const { data: clase } = await supabase
+          .from("clases")
+          .select("numero")
+          .eq("id", f.clase_id)
+          .single();
+        clase_numero = clase?.numero ?? null;
+      }
+      return {
+        ...f,
+        materia_nombre: f.materia_id ? materiasMap.get(f.materia_id)?.nombre ?? null : null,
+        materia_slug: f.materia_id ? materiasMap.get(f.materia_id)?.slug ?? null : null,
+        clase_numero,
+      };
+    })
+  );
 
   const clases = (clasesRes.data || []).map((c) => ({
     ...c,

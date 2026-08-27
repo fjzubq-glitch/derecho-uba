@@ -12,11 +12,12 @@ export async function PUT(
 
   const { id } = await params;
   const body = await request.json();
-  const updates: { titulo?: string; contenido?: string; materia_id?: string | null; tags?: string[] } = {};
+  const updates: { titulo?: string; contenido?: string; materia_id?: string | null; clase_id?: string | null; tags?: string[] } = {};
 
   if (typeof body.titulo === "string") updates.titulo = body.titulo.trim();
   if (typeof body.contenido === "string") updates.contenido = body.contenido;
   if ("materia_id" in body) updates.materia_id = body.materia_id || null;
+  if ("clase_id" in body) updates.clase_id = body.clase_id || null;
   if (Array.isArray(body.tags)) updates.tags = body.tags.map(String);
 
   if (updates.titulo === "") {

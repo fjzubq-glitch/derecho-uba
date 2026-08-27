@@ -45,7 +45,8 @@ interface Ficha {
   contenido: string;
   materia_id: string | null;
   materia_nombre: string | null;
-  materia_slug: string | null;
+  clase_id: string | null;
+  clase_numero: number | null;
   tags: string[];
   created_at: string;
   updated_at: string;
@@ -118,7 +119,7 @@ export default function AdminPanel() {
   const [busqueda, setBusqueda] = useState("");
   const [cuadernoActualId, setCuadernoActualId] = useState<string | null>(null);
 
-  const [editorAbierto, setEditorAbierto] = useState<{ id: string | null; titulo: string; contenido: string; materiaId: string } | null>(null);
+  const [editorAbierto, setEditorAbierto] = useState<{ id: string | null; titulo: string; contenido: string; materiaId: string; claseId: string } | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [vistaFicha, setVistaFicha] = useState<Ficha | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -146,11 +147,11 @@ export default function AdminPanel() {
   }, [cargar]);
 
   const abrirNueva = () => {
-    setEditorAbierto({ id: null, titulo: "", contenido: "", materiaId: cuadernoActualId ?? materias[0]?.id ?? "" });
+    setEditorAbierto({ id: null, titulo: "", contenido: "", materiaId: cuadernoActualId ?? materias[0]?.id ?? "", claseId: "" });
   };
 
   const abrirEditar = (f: Ficha) => {
-    setEditorAbierto({ id: f.id, titulo: f.titulo, contenido: f.contenido, materiaId: f.materia_id ?? "" });
+    setEditorAbierto({ id: f.id, titulo: f.titulo, contenido: f.contenido, materiaId: f.materia_id ?? "", claseId: f.clase_id ?? "" });
   };
 
   const guardarFicha = async (titulo: string, contenido: string) => {
@@ -161,7 +162,7 @@ export default function AdminPanel() {
       const res = await fetch(editorAbierto.id ? `/api/fichas/${editorAbierto.id}` : "/api/fichas", {
         method: editorAbierto.id ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ titulo, contenido, materia_id: editorAbierto.materiaId || null }),
+        body: JSON.stringify({ titulo, contenido, materia_id: editorAbierto.materiaId || null, clase_id: editorAbierto.claseId || null }),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -280,7 +281,7 @@ export default function AdminPanel() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)", display: "block", marginBottom: "6px" }}>
-                    FICHA
+                    FICHA{f.clase_numero != null ? ` · CLASE ${f.clase_numero.toString().padStart(2, "0")}` : ""}
                   </span>
                   <h4 style={{ fontFamily: "var(--font-fraunces), serif", fontSize: "18px", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3, overflowWrap: "break-word" }}>{f.titulo}</h4>
                 </div>
@@ -789,13 +790,24 @@ export default function AdminPanel() {
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label style={labelStyle}>Materia</label>
-              <select value={editorAbierto.materiaId} onChange={(e) => setEditorAbierto({ ...editorAbierto, materiaId: e.target.value })} style={inputStyle}>
+              <select value={editorAbierto.materiaId} onChange={(e) => setEditorAbierto({ ...editorAbierto, materiaId: e.target.value, claseId: "" })} style={inputStyle}>
                 <option value="">Sin materia</option>
                 {materias.map((m) => (
                   <option key={m.id} value={m.id}>{m.nombre}</option>
                 ))}
               </select>
             </div>
+            {editorAbierto.materiaId && (
+              <div style={{ marginBottom: "16px" }}>
+                <label style={labelStyle}>Clase (opcional)</label>
+                <select value={editorAbierto.claseId} onChange={(e) => setEditorAbierto({ ...editorAbierto, claseId: e.target.value })} style={inputStyle}>
+                  <option value="">Sin clase específica</option>
+                  {clases.filter((c) => c.materia_id === editorAbierto.materiaId).sort((a, b) => a.numero - b.numero).map((c) => (
+                    <option key={c.id} value={c.id}>Clase {c.numero.toString().padStart(2, "0")} — {c.titulo || c.tema || `Clase ${c.numero}`}</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <FichaEditor
               initialTitulo={editorAbierto.titulo}
               initialContenido={editorAbierto.contenido}

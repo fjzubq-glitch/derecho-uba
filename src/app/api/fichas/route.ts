@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("fichas")
-    .select("id, titulo, contenido, materia_id, tags, created_at, updated_at")
+    .select("id, titulo, contenido, materia_id, clase_id, tags, created_at, updated_at")
     .order("updated_at", { ascending: false });
 
   if (error) {
@@ -28,6 +28,7 @@ export async function POST(request: Request) {
   const titulo = typeof body.titulo === "string" ? body.titulo.trim() : "";
   const contenido = typeof body.contenido === "string" ? body.contenido : "";
   const materiaId = typeof body.materia_id === "string" ? body.materia_id : null;
+  const claseId = typeof body.clase_id === "string" ? body.clase_id : null;
   const tags = Array.isArray(body.tags) ? body.tags.map(String) : [];
 
   if (!titulo) {
@@ -36,7 +37,7 @@ export async function POST(request: Request) {
 
   const { data, error } = await getSupabaseAdmin()
     .from("fichas")
-    .insert({ titulo, contenido, materia_id: materiaId || null, tags })
+    .insert({ titulo, contenido, materia_id: materiaId || null, clase_id: claseId || null, tags })
     .select()
     .single();
 
