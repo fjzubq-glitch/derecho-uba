@@ -868,7 +868,7 @@ export default function AdminPanel() {
       {/* Vista de ficha modal */}
       {vistaFicha && (
         <div style={MODAL_STYLE} onClick={(e) => { if (e.target === e.currentTarget) setVistaFicha(null); }}>
-          <div style={{ ...MODAL_BOX, maxWidth: "780px", padding: "40px 48px 36px" }}>
+          <div style={{ ...MODAL_BOX, maxWidth: "860px", padding: "44px 64px 40px" }}>
             <div className="flex items-center justify-between mb-2">
               <h3 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "28px", lineHeight: 1.2, color: "var(--color-text)" }}>{vistaFicha.titulo}</h3>
               <button onClick={() => setVistaFicha(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)", flexShrink: 0 }}>
