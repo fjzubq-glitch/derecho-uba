@@ -1094,7 +1094,7 @@ Clase Virtual
               type="url"
               value={materialPrivadoLink}
               onChange={(e) => setMaterialPrivadoLink(e.target.value)}
-              placeholder="https://drive.google.com/file/d/..."
+              placeholder="https://youtube.com/watch?v=... o https://res.cloudinary.com/..."
               aria-label="Link externo del material privado"
               style={inputStyle}
             />

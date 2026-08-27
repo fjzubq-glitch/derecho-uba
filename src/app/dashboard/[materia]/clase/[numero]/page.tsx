@@ -342,7 +342,10 @@ if (isTranscription(tipo)) {
           trackActivity({ tipo: "quiz_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
       } else if (tipo === "material_privado") {
-        if (archivo.storage_key) {
+        if (archivo.youtube_url) {
+          window.open(archivo.youtube_url, "_blank");
+          trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+        } else if (archivo.storage_key) {
           window.open(`/api/stream/${archivo.id}`, "_blank");
           trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
