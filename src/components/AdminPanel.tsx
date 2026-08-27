@@ -540,8 +540,6 @@ export default function AdminPanel() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {clasesDelCuaderno.map((clase, i) => {
                   const claseArchivos = archivosFiltrados.filter((a) => a.clase_numero === clase.numero);
-                  const tieneCuestionario = claseArchivos.some((a) => a.tipo === "cuestionario");
-                  const tieneMaterial = claseArchivos.some((a) => a.tipo === "material_privado");
 
                   return (
                     <article
@@ -571,20 +569,58 @@ export default function AdminPanel() {
                           </p>
                         )}
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {clase.fecha ? (
-                            <div className="flex items-center gap-2" style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}>
-                              <Calendar style={{ width: "14px", height: "14px" }} />
-                              {formatFechaLocal(clase.fecha)}
-                            </div>
-                          ) : <div />}
-                          <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
-                            {tieneCuestionario && <Check style={{ width: "12px", height: "12px" }} />}
-                            {tieneMaterial && <Lock style={{ width: "12px", height: "12px" }} />}
-                          </div>
-                        </div>
+                      <div className="flex items-center gap-2 mb-3" style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}>
+                        {clase.fecha ? (
+                          <>
+                            <Calendar style={{ width: "14px", height: "14px" }} />
+                            {formatFechaLocal(clase.fecha)}
+                          </>
+                        ) : null}
                       </div>
+                      {claseArchivos.length > 0 ? (
+                        <div style={{ borderTop: "1px solid var(--color-line-soft)", paddingTop: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                          {claseArchivos.map((a) => (
+                            <div
+                              key={a.id}
+                              className="flex items-center justify-between gap-2"
+                              style={{ padding: "8px 12px", background: "var(--color-ink)", border: "1px solid var(--color-line-soft)" }}
+                            >
+                              <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                <div className="flex items-center justify-center flex-shrink-0" style={{ width: "28px", height: "28px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)" }}>
+                                  {a.tipo === "cuestionario"
+                                    ? <Check style={{ width: "12px", height: "12px", color: "var(--color-gold)" }} />
+                                    : <Lock style={{ width: "12px", height: "12px", color: "var(--color-gold)" }} />
+                                  }
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "8px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-gold)", display: "block", marginBottom: "2px" }}>
+                                    {a.tipo === "cuestionario" ? "CUESTIONARIO" : "MATERIAL PRIVADO"}
+                                  </span>
+                                  <p style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "13px", lineHeight: 1.25, color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                    {a.nombre_display}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-0.5 flex-shrink-0">
+                                {a.tipo === "cuestionario" && (
+                                  <button onClick={(e) => { e.stopPropagation(); abrirCuestionarioHtml(a.id); }} title="Ver HTML" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-muted)" }}>
+                                    <Edit3 style={{ width: "12px", height: "12px" }} />
+                                  </button>
+                                )}
+                                <button onClick={(e) => { e.stopPropagation(); borrarArchivo(a.id); }} title="Borrar" style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--color-text-faint)" }}>
+                                  <Trash2 style={{ width: "12px", height: "12px" }} />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div style={{ borderTop: "1px solid var(--color-line-soft)", paddingTop: "12px" }}>
+                          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)", fontStyle: "italic" }}>
+                            Sin material aún
+                          </p>
+                        </div>
+                      )}
                     </article>
                   );
                 })}
