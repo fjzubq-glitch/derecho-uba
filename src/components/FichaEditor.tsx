@@ -104,6 +104,28 @@ export default function FichaEditor({
     return null;
   }
 
+  const insertToggle = () => {
+    if (editor.isActive("details")) {
+      editor.chain().focus().unsetDetails().run();
+      return;
+    }
+    if (!editor.state.selection.empty) {
+      editor.chain().focus().setDetails().run();
+      return;
+    }
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: "details",
+        content: [
+          { type: "detailsSummary", content: [{ type: "paragraph" }] },
+          { type: "detailsContent", content: [{ type: "paragraph" }] },
+        ],
+      })
+      .run();
+  };
+
   return (
     <div className="space-y-4">
       <input
@@ -248,7 +270,7 @@ export default function FichaEditor({
         <ToolbarButton
           title="Bloque toggle (colapsable)"
           active={editor.isActive("details")}
-          onClick={() => editor.chain().focus().setDetails().run()}
+          onClick={insertToggle}
         >
           <ToggleIcon />
         </ToolbarButton>
