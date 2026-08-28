@@ -27,7 +27,7 @@ export default async function VisorPage({
 
   const iframeSandbox = "allow-scripts allow-same-origin allow-forms allow-popups allow-modals";
   const isImage = (key: string | null) =>
-    !!key && /\.(jpe?g|png|gif|webp|svg|bmp|avif)$/i.test(key);
+    !!key && /\.(jpe?g|png|gif|webp|svg|bmp|avif|jfif|heic|heif|tiff?|ico)$/i.test(key);
 
   type Modo = "srcdoc" | "iframe" | "imagen" | "externo" | "error";
   let modo: Modo = "error";
