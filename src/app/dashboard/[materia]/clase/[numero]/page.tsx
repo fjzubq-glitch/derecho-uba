@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { trackActivity } from "@/lib/tracking";
-import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2 } from "@/components/icons";
-import { formatDuration, formatFechaLocal } from "@/lib/utils";
+import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2, Lock } from "@/components/icons";
+import { formatDuration, formatFechaLocal, isAdminSession } from "@/lib/utils";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
 import { useAudio } from "@/components/AudioProvider";
 
@@ -36,7 +36,7 @@ interface MateriaData {
   nombre: string;
 }
 
-type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace";
+type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha";
 
 function isHtmlArchivo(a: Archivo | null): boolean {
   if (!a || !a.storage_key) return false;
@@ -87,9 +87,26 @@ const CARD_CONFIG: Record<CardTipo, {
     label: "ENLACE ÚTIL",
     subtitle: () => "Abrir enlace",
   },
+  cuestionario: {
+    icon: <FileText style={{ width: "18px", height: "18px", color: "var(--color-admin)" }} />,
+    label: "CUESTIONARIO",
+    subtitle: () => "Abrir cuestionario",
+  },
+  material_privado: {
+    icon: <Lock style={{ width: "18px", height: "18px", color: "var(--color-admin)" }} />,
+    label: "MATERIAL PRIVADO",
+    subtitle: () => "Abrir material",
+  },
+  ficha: {
+    icon: <Link2 style={{ width: "18px", height: "18px", color: "var(--color-admin)" }} />,
+    label: "FICHA",
+    subtitle: () => "Abrir enlace de Notion",
+  },
 };
 
-const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace"];
+const TIPOS_PRIVADOS: CardTipo[] = ["cuestionario", "material_privado", "ficha"];
+
+const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario", "material_privado", "ficha"];
 
 export default function ClaseNumeroPage() {
   const params = useParams();
@@ -107,6 +124,7 @@ export default function ClaseNumeroPage() {
   const { currentTrack, isPlaying, currentTime, duration, playbackRate, play, togglePlay, seek, cycleSpeed, restart: restartAudio } = useAudio();
   const playingArchivoId = currentTrack?.id ?? null;
   const playingTipo = currentTrack?.tipo as CardTipo | null;
+  const esAdmin = isAdminSession();
 
   // Offline state
   const [offlineStatus, setOfflineStatus] = useState<Record<string, "idle" | "downloading" | "saved">>({});
@@ -306,16 +324,29 @@ if (isTranscription(tipo)) {
             trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
           }
         }
+      } else if (tipo === "cuestionario" || tipo === "material_privado") {
+        const back = `/dashboard/${materiaSlug}/clase/${numero}`;
+        window.open(`/visor/${archivo.id}?back=${encodeURIComponent(back)}&nombre=${encodeURIComponent(archivo.nombre_display)}`, "_blank");
+        trackActivity({ tipo: "admin_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+      } else if (tipo === "ficha") {
+        if (archivo.youtube_url) {
+          window.open(archivo.youtube_url, "_blank");
+          trackActivity({ tipo: "admin_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+        }
       } else if (isAudioTipo(tipo)) {
        handleAudioAction(archivo);
      }
    }
 
-  function renderCard(tipo: CardTipo) {
+   function renderCard(tipo: CardTipo) {
     const archivos = getArchivos(tipo);
     const isThisPlaying = playingTipo === tipo && isPlaying;
 
     if (archivos.length === 0) {
+      return [];
+    }
+
+    if (TIPOS_PRIVADOS.includes(tipo) && !esAdmin) {
       return [];
     }
 
@@ -328,6 +359,9 @@ if (isTranscription(tipo)) {
 
     const youtubeThumb = archivo.youtube_url ? youtubeThumbUrl(archivo.youtube_url) : null;
     const isActive = playingArchivoId === archivo.id;
+    const esPrivado = TIPOS_PRIVADOS.includes(tipo);
+    const accentColor = esPrivado ? "var(--color-admin)" : "var(--color-gold)";
+    const accentBorder = esPrivado ? "var(--color-admin-dim)" : "var(--color-gold-dim)";
 
     return (
       <article
@@ -352,19 +386,19 @@ if (isTranscription(tipo)) {
           boxShadow: isActive ? "inset 0 0 0 1px var(--color-gold)" : "none",
           border: "1px solid var(--color-line-soft)",
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = accentBorder; }}
         onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
         onClick={() => handleCardClick(archivo)}
       >
         <div className="flex items-start justify-between gap-3" style={{ position: "relative", zIndex: 1 }}>
           <div
             className="flex items-center justify-center flex-shrink-0"
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              border: "1px solid var(--color-gold-dim)",
-            }}
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                border: `1px solid ${accentBorder}`,
+              }}
           >
             {config.icon}
           </div>
@@ -375,7 +409,7 @@ if (isTranscription(tipo)) {
                 fontSize: "9px",
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
-                color: "var(--color-gold)",
+                color: accentColor,
                 marginBottom: "6px",
                 display: "flex",
                 flexWrap: "wrap",
