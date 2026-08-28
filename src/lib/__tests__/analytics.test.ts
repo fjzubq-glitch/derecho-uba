@@ -66,17 +66,17 @@ describe("calcularResumen", () => {
 
   it("agrega contenido consumido por tipo y por materia", () => {
     const eventos = [
-      ev({ tipo: "enlace_open", archivo_id: "e1", nombre: "Ana", materia_slug: "derecho-comercial" }),
-      ev({ tipo: "file_open", archivo_id: "pun1", nombre: "Ana", materia_slug: "derecho-comercial" }),
-      ev({ tipo: "enlace_open", archivo_id: "e1", nombre: "Leo", materia_slug: "contratos-i" }),
+      ev({ tipo: "play_start", archivo_id: "a1", nombre: "Ana", materia_slug: "derecho-comercial" }),
+      ev({ tipo: "youtube_open", archivo_id: "v1", nombre: "Ana", materia_slug: "derecho-comercial" }),
+      ev({ tipo: "play_start", archivo_id: "a1", nombre: "Leo", materia_slug: "contratos-i" }),
     ];
     const r = calcularResumen(eventos, tipoPorArchivo, materias);
-    const enlace = r.contenidoPorTipo.find((c) => c.tipo === "enlace");
-    const punteo = r.contenidoPorTipo.find((c) => c.tipo === "archivo");
-    expect(enlace?.accesos).toBe(2);
-    expect(enlace?.personas).toBe(2);
-    expect(enlace?.materias).toHaveLength(2);
-    expect(punteo?.accesos).toBe(1);
+    const audio = r.contenidoPorTipo.find((c) => c.tipo === "audio_clase");
+    const video = r.contenidoPorTipo.find((c) => c.tipo === "clase_youtube");
+    expect(audio?.accesos).toBe(2);
+    expect(audio?.personas).toBe(2);
+    expect(audio?.materias).toHaveLength(2);
+    expect(video?.accesos).toBe(1);
     expect(r.contenidoPorTipo.map((c) => c.tipo)).toEqual(CONTENIDO_TIPOS);
   });
 

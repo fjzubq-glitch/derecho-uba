@@ -54,6 +54,10 @@ export async function GET(request: NextRequest) {
 
     const resumen = calcularResumen(eventos, tipoPorArchivo, (materias || []) as MateriaAnalitica[]);
 
+    const pageViews = (eventos || []).filter((e) => e.tipo === "page_view").length;
+    const registros = (eventos || []).filter((e) => e.tipo === "usuario_registrado").length;
+    const tasaRegistro = pageViews ? Math.round((registros / pageViews) * 1000) / 10 : 0;
+
     // ── Contenido más popular ──
     const popCounts = calcularPopCounts(eventos);
     const popIds = [...popCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([id]) => id);
@@ -136,6 +140,7 @@ export async function GET(request: NextRequest) {
         totalClases: clasesCount || 0,
         totalArchivos: archivosCount || 0,
         totalReproducciones: resumen.totalReproducciones,
+        tasaRegistro,
       },
       materias: materias || [],
       visitantesUnicos: resumen.visitantesUnicos,
