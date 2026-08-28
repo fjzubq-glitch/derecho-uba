@@ -1,6 +1,7 @@
 import VolverBoton from "@/components/VolverBoton";
 import { cookies } from "next/headers";
 import { isAdminRequest, verifyVisorToken } from "@/lib/auth";
+import ZoomableImage from "@/components/ZoomableImage";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { getObjectStream } from "@/lib/r2";
 
@@ -159,29 +160,7 @@ export default async function VisorPage({
             {errorMsg}
           </div>
         ) : modo === "imagen" && iframeSrc ? (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "100%",
-              width: "100%",
-              background: "#ffffff",
-              overflow: "hidden",
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={iframeSrc}
-              alt={archivo?.nombre_display || "Material privado"}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                display: "block",
-              }}
-            />
-          </div>
+          <ZoomableImage src={iframeSrc} alt={archivo?.nombre_display || "Material privado"} />
         ) : modo === "externo" && externalUrl ? (
           <div
             style={{
