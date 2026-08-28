@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { hashIp } from "@/lib/hashIp";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
 const TIPOS_CONTENIDO = ["play_start", "play_complete", "transcription_view", "youtube_open"];
