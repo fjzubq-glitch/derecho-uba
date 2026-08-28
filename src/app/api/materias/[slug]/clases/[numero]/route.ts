@@ -32,20 +32,24 @@ export async function GET(
     return NextResponse.json({ materia, clase: null, adjacentes: [] });
   }
 
-  const { data: archivos } = await supabase
-    .from("archivos")
-    .select("id, tipo, nombre_display, storage_key, youtube_url, cloudinary_url, contenido_texto, nota, duration_seconds, play_count, orden")
-    .eq("clase_id", clase.id)
-    .order("orden")
-    .order("created_at");
+  const [archivosRes, vecinosRes] = await Promise.all([
+    supabase
+      .from("archivos")
+      .select("id, tipo, nombre_display, storage_key, youtube_url, cloudinary_url, contenido_texto, nota, duration_seconds, play_count, orden")
+      .eq("clase_id", clase.id)
+      .order("orden")
+      .order("created_at"),
+    supabase
+      .from("clases")
+      .select("numero, titulo")
+      .eq("materia_id", materia.id)
+      .in("numero", [num - 1, num + 1]),
+  ]);
+
+  const archivos = archivosRes.data;
+  const vecinos = vecinosRes.data;
 
   const visibles = (archivos || []).filter((a) => esAdmin || (a.tipo !== "cuestionario" && a.tipo !== "material_privado" && a.tipo !== "ficha"));
-
-  const { data: vecinos } = await supabase
-    .from("clases")
-    .select("numero, titulo")
-    .eq("materia_id", materia.id)
-    .in("numero", [num - 1, num + 1]);
 
   const adjacentes = (vecinos || [])
     .slice()

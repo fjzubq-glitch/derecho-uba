@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { unstable_cache } from "next/cache";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
 import MateriaClient from "./MateriaClient";
@@ -17,47 +18,65 @@ interface ArchivoRow {
   created_at: string;
 }
 
+const REVALIDATE = 300;
+
+const getMateriaConFechas = (slug: string) =>
+  unstable_cache(
+    async () =>
+      getSupabaseAdmin()
+        .from("materias")
+        .select("id, nombre, estado, materia_fechas(id, titulo, fecha)")
+        .eq("slug", slug)
+        .single(),
+    ["materia-con-fechas", slug],
+    { revalidate: REVALIDATE }
+  )();
+
+const getClases = (slug: string, materiaId: string) =>
+  unstable_cache(
+    async () =>
+      getSupabaseAdmin()
+        .from("clases")
+        .select("id, numero, titulo, tema, fecha")
+        .eq("materia_id", materiaId)
+        .order("numero"),
+    ["clases", slug],
+    { revalidate: REVALIDATE }
+  )();
+
+const getArchivos = (slug: string, claseIds: string[]) =>
+  unstable_cache(
+    async () =>
+      getSupabaseAdmin()
+        .from("archivos")
+        .select("id, clase_id, tipo, nombre_display, storage_key, youtube_url, duration_seconds, orden, created_at")
+        .in("clase_id", claseIds)
+        .order("orden")
+        .order("created_at"),
+    ["archivos", slug],
+    { revalidate: REVALIDATE }
+  )();
+
 export default async function MateriaPage({
   params,
 }: {
   params: Promise<{ materia: string }>;
 }) {
   const { materia: slug } = await params;
-  const supabase = getSupabaseAdmin();
-
   const esAdmin = isAdminRequest((await cookies()).toString());
 
-  const { data: materia } = await supabase
-    .from("materias")
-    .select("id, nombre, estado")
-    .eq("slug", slug)
-    .single();
+  const { data: materia } = await getMateriaConFechas(slug);
 
   if (!materia) {
     return <MateriaClient slug={slug} materia={null} clases={[]} />;
   }
 
-  const { data: clases } = await supabase
-    .from("clases")
-    .select("id, numero, titulo, tema, fecha")
-    .eq("materia_id", materia.id)
-    .order("numero");
-
-  const { data: fechas } = await supabase
-    .from("materia_fechas")
-    .select("id, titulo, fecha")
-    .eq("materia_id", materia.id)
-    .order("fecha");
+  const { data: clases } = await getClases(slug, materia.id);
 
   const claseIds = (clases || []).map((c) => c.id);
   const { data: archivos } = claseIds.length
-    ? await supabase
-        .from("archivos")
-        .select("id, clase_id, tipo, nombre_display, storage_key, youtube_url, duration_seconds, orden, created_at")
-        .in("clase_id", claseIds)
-        .order("orden")
-        .order("created_at")
-    : { data: [] };
+    ? await getArchivos(slug, claseIds)
+    : { data: [] as ArchivoRow[] };
 
   const TIPOS_PRIVADOS = ["cuestionario", "material_privado", "ficha"];
   const porClase = new Map<string, ArchivoRow[]>();
@@ -73,10 +92,17 @@ export default async function MateriaPage({
     return { ...c, archivos: archivosDeClase };
   });
 
+  const fechas = (materia as unknown as { materia_fechas?: { id: string; titulo: string; fecha: string }[] }).materia_fechas || [];
+
   return (
     <MateriaClient
       slug={slug}
-      materia={{ ...materia, fechas: fechas || [] }}
+      materia={{
+        id: materia.id,
+        nombre: materia.nombre,
+        estado: materia.estado,
+        fechas,
+      }}
       clases={clasesWithFiles}
     />
   );
