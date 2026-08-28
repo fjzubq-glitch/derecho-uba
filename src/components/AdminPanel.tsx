@@ -914,7 +914,7 @@ export default function AdminPanel() {
             <div style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginBottom: "32px", letterSpacing: "0.02em" }}>
               {vistaFicha.materia_nombre || "Sin materia"} · Actualizada {new Date(vistaFicha.updated_at).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })}
             </div>
-            <div className="ficha-view" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(vistaFicha.contenido, { ADD_TAGS: ["iframe"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling"] }) }} />
+            <div className="ficha-view" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(vistaFicha.contenido, { ADD_TAGS: ["iframe"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "style"] }) }} />
             <div className="flex justify-end gap-3" style={{ marginTop: "32px", borderTop: "1px solid var(--color-line-soft)", paddingTop: "20px" }}>
               <button onClick={() => { const f = vistaFicha; setVistaFicha(null); abrirEditar(f); }} style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", padding: "10px 20px", cursor: "pointer", fontFamily: "var(--font-inter)" }}>
                 Editar

@@ -6,6 +6,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import { TextStyle } from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
+import { TableKit } from "@tiptap/extension-table";
 import { Loader2, Check, X, Bold, Italic, List, ListOrdered, Heading2, Heading3, Undo, Redo, Quote, Code, Minus, Highlight as HighlightIcon } from "@/components/icons";
 
 const btnStyle: React.CSSProperties = {
@@ -31,6 +32,7 @@ function ToolbarButton({ active, onClick, title, children }: {
       type="button"
       className={`tb-btn${active ? " is-active" : ""}`}
       onClick={onClick}
+      onMouseDown={(e) => e.preventDefault()}
       title={title}
       style={btnStyle}
     >
@@ -62,6 +64,7 @@ export default function FichaEditor({
       Highlight,
       TextStyle,
       Color,
+      TableKit,
     ],
     content: initialContenido,
     editorProps: {
@@ -128,10 +131,11 @@ export default function FichaEditor({
           { color: "#5B8DB8", label: "Azul" },
           { color: "#9B7ED8", label: "Violeta" },
         ].map((c) => (
-          <button
+           <button
             key={c.color}
             type="button"
             title={c.label}
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => editor.chain().focus().setColor(c.color).run()}
             style={{
               width: "18px",
@@ -151,6 +155,7 @@ export default function FichaEditor({
         <button
           type="button"
           title="Color normal"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().unsetColor().run()}
           style={{
             width: "18px",
@@ -213,6 +218,31 @@ export default function FichaEditor({
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
         >
           <Minus style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <span style={{ width: "1px", height: "20px", background: "var(--color-line-soft)", margin: "0 4px", alignSelf: "center" }} />
+        <ToolbarButton
+          title="Insertar tabla"
+          onClick={() => editor.chain().focus().insertTable({ rows: 4, cols: 4, withHeaderRow: true }).run()}
+        >
+          <span style={{ fontSize: "13px", fontWeight: 700 }}>⊞</span>
+        </ToolbarButton>
+        <ToolbarButton
+          title="Añadir fila"
+          onClick={() => editor.chain().focus().addRowAfter().run()}
+        >
+          <span style={{ fontSize: "11px" }}>F+</span>
+        </ToolbarButton>
+        <ToolbarButton
+          title="Añadir columna"
+          onClick={() => editor.chain().focus().addColumnAfter().run()}
+        >
+          <span style={{ fontSize: "11px" }}>C+</span>
+        </ToolbarButton>
+        <ToolbarButton
+          title="Eliminar tabla"
+          onClick={() => editor.chain().focus().deleteTable().run()}
+        >
+          <span style={{ fontSize: "11px" }}>✕⊞</span>
         </ToolbarButton>
         <span style={{ flex: 1 }} />
         <ToolbarButton title="Deshacer" onClick={() => editor.chain().focus().undo().run()}>
