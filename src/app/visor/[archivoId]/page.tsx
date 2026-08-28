@@ -26,9 +26,14 @@ export default async function VisorPage({
     .single();
 
   const iframeSandbox = "allow-scripts allow-same-origin allow-forms allow-popups allow-modals";
+  const isImage = (key: string | null) =>
+    !!key && /\.(jpe?g|png|gif|webp|svg|bmp|avif)$/i.test(key);
 
+  type Modo = "srcdoc" | "iframe" | "imagen" | "externo" | "error";
+  let modo: Modo = "error";
   let iframeSrc: string | null = null;
   let iframeSrcDoc: string | null = null;
+  let externalUrl: string | null = null;
   let errorMsg: string | null = null;
 
   if (archivo) {
@@ -45,25 +50,31 @@ export default async function VisorPage({
             errorMsg = `R2: ${r2Res.status}`;
           } else {
             iframeSrcDoc = await r2Res.text();
+            modo = "srcdoc";
           }
         } catch (e) {
           errorMsg = e instanceof Error ? e.message : "Error al leer el archivo";
         }
       } else if (archivo.contenido_texto) {
         iframeSrcDoc = archivo.contenido_texto;
+        modo = "srcdoc";
       } else {
         errorMsg = "Cuestionario sin contenido";
       }
     } else {
-      if (archivo.youtube_url) {
-        let url = archivo.youtube_url;
-        const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+      const youtubeUrl = archivo.youtube_url || archivo.cloudinary_url;
+      if (youtubeUrl) {
+        const ytMatch = youtubeUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
         if (ytMatch) {
-          url = `https://www.youtube.com/embed/${ytMatch[1]}`;
+          iframeSrc = `https://www.youtube.com/embed/${ytMatch[1]}`;
+          modo = "iframe";
+        } else if (/cloudinary\.com/.test(youtubeUrl)) {
+          iframeSrc = youtubeUrl;
+          modo = "iframe";
+        } else {
+          externalUrl = youtubeUrl;
+          modo = "externo";
         }
-        iframeSrc = url;
-      } else if (archivo.cloudinary_url) {
-        iframeSrc = archivo.cloudinary_url;
       } else if (archivo.storage_key && /\.(html?|htm)$/i.test(archivo.storage_key)) {
         try {
           const r2Res = await getObjectStream(archivo.storage_key);
@@ -71,14 +82,22 @@ export default async function VisorPage({
             errorMsg = `R2: ${r2Res.status}`;
           } else {
             iframeSrcDoc = await r2Res.text();
+            modo = "srcdoc";
           }
         } catch (e) {
           errorMsg = e instanceof Error ? e.message : "Error al leer el archivo";
         }
       } else if (archivo.contenido_texto) {
         iframeSrcDoc = archivo.contenido_texto;
+        modo = "srcdoc";
       } else if (archivo.storage_key) {
-        iframeSrc = `/api/stream/${archivoId}`;
+        if (isImage(archivo.storage_key)) {
+          iframeSrc = `/api/stream/${archivoId}`;
+          modo = "imagen";
+        } else {
+          iframeSrc = `/api/stream/${archivoId}`;
+          modo = "iframe";
+        }
       } else {
         errorMsg = "Archivo sin contenido";
       }
@@ -130,6 +149,64 @@ export default async function VisorPage({
             }}
           >
             {errorMsg}
+          </div>
+        ) : modo === "imagen" && iframeSrc ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              padding: "16px",
+              background: "#ffffff",
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={iframeSrc}
+              alt={archivo?.nombre_display || "Material privado"}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain",
+                display: "block",
+              }}
+            />
+          </div>
+        ) : modo === "externo" && externalUrl ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "16px",
+              height: "100%",
+              color: "var(--color-text-faint)",
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "14px",
+              background: "#ffffff",
+              padding: "24px",
+              textAlign: "center",
+            }}
+          >
+            <p>Este enlace no se puede mostrar dentro del visor.</p>
+            <button
+              onClick={() => window.open(externalUrl, "_blank")}
+              style={{
+                background: "var(--color-gold)",
+                color: "var(--color-ink)",
+                border: "none",
+                borderRadius: 0,
+                padding: "12px 24px",
+                fontSize: "14px",
+                fontWeight: 600,
+                fontFamily: "var(--font-inter)",
+                cursor: "pointer",
+              }}
+            >
+              Abrir enlace en una pestaña nueva
+            </button>
           </div>
         ) : iframeSrcDoc !== null ? (
           <iframe

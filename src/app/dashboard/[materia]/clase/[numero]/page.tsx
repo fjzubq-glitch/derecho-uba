@@ -324,10 +324,19 @@ if (isTranscription(tipo)) {
             trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
           }
         }
-      } else if (tipo === "cuestionario" || tipo === "material_privado") {
+      } else if (tipo === "cuestionario") {
         const back = `/dashboard/${materiaSlug}/clase/${numero}`;
         window.open(`/visor/${archivo.id}?back=${encodeURIComponent(back)}&nombre=${encodeURIComponent(archivo.nombre_display)}`, "_blank");
         trackActivity({ tipo: "admin_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+      } else if (tipo === "material_privado") {
+        if (archivo.youtube_url) {
+          window.open(archivo.youtube_url, "_blank");
+          trackActivity({ tipo: "admin_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+        } else {
+          const back = `/dashboard/${materiaSlug}/clase/${numero}`;
+          window.open(`/visor/${archivo.id}?back=${encodeURIComponent(back)}&nombre=${encodeURIComponent(archivo.nombre_display)}`, "_blank");
+          trackActivity({ tipo: "admin_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+        }
       } else if (tipo === "ficha") {
         if (archivo.youtube_url) {
           window.open(archivo.youtube_url, "_blank");
