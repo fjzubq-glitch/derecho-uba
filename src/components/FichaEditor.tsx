@@ -12,6 +12,8 @@ import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import { Details, DetailsSummary, DetailsContent } from "@tiptap/extension-details";
 import Image from "@tiptap/extension-image";
+import { SlashCommand } from "@/components/SlashCommand";
+import BlockHandle from "@/components/BlockHandle";
 import { Loader2, Check, X, Bold, Italic, List, ListOrdered, Heading2, Heading3, Undo, Redo, Quote, Code, Minus, Highlight as HighlightIcon } from "@/components/icons";
 
 function CalloutView({ node, updateAttributes }: NodeViewProps) {
@@ -267,6 +269,7 @@ export default function FichaEditor({
       Column,
       ColumnList,
       Image.configure({ inline: false, allowBase64: true }),
+      SlashCommand,
     ],
     content: initialContenido,
     editorProps: {
@@ -529,7 +532,8 @@ export default function FichaEditor({
         </ToolbarButton>
       </div>
 
-      <div style={{ border: "1px solid var(--color-line-soft)", background: "var(--color-ink)" }}>
+      <div style={{ position: "relative", border: "1px solid var(--color-line-soft)", background: "var(--color-ink)" }}>
+        <BlockHandle editor={editor} />
         <EditorContent editor={editor} />
       </div>
 
