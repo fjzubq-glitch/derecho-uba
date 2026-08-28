@@ -106,29 +106,33 @@ export default async function VisorPage({
     errorMsg = "Archivo no encontrado";
   }
 
+  const ocultarHeader = archivo?.tipo === "material_privado";
+
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "column",
         height: "100dvh",
-        background: "var(--color-ink)",
+        background: ocultarHeader ? "#ffffff" : "var(--color-ink)",
         overflow: "hidden",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-          padding: "8px 16px",
-          borderBottom: "1px solid var(--color-gold-dim)",
-          flexShrink: 0,
-          background: "var(--color-card)",
-        }}
-      >
-        <VolverBoton />
-      </div>
+      {!ocultarHeader && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            padding: "8px 16px",
+            borderBottom: "1px solid var(--color-gold-dim)",
+            flexShrink: 0,
+            background: "var(--color-card)",
+          }}
+        >
+          <VolverBoton />
+        </div>
+      )}
       <div
         style={{
           flex: 1,
