@@ -6,7 +6,9 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!isAdminRequest(request.headers.get("cookie"))) {
+  const cookieHeader = request.headers.get("cookie");
+  if (!isAdminRequest(cookieHeader)) {
+    console.error("[fichas PUT] Auth falló. Cookie presente:", !!cookieHeader);
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
@@ -24,6 +26,8 @@ export async function PUT(
     return NextResponse.json({ error: "El título es obligatorio" }, { status: 400 });
   }
 
+  console.error("[fichas PUT] Actualizando id:", id, "updates:", JSON.stringify(updates).slice(0, 200));
+
   const { data, error } = await getSupabaseAdmin()
     .from("fichas")
     .update(updates)
@@ -32,6 +36,7 @@ export async function PUT(
     .single();
 
   if (error) {
+    console.error("[fichas PUT] Error de Supabase:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
   return NextResponse.json(data);

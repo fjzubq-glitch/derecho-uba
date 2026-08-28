@@ -165,6 +165,7 @@ export default function AdminPanel() {
       const res = await fetch(editorAbierto.id ? `/api/fichas/${editorAbierto.id}` : "/api/fichas", {
         method: editorAbierto.id ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ titulo, contenido, materia_id: editorAbierto.materiaId || null, clase_id: editorAbierto.claseId || null }),
       });
       if (!res.ok) {
@@ -880,6 +881,11 @@ export default function AdminPanel() {
                     <option key={c.id} value={c.id}>Clase {c.numero.toString().padStart(2, "0")} — {c.titulo || c.tema || `Clase ${c.numero}`}</option>
                   ))}
                 </select>
+              </div>
+            )}
+            {errorMsg && (
+              <div style={{ padding: "10px 14px", background: "rgba(224,85,85,0.08)", border: "1px solid rgba(224,85,85,0.3)", marginBottom: "16px" }}>
+                <p style={{ fontSize: "12px", color: "#E05555" }}>{errorMsg}</p>
               </div>
             )}
             <FichaEditor
