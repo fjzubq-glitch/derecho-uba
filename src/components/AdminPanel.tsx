@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import DOMPurify from "dompurify";
 import { ArrowLeft, Check, FileText, Loader2, Lock, Plus, Search, StickyNote, Trash2, Edit3, X, Calendar, Shield, ArrowRight } from "@/components/icons";
 import FichaEditor from "@/components/FichaEditor";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
@@ -159,21 +158,26 @@ export default function AdminPanel() {
     setEditorAbierto({ id: f.id, titulo: f.titulo, contenido: f.contenido, materiaId: f.materia_id ?? "", claseId: f.clase_id ?? "" });
   };
 
+  const saveFichaAPI = async (id: string | null, materiaId: string, claseId: string, titulo: string, contenido: string) => {
+    const res = await fetch(id ? `/api/fichas/${id}` : "/api/fichas", {
+      method: id ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ titulo, contenido, materia_id: materiaId || null, clase_id: claseId || null }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}) as Record<string, unknown>);
+      throw new Error((err.error as string) || "Error al guardar");
+    }
+    return true;
+  };
+
   const guardarFicha = async (titulo: string, contenido: string) => {
     if (!editorAbierto) return;
     setGuardando(true);
     setErrorMsg(null);
     try {
-      const res = await fetch(editorAbierto.id ? `/api/fichas/${editorAbierto.id}` : "/api/fichas", {
-        method: editorAbierto.id ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ titulo, contenido, materia_id: editorAbierto.materiaId || null, clase_id: editorAbierto.claseId || null }),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Error al guardar");
-      }
+      await saveFichaAPI(editorAbierto.id, editorAbierto.materiaId, editorAbierto.claseId, titulo, contenido);
       setEditorAbierto(null);
       await cargar();
     } catch (e) {
@@ -181,6 +185,12 @@ export default function AdminPanel() {
     } finally {
       setGuardando(false);
     }
+  };
+
+  const guardarFichaViewer = async (titulo: string, contenido: string) => {
+    if (!vistaFicha) return;
+    await saveFichaAPI(vistaFicha.id, vistaFicha.materia_id ?? "", vistaFicha.clase_id ?? "", titulo, contenido);
+    setVistaFicha((prev) => (prev ? { ...prev, titulo, contenido } : prev));
   };
 
   const borrarFicha = (id: string) => {
@@ -906,23 +916,22 @@ export default function AdminPanel() {
         <div style={MODAL_STYLE} onClick={(e) => { if (e.target === e.currentTarget) setVistaFicha(null); }}>
           <div style={{ ...MODAL_BOX, maxWidth: "920px", padding: "44px 80px 40px" }}>
             <div className="flex items-center justify-between mb-2">
-              <h3 style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, fontSize: "28px", lineHeight: 1.2, color: "var(--color-text)" }}>{vistaFicha.titulo}</h3>
+              <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>Editando ficha</span>
               <button onClick={() => setVistaFicha(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)", flexShrink: 0 }}>
                 <X style={{ width: "20px", height: "20px" }} />
               </button>
             </div>
-            <div style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginBottom: "32px", letterSpacing: "0.02em" }}>
+            <div style={{ fontSize: "12px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginBottom: "24px", letterSpacing: "0.02em" }}>
               {vistaFicha.materia_nombre || "Sin materia"} · Actualizada {new Date(vistaFicha.updated_at).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })}
             </div>
-            <div className="ficha-view" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(vistaFicha.contenido, { ADD_TAGS: ["iframe", "input", "label", "details", "summary", "img"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "style", "type", "checked", "open", "data-checked", "data-type", "src", "alt", "title"] }) }} />
-            <div className="flex justify-end gap-3" style={{ marginTop: "32px", borderTop: "1px solid var(--color-line-soft)", paddingTop: "20px" }}>
-              <button onClick={() => { const f = vistaFicha; setVistaFicha(null); abrirEditar(f); }} style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", padding: "10px 20px", cursor: "pointer", fontFamily: "var(--font-inter)" }}>
-                Editar
-              </button>
-              <button onClick={() => setVistaFicha(null)} style={{ background: "var(--color-gold)", color: "var(--color-ink)", border: "none", padding: "10px 20px", cursor: "pointer", fontFamily: "var(--font-inter)" }}>
-                Cerrar
-              </button>
-            </div>
+            <FichaEditor
+              autoSave
+              initialTitulo={vistaFicha.titulo}
+              initialContenido={vistaFicha.contenido}
+              onSave={guardarFichaViewer}
+              onCancel={() => setVistaFicha(null)}
+              saving={false}
+            />
           </div>
         </div>
       )}

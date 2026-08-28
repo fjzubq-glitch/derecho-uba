@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Node, mergeAttributes } from "@tiptap/core";
 import { useEditor, EditorContent, NodeViewWrapper, NodeViewContent, ReactNodeViewRenderer, NodeViewProps } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -242,14 +242,23 @@ export default function FichaEditor({
   onSave,
   onCancel,
   saving,
+  autoSave,
 }: {
   initialTitulo: string;
   initialContenido: string;
   onSave: (t: string, c: string) => Promise<void>;
   onCancel: () => void;
   saving: boolean;
+  autoSave?: boolean;
 }) {
   const [titulo, setTitulo] = useState(initialTitulo);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+
+  const onSaveRef = useRef(onSave);
+  useEffect(() => { onSaveRef.current = onSave; }, [onSave]);
+  const tituloRef = useRef(titulo);
+  useEffect(() => { tituloRef.current = titulo; }, [titulo]);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const editor = useEditor({
     extensions: [
@@ -277,8 +286,52 @@ export default function FichaEditor({
         class: "tiptap",
         style: "min-height:320px",
       },
+      handleKeyDown: (_view, event) => {
+        const mod = event.metaKey || event.ctrlKey;
+        if (mod && event.key.toLowerCase() === "s") {
+          event.preventDefault();
+          onSaveRef.current(tituloRef.current, editor.getHTML());
+          return true;
+        }
+        if (mod && event.shiftKey && event.key.toLowerCase() === "h") {
+          event.preventDefault();
+          editor.chain().focus().toggleHighlight().run();
+          return true;
+        }
+        if (mod && event.shiftKey && /^Digit[1-6]$/.test(event.code)) {
+          const colors = ["#E05555", "#D4769A", "#B99A62", "#6B9E78", "#5B8DB8", "#9B7ED8"];
+          event.preventDefault();
+          editor.chain().focus().setColor(colors[parseInt(event.code.slice(5), 10) - 1]).run();
+          return true;
+        }
+        return false;
+      },
     },
   });
+
+  const scheduleSave = useCallback(() => {
+    if (!autoSave || !editor) return;
+    setSaveStatus("saving");
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(async () => {
+      try {
+        await onSaveRef.current(tituloRef.current, editor.getHTML());
+        setSaveStatus("saved");
+      } catch {
+        setSaveStatus("error");
+      }
+    }, 1500);
+  }, [autoSave, editor]);
+
+  useEffect(() => {
+    if (!autoSave || !editor) return;
+    const onUpdate = () => scheduleSave();
+    editor.on("update", onUpdate);
+    return () => {
+      editor.off("update", onUpdate);
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
+  }, [autoSave, editor, scheduleSave]);
 
   if (!editor) {
     return null;
@@ -311,7 +364,7 @@ export default function FichaEditor({
       <input
         type="text"
         value={titulo}
-        onChange={(e) => setTitulo(e.target.value)}
+        onChange={(e) => { setTitulo(e.target.value); scheduleSave(); }}
         placeholder="Título de la ficha"
         aria-label="Título de la ficha"
         style={{
@@ -537,19 +590,28 @@ export default function FichaEditor({
         <EditorContent editor={editor} />
       </div>
 
-      <div className="flex justify-end gap-3" style={{ paddingTop: "12px" }}>
-        <button onClick={onCancel} style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", padding: "10px 20px", cursor: "pointer", fontFamily: "var(--font-inter)" }}>
-          <X style={{ width: "14px", height: "14px", display: "inline-block", verticalAlign: "middle", marginRight: "6px" }} />
-          Cancelar
-        </button>
-        <button
-          onClick={() => onSave(titulo, editor.getHTML())}
-          disabled={saving}
-          style={{ background: "var(--color-gold)", color: "var(--color-ink)", border: "none", padding: "10px 20px", cursor: saving ? "not-allowed" : "pointer", fontFamily: "var(--font-inter)", display: "flex", alignItems: "center", gap: "8px", opacity: saving ? 0.6 : 1 }}
-        >
-          {saving ? <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} /> : <Check style={{ width: "14px", height: "14px" }} />}
-          Guardar
-        </button>
+      <div className="flex items-center justify-between gap-3" style={{ paddingTop: "12px" }}>
+        <div style={{ fontSize: "12px", fontFamily: "var(--font-ibm-plex-mono)", color: "var(--color-text-faint)", minHeight: "16px" }}>
+          {autoSave && saveStatus === "saving" && "Guardando…"}
+          {autoSave && saveStatus === "saved" && "Guardado ✓"}
+          {autoSave && saveStatus === "error" && "Error al guardar"}
+        </div>
+        <div className="flex justify-end gap-3">
+          <button onClick={onCancel} style={{ background: "none", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", padding: "10px 20px", cursor: "pointer", fontFamily: "var(--font-inter)" }}>
+            <X style={{ width: "14px", height: "14px", display: "inline-block", verticalAlign: "middle", marginRight: "6px" }} />
+            {autoSave ? "Cerrar" : "Cancelar"}
+          </button>
+          {!autoSave && (
+            <button
+              onClick={() => onSave(titulo, editor.getHTML())}
+              disabled={saving}
+              style={{ background: "var(--color-gold)", color: "var(--color-ink)", border: "none", padding: "10px 20px", cursor: saving ? "not-allowed" : "pointer", fontFamily: "var(--font-inter)", display: "flex", alignItems: "center", gap: "8px", opacity: saving ? 0.6 : 1 }}
+            >
+              {saving ? <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} /> : <Check style={{ width: "14px", height: "14px" }} />}
+              Guardar
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
