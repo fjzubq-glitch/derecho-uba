@@ -150,10 +150,12 @@ export default function AdminPanel() {
   }, [cargar]);
 
   const abrirNueva = () => {
+    setErrorMsg(null);
     setEditorAbierto({ id: null, titulo: "", contenido: "", materiaId: cuadernoActualId ?? materias[0]?.id ?? "", claseId: "" });
   };
 
   const abrirEditar = (f: Ficha) => {
+    setErrorMsg(null);
     setEditorAbierto({ id: f.id, titulo: f.titulo, contenido: f.contenido, materiaId: f.materia_id ?? "", claseId: f.clase_id ?? "" });
   };
 
