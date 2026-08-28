@@ -1,4 +1,6 @@
+import { cookies } from "next/headers";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { isAdminRequest } from "@/lib/auth";
 import MateriaClient from "./MateriaClient";
 
 export const dynamic = "force-dynamic";
@@ -22,6 +24,8 @@ export default async function MateriaPage({
 }) {
   const { materia: slug } = await params;
   const supabase = getSupabaseAdmin();
+
+  const esAdmin = isAdminRequest((await cookies()).toString());
 
   const { data: materia } = await supabase
     .from("materias")
@@ -55,8 +59,10 @@ export default async function MateriaPage({
         .order("created_at")
     : { data: [] };
 
+  const TIPOS_PRIVADOS = ["cuestionario", "material_privado", "ficha"];
   const porClase = new Map<string, ArchivoRow[]>();
   for (const a of archivos || []) {
+    if (!esAdmin && TIPOS_PRIVADOS.includes(a.tipo)) continue;
     const list = porClase.get(a.clase_id) || [];
     list.push(a);
     porClase.set(a.clase_id, list);

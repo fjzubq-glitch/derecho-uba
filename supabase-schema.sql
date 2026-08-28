@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS clases (
 CREATE TABLE IF NOT EXISTS archivos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   clase_id UUID REFERENCES clases(id) ON DELETE CASCADE,
-  tipo TEXT CHECK (tipo IN ('audio_clase', 'clase_youtube', 'podcast', 'transcripcion', 'archivo', 'enlace', 'youtube', 'cuestionario', 'material_privado')),
+  tipo TEXT CHECK (tipo IN ('audio_clase', 'clase_youtube', 'podcast', 'transcripcion', 'archivo', 'enlace', 'youtube', 'cuestionario', 'material_privado', 'ficha')),
   nombre_display TEXT NOT NULL,
   storage_key TEXT,
   youtube_url TEXT,

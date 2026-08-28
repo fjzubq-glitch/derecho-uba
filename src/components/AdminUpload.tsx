@@ -6,7 +6,7 @@ import { formatFechaLocal } from "@/lib/utils";
 import { Upload, FileText, X, Check, Loader2, Headphones, Link2, Play, Lock } from "@/components/icons";
 
 interface UploadItem {
-  tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado";
+  tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha";
   nombre: string;
   archivo?: File;
   driveLink?: string;
@@ -109,6 +109,9 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const [youtubeNombre, setYoutubeNombre] = useState("");
   const [useYoutube, setUseYoutube] = useState(false);
 
+  const [fichaNombre, setFichaNombre] = useState("");
+  const [fichaUrl, setFichaUrl] = useState("");
+
   const [claseYoutubeItems, setClaseYoutubeItems] = useState<Array<{ nombre: string; url: string }>>([{ nombre: "", url: "" }]);
 
   const [cloudinaryUrl, setCloudinaryUrl] = useState("");
@@ -127,8 +130,9 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const hasEnlace = enlaceUrl.trim() !== "";
   const hasClaseYoutube = claseYoutubeItems.some((i) => i.url.trim() !== "");
   const hasMaterialPrivado = materialPrivadoFile !== null || (materialPrivadoUseLink && materialPrivadoLink.trim() !== "");
+  const hasFicha = fichaUrl.trim() !== "";
 
-  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasEnlace, hasClaseYoutube, hasCuestionario, hasMaterialPrivado].filter(Boolean).length;
+  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasEnlace, hasClaseYoutube, hasCuestionario, hasMaterialPrivado, hasFicha].filter(Boolean).length;
   useEffect(() => {
     if (materias.length > 0 && !materiaId) {
       setMateriaId(materias[0].id);
@@ -282,6 +286,10 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
       }
     }
 
+    if (hasFicha) {
+      items.push({ tipo: "ficha", nombre: fichaNombre || `Ficha`, driveLink: fichaUrl.trim() });
+    }
+
     claseYoutubeItems.forEach((item, idx) => {
       if (item.url.trim()) {
         items.push({ tipo: "clase_youtube", nombre: item.nombre.trim() || `Clase Virtual ${claseYoutubeItems.filter((i) => i.url.trim()).length > 1 ? idx + 1 : ""}`.trim(), driveLink: item.url.trim() });
@@ -335,6 +343,8 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     setMaterialPrivadoFile(null);
     setMaterialPrivadoLink("");
     setMaterialPrivadoUseLink(false);
+    setFichaNombre("");
+    setFichaUrl("");
     setClaseYoutubeItems([{ nombre: "", url: "" }]);
   };
 
@@ -1125,6 +1135,36 @@ Clase Virtual
           </p>
         </div>
 
+        {/* Ficha (enlace a Notion, solo admin) */}
+        <div style={{ padding: "24px", border: "1px dashed var(--color-gold-dim)", borderRadius: 0 }}>
+          <h3 style={sectionHeaderStyle}>
+            <Lock style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+            Ficha (enlace de Notion)
+          </h3>
+
+          <div className="space-y-3">
+            <input
+              type="text"
+              value={fichaNombre}
+              onChange={(e) => setFichaNombre(e.target.value)}
+              placeholder="Nombre de la ficha (ej: Ficha de cátedra)"
+              aria-label="Nombre de la ficha"
+              style={inputStyle}
+            />
+            <input
+              type="url"
+              value={fichaUrl}
+              onChange={(e) => setFichaUrl(e.target.value)}
+              placeholder="https://www.notion.so/..."
+              aria-label="URL de la ficha de Notion"
+              style={inputStyle}
+            />
+          </div>
+          <p style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginTop: "8px" }}>
+            Solo visible para el administrador. Aparece como card en el dashboard de la materia y abre el enlace de Notion.
+          </p>
+        </div>
+
         </div>
       </div>
 
@@ -1143,16 +1183,17 @@ Clase Virtual
           borderRadius: 0,
         }}
       >
-        <div className="flex flex-wrap items-center gap-4">
-          {[
-            { label: "Audio", ready: hasAudio },
-            { label: "Clase Virtual", ready: hasClaseYoutube },
-            { label: "Transcripción", ready: hasTranscripcion },
-            { label: "Archivo adjunto", ready: hasArchivo },
-            { label: "Enlace", ready: hasEnlace },
-            { label: "Cuestionario", ready: hasCuestionario },
-            { label: "Material privado", ready: hasMaterialPrivado },
-          ].map((item) => (
+          <div className="flex flex-wrap items-center gap-4">
+            {[
+              { label: "Audio", ready: hasAudio },
+              { label: "Clase Virtual", ready: hasClaseYoutube },
+              { label: "Transcripción", ready: hasTranscripcion },
+              { label: "Archivo adjunto", ready: hasArchivo },
+              { label: "Enlace", ready: hasEnlace },
+              { label: "Cuestionario", ready: hasCuestionario },
+              { label: "Material privado", ready: hasMaterialPrivado },
+              { label: "Ficha", ready: hasFicha },
+            ].map((item) => (
             <div key={item.label} className="flex items-center gap-2">
               <div
                 className="flex items-center justify-center"
@@ -1189,7 +1230,7 @@ Clase Virtual
             color: loadedCount === 7 ? "var(--color-gold)" : "var(--color-text-muted)",
           }}
         >
-          {loadedCount}/7 cargados
+          {loadedCount}/8 cargados
         </span>
       </div>
 

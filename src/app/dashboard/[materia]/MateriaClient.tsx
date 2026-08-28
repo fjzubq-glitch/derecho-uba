@@ -6,9 +6,9 @@ import PortalHeader from "@/components/PortalHeader";
 import WelcomeGate from "@/components/WelcomeGate";
 import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
-import { formatFechaLocal } from "@/lib/utils";
+import { formatFechaLocal, isAdminSession } from "@/lib/utils";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
-import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Play } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Lock, Play } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -34,6 +34,8 @@ interface MateriaData {
   estado?: string;
   fechas?: Array<{ id: string; titulo: string; fecha: string }>;
 }
+
+const TIPOS_PRIVADOS = ["cuestionario", "material_privado", "ficha"];
 
 export default function MateriaClient({
   slug,
@@ -64,6 +66,28 @@ export default function MateriaClient({
       c.archivos.filter((a) => a.tipo === "enlace").map((a) => ({ ...a, clase: c }))
     ),
   [clases]);
+
+  const esAdmin = isAdminSession();
+  const privados = useMemo(() => {
+    if (!esAdmin) return [];
+    return clases.flatMap((c) =>
+      c.archivos
+        .filter((a) => TIPOS_PRIVADOS.includes(a.tipo))
+        .map((a) => ({ ...a, clase: c }))
+    );
+  }, [clases, esAdmin]);
+
+  const privLabel = (tipo: string) =>
+    tipo === "cuestionario" ? "Cuestionario" : tipo === "material_privado" ? "Material privado" : "Ficha";
+
+  const abrirPrivado = (p: { id: string; tipo: string; youtube_url: string | null }) => {
+    if (p.tipo === "ficha") {
+      if (p.youtube_url) window.open(p.youtube_url, "_blank");
+    } else {
+      window.open(`/visor/${p.id}`, "_blank");
+    }
+    trackActivity({ tipo: "admin_open", pagina: "materia", materia_slug: slug, archivo_id: p.id });
+  };
 
   const claseHref = (numero: number) => `/dashboard/${slug}/clase/${numero}`;
 
@@ -498,6 +522,77 @@ export default function MateriaClient({
                       </p>
                       <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-gold)" }}>
                         Clase {e.clase.numero.toString().padStart(2, "0")}
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Material del administrador (solo visible para admin) */}
+          {privados.length > 0 && (
+            <section style={{ marginTop: "56px" }}>
+              <div className="flex items-center gap-3 mb-6">
+                <Lock style={{ width: "16px", height: "16px", color: "var(--color-admin)" }} />
+                <h2 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 400, fontSize: "24px" }}>
+                  Material del administrador
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {privados.map((p, i) => (
+                  <article
+                    key={p.id}
+                    onClick={() => abrirPrivado(p)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); abrirPrivado(p); } }}
+                    className="card-reveal card-hover flex items-center gap-4 cursor-pointer focus-visible"
+                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease", border: "1px solid var(--color-line-soft)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-admin-dim)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+                  >
+                    <div
+                      className="flex items-center justify-center flex-shrink-0"
+                      style={{ width: "36px", height: "36px", borderRadius: "50%", border: `1px solid var(--color-admin-dim)` }}
+                    >
+                      {p.tipo === "ficha" ? (
+                        <Link2 style={{ width: "14px", height: "14px", color: "var(--color-admin)" }} />
+                      ) : (
+                        <FileText style={{ width: "14px", height: "14px", color: "var(--color-admin)" }} />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "9px",
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                            color: "var(--color-admin)",
+                            border: "1px solid var(--color-admin-dim)",
+                            padding: "2px 7px",
+                          }}
+                        >
+                          {privLabel(p.tipo)}
+                        </span>
+                      </div>
+                      <p
+                        style={{
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontWeight: 500,
+                          fontSize: "15px",
+                          color: "var(--color-text)",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {p.nombre_display}
+                      </p>
+                      <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)" }}>
+                        Clase {p.clase.numero.toString().padStart(2, "0")}
                       </p>
                     </div>
                   </article>

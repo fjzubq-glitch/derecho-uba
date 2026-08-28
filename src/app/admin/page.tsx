@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 const AdminUpload = React.lazy(() => import("@/components/AdminUpload"));
 const AdminManage = React.lazy(() => import("@/components/AdminManage"));
 const AdminMaterias = React.lazy(() => import("@/components/AdminMaterias"));
-const AdminPanel = React.lazy(() => import("@/components/AdminPanel"));
+
 import { ArrowLeft, BarChart3, Headphones, FileText, Shield, ChevronDown, Loader2 } from "@/components/icons";
 import { setAdminSession } from "@/lib/utils";
 
@@ -115,7 +115,7 @@ export default function AdminPage() {
     totalReproducciones: 0,
   });
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"upload" | "manage" | "analytics" | "panel">("panel");
+  const [activeTab, setActiveTab] = useState<"upload" | "manage" | "analytics">("upload");
   const [claseEditar, setClaseEditar] = useState<{ claseId: string; materiaId: string } | null>(null);
   const [visitantesUnicos, setVisitantesUnicos] = useState(0);
   const [totalVisitas, setTotalVisitas] = useState(0);
@@ -298,7 +298,7 @@ export default function AdminPage() {
     claseTitulo: string,
     claseFecha: string,
     items: Array<{
-      tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado";
+      tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha";
       nombre: string;
       archivo?: File;
       driveLink?: string;
@@ -416,7 +416,6 @@ export default function AdminPage() {
   }
 
   const TAB_LABELS: Record<string, string> = {
-    panel: "Mi Panel",
     upload: "Subir contenido",
     manage: "Gestionar contenido",
     analytics: "Analytics",
@@ -692,7 +691,7 @@ export default function AdminPage() {
               borderRadius: 0,
             }}
           >
-            {(["panel", "upload", "manage", "analytics"] as const).map((tab) => (
+            {(["upload", "manage", "analytics"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -717,7 +716,7 @@ export default function AdminPage() {
                   if (activeTab !== tab) e.currentTarget.style.color = "var(--color-text-muted)";
                 }}
               >
-                <span className="sm:hidden">{tab === "panel" ? "Mi Panel" : tab === "upload" ? "Subir" : tab === "manage" ? "Gestionar" : "Analytics"}</span>
+                <span className="sm:hidden">{tab === "upload" ? "Subir" : tab === "manage" ? "Gestionar" : "Analytics"}</span>
                 <span className="hidden sm:inline">{TAB_LABELS[tab]}</span>
               </button>
             ))}
@@ -729,7 +728,7 @@ export default function AdminPage() {
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "48px 48px 80px" }}>
           {/* Stats — solo en tabs de contenido */}
-          {activeTab !== "analytics" && activeTab !== "panel" && (
+          {activeTab !== "analytics" && (
           <div
             className="grid grid-cols-1 md:grid-cols-3 overflow-hidden mb-8"
             style={{
@@ -788,13 +787,6 @@ export default function AdminPage() {
               </div>
             ))}
           </div>
-          )}
-
-          {/* Mi Panel Tab */}
-          {activeTab === "panel" && (
-            <Suspense fallback={<div className="flex items-center gap-2" style={{ padding: "24px 0", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px" }}><Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> Cargando…</div>}>
-              <AdminPanel />
-            </Suspense>
           )}
 
           {/* Upload Tab */}
