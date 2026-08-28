@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { Node, mergeAttributes } from "@tiptap/core";
+import { useEditor, EditorContent, NodeViewWrapper, NodeViewContent, ReactNodeViewRenderer, NodeViewProps } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import { TextStyle } from "@tiptap/extension-text-style";
@@ -11,6 +12,53 @@ import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import { Details, DetailsSummary, DetailsContent } from "@tiptap/extension-details";
 import { Loader2, Check, X, Bold, Italic, List, ListOrdered, Heading2, Heading3, Undo, Redo, Quote, Code, Minus, Highlight as HighlightIcon } from "@/components/icons";
+
+function CalloutView({ node, updateAttributes }: NodeViewProps) {
+  const icon = node.attrs.icon || "💡";
+  return (
+    <NodeViewWrapper className="callout-node" data-type="callout" data-icon={icon}>
+      <button
+        type="button"
+        className="callout-icon"
+        contentEditable={false}
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={() => {
+          const next = window.prompt("Emoji para el callout (ej. 💡 ⚠️ 📌 ✅ 📝):", icon);
+          if (next && next.trim()) updateAttributes({ icon: next.trim() });
+        }}
+        title="Cambiar icono"
+      >
+        {icon}
+      </button>
+      <NodeViewContent className="callout-content" />
+    </NodeViewWrapper>
+  );
+}
+
+const Callout = Node.create({
+  name: "callout",
+  group: "block",
+  content: "block+",
+  defining: true,
+  addAttributes() {
+    return {
+      icon: {
+        default: "💡",
+        parseHTML: (el) => (el as HTMLElement).getAttribute("data-icon") || "💡",
+        renderHTML: (attrs) => ({ "data-icon": attrs.icon || "💡" }),
+      },
+    };
+  },
+  parseHTML() {
+    return [{ tag: 'div[data-type="callout"]' }];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ["div", mergeAttributes(HTMLAttributes, { "data-type": "callout" }), 0];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(CalloutView);
+  },
+});
 
 function TodoIcon() {
   return (
@@ -25,6 +73,15 @@ function ToggleIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M9 18l6-6-6-6" />
+    </svg>
+  );
+}
+
+function CalloutIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 8h.01M11 12h1v4h1" />
     </svg>
   );
 }
@@ -90,6 +147,7 @@ export default function FichaEditor({
       Details,
       DetailsSummary,
       DetailsContent,
+      Callout,
     ],
     content: initialContenido,
     editorProps: {
@@ -273,6 +331,13 @@ export default function FichaEditor({
           onClick={insertToggle}
         >
           <ToggleIcon />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Callout (bloque destacado)"
+          active={editor.isActive("callout")}
+          onClick={() => editor.chain().focus().insertContent({ type: "callout", attrs: { icon: "💡" }, content: [{ type: "paragraph" }] }).run()}
+        >
+          <CalloutIcon />
         </ToolbarButton>
         <ToolbarButton
           title="Línea separadora"

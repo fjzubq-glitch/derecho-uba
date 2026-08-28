@@ -526,6 +526,35 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .tiptap details[open] summary {
   margin-bottom: 8px;
 }
+.tiptap .callout-node {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border: 1px solid var(--color-line-soft);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: rgba(185, 154, 98, 0.08);
+  margin: 1.2em 0;
+}
+.tiptap .callout-icon {
+  flex-shrink: 0;
+  font-size: 18px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1.5;
+}
+.tiptap .callout-content {
+  flex: 1;
+  min-width: 0;
+}
+.tiptap .callout-content > *:first-child {
+  margin-top: 0;
+}
+.tiptap .callout-content > *:last-child {
+  margin-bottom: 0;
+}
 .ficha-toolbar .tb-btn {
   background: none;
   border: 1px solid transparent;
@@ -707,4 +736,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 .ficha-view details[open] summary {
   margin-bottom: 8px;
+}
+.ficha-view [data-type="callout"] {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border: 1px solid var(--color-line-soft);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: rgba(185, 154, 98, 0.08);
+  margin: 1.2em 0;
+}
+.ficha-view [data-type="callout"]::before {
+  content: attr(data-icon);
+  font-size: 18px;
+  flex-shrink: 0;
+  line-height: 1.5;
+}
+.ficha-view [data-type="callout"] > *:first-child {
+  margin-top: 0;
+}
+.ficha-view [data-type="callout"] > *:last-child {
+  margin-bottom: 0;
 }
