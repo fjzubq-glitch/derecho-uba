@@ -700,6 +700,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-collapse: collapse;
   width: 100%;
   margin: 1.5em 0;
+  table-layout: fixed;
+  overflow: hidden;
 }
 .ficha-view table td,
 .ficha-view table th {
@@ -759,6 +761,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 .ficha-view details[open] summary {
   margin-bottom: 8px;
+}
+.ficha-view details > div[data-type="detailsContent"] > *:first-child {
+  margin-top: 0;
+}
+.ficha-view details > div[data-type="detailsContent"] > *:last-child {
+  margin-bottom: 0;
 }
 .ficha-view [data-type="callout"] {
   display: flex;
