@@ -6,9 +6,9 @@ import PortalHeader from "@/components/PortalHeader";
 import WelcomeGate from "@/components/WelcomeGate";
 import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
-import { formatFechaLocal } from "@/lib/utils";
+import { formatFechaLocal, isAdminSession } from "@/lib/utils";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
-import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Play } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Lock, Play } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -64,6 +64,20 @@ export default function MateriaClient({
       c.archivos.filter((a) => a.tipo === "enlace").map((a) => ({ ...a, clase: c }))
     ),
   [clases]);
+
+  const esAdmin = isAdminSession();
+  const TIPOS_PRIVADOS = ["cuestionario", "material_privado", "ficha"];
+  const privLabel = (tipo: string) =>
+    tipo === "cuestionario" ? "Cuestionario" : tipo === "material_privado" ? "Material privado" : "Ficha";
+
+  const abrirPrivado = (p: { id: string; tipo: string; youtube_url: string | null }) => {
+    if (p.tipo === "ficha") {
+      if (p.youtube_url) window.open(p.youtube_url, "_blank");
+    } else {
+      window.open(`/visor/${p.id}`, "_blank");
+    }
+    trackActivity({ tipo: "admin_open", pagina: "materia", materia_slug: slug, archivo_id: p.id });
+  };
 
   const claseHref = (numero: number) => `/dashboard/${slug}/clase/${numero}`;
 
@@ -446,6 +460,68 @@ export default function MateriaClient({
                     </div>
                     <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} />
                   </div>
+                  {esAdmin && clase.archivos.some((a) => TIPOS_PRIVADOS.includes(a.tipo)) && (
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      style={{ marginTop: "16px", paddingTop: "14px", borderTop: "1px solid var(--color-line-soft)" }}
+                    >
+                      <div className="flex items-center gap-2 mb-3">
+                        <Lock style={{ width: "13px", height: "13px", color: "var(--color-admin)" }} />
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "9px",
+                            letterSpacing: "0.14em",
+                            textTransform: "uppercase",
+                            color: "var(--color-admin)",
+                          }}
+                        >
+                          Material del administrador
+                        </span>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        {clase.archivos
+                          .filter((a) => TIPOS_PRIVADOS.includes(a.tipo))
+                          .map((a) => (
+                            <button
+                              key={a.id}
+                              onClick={() => abrirPrivado(a)}
+                              className="flex items-center gap-2 text-left"
+                              style={{
+                                background: "none",
+                                border: "none",
+                                cursor: "pointer",
+                                padding: 0,
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "12px",
+                                color: "var(--color-text)",
+                              }}
+                            >
+                              {a.tipo === "ficha" ? (
+                                <Link2 style={{ width: "13px", height: "13px", color: "var(--color-admin)", flexShrink: 0 }} />
+                              ) : (
+                                <FileText style={{ width: "13px", height: "13px", color: "var(--color-admin)", flexShrink: 0 }} />
+                              )}
+                              <span
+                                style={{
+                                  border: "1px solid var(--color-admin-dim)",
+                                  padding: "1px 6px",
+                                  fontSize: "9px",
+                                  letterSpacing: "0.1em",
+                                  textTransform: "uppercase",
+                                  color: "var(--color-admin)",
+                                }}
+                              >
+                                {privLabel(a.tipo)}
+                              </span>
+                              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                {a.nombre_display}
+                              </span>
+                            </button>
+                          ))}
+                      </div>
+                    </div>
+                  )}
                 </article>
               ))}
             </div>
