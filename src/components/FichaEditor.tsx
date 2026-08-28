@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Node, mergeAttributes } from "@tiptap/core";
 import { useEditor, EditorContent, NodeViewWrapper, NodeViewContent, ReactNodeViewRenderer, NodeViewProps } from "@tiptap/react";
+import { BubbleMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import { TextStyle } from "@tiptap/extension-text-style";
@@ -383,6 +384,7 @@ export default function FichaEditor({
     <div className="space-y-4">
       <input
         type="text"
+        className="ficha-title"
         value={titulo}
         onChange={(e) => { setTitulo(e.target.value); scheduleSave(); }}
         placeholder="Título de la ficha"
@@ -598,9 +600,59 @@ export default function FichaEditor({
         </ToolbarButton>
       </div>
 
-      <div style={{ position: "relative", border: "1px solid var(--color-line-soft)", background: "var(--color-ink)" }}>
+      <div className="ficha-editor-body" style={{ position: "relative", border: "1px solid var(--color-line-soft)", background: "var(--color-ink)" }}>
         <BlockHandle editor={editor} />
         <EditorContent editor={editor} />
+        <BubbleMenu editor={editor} options={{ placement: "top", offset: 8 }} updateDelay={80}>
+          <div className="bubble-menu">
+            <button
+              type="button"
+              title="Negrita"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              className="bm-btn"
+            >
+              <Bold style={{ width: "15px", height: "15px" }} />
+            </button>
+            <button
+              type="button"
+              title="Cursiva"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+              className="bm-btn"
+            >
+              <Italic style={{ width: "15px", height: "15px" }} />
+            </button>
+            <button
+              type="button"
+              title="Resaltar"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => editor.chain().focus().toggleHighlight().run()}
+              className="bm-btn"
+            >
+              <HighlightIcon style={{ width: "15px", height: "15px" }} />
+            </button>
+            <span className="bm-sep" />
+            {HIGHLIGHT_COLORS.map((color, i) => (
+              <button
+                key={color}
+                type="button"
+                title={COLOR_LABELS[i]}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => editor.chain().focus().setColor(color).run()}
+                className="bm-color"
+                style={{ background: color }}
+              />
+            ))}
+            <button
+              type="button"
+              title="Color normal"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => editor.chain().focus().unsetColor().run()}
+              className="bm-color bm-color-reset"
+            />
+          </div>
+        </BubbleMenu>
       </div>
 
       <div className="flex items-center justify-between gap-3" style={{ paddingTop: "12px" }}>

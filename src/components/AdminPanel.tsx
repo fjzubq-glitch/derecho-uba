@@ -103,9 +103,9 @@ const MODAL_STYLE: React.CSSProperties = {
 const MODAL_BOX: React.CSSProperties = {
   background: "var(--color-card)",
   border: "1px solid var(--color-line-soft)",
-  padding: "28px",
+  padding: "28px 48px",
   width: "100%",
-  maxWidth: "820px",
+  maxWidth: "900px",
   borderRadius: 0,
 };
 
@@ -914,7 +914,7 @@ export default function AdminPanel() {
       {/* Vista de ficha modal */}
       {vistaFicha && (
         <div style={MODAL_STYLE} onClick={(e) => { if (e.target === e.currentTarget) setVistaFicha(null); }}>
-          <div style={{ ...MODAL_BOX, maxWidth: "920px", padding: "44px 80px 40px" }}>
+          <div style={{ ...MODAL_BOX, maxWidth: "1000px", padding: "44px 140px 40px" }}>
             <div className="flex items-center justify-between mb-2">
               <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px", letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>Editando ficha</span>
               <button onClick={() => setVistaFicha(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)", flexShrink: 0 }}>
