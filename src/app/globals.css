@@ -477,6 +477,55 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: var(--color-gold);
   cursor: col-resize;
 }
+.tiptap ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 4px;
+}
+.tiptap ul[data-type="taskList"] li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.tiptap ul[data-type="taskList"] li > label {
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.tiptap ul[data-type="taskList"] li > div {
+  flex: 1;
+}
+.tiptap ul[data-type="taskList"] input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-gold);
+  cursor: pointer;
+}
+.tiptap details {
+  border: 1px solid var(--color-line-soft);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 1.2em 0;
+  background: rgba(255, 255, 255, 0.02);
+}
+.tiptap details summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+.tiptap details summary::-webkit-details-marker {
+  display: none;
+}
+.tiptap details summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 8px;
+  transition: transform 0.15s ease;
+}
+.tiptap details[open] summary::before {
+  transform: rotate(90deg);
+}
+.tiptap details[open] summary {
+  margin-bottom: 8px;
+}
 .ficha-toolbar .tb-btn {
   background: none;
   border: 1px solid transparent;
@@ -610,4 +659,52 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: rgba(185, 154, 98, 0.12);
   font-weight: 700;
   text-align: left;
+}
+.ficha-view ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 4px;
+}
+.ficha-view ul[data-type="taskList"] li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.ficha-view ul[data-type="taskList"] li > label {
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.ficha-view ul[data-type="taskList"] li > div {
+  flex: 1;
+}
+.ficha-view ul[data-type="taskList"] input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-gold);
+}
+.ficha-view details {
+  border: 1px solid var(--color-line-soft);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 1.2em 0;
+  background: rgba(255, 255, 255, 0.02);
+}
+.ficha-view details summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+.ficha-view details summary::-webkit-details-marker {
+  display: none;
+}
+.ficha-view details summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 8px;
+  transition: transform 0.15s ease;
+}
+.ficha-view details[open] summary::before {
+  transform: rotate(90deg);
+}
+.ficha-view details[open] summary {
+  margin-bottom: 8px;
 }

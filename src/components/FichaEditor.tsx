@@ -7,7 +7,27 @@ import Highlight from "@tiptap/extension-highlight";
 import { TextStyle } from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import { TableKit } from "@tiptap/extension-table";
+import TaskList from "@tiptap/extension-task-list";
+import TaskItem from "@tiptap/extension-task-item";
+import { Details, DetailsSummary, DetailsContent } from "@tiptap/extension-details";
 import { Loader2, Check, X, Bold, Italic, List, ListOrdered, Heading2, Heading3, Undo, Redo, Quote, Code, Minus, Highlight as HighlightIcon } from "@/components/icons";
+
+function TodoIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  );
+}
+
+function ToggleIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  );
+}
 
 const btnStyle: React.CSSProperties = {
   background: "none",
@@ -65,6 +85,11 @@ export default function FichaEditor({
       TextStyle,
       Color,
       TableKit,
+      TaskList,
+      TaskItem.configure({ nested: true }),
+      Details,
+      DetailsSummary,
+      DetailsContent,
     ],
     content: initialContenido,
     editorProps: {
@@ -200,6 +225,13 @@ export default function FichaEditor({
           <ListOrdered style={{ width: "15px", height: "15px" }} />
         </ToolbarButton>
         <ToolbarButton
+          title="Lista de tareas (to-do)"
+          active={editor.isActive("taskList")}
+          onClick={() => editor.chain().focus().toggleTaskList().run()}
+        >
+          <TodoIcon />
+        </ToolbarButton>
+        <ToolbarButton
           title="Cita"
           active={editor.isActive("blockquote")}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
@@ -212,6 +244,13 @@ export default function FichaEditor({
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         >
           <Code style={{ width: "15px", height: "15px" }} />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Bloque toggle (colapsable)"
+          active={editor.isActive("details")}
+          onClick={() => editor.chain().focus().setDetails().run()}
+        >
+          <ToggleIcon />
         </ToolbarButton>
         <ToolbarButton
           title="Línea separadora"
