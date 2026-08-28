@@ -148,11 +148,6 @@ export default function AdminPanel() {
     cargar();
   }, [cargar]);
 
-  const abrirNueva = () => {
-    setErrorMsg(null);
-    setEditorAbierto({ id: null, titulo: "", contenido: "", materiaId: cuadernoActualId ?? materias[0]?.id ?? "", claseId: "" });
-  };
-
   const abrirEditar = (f: Ficha) => {
     setErrorMsg(null);
     setEditorAbierto({ id: f.id, titulo: f.titulo, contenido: f.contenido, materiaId: f.materia_id ?? "", claseId: f.clase_id ?? "" });
@@ -457,13 +452,6 @@ export default function AdminPanel() {
             />
           </div>
         </div>
-        <button
-          onClick={abrirNueva}
-          style={{ background: "var(--color-gold)", color: "var(--color-ink)", border: "none", padding: "10px 18px", cursor: "pointer", fontFamily: "var(--font-inter)", fontSize: "13px", display: "flex", alignItems: "center", gap: "8px", fontWeight: 500 }}
-        >
-          <Plus style={{ width: "16px", height: "16px" }} />
-          Nueva ficha
-        </button>
       </div>
       )}
 
@@ -482,13 +470,6 @@ export default function AdminPanel() {
                 {cuadernoActual?.nombre}
               </h3>
             </div>
-            <button
-              onClick={abrirNueva}
-              style={{ background: "var(--color-gold)", color: "var(--color-ink)", border: "none", padding: "10px 18px", cursor: "pointer", fontFamily: "var(--font-inter)", fontSize: "13px", display: "flex", alignItems: "center", gap: "8px", fontWeight: 500 }}
-            >
-              <Plus style={{ width: "16px", height: "16px" }} />
-              Nueva ficha
-            </button>
           </div>
 
           {/* Fechas Importantes */}

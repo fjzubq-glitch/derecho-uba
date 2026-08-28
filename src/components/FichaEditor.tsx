@@ -430,7 +430,31 @@ export default function FichaEditor({
             key={color}
             type="button"
             title={COLOR_LABELS[i]}
-            onMouseDown={(e) => { e.preventDefault(); requestAnimationFrame(() => { editor.chain().focus().setColor(color).run(); }); }}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => {
+              const { state, dispatch } = editor.view;
+              const { selection } = state;
+              if (selection.empty) return;
+              const markType = state.schema.marks.textStyle;
+              if (!markType) return;
+              const tr = state.tr;
+              selection.ranges.forEach((range) => {
+                const from = range.$from.pos;
+                const to = range.$to.pos;
+                state.doc.nodesBetween(from, to, (node, pos) => {
+                  const trimmedFrom = Math.max(pos, from);
+                  const trimmedTo = Math.min(pos + node.nodeSize, to);
+                  const existing = node.marks.find((m) => m.type === markType);
+                  if (existing) {
+                    tr.addMark(trimmedFrom, trimmedTo, markType.create({ ...existing.attrs, color }));
+                  } else {
+                    tr.addMark(trimmedFrom, trimmedTo, markType.create({ color }));
+                  }
+                });
+              });
+              dispatch(tr);
+              editor.chain().focus().run();
+            }}
             style={{
               width: "18px",
               height: "18px",
@@ -449,7 +473,30 @@ export default function FichaEditor({
         <button
           type="button"
           title="Color normal"
-          onMouseDown={(e) => { e.preventDefault(); requestAnimationFrame(() => { editor.chain().focus().unsetColor().run(); }); }}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => {
+            const { state, dispatch } = editor.view;
+            const { selection } = state;
+            if (selection.empty) return;
+            const markType = state.schema.marks.textStyle;
+            if (!markType) return;
+            const tr = state.tr;
+            selection.ranges.forEach((range) => {
+              const from = range.$from.pos;
+              const to = range.$to.pos;
+              state.doc.nodesBetween(from, to, (node, pos) => {
+                const trimmedFrom = Math.max(pos, from);
+                const trimmedTo = Math.min(pos + node.nodeSize, to);
+                node.marks.forEach((m) => {
+                  if (m.type === markType) {
+                    tr.removeMark(trimmedFrom, trimmedTo, markType);
+                  }
+                });
+              });
+            });
+            dispatch(tr);
+            editor.chain().focus().run();
+          }}
           style={{
             width: "18px",
             height: "18px",
