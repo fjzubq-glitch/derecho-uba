@@ -55,7 +55,33 @@ export default async function VisorPage({
         errorMsg = "Cuestionario sin contenido";
       }
     } else {
-      iframeSrc = `/api/stream/${archivoId}`;
+      if (archivo.youtube_url) {
+        let url = archivo.youtube_url;
+        const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+        if (ytMatch) {
+          url = `https://www.youtube.com/embed/${ytMatch[1]}`;
+        }
+        iframeSrc = url;
+      } else if (archivo.cloudinary_url) {
+        iframeSrc = archivo.cloudinary_url;
+      } else if (archivo.storage_key && /\.(html?|htm)$/i.test(archivo.storage_key)) {
+        try {
+          const r2Res = await getObjectStream(archivo.storage_key);
+          if (!r2Res.ok) {
+            errorMsg = `R2: ${r2Res.status}`;
+          } else {
+            iframeSrcDoc = await r2Res.text();
+          }
+        } catch (e) {
+          errorMsg = e instanceof Error ? e.message : "Error al leer el archivo";
+        }
+      } else if (archivo.contenido_texto) {
+        iframeSrcDoc = archivo.contenido_texto;
+      } else if (archivo.storage_key) {
+        iframeSrc = `/api/stream/${archivoId}`;
+      } else {
+        errorMsg = "Archivo sin contenido";
+      }
     }
   } else {
     errorMsg = "Archivo no encontrado";
