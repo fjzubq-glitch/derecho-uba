@@ -11,6 +11,7 @@ import { TableKit } from "@tiptap/extension-table";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import { Details, DetailsSummary, DetailsContent } from "@tiptap/extension-details";
+import Image from "@tiptap/extension-image";
 import { Loader2, Check, X, Bold, Italic, List, ListOrdered, Heading2, Heading3, Undo, Redo, Quote, Code, Minus, Highlight as HighlightIcon } from "@/components/icons";
 
 function CalloutView({ node, updateAttributes }: NodeViewProps) {
@@ -91,6 +92,16 @@ function ColumnsIcon() {
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="4" width="7" height="16" rx="1" />
       <rect x="14" y="4" width="7" height="16" rx="1" />
+    </svg>
+  );
+}
+
+function ImageIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <path d="M21 15l-5-5L5 21" />
     </svg>
   );
 }
@@ -255,6 +266,7 @@ export default function FichaEditor({
       Callout,
       Column,
       ColumnList,
+      Image.configure({ inline: false, allowBase64: true }),
     ],
     content: initialContenido,
     editorProps: {
@@ -445,6 +457,17 @@ export default function FichaEditor({
           onClick={() => editor.chain().focus().insertContent({ type: "callout", attrs: { icon: "💡" }, content: [{ type: "paragraph" }] }).run()}
         >
           <CalloutIcon />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Insertar imagen (URL)"
+          onClick={() => {
+            const url = window.prompt("URL de la imagen:", "https://");
+            if (url && url.trim() && url.trim() !== "https://") {
+              editor.chain().focus().setImage({ src: url.trim() }).run();
+            }
+          }}
+        >
+          <ImageIcon />
         </ToolbarButton>
         <ToolbarButton
           title="Línea separadora"

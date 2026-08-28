@@ -572,6 +572,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .tiptap [data-type="column"] > *:last-child {
   margin-bottom: 0;
 }
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 1.2em 0;
+}
 .ficha-toolbar .tb-btn {
   background: none;
   border: 1px solid transparent;
@@ -775,4 +781,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 .ficha-view [data-type="callout"] > *:last-child {
   margin-bottom: 0;
+}
+.ficha-view img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 1.2em 0;
 }
