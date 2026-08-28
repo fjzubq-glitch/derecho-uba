@@ -69,14 +69,23 @@ describe("calcularResumen", () => {
       ev({ tipo: "play_start", archivo_id: "a1", nombre: "Ana", materia_slug: "derecho-comercial" }),
       ev({ tipo: "youtube_open", archivo_id: "v1", nombre: "Ana", materia_slug: "derecho-comercial" }),
       ev({ tipo: "play_start", archivo_id: "a1", nombre: "Leo", materia_slug: "contratos-i" }),
+      ev({ tipo: "transcription_view", archivo_id: "t1", nombre: "Ana", materia_slug: "derecho-comercial" }),
+      ev({ tipo: "file_open", archivo_id: "pun1", nombre: "Ana", materia_slug: "derecho-comercial" }),
+      ev({ tipo: "enlace_open", archivo_id: "e1", nombre: "Leo", materia_slug: "contratos-i" }),
     ];
     const r = calcularResumen(eventos, tipoPorArchivo, materias);
     const audio = r.contenidoPorTipo.find((c) => c.tipo === "audio_clase");
     const video = r.contenidoPorTipo.find((c) => c.tipo === "clase_youtube");
+    const texto = r.contenidoPorTipo.find((c) => c.tipo === "transcripcion");
+    const archivo = r.contenidoPorTipo.find((c) => c.tipo === "archivo");
+    const enlace = r.contenidoPorTipo.find((c) => c.tipo === "enlace");
     expect(audio?.accesos).toBe(2);
     expect(audio?.personas).toBe(2);
     expect(audio?.materias).toHaveLength(2);
     expect(video?.accesos).toBe(1);
+    expect(texto?.accesos).toBe(1);
+    expect(archivo?.accesos).toBe(1);
+    expect(enlace?.accesos).toBe(1);
     expect(r.contenidoPorTipo.map((c) => c.tipo)).toEqual(CONTENIDO_TIPOS);
   });
 

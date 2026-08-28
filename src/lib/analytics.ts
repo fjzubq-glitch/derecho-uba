@@ -16,8 +16,8 @@ export interface MateriaAnalitica {
 }
 
 export const EVENTOS_REPRODUCCION = new Set(["play_start", "youtube_open"]);
-// Solo se mide consumo de audio y video (lo que aporta señal real por materia).
-export const CONTENIDO_TIPOS = ["audio_clase", "clase_youtube"];
+// Consumo medido por materia/clase: audio, video, transcripción, archivos y enlaces.
+export const CONTENIDO_TIPOS = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace"];
 
 export function normalizarNombre(n: string | null | undefined): string {
   return (n || "").trim().toLowerCase();

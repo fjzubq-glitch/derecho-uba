@@ -1466,6 +1466,9 @@ export default function AdminPage() {
                               <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Personas</th>
                               <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Audio</th>
                               <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Virtual</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Textos</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Archivos</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Enlaces</th>
                               <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Total</th>
                             </tr>
                           </thead>
@@ -1535,6 +1538,39 @@ export default function AdminPage() {
                                     }}
                                   >
                                     {mat.porTipo.clase_youtube || 0}
+                                  </td>
+                                  <td
+                                    style={{
+                                      padding: "12px 0",
+                                      textAlign: "right",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      color: (mat.porTipo.transcripcion || 0) > 0 ? "var(--color-text)" : "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {mat.porTipo.transcripcion || 0}
+                                  </td>
+                                  <td
+                                    style={{
+                                      padding: "12px 0",
+                                      textAlign: "right",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      color: (mat.porTipo.archivo || 0) > 0 ? "var(--color-text)" : "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {mat.porTipo.archivo || 0}
+                                  </td>
+                                  <td
+                                    style={{
+                                      padding: "12px 0",
+                                      textAlign: "right",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      color: (mat.porTipo.enlace || 0) > 0 ? "var(--color-text)" : "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {mat.porTipo.enlace || 0}
                                   </td>
                                   <td
                                     style={{
@@ -1618,6 +1654,21 @@ export default function AdminPage() {
                                 {(mat.porTipo.clase_youtube || 0) > 0 && (
                                   <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
                                     {mat.porTipo.clase_youtube} virtual
+                                  </span>
+                                )}
+                                {(mat.porTipo.transcripcion || 0) > 0 && (
+                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
+                                    {mat.porTipo.transcripcion} transcrip.
+                                  </span>
+                                )}
+                                {(mat.porTipo.archivo || 0) > 0 && (
+                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
+                                    {mat.porTipo.archivo} archivos
+                                  </span>
+                                )}
+                                {(mat.porTipo.enlace || 0) > 0 && (
+                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
+                                    {mat.porTipo.enlace} enlaces
                                   </span>
                                 )}
                                 {mat.consumo > 0 && (
