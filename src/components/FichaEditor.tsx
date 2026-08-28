@@ -16,6 +16,12 @@ import { SlashCommand } from "@/components/SlashCommand";
 import BlockHandle from "@/components/BlockHandle";
 import { Loader2, Check, X, Bold, Italic, List, ListOrdered, Heading2, Heading3, Undo, Redo, Quote, Code, Minus, Highlight as HighlightIcon } from "@/components/icons";
 
+const HIGHLIGHT_COLORS = ["#E05555", "#D4769A", "#B99A62", "#6B9E78", "#5B8DB8", "#9B7ED8"];
+const COLOR_LABELS = ["Rojo", "Rosa", "Dorado", "Verde", "Azul", "Violeta"];
+
+const isValidImageUrl = (url: string): boolean =>
+  /^https?:\/\/.+/i.test(url) || /^data:image\//i.test(url);
+
 function CalloutView({ node, updateAttributes }: NodeViewProps) {
   const icon = node.attrs.icon || "💡";
   return (
@@ -193,7 +199,7 @@ const ColumnList = Node.create({
           }
           if (!colNode) return false;
           const listNode = $from.node(colDepth - 1);
-          if (!listNode || listNode.childCount <= 1) return false;
+          if (!listNode || listNode.childCount <= 2) return false;
           if (dispatch) {
             const tr = state.tr.delete(colPos, colPos + colNode.nodeSize);
             dispatch(tr);
@@ -259,8 +265,11 @@ export default function FichaEditor({
   const tituloRef = useRef(titulo);
   useEffect(() => { tituloRef.current = titulo; }, [titulo]);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const latestHTML = useRef(initialContenido);
+  const editorRef = useRef<ReturnType<typeof useEditor>>(null);
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: { levels: [2, 3] },
@@ -288,20 +297,21 @@ export default function FichaEditor({
       },
       handleKeyDown: (_view, event) => {
         const mod = event.metaKey || event.ctrlKey;
+        const ed = editorRef.current;
+        if (!ed) return false;
         if (mod && event.key.toLowerCase() === "s") {
           event.preventDefault();
-          onSaveRef.current(tituloRef.current, editor.getHTML());
+          onSaveRef.current(tituloRef.current, ed.getHTML()).catch(() => {});
           return true;
         }
         if (mod && event.shiftKey && event.key.toLowerCase() === "h") {
           event.preventDefault();
-          editor.chain().focus().toggleHighlight().run();
+          ed.chain().focus().toggleHighlight().run();
           return true;
         }
         if (mod && event.shiftKey && /^Digit[1-6]$/.test(event.code)) {
-          const colors = ["#E05555", "#D4769A", "#B99A62", "#6B9E78", "#5B8DB8", "#9B7ED8"];
           event.preventDefault();
-          editor.chain().focus().setColor(colors[parseInt(event.code.slice(5), 10) - 1]).run();
+          ed.chain().focus().setColor(HIGHLIGHT_COLORS[parseInt(event.code.slice(5), 10) - 1]).run();
           return true;
         }
         return false;
@@ -309,13 +319,16 @@ export default function FichaEditor({
     },
   });
 
+  editorRef.current = editor;
+
   const scheduleSave = useCallback(() => {
     if (!autoSave || !editor) return;
+    latestHTML.current = editor.getHTML();
     setSaveStatus("saving");
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(async () => {
       try {
-        await onSaveRef.current(tituloRef.current, editor.getHTML());
+        await onSaveRef.current(tituloRef.current, latestHTML.current);
         setSaveStatus("saved");
       } catch {
         setSaveStatus("error");
@@ -328,8 +341,15 @@ export default function FichaEditor({
     const onUpdate = () => scheduleSave();
     editor.on("update", onUpdate);
     return () => {
-      editor.off("update", onUpdate);
-      if (saveTimer.current) clearTimeout(saveTimer.current);
+      try {
+        editor.off("update", onUpdate);
+      } catch {
+        /* editor ya destruido */
+      }
+      if (saveTimer.current) {
+        clearTimeout(saveTimer.current);
+        onSaveRef.current(tituloRef.current, latestHTML.current).catch(() => {});
+      }
     };
   }, [autoSave, editor, scheduleSave]);
 
@@ -403,26 +423,19 @@ export default function FichaEditor({
           <HighlightIcon style={{ width: "15px", height: "15px" }} />
         </ToolbarButton>
         <span style={{ width: "1px", height: "20px", background: "var(--color-line-soft)", margin: "0 4px", alignSelf: "center" }} />
-        {[
-          { color: "#E05555", label: "Rojo" },
-          { color: "#D4769A", label: "Rosa" },
-          { color: "#B99A62", label: "Dorado" },
-          { color: "#6B9E78", label: "Verde" },
-          { color: "#5B8DB8", label: "Azul" },
-          { color: "#9B7ED8", label: "Violeta" },
-        ].map((c) => (
+        {HIGHLIGHT_COLORS.map((color, i) => (
            <button
-            key={c.color}
+            key={color}
             type="button"
-            title={c.label}
+            title={COLOR_LABELS[i]}
             onMouseDown={(e) => e.preventDefault()}
-            onClick={() => editor.chain().focus().setColor(c.color).run()}
+            onClick={() => editor.chain().focus().setColor(color).run()}
             style={{
               width: "18px",
               height: "18px",
               borderRadius: "50%",
-              background: c.color,
-              border: editor.isActive("textStyle", { color: c.color }) ? "2px solid var(--color-text)" : "2px solid transparent",
+              background: color,
+              border: editor.isActive("textStyle", { color }) ? "2px solid var(--color-text)" : "2px solid transparent",
               cursor: "pointer",
               padding: 0,
               transition: "border-color 0.15s ease, transform 0.15s ease",
@@ -518,7 +531,7 @@ export default function FichaEditor({
           title="Insertar imagen (URL)"
           onClick={() => {
             const url = window.prompt("URL de la imagen:", "https://");
-            if (url && url.trim() && url.trim() !== "https://") {
+            if (url && isValidImageUrl(url.trim())) {
               editor.chain().focus().setImage({ src: url.trim() }).run();
             }
           }}

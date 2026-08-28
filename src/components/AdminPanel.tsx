@@ -128,7 +128,7 @@ export default function AdminPanel() {
   const [fechasExpandida, setFechasExpandida] = useState(false);
 
   const cargar = useCallback(async () => {
-    const res = await fetch("/api/admin/panel");
+    const res = await fetch("/api/admin/panel", { credentials: "include" });
     if (!res.ok) {
       setErrorMsg("No se pudo cargar el panel.");
       setLoading(false);
@@ -198,7 +198,7 @@ export default function AdminPanel() {
       message: "¿Seguro que querés borrar esta ficha? Esta acción no se puede deshacer.",
       onConfirm: async () => {
         setConfirmState(null);
-        const res = await fetch(`/api/fichas/${id}`, { method: "DELETE" });
+        const res = await fetch(`/api/fichas/${id}`, { method: "DELETE", credentials: "include" });
         if (res.ok) await cargar();
       },
     });
@@ -209,7 +209,7 @@ export default function AdminPanel() {
       message: "¿Seguro que querés borrar este elemento? Esta acción no se puede deshacer.",
       onConfirm: async () => {
         setConfirmState(null);
-        const res = await fetch(`/api/admin?id=${id}&tipo=archivo`, { method: "DELETE" });
+        const res = await fetch(`/api/admin?id=${id}&tipo=archivo`, { method: "DELETE", credentials: "include" });
         if (res.ok) await cargar();
       },
     });

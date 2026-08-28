@@ -10,6 +10,9 @@ import React, { forwardRef, useEffect, useImperativeHandle, useState } from "rea
 
 import "tippy.js/dist/tippy.css";
 
+const isValidImageUrl = (url: string): boolean =>
+  /^https?:\/\/.+/i.test(url) || /^data:image\//i.test(url);
+
 interface SlashItem {
   title: string;
   description: string;
@@ -27,12 +30,6 @@ const ITEMS: SlashItem[] = [
     description: "Párrafo simple",
     icon: "¶",
     command: ({ editor, range }) => editor.chain().focus().deleteRange(range).setParagraph().run(),
-  },
-  {
-    title: "Título 1",
-    description: "Encabezado grande",
-    icon: "H1",
-    command: ({ editor, range }) => editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run(),
   },
   {
     title: "Título 2",
@@ -126,7 +123,7 @@ const ITEMS: SlashItem[] = [
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).run();
       const url = window.prompt("URL de la imagen:", "https://");
-      if (url && url.trim() && url.trim() !== "https://") {
+      if (url && isValidImageUrl(url.trim())) {
         editor.chain().focus().setImage({ src: url.trim() }).run();
       }
     },
