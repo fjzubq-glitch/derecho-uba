@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { getObjectStream } from "@/lib/r2";
 import { ipFromRequest, isRateLimited } from "@/lib/simpleRateLimit";
-import { isAdminRequest, SESSION_COOKIE_NAME } from "@/lib/auth";
+import { isAdminRequest } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
@@ -21,7 +21,7 @@ export async function GET(
   }
 
   // Los cuestionarios solo son accesibles para el administrador
-  if (archivo.tipo === "cuestionario" && !isAdminRequest(request.cookies.get(SESSION_COOKIE_NAME)?.value ?? null)) {
+  if (archivo.tipo === "cuestionario" && !isAdminRequest(request.headers.get("cookie"))) {
     return new Response("File not found", { status: 404 });
   }
 
@@ -82,7 +82,7 @@ export async function PUT(
   { params }: { params: Promise<{ archivoId: string }> }
 ) {
   try {
-    if (!isAdminRequest(request.cookies.get(SESSION_COOKIE_NAME)?.value ?? null)) {
+    if (!isAdminRequest(request.headers.get("cookie"))) {
       return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
     }
     if (isRateLimited(`stream-put:${ipFromRequest(request)}`, 300, 60 * 60 * 1000)) {

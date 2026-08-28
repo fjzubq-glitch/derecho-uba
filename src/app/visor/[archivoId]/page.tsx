@@ -1,6 +1,6 @@
 import VolverBoton from "@/components/VolverBoton";
 import { cookies } from "next/headers";
-import { isAdminRequest, SESSION_COOKIE_NAME, verifyVisorToken } from "@/lib/auth";
+import { isAdminRequest, verifyVisorToken } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { getObjectStream } from "@/lib/r2";
 
@@ -16,8 +16,8 @@ export default async function VisorPage({
   const { archivoId } = await params;
   const sp = await searchParams;
   const token = typeof sp.t === "string" ? sp.t : null;
-  const cookie = (await cookies()).get(SESSION_COOKIE_NAME)?.value ?? null;
-  const esAdmin = verifyVisorToken(token, archivoId) || isAdminRequest(cookie);
+  const cookieHeader = (await cookies()).toString();
+  const esAdmin = verifyVisorToken(token, archivoId) || isAdminRequest(cookieHeader);
 
   const { data: archivo } = await getSupabaseAdmin()
     .from("archivos")

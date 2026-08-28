@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { uploadToR2 } from "@/lib/r2";
-import { isAdminRequest, SESSION_COOKIE_NAME } from "@/lib/auth";
+import { isAdminRequest } from "@/lib/auth";
 
 const SLUG_MAP: Record<string, string> = {
   "contratos-ii": "contratos",
@@ -11,7 +11,7 @@ const SLUG_MAP: Record<string, string> = {
 };
 
 export async function POST(request: NextRequest) {
-  if (!isAdminRequest(request.cookies.get(SESSION_COOKIE_NAME)?.value ?? null)) {
+  if (!isAdminRequest(request.headers.get("cookie"))) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
   try {
