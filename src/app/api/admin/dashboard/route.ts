@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
-import { calcularPopCounts, calcularResumen, type EventoAnalitico, type MateriaAnalitica } from "@/lib/analytics";
+import { calcularPopCounts, calcularResumen, CONTENIDO_TIPOS, normalizarNombre, type EventoAnalitico, type MateriaAnalitica } from "@/lib/analytics";
 
 export async function GET(request: NextRequest) {
   if (!isAdminRequest(request.headers.get("cookie"))) {
@@ -17,15 +17,17 @@ export async function GET(request: NextRequest) {
     const now = Date.now();
     const desdeISO = dias ? new Date(now - dias * 24 * 60 * 60 * 1000).toISOString() : null;
 
-    const [{ data: materias }, { count: clasesCount }, { count: archivosCount }, { data: archivos }] =
+    const [{ data: materias }, { count: clasesCount }, { count: archivosCount }, { data: archivos }, { data: clasesRows }] =
       await Promise.all([
         supabase.from("materias").select("*").order("nombre"),
         supabase.from("clases").select("*", { count: "exact", head: true }),
         supabase.from("archivos").select("*", { count: "exact", head: true }),
-        supabase.from("archivos").select("id, tipo"),
+        supabase.from("archivos").select("id, tipo, clase_id"),
+        supabase.from("clases").select("id, numero, titulo, materia_id").order("materia_id").order("numero"),
       ]);
 
     const tipoPorArchivo = new Map((archivos || []).map((a) => [a.id, a.tipo]));
+    const clasePorArchivo = new Map((archivos || []).map((a) => [a.id, a.clase_id]));
 
     // Todos los eventos del período (visitas, reproducciones, aperturas)
     // Los heartbeats (presencia) se excluyen: solo ensucian el volumen
@@ -135,6 +137,46 @@ export async function GET(request: NextRequest) {
       }))
       .sort((a, b) => b.personas - a.personas);
 
+    // ── Actividad por clase (audio/video/textos/archivos/enlaces) ──
+    const materiaNombreMap = new Map(
+      (materias || []).filter((m) => m.id).map((m) => [m.id as string, m.nombre || ""]),
+    );
+    const claseAgg: Record<string, { counts: Record<string, number>; personas: Set<string> }> = {};
+    for (const e of eventos || []) {
+      if (!e.archivo_id) continue;
+      const cid = clasePorArchivo.get(e.archivo_id);
+      if (!cid) continue;
+      const t = tipoPorArchivo.get(e.archivo_id);
+      if (!t || !CONTENIDO_TIPOS.includes(t)) continue;
+      const agg = (claseAgg[cid] = claseAgg[cid] || { counts: {}, personas: new Set<string>() });
+      agg.counts[t] = (agg.counts[t] || 0) + 1;
+      const key = normalizarNombre(e.nombre);
+      if (key) agg.personas.add(key);
+    }
+
+    const clasesStats = (clasesRows || []).map((c) => {
+      const agg = claseAgg[c.id] || { counts: {}, personas: new Set<string>() };
+      const audio_clase = agg.counts.audio_clase || 0;
+      const clase_youtube = agg.counts.clase_youtube || 0;
+      const transcripcion = agg.counts.transcripcion || 0;
+      const archivo = agg.counts.archivo || 0;
+      const enlace = agg.counts.enlace || 0;
+      const total = audio_clase + clase_youtube + transcripcion + archivo + enlace;
+      return {
+        id: c.id,
+        materia: materiaNombreMap.get(c.materia_id) || "",
+        numero: c.numero,
+        titulo: c.titulo || "",
+        personas: agg.personas.size,
+        audio_clase,
+        clase_youtube,
+        transcripcion,
+        archivo,
+        enlace,
+        total,
+      };
+    });
+
     return NextResponse.json({
       stats: {
         totalClases: clasesCount || 0,
@@ -150,6 +192,7 @@ export async function GET(request: NextRequest) {
       estudiantes: resumen.estudiantes,
       contenidoPorTipo: resumen.contenidoPorTipo,
       materiasStats: resumen.materiasStats,
+      clasesStats,
       contenidoPopular,
       totalRegistradosAllTime,
       registradosPorMateria,

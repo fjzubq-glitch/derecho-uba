@@ -91,6 +91,20 @@ interface MateriaStats {
   consumo: number;
 }
 
+interface ClaseStats {
+  id: string;
+  materia: string;
+  numero: number;
+  titulo: string;
+  personas: number;
+  audio_clase: number;
+  clase_youtube: number;
+  transcripcion: number;
+  archivo: number;
+  enlace: number;
+  total: number;
+}
+
 interface EnLinea {
   nombre: string;
   materia_slug: string | null;
@@ -125,6 +139,7 @@ export default function AdminPage() {
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
   const [contenidoPorTipo, setContenidoPorTipo] = useState<ContenidoPorTipo[]>([]);
   const [materiasStats, setMateriasStats] = useState<MateriaStats[]>([]);
+  const [clasesStats, setClasesStats] = useState<ClaseStats[]>([]);
   const [contenidoPopular, setContenidoPopular] = useState<ContenidoPopular[]>([]);
   const [totalRegistradosAllTime, setTotalRegistradosAllTime] = useState(0);
   const [periodo, setPeriodo] = useState<Periodo>("7");
@@ -221,6 +236,7 @@ export default function AdminPage() {
       if (data.contenidoPorTipo) setContenidoPorTipo(data.contenidoPorTipo);
       if (data.estudiantes) setEstudiantes(data.estudiantes);
       if (data.materiasStats) setMateriasStats(data.materiasStats);
+      if (data.clasesStats) setClasesStats(data.clasesStats);
       if (data.contenidoPopular) setContenidoPopular(data.contenidoPopular);
       setTotalRegistradosAllTime(data.totalRegistradosAllTime || 0);
     } catch (e) {
@@ -1680,6 +1696,159 @@ export default function AdminPage() {
                             </div>
                           );
                         })}
+                      </div>
+                    </article>
+                  )}
+
+                  {/* Actividad por clase */}
+                  {clasesStats.length > 0 && (
+                    <article
+                      style={{
+                        background: "var(--color-card)",
+                        border: "1px solid var(--color-line-soft)",
+                        padding: "28px 30px",
+                        borderRadius: 0,
+                      }}
+                    >
+                      <h3
+                        style={{
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontWeight: 400,
+                          fontSize: "20px",
+                          color: "var(--color-text)",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        Actividad por clase
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--color-text-muted)",
+                          marginBottom: "20px",
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        Consumo de audio, video, textos, archivos y enlaces por cada clase.
+                      </p>
+
+                      <div className="hidden sm:block" style={{ overflowX: "auto" }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                          <thead>
+                            <tr
+                              style={{
+                                borderBottom: "1px solid var(--color-line)",
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "9px",
+                                letterSpacing: "0.12em",
+                                textTransform: "uppercase",
+                                color: "var(--color-text-faint)",
+                              }}
+                            >
+                              <th style={{ textAlign: "left", padding: "8px 0", fontWeight: 500 }}>Materia</th>
+                              <th style={{ textAlign: "left", padding: "8px 0", fontWeight: 500 }}>Clase</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Personas</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Audio</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Virtual</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Textos</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Archivos</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Enlaces</th>
+                              <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {clasesStats.map((c, i) => {
+                              const cell = (val: number) => ({
+                                padding: "12px 0",
+                                textAlign: "right" as const,
+                                fontFamily: "var(--font-ibm-plex-mono)",
+                                fontSize: "12px",
+                                color: val > 0 ? "var(--color-text)" : "var(--color-text-faint)",
+                              });
+                              return (
+                                <tr
+                                  key={c.id}
+                                  style={{
+                                    borderBottom: i < clasesStats.length - 1 ? "1px solid var(--color-line-soft)" : "none",
+                                  }}
+                                >
+                                  <td style={{ padding: "12px 12px 12px 0" }}>
+                                    <p style={{ fontSize: "14px", fontWeight: 500, color: i === 0 ? "var(--color-gold)" : "var(--color-text)", margin: 0 }}>
+                                      {c.materia}
+                                    </p>
+                                  </td>
+                                  <td style={{ padding: "12px 12px 12px 0" }}>
+                                    <p style={{ fontSize: "13px", color: "var(--color-text)", margin: 0 }}>
+                                      <span style={{ fontFamily: "var(--font-ibm-plex-mono)", color: "var(--color-text-muted)" }}>
+                                        {String(c.numero).padStart(2, "0")}
+                                      </span>{" "}
+                                      {c.titulo}
+                                    </p>
+                                  </td>
+                                  <td style={{ ...cell(c.personas), color: c.personas > 0 ? "var(--color-gold)" : "var(--color-text-faint)" }}>
+                                    {c.personas}
+                                  </td>
+                                  <td style={cell(c.audio_clase)}>{c.audio_clase}</td>
+                                  <td style={cell(c.clase_youtube)}>{c.clase_youtube}</td>
+                                  <td style={cell(c.transcripcion)}>{c.transcripcion}</td>
+                                  <td style={cell(c.archivo)}>{c.archivo}</td>
+                                  <td style={cell(c.enlace)}>{c.enlace}</td>
+                                  <td
+                                    style={{
+                                      padding: "12px 0",
+                                      textAlign: "right",
+                                      fontFamily: "var(--font-ibm-plex-mono)",
+                                      fontSize: "12px",
+                                      fontWeight: 500,
+                                      color: c.total > 0 ? "var(--color-gold)" : "var(--color-text-faint)",
+                                    }}
+                                  >
+                                    {c.total}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div className="sm:hidden" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        {clasesStats.map((c) => (
+                          <div key={c.id} style={{ borderBottom: "1px solid var(--color-line-soft)", paddingBottom: "10px" }}>
+                            <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
+                              <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
+                                {String(c.numero).padStart(2, "0")}
+                              </span>
+                              <span style={{ fontSize: "14px", fontWeight: 500, color: "var(--color-text)" }}>{c.titulo}</span>
+                              <span style={{ fontSize: "11px", color: "var(--color-text-muted)" }}>· {c.materia}</span>
+                              {c.personas > 0 && (
+                                <span style={{ marginLeft: "auto", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-gold)" }}>
+                                  {c.personas} personas
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex flex-wrap gap-x-4 gap-y-1" style={{ marginTop: "6px" }}>
+                              {c.audio_clase > 0 && (
+                                <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>{c.audio_clase} audio</span>
+                              )}
+                              {c.clase_youtube > 0 && (
+                                <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>{c.clase_youtube} virtual</span>
+                              )}
+                              {c.transcripcion > 0 && (
+                                <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>{c.transcripcion} transcrip.</span>
+                              )}
+                              {c.archivo > 0 && (
+                                <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>{c.archivo} archivos</span>
+                              )}
+                              {c.enlace > 0 && (
+                                <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>{c.enlace} enlaces</span>
+                              )}
+                              {c.total > 0 && (
+                                <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-gold)", fontWeight: 500 }}>{c.total} total</span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </article>
                   )}
