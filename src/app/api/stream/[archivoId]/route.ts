@@ -20,8 +20,8 @@ export async function GET(
     return new Response("File not found", { status: 404 });
   }
 
-  // Los cuestionarios solo son accesibles para el administrador
-  if (archivo.tipo === "cuestionario" && !isAdminRequest(request.headers.get("cookie"))) {
+  // Los cuestionarios, material privado y fichas solo son accesibles para el administrador
+  if ((archivo.tipo === "cuestionario" || archivo.tipo === "material_privado" || archivo.tipo === "ficha") && !isAdminRequest(request.headers.get("cookie"))) {
     return new Response("File not found", { status: 404 });
   }
 

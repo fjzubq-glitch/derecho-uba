@@ -62,6 +62,9 @@ export default async function VisorPage({
         errorMsg = "Cuestionario sin contenido";
       }
     } else {
+      if ((archivo.tipo === "material_privado" || archivo.tipo === "ficha") && !esAdmin) {
+        errorMsg = "No autorizado";
+      } else {
       const youtubeUrl = archivo.youtube_url || archivo.cloudinary_url;
       if (youtubeUrl) {
         const ytMatch = youtubeUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
@@ -100,6 +103,7 @@ export default async function VisorPage({
         }
       } else {
         errorMsg = "Archivo sin contenido";
+      }
       }
     }
   } else {

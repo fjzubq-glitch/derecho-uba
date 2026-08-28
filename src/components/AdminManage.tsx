@@ -42,7 +42,7 @@ interface Clase {
 }
 
 interface EditData {
-  tipo: "clase" | "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado";
+  tipo: "clase" | "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha";
   id: string;
   data: Record<string, string | number>;
 }
@@ -501,6 +501,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     cuestionario: <Check style={{ width: "14px", height: "14px" }} />,
     enlace: <Link2 style={{ width: "14px", height: "14px" }} />,
     material_privado: <Lock style={{ width: "14px", height: "14px" }} />,
+    ficha: <Lock style={{ width: "14px", height: "14px" }} />,
     youtube: <ExternalLink style={{ width: "14px", height: "14px" }} />,
   };
 
@@ -512,10 +513,11 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     cuestionario: "Cuestionario interactivo",
     enlace: "Enlace útil",
     material_privado: "Material privado",
+    ficha: "Ficha",
     youtube: "YouTube",
   };
 
-  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo" || tipo === "cuestionario" || tipo === "material_privado";
+  const canReplace = (tipo: string) => tipo === "audio_clase" || tipo === "clase_youtube" || tipo === "transcripcion" || tipo === "youtube" || tipo === "enlace" || tipo === "archivo" || tipo === "cuestionario" || tipo === "material_privado" || tipo === "ficha";
 
   const actionBtnStyle: React.CSSProperties = {
     padding: "6px 12px",

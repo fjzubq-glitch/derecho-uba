@@ -16,7 +16,7 @@ export interface MateriaAnalitica {
 }
 
 export const EVENTOS_REPRODUCCION = new Set(["play_start", "youtube_open"]);
-export const CONTENIDO_TIPOS = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario", "material_privado"];
+export const CONTENIDO_TIPOS = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario", "material_privado", "ficha"];
 
 export function normalizarNombre(n: string | null | undefined): string {
   return (n || "").trim().toLowerCase();

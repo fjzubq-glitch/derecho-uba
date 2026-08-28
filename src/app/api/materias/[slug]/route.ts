@@ -52,7 +52,7 @@ export async function GET(
 
   const clasesWithFiles = (clases || []).map((c) => {
     const archivosDeClase = porClase.get(c.id) || [];
-    const visibles = archivosDeClase.filter((a) => esAdmin || (a.tipo !== "cuestionario" && a.tipo !== "material_privado"));
+    const visibles = archivosDeClase.filter((a) => esAdmin || (a.tipo !== "cuestionario" && a.tipo !== "material_privado" && a.tipo !== "ficha"));
     return { ...c, archivos: visibles };
   });
 
