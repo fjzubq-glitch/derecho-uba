@@ -918,11 +918,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: rgba(185, 154, 98, 0.15);
 }
 
-/* === Ficha editor: columna centrada con margenes laterales === */
+/* === Ficha editor: lienzo amplio === */
 .ficha-title,
 .ficha-toolbar,
 .ficha-editor-body {
-  max-width: 720px;
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 }

@@ -430,8 +430,7 @@ export default function FichaEditor({
             key={color}
             type="button"
             title={COLOR_LABELS[i]}
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => editor.chain().focus().setColor(color).run()}
+            onMouseDown={(e) => { e.preventDefault(); requestAnimationFrame(() => { editor.chain().focus().setColor(color).run(); }); }}
             style={{
               width: "18px",
               height: "18px",
@@ -450,8 +449,7 @@ export default function FichaEditor({
         <button
           type="button"
           title="Color normal"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => editor.chain().focus().unsetColor().run()}
+          onMouseDown={(e) => { e.preventDefault(); requestAnimationFrame(() => { editor.chain().focus().unsetColor().run(); }); }}
           style={{
             width: "18px",
             height: "18px",
@@ -638,8 +636,7 @@ export default function FichaEditor({
                 key={color}
                 type="button"
                 title={COLOR_LABELS[i]}
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => editor.chain().focus().setColor(color).run()}
+                onMouseDown={(e) => { e.preventDefault(); requestAnimationFrame(() => { editor.chain().focus().setColor(color).run(); }); }}
                 className="bm-color"
                 style={{ background: color }}
               />
@@ -647,8 +644,7 @@ export default function FichaEditor({
             <button
               type="button"
               title="Color normal"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => editor.chain().focus().unsetColor().run()}
+              onMouseDown={(e) => { e.preventDefault(); requestAnimationFrame(() => { editor.chain().focus().unsetColor().run(); }); }}
               className="bm-color bm-color-reset"
             />
           </div>
