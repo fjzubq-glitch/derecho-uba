@@ -157,8 +157,9 @@ export default async function VisorPage({
               alignItems: "center",
               justifyContent: "center",
               height: "100%",
-              padding: "16px",
+              width: "100%",
               background: "#ffffff",
+              overflow: "hidden",
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -166,8 +167,8 @@ export default async function VisorPage({
               src={iframeSrc}
               alt={archivo?.nombre_display || "Material privado"}
               style={{
-                maxWidth: "100%",
-                maxHeight: "100%",
+                width: "100%",
+                height: "100%",
                 objectFit: "contain",
                 display: "block",
               }}
