@@ -67,18 +67,20 @@ export default function ZoomableImage({ src, alt }: { src: string; alt: string }
   };
 
   const btn: React.CSSProperties = {
-    background: "rgba(0,0,0,0.55)",
+    background: "rgba(0,0,0,0.45)",
     color: "#fff",
-    border: "1px solid rgba(255,255,255,0.25)",
-    borderRadius: "6px",
-    width: "40px",
-    height: "40px",
-    fontSize: "18px",
+    border: "1px solid rgba(255,255,255,0.2)",
+    borderRadius: "5px",
+    width: "28px",
+    height: "28px",
+    fontSize: "14px",
+    lineHeight: "1",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     fontFamily: "var(--font-inter)",
+    padding: 0,
   };
 
   return (
@@ -120,10 +122,10 @@ export default function ZoomableImage({ src, alt }: { src: string; alt: string }
       <div
         style={{
           position: "absolute",
-          bottom: "16px",
-          right: "16px",
+          bottom: "10px",
+          right: "10px",
           display: "flex",
-          gap: "8px",
+          gap: "6px",
           zIndex: 5,
         }}
       >
@@ -136,24 +138,6 @@ export default function ZoomableImage({ src, alt }: { src: string; alt: string }
         <button style={btn} onClick={reset} title="Restablecer" aria-label="Restablecer">
           ⟲
         </button>
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          top: "16px",
-          left: "16px",
-          color: "rgba(0,0,0,0.55)",
-          fontFamily: "var(--font-ibm-plex-mono)",
-          fontSize: "11px",
-          letterSpacing: "0.05em",
-          background: "rgba(255,255,255,0.7)",
-          padding: "4px 8px",
-          borderRadius: "4px",
-          zIndex: 5,
-          pointerEvents: "none",
-        }}
-      >
-        doble clic o rueda para zoom · arrastrar para mover
       </div>
     </div>
   );
