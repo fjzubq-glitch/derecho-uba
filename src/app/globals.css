@@ -555,6 +555,23 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .tiptap .callout-content > *:last-child {
   margin-bottom: 0;
 }
+.tiptap [data-type="columnList"],
+.ficha-view [data-type="columnList"] {
+  display: flex;
+  gap: 16px;
+  margin: 1.2em 0;
+}
+.tiptap [data-type="column"],
+.ficha-view [data-type="column"] {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.tiptap [data-type="column"] > *:first-child {
+  margin-top: 0;
+}
+.tiptap [data-type="column"] > *:last-child {
+  margin-bottom: 0;
+}
 .ficha-toolbar .tb-btn {
   background: none;
   border: 1px solid transparent;

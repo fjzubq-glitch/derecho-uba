@@ -86,6 +86,111 @@ function CalloutIcon() {
   );
 }
 
+function ColumnsIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="7" height="16" rx="1" />
+      <rect x="14" y="4" width="7" height="16" rx="1" />
+    </svg>
+  );
+}
+
+declare module "@tiptap/core" {
+  interface Commands<ReturnType> {
+    columnList: {
+      insertColumnLayout: () => ReturnType;
+      addColumn: () => ReturnType;
+      removeColumn: () => ReturnType;
+    };
+  }
+}
+
+const Column = Node.create({
+  name: "column",
+  content: "block+",
+  isolating: true,
+  parseHTML() {
+    return [{ tag: 'div[data-type="column"]' }];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ["div", mergeAttributes(HTMLAttributes, { "data-type": "column" }), 0];
+  },
+});
+
+const ColumnList = Node.create({
+  name: "columnList",
+  group: "block",
+  content: "column{2,}",
+  parseHTML() {
+    return [{ tag: 'div[data-type="columnList"]' }];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ["div", mergeAttributes(HTMLAttributes, { "data-type": "columnList" }), 0];
+  },
+  addCommands() {
+    return {
+      insertColumnLayout:
+        () =>
+        ({ commands }) =>
+          commands.insertContent({
+            type: this.name,
+            content: [
+              { type: "column", content: [{ type: "paragraph" }] },
+              { type: "column", content: [{ type: "paragraph" }] },
+            ],
+          }),
+      addColumn:
+        () =>
+        ({ state, dispatch }) => {
+          const { $from } = state.selection;
+          let listPos = -1;
+          let listNode = null;
+          for (let d = $from.depth; d > 0; d--) {
+            const node = $from.node(d);
+            if (node.type.name === "columnList") {
+              listPos = $from.before(d);
+              listNode = node;
+              break;
+            }
+          }
+          if (!listNode) return false;
+          const newColumn = state.schema.nodes.column.createAndFill();
+          if (!newColumn) return false;
+          if (dispatch) {
+            const tr = state.tr.insert(listPos + listNode.nodeSize - 1, newColumn);
+            dispatch(tr);
+          }
+          return true;
+        },
+      removeColumn:
+        () =>
+        ({ state, dispatch }) => {
+          const { $from } = state.selection;
+          let colPos = -1;
+          let colNode = null;
+          let colDepth = -1;
+          for (let d = $from.depth; d > 0; d--) {
+            const node = $from.node(d);
+            if (node.type.name === "column") {
+              colPos = $from.before(d);
+              colNode = node;
+              colDepth = d;
+              break;
+            }
+          }
+          if (!colNode) return false;
+          const listNode = $from.node(colDepth - 1);
+          if (!listNode || listNode.childCount <= 1) return false;
+          if (dispatch) {
+            const tr = state.tr.delete(colPos, colPos + colNode.nodeSize);
+            dispatch(tr);
+          }
+          return true;
+        },
+    };
+  },
+});
+
 const btnStyle: React.CSSProperties = {
   background: "none",
   border: "1px solid transparent",
@@ -148,6 +253,8 @@ export default function FichaEditor({
       DetailsSummary,
       DetailsContent,
       Callout,
+      Column,
+      ColumnList,
     ],
     content: initialContenido,
     editorProps: {
@@ -369,6 +476,26 @@ export default function FichaEditor({
           onClick={() => editor.chain().focus().deleteTable().run()}
         >
           <span style={{ fontSize: "11px" }}>✕⊞</span>
+        </ToolbarButton>
+        <span style={{ width: "1px", height: "20px", background: "var(--color-line-soft)", margin: "0 4px", alignSelf: "center" }} />
+        <ToolbarButton
+          title="Insertar columnas (2)"
+          active={editor.isActive("columnList")}
+          onClick={() => editor.chain().focus().insertColumnLayout().run()}
+        >
+          <ColumnsIcon />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Añadir columna"
+          onClick={() => editor.chain().focus().addColumn().run()}
+        >
+          <span style={{ fontSize: "11px" }}>C+</span>
+        </ToolbarButton>
+        <ToolbarButton
+          title="Quitar columna"
+          onClick={() => editor.chain().focus().removeColumn().run()}
+        >
+          <span style={{ fontSize: "11px" }}>C−</span>
         </ToolbarButton>
         <span style={{ flex: 1 }} />
         <ToolbarButton title="Deshacer" onClick={() => editor.chain().focus().undo().run()}>
