@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
+export const dynamic = "force-dynamic";
+
 
 export async function PUT(
   request: Request,

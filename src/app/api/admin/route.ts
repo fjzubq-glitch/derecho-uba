@@ -3,6 +3,8 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 import { uploadToR2, deleteFromR2 } from "@/lib/r2";
 import { isAdminRequest } from "@/lib/auth";
 import { validateAudioFile, validateDocumentFile } from "@/lib/fileValidation";
+export const dynamic = "force-dynamic";
+
 
 export async function PUT(request: NextRequest) {
   if (!isAdminRequest(request.headers.get("cookie"))) {

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
 import { getObjectStream } from "@/lib/r2";
+export const dynamic = "force-dynamic";
+
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!isAdminRequest(request.headers.get("cookie"))) {

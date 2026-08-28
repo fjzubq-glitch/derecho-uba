@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { hashIp } from "@/lib/hashIp";
 import { ipFromRequest, isRateLimited } from "@/lib/simpleRateLimit";
+export const dynamic = "force-dynamic";
+
 
 const RATE_KEY = "track";
 const RATE_MAX = 120;

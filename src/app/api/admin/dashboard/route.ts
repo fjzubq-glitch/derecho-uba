@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
 import { calcularPopCounts, calcularResumen, CONTENIDO_TIPOS, normalizarNombre, type EventoAnalitico, type MateriaAnalitica } from "@/lib/analytics";
+export const dynamic = "force-dynamic";
+
 
 export async function GET(request: NextRequest) {
   if (!isAdminRequest(request.headers.get("cookie"))) {

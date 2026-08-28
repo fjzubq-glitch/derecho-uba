@@ -4,6 +4,8 @@ import path from "path";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { uploadToR2 } from "@/lib/r2";
 import { isAdminRequest } from "@/lib/auth";
+export const dynamic = "force-dynamic";
+
 
 const SLUG_MAP: Record<string, string> = {
   "contratos-ii": "contratos",

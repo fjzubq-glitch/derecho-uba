@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { uploadToR2 } from "@/lib/r2";
 import { isAdminRequest } from "@/lib/auth";
+export const dynamic = "force-dynamic";
+
 
 const MAX_CHUNK_BYTES = 2 * 1024 * 1024; // 2 MB por parte
 const MAX_PARTS = 600; // hasta ~1.2 GB por archivo (partes de ~2MB)

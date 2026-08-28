@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { uploadToR2, deleteFromR2, getObjectBuffer } from "@/lib/r2";
 import { isAdminRequest } from "@/lib/auth";
 import { validateAudioFile, validateDocumentFile } from "@/lib/fileValidation";
+export const dynamic = "force-dynamic";
+
 
 const MAX_PARTS = 600;
 const MAX_SESSION_PARTS = 600;

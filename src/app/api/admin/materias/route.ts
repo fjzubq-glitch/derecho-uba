@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
+export const dynamic = "force-dynamic";
+
 
 const ALLOWED = ["nombre", "comision", "catedra", "anio", "turno", "descripcion"];
 

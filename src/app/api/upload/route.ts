@@ -6,6 +6,8 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
 import { validateAudioFile, validateDocumentFile } from "@/lib/fileValidation";
 import { CuestionarioData, generarCuestionarioHTML } from "@/lib/cuestionario";
+export const dynamic = "force-dynamic";
+
 
 // Cuando el cuestionario se sube como HTML crudo (fiel al original), se guarda
 // directo en R2 sin pasar por el generador que resintetiza contenido desde JSON.

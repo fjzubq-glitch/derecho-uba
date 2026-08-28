@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminRequest, createVisorToken } from "@/lib/auth";
+export const dynamic = "force-dynamic";
+
 
 export async function GET(request: NextRequest) {
   if (!isAdminRequest(request.headers.get("cookie"))) {

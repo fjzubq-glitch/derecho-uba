@@ -5,6 +5,8 @@ import { uploadToR2 } from "@/lib/r2";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
 import { CuestionarioData, generarCuestionarioHTML } from "@/lib/cuestionario";
+export const dynamic = "force-dynamic";
+
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!isAdminRequest(request.headers.get("cookie"))) {

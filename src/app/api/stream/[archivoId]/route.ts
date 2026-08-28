@@ -3,6 +3,8 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 import { getObjectStream } from "@/lib/r2";
 import { ipFromRequest, isRateLimited } from "@/lib/simpleRateLimit";
 import { isAdminRequest } from "@/lib/auth";
+export const dynamic = "force-dynamic";
+
 
 export async function GET(
   request: NextRequest,

@@ -5,6 +5,8 @@ import { uploadToR2 } from "@/lib/r2";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { CuestionarioData, generarCuestionarioHTML } from "@/lib/cuestionario";
 import { isAdminRequest } from "@/lib/auth";
+export const dynamic = "force-dynamic";
+
 
 async function readJsonFiles(dir: string): Promise<{ filePath: string; data: CuestionarioData }[]> {
   const results: { filePath: string; data: CuestionarioData }[] = [];
