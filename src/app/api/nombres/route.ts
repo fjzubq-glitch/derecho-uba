@@ -14,12 +14,22 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
+  const url = new URL(request.url);
+  const q = url.searchParams.get("q")?.trim().toLowerCase() || "";
+
+  // Sin query no devolvemos nada (evita fuga de PII). El cliente debe enviar
+  // lo que el alumno va tipeando (p.ej. "ma" → "María", "Marcos"...).
+  if (!q) {
+    return NextResponse.json({ nombres: [] });
+  }
+
   try {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from("actividad")
       .select("nombre")
       .not("nombre", "is", null)
+      .ilike("nombre", `${q}%`)
       .order("created_at", { ascending: false })
       .limit(200);
 
@@ -38,7 +48,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const nombres = Array.from(vistos.values()).slice(0, 15);
+    const nombres = Array.from(vistos.values()).slice(0, 10);
     return NextResponse.json({ nombres });
   } catch (e) {
     console.error("Error fetching nombres:", e);

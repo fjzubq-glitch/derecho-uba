@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { getPortalUserName, setPortalUserName } from "@/lib/portalUser";
 import { trackActivity } from "@/lib/tracking";
 
@@ -14,19 +14,13 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
   const [nombre, setNombre] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [sugerencias, setSugerencias] = useState<string[]>([]);
-  const [todasSugerencias, setTodasSugerencias] = useState<string[]>([]);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const name = getPortalUserName();
     if (!name) {
       setOpen(true);
-      fetch("/api/nombres")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.nombres) setTodasSugerencias(data.nombres);
-        })
-        .catch(() => {});
     }
     setChecking(false);
   }, []);
@@ -40,11 +34,21 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
       setActiveIndex(-1);
       return;
     }
-    const filtradas = todasSugerencias.filter(
-      (s) => s.toLowerCase().includes(q) && s.toLowerCase() !== q
-    );
-    setSugerencias(filtradas.slice(0, 5));
-    setActiveIndex(-1);
+    // Debounce 150ms para no saturar la API
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetch(`/api/nombres?q=${encodeURIComponent(q)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.nombres) {
+            // El server ya filtra por prefijo y excluye el admin;
+            // aquí solo quitamos la coincidencia exacta con lo tipeado
+            const filtradas = data.nombres.filter((s: string) => s.toLowerCase() !== q);
+            setSugerencias(filtradas.slice(0, 5));
+          }
+        })
+        .catch(() => {});
+    }, 150);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -89,6 +93,8 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
     }
     setOpen(false);
   }
+
+  useEffect(() => () => { if (debounceRef.current) clearTimeout(debounceRef.current); }, []);
 
   if (checking || !open) return null;
 

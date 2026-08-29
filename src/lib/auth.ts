@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual, scryptSync } from "node:crypto";
+import { createHmac, timingSafeEqual, scryptSync, createHash } from "node:crypto";
 
 const SESSION_COOKIE = "derecho_admin";
 const SESSION_TTL = 60 * 60 * 24 * 30; // 30 días
@@ -8,19 +8,29 @@ const SESSION_TTL = 60 * 60 * 24 * 30; // 30 días
 // directamente como clave HMAC.
 const SESSION_SALT = "derecho-uba-session-salt-v1";
 
+function rawSecret(): string {
+  return process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || "";
+}
+
 function sessionSecret(): Buffer {
-  // SESSION_SECRET (preferido) o, en su defecto, ADMIN_PASSWORD estirado.
-  const base = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || "";
+  const base = rawSecret();
   if (!base) {
     throw new Error("SESSION_SECRET o ADMIN_PASSWORD no están definidos");
   }
   return scryptSync(base, SESSION_SALT, 64);
 }
 
+// Versión del secreto: cambia si rota ADMIN_PASSWORD/SESSION_SECRET
+// → invalida automáticamente todas las cookies de admin vigentes.
+function sessionVersion(): string {
+  return createHash("sha256").update(rawSecret()).digest("hex").slice(0, 12);
+}
+
 export function createSessionToken(): string {
   const secret = sessionSecret();
   const payload = {
     exp: Date.now() + SESSION_TTL * 1000,
+    v: sessionVersion(),
   };
   const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
   const sig = createHmac("sha256", secret).update(body).digest("base64url");
@@ -41,6 +51,7 @@ export function verifySessionToken(token: string | null | undefined): boolean {
   try {
     const payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
     if (!payload.exp || Date.now() > payload.exp) return false;
+    if (payload.v !== sessionVersion()) return false;
     return true;
   } catch {
     return false;
