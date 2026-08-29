@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
         tipo: item.tipo,
         nombre_display: item.nombre,
         storage_key: storageKey,
-        youtube_url: item.youtubeUrl || null,
+        youtube_url: item.driveLink || item.youtubeUrl || null,
         cloudinary_url: item.cloudinaryUrl || null,
         contenido_texto: contenidoTexto,
         contenido,
