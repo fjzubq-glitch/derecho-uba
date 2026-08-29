@@ -449,7 +449,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     setMessage("");
     setCuestionarioSaving(true);
     try {
-      const res = await fetch(`/api/admin/cuestionario/${archivo.id}/html`);
+      const res = await fetch(`/api/admin/cuestionario/${archivo.id}/html`, { cache: "no-store" });
       if (res.ok) {
         const html = await res.text();
         setEditandoCuestionario({ archivoId: archivo.id, nombre: archivo.nombre_display, html });

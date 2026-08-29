@@ -26,7 +26,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         const r2Res = await getObjectStream(archivo.storage_key);
         if (r2Res.ok) {
           return new NextResponse(r2Res.body, {
-            headers: { "Content-Type": "text/html; charset=utf-8" },
+            headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store, no-cache, must-revalidate" },
           });
         }
       } catch {
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     if (archivo.contenido_texto) {
       return new NextResponse(archivo.contenido_texto, {
-        headers: { "Content-Type": "text/html; charset=utf-8" },
+        headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store, no-cache, must-revalidate" },
       });
     }
 
