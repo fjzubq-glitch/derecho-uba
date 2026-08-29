@@ -1,17 +1,11 @@
 import { NextResponse } from "next/server";
+import { unstable_cache } from "next/cache";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
-
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ slug: string; numero: string }> }
-) {
-  const { slug, numero } = await params;
-  const esAdmin = isAdminRequest(request.headers.get("cookie"));
+async function getClaseData(slug: string, num: number) {
   const supabase = getSupabaseAdmin();
-  const num = parseInt(numero);
 
   const { data: materia } = await supabase
     .from("materias")
@@ -20,7 +14,7 @@ export async function GET(
     .single();
 
   if (!materia) {
-    return NextResponse.json({ materia: null, clase: null, adjacentes: [] });
+    return { materia: null, clase: null, adjacentes: [] as unknown[] };
   }
 
   const { data: clase } = await supabase
@@ -31,7 +25,7 @@ export async function GET(
     .single();
 
   if (!clase) {
-    return NextResponse.json({ materia, clase: null, adjacentes: [] });
+    return { materia, clase: null, adjacentes: [] as unknown[] };
   }
 
   const [archivosRes, vecinosRes] = await Promise.all([
@@ -48,14 +42,40 @@ export async function GET(
       .in("numero", [num - 1, num + 1]),
   ]);
 
-  const archivos = archivosRes.data;
-  const vecinos = vecinosRes.data;
-
-  const visibles = (archivos || []).filter((a) => esAdmin || (a.tipo !== "cuestionario" && a.tipo !== "material_privado" && a.tipo !== "ficha"));
-
-  const adjacentes = (vecinos || [])
+  const adjacentes = (vecinosRes.data || [])
     .slice()
     .sort((a, b) => a.numero - b.numero);
 
-  return NextResponse.json({ materia, clase: { ...clase, archivos: visibles }, adjacentes });
+  return { materia, clase: { ...clase, archivos: archivosRes.data || [] }, adjacentes };
+}
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ slug: string; numero: string }> }
+) {
+  const { slug, numero } = await params;
+  const esAdmin = isAdminRequest(request.headers.get("cookie"));
+  const num = parseInt(numero);
+
+  const data = await unstable_cache(
+    () => getClaseData(slug, num),
+    ["clase-detalle", slug, String(num)],
+    { revalidate: 300 },
+  )();
+
+  if (!data.materia || !data.clase) {
+    return NextResponse.json({ materia: data.materia, clase: null, adjacentes: [] });
+  }
+
+  // El filtrado de tipos privados es por-request (depende de esAdmin) y no se
+  // cachea, así el cache compartido no filtra para el rol equivocado.
+  const visibles = (data.clase.archivos || []).filter(
+    (a) => esAdmin || (a.tipo !== "cuestionario" && a.tipo !== "material_privado" && a.tipo !== "ficha"),
+  );
+
+  return NextResponse.json({
+    materia: data.materia,
+    clase: { ...data.clase, archivos: visibles },
+    adjacentes: data.adjacentes,
+  });
 }

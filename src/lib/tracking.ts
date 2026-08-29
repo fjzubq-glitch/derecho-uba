@@ -1,13 +1,10 @@
 import { isAdminSession } from "./utils";
 import { getPortalUserName } from "./portalUser";
 
-const ADMIN_NOMBRE = process.env.NEXT_PUBLIC_ADMIN_NOMBRE?.trim().toLowerCase();
-
-/** El admin no cuenta en estadísticas: sesión activa o nombre configurado. */
+/** El admin no cuenta en estadísticas. Se excluye por su sesión local para no
+ *  exponer NEXT_PUBLIC_ADMIN_NOMBRE en el bundle del cliente. */
 export function isAdminUser(): boolean {
-  if (isAdminSession()) return true;
-  const usuario = getPortalUserName();
-  return Boolean(ADMIN_NOMBRE && usuario && usuario.toLowerCase() === ADMIN_NOMBRE);
+  return isAdminSession();
 }
 
 export async function trackActivity(data: {

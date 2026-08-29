@@ -26,7 +26,10 @@ export default async function VisorPage({
     .eq("id", archivoId)
     .single();
 
-  const iframeSandbox = "allow-scripts allow-same-origin allow-forms allow-popups allow-modals";
+  // Sin allow-same-origin: el contenido del iframe queda en un origen opaco y
+  // no puede leer cookies, localStorage ni acceder al padre (mitiga XSS/session
+  // theft si el contenido embebido resultara comprometido).
+  const iframeSandbox = "allow-scripts allow-forms allow-popups allow-modals";
   const isImage = (key: string | null) =>
     !!key && /\.(jpe?g|png|gif|webp|svg|bmp|avif|jfif|heic|heif|tiff?|ico)$/i.test(key);
 

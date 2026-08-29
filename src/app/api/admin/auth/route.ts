@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sessionCookieHeader } from "@/lib/auth";
 import { checkRateLimit, registerFailedAttempt } from "@/lib/rateLimit";
+import { scryptSync, timingSafeEqual } from "node:crypto";
+
+const AUTH_SALT = "derecho-uba-auth-salt-v1";
+
+function hashPassword(pw: string): Buffer {
+  return scryptSync(pw, AUTH_SALT, 64);
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,14 +28,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: "Configuración incompleta" }, { status: 500 });
     }
 
-    if (password === ADMIN_PASSWORD) {
-      const response = NextResponse.json({ ok: true });
-      response.headers.set("Set-Cookie", sessionCookieHeader());
-      return response;
+    const a = hashPassword(password);
+    const b = hashPassword(ADMIN_PASSWORD);
+    if (a.length !== b.length || !timingSafeEqual(a, b)) {
+      registerFailedAttempt(request);
+      return NextResponse.json({ ok: false, error: "Contraseña incorrecta" }, { status: 401 });
     }
 
-    registerFailedAttempt(request);
-    return NextResponse.json({ ok: false, error: "Contraseña incorrecta" }, { status: 401 });
+    const response = NextResponse.json({ ok: true });
+    response.headers.set("Set-Cookie", sessionCookieHeader());
+    return response;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json({ ok: false, error: msg }, { status: 500 });

@@ -230,10 +230,12 @@ export default function AdminPage() {
   }, [periodo]);
 
   useEffect(() => {
-    if (authenticated) {
+    // Solo cargamos las estadísticas al entrar a la pestaña Analytics, para no
+    // golpear Supabase (consultas pesadas) al abrir el panel en "Subir".
+    if (authenticated && activeTab === "analytics") {
       loadAdminData();
     }
-  }, [authenticated, loadAdminData]);
+  }, [authenticated, activeTab, loadAdminData]);
 
   function cambiarPeriodo(p: Periodo) {
     setPeriodo(p);

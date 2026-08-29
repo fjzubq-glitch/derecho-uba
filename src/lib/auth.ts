@@ -1,14 +1,20 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHmac, timingSafeEqual, scryptSync } from "node:crypto";
 
 const SESSION_COOKIE = "derecho_admin";
 const SESSION_TTL = 60 * 60 * 24 * 30; // 30 días
 
-function sessionSecret(): string {
-  const secret = process.env.ADMIN_PASSWORD || "";
-  if (!secret) {
-    throw new Error("ADMIN_PASSWORD is not set");
+// Sal fija: solo endurece el secreto frente a fuerza bruta offline. No aporta
+// aleatoriedad criptográfica, pero evita que una ADMIN_PASSWORD débil sea usada
+// directamente como clave HMAC.
+const SESSION_SALT = "derecho-uba-session-salt-v1";
+
+function sessionSecret(): Buffer {
+  // SESSION_SECRET (preferido) o, en su defecto, ADMIN_PASSWORD estirado.
+  const base = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || "";
+  if (!base) {
+    throw new Error("SESSION_SECRET o ADMIN_PASSWORD no están definidos");
   }
-  return secret;
+  return scryptSync(base, SESSION_SALT, 64);
 }
 
 export function createSessionToken(): string {
