@@ -21,6 +21,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Cuestionario no encontrado" }, { status: 404 });
     }
 
+    if (archivo.contenido_texto) {
+      return new NextResponse(archivo.contenido_texto, {
+        headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store, no-cache, must-revalidate" },
+      });
+    }
+
     if (archivo.storage_key) {
       try {
         const r2Res = await getObjectStream(archivo.storage_key);
@@ -30,14 +36,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           });
         }
       } catch {
-        // R2 no tiene el archivo, intentar contenido_texto
+        // R2 no disponible
       }
-    }
-
-    if (archivo.contenido_texto) {
-      return new NextResponse(archivo.contenido_texto, {
-        headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store, no-cache, must-revalidate" },
-      });
     }
 
     return NextResponse.json({ error: "Sin contenido HTML" }, { status: 404 });

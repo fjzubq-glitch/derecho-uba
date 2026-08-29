@@ -47,6 +47,9 @@ export default async function VisorPage({
       // dependencias de que la cookie viaje en la subpetición del iframe.
       if (!esAdmin) {
         errorMsg = "No autorizado";
+      } else if (archivo.contenido_texto) {
+        iframeSrcDoc = archivo.contenido_texto;
+        modo = "srcdoc";
       } else if (archivo.storage_key) {
         try {
           const r2Res = await getObjectStream(archivo.storage_key);
@@ -59,9 +62,6 @@ export default async function VisorPage({
         } catch (e) {
           errorMsg = e instanceof Error ? e.message : "Error al leer el archivo";
         }
-      } else if (archivo.contenido_texto) {
-        iframeSrcDoc = archivo.contenido_texto;
-        modo = "srcdoc";
       } else {
         errorMsg = "Cuestionario sin contenido";
       }
