@@ -141,6 +141,7 @@ export default function AdminPage() {
   const [materiasStats, setMateriasStats] = useState<MateriaStats[]>([]);
   const [clasesStats, setClasesStats] = useState<ClaseStats[]>([]);
   const [materiasClaseAbiertas, setMateriasClaseAbiertas] = useState<Set<string>>(new Set());
+  const [analyticsError, setAnalyticsError] = useState<string | null>(null);
   const [contenidoPopular, setContenidoPopular] = useState<ContenidoPopular[]>([]);
   const [totalRegistradosAllTime, setTotalRegistradosAllTime] = useState(0);
   const [periodo, setPeriodo] = useState<Periodo>("7");
@@ -225,8 +226,13 @@ export default function AdminPage() {
   const loadAdminData = useCallback(async () => {
     try {
       setAnalyticsLoading(true);
+      setAnalyticsError(null);
       const res = await fetch(`/api/admin/dashboard?dias=${periodo}`);
       const data = await res.json();
+      if (!res.ok) {
+        setAnalyticsError(`Error ${res.status}: ${data?.error || "sin datos"}`);
+        return;
+      }
       if (data.materias) setMaterias(data.materias);
       if (data.stats) setStats(data.stats);
       setVisitantesUnicos(data.visitantesUnicos || 0);
@@ -237,11 +243,18 @@ export default function AdminPage() {
       if (data.contenidoPorTipo) setContenidoPorTipo(data.contenidoPorTipo);
       if (data.estudiantes) setEstudiantes(data.estudiantes);
       if (data.materiasStats) setMateriasStats(data.materiasStats);
-      if (data.clasesStats) setClasesStats(data.clasesStats);
+      if (data.clasesStats) {
+        setClasesStats(data.clasesStats);
+        const nombres = (data.clasesStats as ClaseStats[])
+          .map((c) => c.materia)
+          .filter((m): m is string => Boolean(m));
+        setMateriasClaseAbiertas(new Set(nombres));
+      }
       if (data.contenidoPopular) setContenidoPopular(data.contenidoPopular);
       setTotalRegistradosAllTime(data.totalRegistradosAllTime || 0);
     } catch (e) {
       console.error("Error loading admin data:", e);
+      setAnalyticsError("No se pudieron cargar los datos. Revisá la consola (F12).");
     }
     setAnalyticsLoading(false);
   }, [periodo]);
@@ -958,6 +971,22 @@ export default function AdminPage() {
                       {periodo === "all" ? "Todo el historial" : `Últimos ${periodo} días`}
                     </span>
                   </div>
+
+                  {analyticsError && (
+                    <div
+                      style={{
+                        padding: "12px 16px",
+                        background: "rgba(196, 117, 107, 0.08)",
+                        border: "1px solid rgba(196, 117, 107, 0.3)",
+                        borderRadius: 0,
+                        marginBottom: "24px",
+                      }}
+                    >
+                      <p style={{ fontSize: "13px", color: "#C4756B", fontFamily: "var(--font-inter)" }}>
+                        {analyticsError}
+                      </p>
+                    </div>
+                  )}
 
                   {/* Métricas generales */}
                   <div
