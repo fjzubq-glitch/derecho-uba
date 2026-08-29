@@ -91,20 +91,6 @@ interface MateriaStats {
   consumo: number;
 }
 
-interface ClaseStats {
-  id: string;
-  materia: string;
-  numero: number;
-  titulo: string;
-  personas: number;
-  audio_clase: number;
-  clase_youtube: number;
-  transcripcion: number;
-  archivo: number;
-  enlace: number;
-  total: number;
-}
-
 interface EnLinea {
   nombre: string;
   materia_slug: string | null;
@@ -139,9 +125,6 @@ export default function AdminPage() {
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
   const [contenidoPorTipo, setContenidoPorTipo] = useState<ContenidoPorTipo[]>([]);
   const [materiasStats, setMateriasStats] = useState<MateriaStats[]>([]);
-  const [clasesStats, setClasesStats] = useState<ClaseStats[]>([]);
-  const [materiasClaseAbiertas, setMateriasClaseAbiertas] = useState<Set<string>>(new Set());
-  const [analyticsError, setAnalyticsError] = useState<string | null>(null);
   const [contenidoPopular, setContenidoPopular] = useState<ContenidoPopular[]>([]);
   const [totalRegistradosAllTime, setTotalRegistradosAllTime] = useState(0);
   const [periodo, setPeriodo] = useState<Periodo>("7");
@@ -226,13 +209,8 @@ export default function AdminPage() {
   const loadAdminData = useCallback(async () => {
     try {
       setAnalyticsLoading(true);
-      setAnalyticsError(null);
       const res = await fetch(`/api/admin/dashboard?dias=${periodo}`);
       const data = await res.json();
-      if (!res.ok) {
-        setAnalyticsError(`Error ${res.status}: ${data?.error || "sin datos"}`);
-        return;
-      }
       if (data.materias) setMaterias(data.materias);
       if (data.stats) setStats(data.stats);
       setVisitantesUnicos(data.visitantesUnicos || 0);
@@ -243,18 +221,10 @@ export default function AdminPage() {
       if (data.contenidoPorTipo) setContenidoPorTipo(data.contenidoPorTipo);
       if (data.estudiantes) setEstudiantes(data.estudiantes);
       if (data.materiasStats) setMateriasStats(data.materiasStats);
-      if (data.clasesStats) {
-        setClasesStats(data.clasesStats);
-        const nombres = (data.clasesStats as ClaseStats[])
-          .map((c) => c.materia)
-          .filter((m): m is string => Boolean(m));
-        setMateriasClaseAbiertas(new Set(nombres));
-      }
       if (data.contenidoPopular) setContenidoPopular(data.contenidoPopular);
       setTotalRegistradosAllTime(data.totalRegistradosAllTime || 0);
     } catch (e) {
       console.error("Error loading admin data:", e);
-      setAnalyticsError("No se pudieron cargar los datos. Revisá la consola (F12).");
     }
     setAnalyticsLoading(false);
   }, [periodo]);
@@ -971,22 +941,6 @@ export default function AdminPage() {
                       {periodo === "all" ? "Todo el historial" : `Últimos ${periodo} días`}
                     </span>
                   </div>
-
-                  {analyticsError && (
-                    <div
-                      style={{
-                        padding: "12px 16px",
-                        background: "rgba(196, 117, 107, 0.08)",
-                        border: "1px solid rgba(196, 117, 107, 0.3)",
-                        borderRadius: 0,
-                        marginBottom: "24px",
-                      }}
-                    >
-                      <p style={{ fontSize: "13px", color: "#C4756B", fontFamily: "var(--font-inter)" }}>
-                        {analyticsError}
-                      </p>
-                    </div>
-                  )}
 
                   {/* Métricas generales */}
                   <div
@@ -1730,196 +1684,6 @@ export default function AdminPage() {
                     </article>
                   )}
 
-                  {/* Actividad por clase (agrupado por materia en desplegables) */}
-                  {clasesStats.length > 0 && (() => {
-                    const grupos = clasesStats.reduce<Record<string, ClaseStats[]>>((acc, c) => {
-                      (acc[c.materia] = acc[c.materia] || []).push(c);
-                      return acc;
-                    }, {});
-                    const materiasOrden = Object.keys(grupos).sort((a, b) => a.localeCompare(b));
-                    const cell = (val: number) => ({
-                      padding: "11px 0",
-                      textAlign: "right" as const,
-                      fontFamily: "var(--font-ibm-plex-mono)",
-                      fontSize: "12px",
-                      color: val > 0 ? "var(--color-text)" : "var(--color-text-faint)",
-                    });
-                    return (
-                      <article
-                        style={{
-                          background: "var(--color-card)",
-                          border: "1px solid var(--color-line-soft)",
-                          padding: "28px 30px",
-                          borderRadius: 0,
-                        }}
-                      >
-                        <h3
-                          style={{
-                            fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                            fontWeight: 400,
-                            fontSize: "20px",
-                            color: "var(--color-text)",
-                            marginBottom: "4px",
-                          }}
-                        >
-                          Actividad por clase
-                        </h3>
-                        <p
-                          style={{
-                            fontSize: "12px",
-                            color: "var(--color-text-muted)",
-                            marginBottom: "20px",
-                            lineHeight: 1.6,
-                          }}
-                        >
-                          Consumo de audio, video, textos, archivos y enlaces por clase. Desplegá cada materia.
-                        </p>
-
-                        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                          {materiasOrden.map((materia) => {
-                            const grupo = grupos[materia];
-                            const totalMat = grupo.reduce((s, c) => s + c.total, 0);
-                            const abierta = materiasClaseAbiertas.has(materia);
-                            return (
-                              <div key={materia} style={{ border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    setMateriasClaseAbiertas((prev) => {
-                                      const n = new Set(prev);
-                                      if (n.has(materia)) n.delete(materia);
-                                      else n.add(materia);
-                                      return n;
-                                    })
-                                  }
-                                  style={{
-                                    width: "100%",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "12px",
-                                    background: "transparent",
-                                    border: "none",
-                                    padding: "14px 16px",
-                                    cursor: "pointer",
-                                    textAlign: "left",
-                                  }}
-                                >
-                                  <span
-                                    style={{
-                                      fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                                      fontSize: "16px",
-                                      color: "var(--color-text)",
-                                    }}
-                                  >
-                                    {materia}
-                                  </span>
-                                  <span
-                                    style={{
-                                      fontFamily: "var(--font-ibm-plex-mono)",
-                                      fontSize: "10px",
-                                      color: "var(--color-text-faint)",
-                                      textTransform: "uppercase",
-                                      letterSpacing: "0.1em",
-                                    }}
-                                  >
-                                    {grupo.length} clases
-                                  </span>
-                                  <span
-                                    style={{
-                                      marginLeft: "auto",
-                                      fontFamily: "var(--font-ibm-plex-mono)",
-                                      fontSize: "12px",
-                                      color: "var(--color-gold)",
-                                      fontWeight: 500,
-                                    }}
-                                  >
-                                    {totalMat} acc.
-                                  </span>
-                                  <span
-                                    style={{
-                                      fontFamily: "var(--font-ibm-plex-mono)",
-                                      fontSize: "12px",
-                                      color: "var(--color-text-muted)",
-                                      transform: abierta ? "rotate(180deg)" : "none",
-                                      transition: "transform 0.15s ease",
-                                    }}
-                                  >
-                                    ▾
-                                  </span>
-                                </button>
-                                {abierta && (
-                                  <div style={{ padding: "0 16px 16px", overflowX: "auto" }}>
-                                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                                      <thead>
-                                        <tr
-                                          style={{
-                                            borderBottom: "1px solid var(--color-line)",
-                                            fontFamily: "var(--font-ibm-plex-mono)",
-                                            fontSize: "9px",
-                                            letterSpacing: "0.12em",
-                                            textTransform: "uppercase",
-                                            color: "var(--color-text-faint)",
-                                          }}
-                                        >
-                                          <th style={{ textAlign: "left", padding: "8px 0", fontWeight: 500 }}>Clase</th>
-                                          <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Pers.</th>
-                                          <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Audio</th>
-                                          <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Virt.</th>
-                                          <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Textos</th>
-                                          <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Arch.</th>
-                                          <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Enlaces</th>
-                                          <th style={{ textAlign: "right", padding: "8px 0", fontWeight: 500 }}>Total</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {grupo.map((c, i) => (
-                                          <tr
-                                            key={c.id}
-                                            style={{
-                                              borderBottom: i < grupo.length - 1 ? "1px solid var(--color-line-soft)" : "none",
-                                            }}
-                                          >
-                                            <td style={{ padding: "10px 12px 10px 0" }}>
-                                              <p style={{ fontSize: "13px", color: "var(--color-text)", margin: 0 }}>
-                                                <span style={{ fontFamily: "var(--font-ibm-plex-mono)", color: "var(--color-text-muted)" }}>
-                                                  {String(c.numero).padStart(2, "0")}
-                                                </span>{" "}
-                                                {c.titulo}
-                                              </p>
-                                            </td>
-                                            <td style={{ ...cell(c.personas), color: c.personas > 0 ? "var(--color-gold)" : "var(--color-text-faint)" }}>
-                                              {c.personas}
-                                            </td>
-                                            <td style={cell(c.audio_clase)}>{c.audio_clase}</td>
-                                            <td style={cell(c.clase_youtube)}>{c.clase_youtube}</td>
-                                            <td style={cell(c.transcripcion)}>{c.transcripcion}</td>
-                                            <td style={cell(c.archivo)}>{c.archivo}</td>
-                                            <td style={cell(c.enlace)}>{c.enlace}</td>
-                                            <td
-                                              style={{
-                                                padding: "11px 0",
-                                                textAlign: "right",
-                                                fontFamily: "var(--font-ibm-plex-mono)",
-                                                fontSize: "12px",
-                                                fontWeight: 500,
-                                                color: c.total > 0 ? "var(--color-gold)" : "var(--color-text-faint)",
-                                              }}
-                                            >
-                                              {c.total}
-                                            </td>
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </article>
-                    );
-                  })}
 
                   {/* Estudiantes registrados */}
                   {estudiantes.length > 0 && (() => {
