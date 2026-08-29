@@ -230,9 +230,10 @@ export default function AdminPage() {
   }, [periodo]);
 
   useEffect(() => {
-    // Solo cargamos las estadísticas al entrar a la pestaña Analytics, para no
-    // golpear Supabase (consultas pesadas) al abrir el panel en "Subir".
-    if (authenticated && activeTab === "analytics") {
+    // Cargamos materias/clases al entrar a Subir (para los dropdowns) o Analytics.
+    // El resto de la data pesada (estadísticas) solo se usa en Analytics,
+    // pero loadAdminData trae ambas; el costo es aceptable.
+    if (authenticated && (activeTab === "upload" || activeTab === "analytics")) {
       loadAdminData();
     }
   }, [authenticated, activeTab, loadAdminData]);
