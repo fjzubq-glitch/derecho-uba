@@ -1,9 +1,12 @@
 import VolverBoton from "@/components/VolverBoton";
+import IframeEditorBridge from "@/components/IframeEditorBridge";
 import { cookies } from "next/headers";
 import { isAdminRequest, verifyVisorToken } from "@/lib/auth";
 import ZoomableImage from "@/components/ZoomableImage";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { getObjectStream } from "@/lib/r2";
+
+const BRIDGE_SCRIPT = `<script>(function(){function h(){try{window.parent.postMessage({type:"cuestionario-editor-save",html:"<!DOCTYPE html>\\n"+document.documentElement.outerHTML},"*")}catch(e){}}function hook(){if(typeof EditorManager!=="undefined"&&EditorManager.saveContent){var o=EditorManager.saveContent.bind(EditorManager);EditorManager.saveContent=function(){o();h()}}else setTimeout(hook,200)}hook();document.addEventListener("visibilitychange",function(){if(document.visibilityState==="hidden")h()})})();<` + `/script>`;
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +42,7 @@ export default async function VisorPage({
   let iframeSrcDoc: string | null = null;
   let externalUrl: string | null = null;
   let errorMsg: string | null = null;
+  let esCuestionario = false;
 
   if (archivo) {
     if (archivo.tipo === "cuestionario") {
@@ -49,6 +53,7 @@ export default async function VisorPage({
         errorMsg = "No autorizado";
       } else if (archivo.contenido_texto) {
         iframeSrcDoc = archivo.contenido_texto;
+        esCuestionario = true;
         modo = "srcdoc";
       } else if (archivo.storage_key) {
         try {
@@ -57,6 +62,7 @@ export default async function VisorPage({
             errorMsg = `R2: ${r2Res.status}`;
           } else {
             iframeSrcDoc = await r2Res.text();
+            esCuestionario = true;
             modo = "srcdoc";
           }
         } catch (e) {
@@ -115,6 +121,14 @@ export default async function VisorPage({
   }
 
   const ocultarHeader = archivo?.tipo === "material_privado";
+
+  if (esCuestionario && iframeSrcDoc) {
+    if (iframeSrcDoc.includes("</body>")) {
+      iframeSrcDoc = iframeSrcDoc.replace("</body>", BRIDGE_SCRIPT + "</body>");
+    } else {
+      iframeSrcDoc += BRIDGE_SCRIPT;
+    }
+  }
 
   return (
     <div
@@ -200,6 +214,13 @@ export default async function VisorPage({
             </button>
           </div>
         ) : iframeSrcDoc !== null ? (
+          esCuestionario ? (
+            <IframeEditorBridge
+              srcDoc={iframeSrcDoc}
+              archivoId={archivoId}
+              sandbox={iframeSandbox}
+            />
+          ) : (
           <iframe
             title="Web interactiva"
             sandbox={iframeSandbox}
@@ -212,6 +233,7 @@ export default async function VisorPage({
               background: "#ffffff",
             }}
           />
+          )
         ) : iframeSrc ? (
           <iframe
             src={iframeSrc}
