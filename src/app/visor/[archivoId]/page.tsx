@@ -6,7 +6,9 @@ import ZoomableImage from "@/components/ZoomableImage";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { getObjectStream } from "@/lib/r2";
 
-const BRIDGE_SCRIPT = `<script>(function(){function h(){try{window.parent.postMessage({type:"cuestionario-editor-save",html:"<!DOCTYPE html>\\n"+document.documentElement.outerHTML},"*")}catch(e){}}function hook(){if(typeof EditorManager!=="undefined"&&EditorManager.saveContent){var o=EditorManager.saveContent.bind(EditorManager);EditorManager.saveContent=function(){o();h()}}else setTimeout(hook,200)}hook();document.addEventListener("visibilitychange",function(){if(document.visibilityState==="hidden")h()})})();<` + `/script>`;
+const BRIDGE_SCRIPT_ADMIN = `<script>(function(){function h(){try{window.parent.postMessage({type:"cuestionario-editor-save",html:"<!DOCTYPE html>\\n"+document.documentElement.outerHTML},"*")}catch(e){}}function hook(){if(typeof EditorManager!=="undefined"&&EditorManager.saveContent){var o=EditorManager.saveContent.bind(EditorManager);EditorManager.saveContent=function(){o();h()}}else setTimeout(hook,200)}hook();document.addEventListener("visibilitychange",function(){if(document.visibilityState==="hidden")h()})})();<` + `/script>`;
+
+const BRIDGE_SCRIPT_READONLY = `<script>(function(){function disable(){var t=document.getElementById("global-editor-toggle"),s=document.getElementById("global-editor-save"),r=document.getElementById("global-editor-reset"),b=document.getElementById("global-editor-toolbar"),i=document.getElementById("edited-indicator");if(t)t.style.display="none";if(s)s.style.display="none";if(r)r.style.display="none";if(b)b.style.display="none";if(i)i.style.display="none";}if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",disable)}else{disable()}})();<` + `/script>`;
 
 export const dynamic = "force-dynamic";
 
@@ -20,12 +22,13 @@ export default async function VisorPage({
   const { archivoId } = await params;
   const sp = await searchParams;
   const token = typeof sp.t === "string" ? sp.t : null;
+  const nombreVisitante = typeof sp.nombre === "string" ? sp.nombre.trim() : null;
   const cookieHeader = (await cookies()).toString();
   const esAdmin = verifyVisorToken(token, archivoId) || isAdminRequest(cookieHeader);
 
   const { data: archivo } = await getSupabaseAdmin()
     .from("archivos")
-    .select("storage_key, youtube_url, cloudinary_url, tipo, contenido_texto, nombre_display")
+    .select("storage_key, youtube_url, cloudinary_url, tipo, contenido_texto, nombre_display, clase_id")
     .eq("id", archivoId)
     .single();
 
@@ -35,6 +38,25 @@ export default async function VisorPage({
   const iframeSandbox = "allow-scripts allow-forms allow-popups allow-modals";
   const isImage = (key: string | null) =>
     !!key && /\.(jpe?g|png|gif|webp|svg|bmp|avif|jfif|heic|heif|tiff?|ico)$/i.test(key);
+
+  // Check si el visitante tiene acceso especial a la materia del archivo
+  let tieneAccesoEspecial = false;
+  if (!esAdmin && nombreVisitante && archivo?.clase_id) {
+    const { data: clase } = await getSupabaseAdmin()
+      .from("clases")
+      .select("materia_id")
+      .eq("id", archivo.clase_id)
+      .single();
+    if (clase) {
+      const { data: acceso } = await getSupabaseAdmin()
+        .from("accesos_especiales")
+        .select("id")
+        .eq("materia_id", clase.materia_id)
+        .ilike("nombre", nombreVisitante)
+        .maybeSingle();
+      tieneAccesoEspecial = !!acceso;
+    }
+  }
 
   type Modo = "srcdoc" | "iframe" | "imagen" | "externo" | "error";
   let modo: Modo = "error";
@@ -46,10 +68,8 @@ export default async function VisorPage({
 
   if (archivo) {
     if (archivo.tipo === "cuestionario") {
-      // Solo el administrador puede ver el cuestionario. Se resuelve en el
-      // servidor (que sí lee la cookie) y se embebe con srcDoc, evitando
-      // dependencias de que la cookie viaje en la subpetición del iframe.
-      if (!esAdmin) {
+      // Admin o acceso especial pueden ver el cuestionario.
+      if (!esAdmin && !tieneAccesoEspecial) {
         errorMsg = "No autorizado";
       } else if (archivo.contenido_texto) {
         iframeSrcDoc = archivo.contenido_texto;
@@ -72,7 +92,7 @@ export default async function VisorPage({
         errorMsg = "Cuestionario sin contenido";
       }
     } else {
-      if ((archivo.tipo === "material_privado" || archivo.tipo === "ficha") && !esAdmin) {
+      if ((archivo.tipo === "material_privado" || archivo.tipo === "ficha") && !esAdmin && !tieneAccesoEspecial) {
         errorMsg = "No autorizado";
       } else {
       const youtubeUrl = archivo.youtube_url || archivo.cloudinary_url;
@@ -123,10 +143,11 @@ export default async function VisorPage({
   const ocultarHeader = archivo?.tipo === "material_privado";
 
   if (esCuestionario && iframeSrcDoc) {
+    const bridgeScript = esAdmin ? BRIDGE_SCRIPT_ADMIN : BRIDGE_SCRIPT_READONLY;
     if (iframeSrcDoc.includes("</body>")) {
-      iframeSrcDoc = iframeSrcDoc.replace("</body>", BRIDGE_SCRIPT + "</body>");
+      iframeSrcDoc = iframeSrcDoc.replace("</body>", bridgeScript + "</body>");
     } else {
-      iframeSrcDoc += BRIDGE_SCRIPT;
+      iframeSrcDoc += bridgeScript;
     }
   }
 

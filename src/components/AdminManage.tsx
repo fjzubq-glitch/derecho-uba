@@ -87,6 +87,10 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const [filtroMateria, setFiltroMateria] = useState("todas");
   const [editandoCuestionario, setEditandoCuestionario] = useState<{ archivoId: string; nombre: string; html: string } | null>(null);
   const [cuestionarioSaving, setCuestionarioSaving] = useState(false);
+  const [accesosMateriaId, setAccesosMateriaId] = useState<string | null>(null);
+  const [accesosLista, setAccesosLista] = useState<{ id: string; nombre: string; materia_id: string; created_at: string }[]>([]);
+  const [accesoNombre, setAccesoNombre] = useState("");
+  const [accesoLoading, setAccesoLoading] = useState(false);
 
   const cerrarReplace = () => {
     setReplacing(null);
@@ -188,6 +192,45 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     }
 
     setLoading(false);
+  }
+
+  async function loadAccesos(materiaId: string) {
+    setAccesosMateriaId(materiaId);
+    setAccesoLoading(true);
+    try {
+      const res = await fetch(`/api/admin/accesos?materia_id=${materiaId}`);
+      const json = await res.json();
+      if (json.ok) setAccesosLista(json.accesos || []);
+    } catch { /* ignore */ }
+    setAccesoLoading(false);
+  }
+
+  async function addAcceso() {
+    if (!accesosMateriaId || !accesoNombre.trim()) return;
+    setAccesoLoading(true);
+    try {
+      const res = await fetch("/api/admin/accesos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombre: accesoNombre.trim(), materia_id: accesosMateriaId }),
+      });
+      const json = await res.json();
+      if (json.ok) {
+        setAccesosLista((prev) => [json.acceso, ...prev]);
+        setAccesoNombre("");
+      } else {
+        setMessage(json.error || "Error al agregar acceso");
+      }
+    } catch { setMessage("Error de red"); }
+    setAccesoLoading(false);
+  }
+
+  async function removeAcceso(id: string) {
+    try {
+      const res = await fetch(`/api/admin/accesos?id=${id}`, { method: "DELETE" });
+      const json = await res.json();
+      if (json.ok) setAccesosLista((prev) => prev.filter((a) => a.id !== id));
+    } catch { /* ignore */ }
   }
 
   async function toggleEstado(slug: string, currentEstado: string) {
@@ -753,6 +796,124 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {materias.length > 0 && (
+        <div
+          style={{
+            background: "var(--color-card)",
+            border: "1px solid var(--color-line-soft)",
+            borderRadius: 0,
+            padding: "20px 22px",
+          }}
+        >
+          <h3
+            style={{
+              fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+              fontWeight: 500,
+              fontSize: "16px",
+              color: "var(--color-text)",
+              marginBottom: "12px",
+            }}
+          >
+            Acceso especial por materia
+          </h3>
+          <p style={{ fontSize: "13px", color: "var(--color-text-faint)", marginBottom: "14px", fontFamily: "var(--font-inter)" }}>
+            Otorgá acceso de lectura a archivos privados para personas específicas. El link que generes incluirá su nombre.
+          </p>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {materias.map((m) => (
+              <button
+                key={m.id}
+                onClick={() => loadAccesos(m.id)}
+                style={{
+                  padding: "6px 14px",
+                  fontSize: "12px",
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  letterSpacing: "0.04em",
+                  background: accesosMateriaId === m.id ? "var(--color-gold)" : "transparent",
+                  color: accesosMateriaId === m.id ? "var(--color-ink)" : "var(--color-text-muted)",
+                  border: `1px solid ${accesosMateriaId === m.id ? "var(--color-gold)" : "var(--color-line)"}`,
+                  borderRadius: 0,
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                }}
+              >
+                {m.nombre}
+              </button>
+            ))}
+          </div>
+          {accesosMateriaId && (
+            <div>
+              <div className="flex gap-2 mb-3">
+                <input
+                  type="text"
+                  value={accesoNombre}
+                  onChange={(e) => setAccesoNombre(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && addAcceso()}
+                  placeholder="Nombre del compañero"
+                  style={{ ...inputStyle, flex: 1, padding: "8px 12px", fontSize: "14px" }}
+                />
+                <button
+                  onClick={addAcceso}
+                  disabled={accesoLoading || !accesoNombre.trim()}
+                  style={{
+                    padding: "8px 16px",
+                    fontSize: "13px",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    background: "var(--color-gold)",
+                    color: "var(--color-ink)",
+                    border: "none",
+                    borderRadius: 0,
+                    cursor: accesoLoading || !accesoNombre.trim() ? "not-allowed" : "pointer",
+                    opacity: accesoLoading || !accesoNombre.trim() ? 0.5 : 1,
+                  }}
+                >
+                  {accesoLoading ? "..." : "Agregar"}
+                </button>
+              </div>
+              {accesoLoading && accesosLista.length === 0 ? (
+                <p style={{ fontSize: "13px", color: "var(--color-text-faint)" }}>Cargando...</p>
+              ) : accesosLista.length === 0 ? (
+                <p style={{ fontSize: "13px", color: "var(--color-text-faint)" }}>Sin accesos especiales para esta materia</p>
+              ) : (
+                <div className="space-y-1">
+                  {accesosLista.map((a) => (
+                    <div
+                      key={a.id}
+                      className="flex items-center justify-between"
+                      style={{
+                        padding: "8px 12px",
+                        background: "var(--color-ink)",
+                        border: "1px solid var(--color-line-soft)",
+                        borderRadius: 0,
+                      }}
+                    >
+                      <span style={{ fontSize: "14px", color: "var(--color-text)", fontFamily: "var(--font-inter)" }}>
+                        {a.nombre}
+                      </span>
+                      <button
+                        onClick={() => removeAcceso(a.id)}
+                        style={{
+                          padding: "4px 10px",
+                          fontSize: "11px",
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          background: "transparent",
+                          color: "var(--color-text-faint)",
+                          border: "1px solid var(--color-line)",
+                          borderRadius: 0,
+                          cursor: "pointer",
+                        }}
+                      >
+                        Quitar
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
