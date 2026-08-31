@@ -725,100 +725,6 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
             padding: "20px 22px",
           }}
         >
-          <div className="flex items-center gap-3 mb-4">
-            <h3
-              style={{
-                fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                fontWeight: 500,
-                fontSize: "16px",
-                color: "var(--color-text)",
-              }}
-            >
-              Estado de materias
-            </h3>
-          </div>
-          <div className="space-y-2">
-            {materias.map((m) => (
-              <div
-                key={m.id}
-                className="flex items-center justify-between gap-4"
-                style={{
-                  padding: "10px 14px",
-                  background: "var(--color-ink)",
-                  border: "1px solid var(--color-line-soft)",
-                  borderRadius: 0,
-                }}
-              >
-                <div className="min-w-0">
-                  <p
-                    style={{
-                      fontSize: "14px",
-                      color: "var(--color-text)",
-                      fontFamily: "var(--font-inter)",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {m.nombre}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "11px",
-                      color: "var(--color-text-faint)",
-                      fontFamily: "var(--font-ibm-plex-mono)",
-                      marginTop: "2px",
-                    }}
-                  >
-                    {m.slug}
-                  </p>
-                </div>
-                <button
-                  onClick={() => toggleEstado(m.slug, m.estado)}
-                  style={{
-                    flexShrink: 0,
-                    padding: "6px 14px",
-                    fontSize: "11px",
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    letterSpacing: "0.06em",
-                    textTransform: "uppercase",
-                    background: m.estado === "finalizada" ? "var(--color-gold)" : "transparent",
-                    color: m.estado === "finalizada" ? "var(--color-ink)" : "var(--color-text-muted)",
-                    border: `1px solid ${m.estado === "finalizada" ? "var(--color-gold)" : "var(--color-line)"}`,
-                    borderRadius: 0,
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (m.estado !== "finalizada") {
-                      e.currentTarget.style.borderColor = "var(--color-gold-dim)";
-                      e.currentTarget.style.color = "var(--color-text)";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (m.estado !== "finalizada") {
-                      e.currentTarget.style.borderColor = "var(--color-line)";
-                      e.currentTarget.style.color = "var(--color-text-muted)";
-                    }
-                  }}
-                >
-                  {m.estado === "finalizada" ? "Finalizada" : "En curso"}
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {materias.length > 0 && (
-        <div
-          style={{
-            background: "var(--color-card)",
-            border: "1px solid var(--color-line-soft)",
-            borderRadius: 0,
-            padding: "20px 22px",
-          }}
-        >
           <h3
             style={{
               fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
@@ -964,6 +870,88 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
               )}
             </div>
           )}
+          <div className="flex items-center gap-3 mb-4 mt-6">
+            <h3
+              style={{
+                fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                fontWeight: 500,
+                fontSize: "16px",
+                color: "var(--color-text)",
+              }}
+            >
+              Estado de materias
+            </h3>
+          </div>
+          <div className="space-y-2">
+            {materias.map((m) => (
+              <div
+                key={m.id}
+                className="flex items-center justify-between gap-4"
+                style={{
+                  padding: "10px 14px",
+                  background: "var(--color-ink)",
+                  border: "1px solid var(--color-line-soft)",
+                  borderRadius: 0,
+                }}
+              >
+                <div className="min-w-0">
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "var(--color-text)",
+                      fontFamily: "var(--font-inter)",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {m.nombre}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "11px",
+                      color: "var(--color-text-faint)",
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      marginTop: "2px",
+                    }}
+                  >
+                    {m.slug}
+                  </p>
+                </div>
+                <button
+                  onClick={() => toggleEstado(m.slug, m.estado)}
+                  style={{
+                    flexShrink: 0,
+                    padding: "6px 14px",
+                    fontSize: "11px",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    background: m.estado === "finalizada" ? "var(--color-gold)" : "transparent",
+                    color: m.estado === "finalizada" ? "var(--color-ink)" : "var(--color-text-muted)",
+                    border: `1px solid ${m.estado === "finalizada" ? "var(--color-gold)" : "var(--color-line)"}`,
+                    borderRadius: 0,
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (m.estado !== "finalizada") {
+                      e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                      e.currentTarget.style.color = "var(--color-text)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (m.estado !== "finalizada") {
+                      e.currentTarget.style.borderColor = "var(--color-line)";
+                      e.currentTarget.style.color = "var(--color-text-muted)";
+                    }
+                  }}
+                >
+                  {m.estado === "finalizada" ? "Finalizada" : "En curso"}
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
