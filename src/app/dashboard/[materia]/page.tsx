@@ -59,16 +59,33 @@ const getArchivos = (slug: string, claseIds: string[]) =>
 
 export default async function MateriaPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ materia: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { materia: slug } = await params;
+  const sp = await searchParams;
+  const clave = typeof sp.clave === "string" ? sp.clave.trim() : null;
+  const nombre = typeof sp.nombre === "string" ? sp.nombre.trim() : null;
   const esAdmin = isAdminRequest((await cookies()).toString());
 
   const { data: materia } = await getMateriaConFechas(slug);
 
   if (!materia) {
     return <MateriaClient slug={slug} materia={null} clases={[]} />;
+  }
+
+  let tieneAcceso = false;
+  if (!esAdmin && clave && nombre && materia.id) {
+    const { data: acceso } = await getSupabaseAdmin()
+      .from("accesos_especiales")
+      .select("id")
+      .eq("materia_id", materia.id)
+      .eq("clave", clave.toUpperCase())
+      .ilike("nombre", nombre)
+      .maybeSingle();
+    tieneAcceso = !!acceso;
   }
 
   const { data: clases } = await getClases(slug, materia.id);
@@ -81,7 +98,7 @@ export default async function MateriaPage({
   const TIPOS_PRIVADOS = ["cuestionario", "material_privado", "ficha"];
   const porClase = new Map<string, ArchivoRow[]>();
   for (const a of archivos || []) {
-    if (!esAdmin && TIPOS_PRIVADOS.includes(a.tipo)) continue;
+    if (!esAdmin && !tieneAcceso && TIPOS_PRIVADOS.includes(a.tipo)) continue;
     const list = porClase.get(a.clase_id) || [];
     list.push(a);
     porClase.set(a.clase_id, list);
@@ -104,6 +121,7 @@ export default async function MateriaPage({
         fechas,
       }}
       clases={clasesWithFiles}
+      acceso={{ clave: tieneAcceso ? clave : null, nombre: tieneAcceso ? nombre : null }}
     />
   );
 }

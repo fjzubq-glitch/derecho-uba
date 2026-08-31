@@ -54,6 +54,9 @@ export async function GET(
   { params }: { params: Promise<{ slug: string; numero: string }> }
 ) {
   const { slug, numero } = await params;
+  const url = new URL(request.url);
+  const clave = url.searchParams.get("clave")?.trim() || null;
+  const nombre = url.searchParams.get("nombre")?.trim() || null;
   const esAdmin = isAdminRequest(request.headers.get("cookie"));
   const num = parseInt(numero);
 
@@ -67,10 +70,24 @@ export async function GET(
     return NextResponse.json({ materia: data.materia, clase: null, adjacentes: [] });
   }
 
-  // El filtrado de tipos privados es por-request (depende de esAdmin) y no se
-  // cachea, así el cache compartido no filtra para el rol equivocado.
+  // Si es admin, o el visitante presenta clave+nombre válida para la materia,
+  // se incluyen los archivos privados.
+  let tieneAcceso = false;
+  if (!esAdmin && clave && nombre && data.materia.id) {
+    const { data: acceso } = await getSupabaseAdmin()
+      .from("accesos_especiales")
+      .select("id")
+      .eq("materia_id", data.materia.id)
+      .eq("clave", clave.toUpperCase())
+      .ilike("nombre", nombre)
+      .maybeSingle();
+    tieneAcceso = !!acceso;
+  }
+
+  // El filtrado de tipos privados es por-request (depende de esAdmin / acceso)
+  // y no se cachea, así el cache compartido no filtra para el rol equivocado.
   const visibles = (data.clase.archivos || []).filter(
-    (a) => esAdmin || (a.tipo !== "cuestionario" && a.tipo !== "material_privado" && a.tipo !== "ficha"),
+    (a) => esAdmin || tieneAcceso || (a.tipo !== "cuestionario" && a.tipo !== "material_privado" && a.tipo !== "ficha"),
   );
 
   return NextResponse.json({

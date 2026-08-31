@@ -17,9 +17,16 @@ export async function POST(request: NextRequest) {
           id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
           nombre TEXT NOT NULL,
           materia_id UUID NOT NULL REFERENCES materias(id) ON DELETE CASCADE,
+          clave TEXT,
           created_at TIMESTAMPTZ DEFAULT now(),
           UNIQUE(nombre, materia_id)
         );
+        ALTER TABLE accesos_especiales ADD COLUMN IF NOT EXISTS clave TEXT;
+        CREATE EXTENSION IF NOT EXISTS pgcrypto;
+        UPDATE accesos_especiales SET clave = upper(substr(md5(gen_random_uuid()::text), 1, 6)) WHERE clave IS NULL OR clave = '';
+        DELETE FROM accesos_especiales a USING accesos_especiales b WHERE a.id > b.id AND a.clave = b.clave;
+        ALTER TABLE accesos_especiales ALTER COLUMN clave SET NOT NULL;
+        CREATE UNIQUE INDEX IF NOT EXISTS accesos_especiales_clave_key ON accesos_especiales (clave);
       `,
     } as never);
 

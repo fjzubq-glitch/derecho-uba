@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2, Lock } from "@/components/icons";
@@ -125,6 +125,24 @@ export default function ClaseNumeroPage() {
   const playingArchivoId = currentTrack?.id ?? null;
   const playingTipo = currentTrack?.tipo as CardTipo | null;
   const esAdmin = isAdminSession();
+  const searchParams = useSearchParams();
+  const accesoClave = searchParams.get("clave")?.trim() || null;
+  const accesoNombre = searchParams.get("nombre")?.trim() || null;
+  const [tieneAcceso, setTieneAcceso] = useState(false);
+  const materiaId = materia?.id ?? null;
+
+  useEffect(() => {
+    let active = true;
+    if (esAdmin || !accesoClave || !accesoNombre || !materiaId) {
+      setTieneAcceso(false);
+      return;
+    }
+    fetch(`/api/acceso?clave=${encodeURIComponent(accesoClave)}&nombre=${encodeURIComponent(accesoNombre)}&materia_id=${encodeURIComponent(materiaId)}`)
+      .then((r) => r.json())
+      .then((j) => { if (active) setTieneAcceso(!!j.ok); })
+      .catch(() => { if (active) setTieneAcceso(false); });
+    return () => { active = false; };
+  }, [esAdmin, accesoClave, accesoNombre, materiaId]);
 
   // Offline state
   const [offlineStatus, setOfflineStatus] = useState<Record<string, "idle" | "downloading" | "saved">>({});
@@ -297,6 +315,15 @@ function handleAudioAction(archivo: Archivo) {
 
    async function handleCardClick(archivo: Archivo | null) {
      if (!archivo) return;
+
+     const visorHref = (archivoId: string, back: string) => {
+       const base = `/visor/${archivoId}?back=${encodeURIComponent(back)}`;
+       if (accesoClave && accesoNombre) {
+         return `${base}&nombre=${encodeURIComponent(accesoNombre)}&clave=${encodeURIComponent(accesoClave)}`;
+       }
+       return `${base}&nombre=${encodeURIComponent(archivo.nombre_display)}`;
+     };
+
      const tipo = archivo.tipo as CardTipo;
 if (isTranscription(tipo)) {
         handleTranscriptionClick(archivo);
@@ -317,7 +344,7 @@ if (isTranscription(tipo)) {
         } else if (archivo.storage_key) {
           if (isHtmlArchivo(archivo)) {
             const back = `/dashboard/${materiaSlug}/clase/${numero}`;
-            window.open(`/visor/${archivo.id}?back=${encodeURIComponent(back)}&nombre=${encodeURIComponent(archivo.nombre_display)}`, "_blank");
+            window.open(visorHref(archivo.id, back), "_blank");
             trackActivity({ tipo: "html_view", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
           } else {
             window.open(`/api/stream/${archivo.id}`, "_blank");
@@ -326,7 +353,7 @@ if (isTranscription(tipo)) {
         }
       } else if (tipo === "cuestionario") {
         const back = `/dashboard/${materiaSlug}/clase/${numero}`;
-        window.open(`/visor/${archivo.id}?back=${encodeURIComponent(back)}&nombre=${encodeURIComponent(archivo.nombre_display)}`, "_blank");
+        window.open(visorHref(archivo.id, back), "_blank");
         trackActivity({ tipo: "admin_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
       } else if (tipo === "material_privado") {
         if (archivo.youtube_url) {
@@ -334,7 +361,7 @@ if (isTranscription(tipo)) {
           trackActivity({ tipo: "admin_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         } else {
           const back = `/dashboard/${materiaSlug}/clase/${numero}`;
-          window.open(`/visor/${archivo.id}?back=${encodeURIComponent(back)}&nombre=${encodeURIComponent(archivo.nombre_display)}`, "_blank");
+          window.open(visorHref(archivo.id, back), "_blank");
           trackActivity({ tipo: "admin_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         }
       } else if (tipo === "ficha") {
@@ -355,7 +382,7 @@ if (isTranscription(tipo)) {
       return [];
     }
 
-    if (TIPOS_PRIVADOS.includes(tipo) && !esAdmin) {
+    if (TIPOS_PRIVADOS.includes(tipo) && !esAdmin && !tieneAcceso) {
       return [];
     }
 

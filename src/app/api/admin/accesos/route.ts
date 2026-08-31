@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   try {
     const { data, error } = await getSupabaseAdmin()
       .from("accesos_especiales")
-      .select("id, nombre, materia_id, created_at")
+      .select("id, nombre, materia_id, clave, created_at")
       .eq("materia_id", materiaId)
       .order("created_at", { ascending: false });
 
@@ -47,14 +47,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "materia_id requerido" }, { status: 400 });
     }
 
+    const clave = generarClave();
+
     const { data, error } = await getSupabaseAdmin()
       .from("accesos_especiales")
-      .insert({ nombre: nombre.trim(), materia_id })
-      .select("id, nombre, materia_id, created_at")
+      .insert({ nombre: nombre.trim(), materia_id, clave })
+      .select("id, nombre, materia_id, clave, created_at")
       .single();
 
     if (error) {
       if (error.code === "23505") {
+        const esClave = String(error.message || "").includes("clave");
+        if (esClave) {
+          return NextResponse.json({ error: "No se pudo generar una clave única. Intentá de nuevo." }, { status: 409 });
+        }
         return NextResponse.json({ error: "Ya existe acceso para ese nombre en esta materia" }, { status: 409 });
       }
       throw error;
@@ -65,6 +71,15 @@ export async function POST(request: NextRequest) {
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json({ error: msg }, { status: 500 });
   }
+}
+
+function generarClave(): string {
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  let clave = "";
+  for (let i = 0; i < 6; i += 1) {
+    clave += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return clave;
 }
 
 export async function DELETE(request: NextRequest) {

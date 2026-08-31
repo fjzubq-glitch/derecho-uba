@@ -39,10 +39,12 @@ export default function MateriaClient({
   slug,
   materia,
   clases,
+  acceso,
 }: {
   slug: string;
   materia: MateriaData | null;
   clases: Clase[];
+  acceso?: { clave: string | null; nombre: string | null };
 }) {
   const router = useRouter();
 
@@ -65,7 +67,21 @@ export default function MateriaClient({
     ),
   [clases]);
 
-  const claseHref = (numero: number) => `/dashboard/${slug}/clase/${numero}`;
+  const claseHref = (numero: number) => {
+    const base = `/dashboard/${slug}/clase/${numero}`;
+    if (acceso?.clave && acceso.nombre) {
+      return `${base}?clave=${encodeURIComponent(acceso.clave)}&nombre=${encodeURIComponent(acceso.nombre)}`;
+    }
+    return base;
+  };
+
+  const calendarioHref = () => {
+    const base = `/dashboard/${slug}/calendario`;
+    if (acceso?.clave && acceso.nombre) {
+      return `${base}?clave=${encodeURIComponent(acceso.clave)}&nombre=${encodeURIComponent(acceso.nombre)}`;
+    }
+    return base;
+  };
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-ink)" }}>
@@ -201,11 +217,11 @@ export default function MateriaClient({
                 <div
                   role="link"
                   tabIndex={0}
-                  onClick={() => router.push(`/dashboard/${slug}/calendario`)}
+                  onClick={() => router.push(calendarioHref())}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
-                      router.push(`/dashboard/${slug}/calendario`);
+                      router.push(calendarioHref());
                     }
                   }}
                   className="cursor-pointer"

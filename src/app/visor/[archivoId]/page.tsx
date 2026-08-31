@@ -23,6 +23,7 @@ export default async function VisorPage({
   const sp = await searchParams;
   const token = typeof sp.t === "string" ? sp.t : null;
   const nombreVisitante = typeof sp.nombre === "string" ? sp.nombre.trim() : null;
+  const claveVisitante = typeof sp.clave === "string" ? sp.clave.trim().toUpperCase() : null;
   const cookieHeader = (await cookies()).toString();
   const esAdmin = verifyVisorToken(token, archivoId) || isAdminRequest(cookieHeader);
 
@@ -41,7 +42,7 @@ export default async function VisorPage({
 
   // Check si el visitante tiene acceso especial a la materia del archivo
   let tieneAccesoEspecial = false;
-  if (!esAdmin && nombreVisitante && archivo?.clase_id) {
+  if (!esAdmin && nombreVisitante && claveVisitante && archivo?.clase_id) {
     const { data: clase } = await getSupabaseAdmin()
       .from("clases")
       .select("materia_id")
@@ -52,6 +53,7 @@ export default async function VisorPage({
         .from("accesos_especiales")
         .select("id")
         .eq("materia_id", clase.materia_id)
+        .eq("clave", claveVisitante)
         .ilike("nombre", nombreVisitante)
         .maybeSingle();
       tieneAccesoEspecial = !!acceso;

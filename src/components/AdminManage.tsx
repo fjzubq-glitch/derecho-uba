@@ -88,9 +88,10 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const [editandoCuestionario, setEditandoCuestionario] = useState<{ archivoId: string; nombre: string; html: string } | null>(null);
   const [cuestionarioSaving, setCuestionarioSaving] = useState(false);
   const [accesosMateriaId, setAccesosMateriaId] = useState<string | null>(null);
-  const [accesosLista, setAccesosLista] = useState<{ id: string; nombre: string; materia_id: string; created_at: string }[]>([]);
+  const [accesosLista, setAccesosLista] = useState<{ id: string; nombre: string; materia_id: string; clave: string; created_at: string }[]>([]);
   const [accesoNombre, setAccesoNombre] = useState("");
   const [accesoLoading, setAccesoLoading] = useState(false);
+  const [copiadoId, setCopiadoId] = useState<string | null>(null);
 
   const cerrarReplace = () => {
     setReplacing(null);
@@ -231,6 +232,16 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
       const json = await res.json();
       if (json.ok) setAccesosLista((prev) => prev.filter((a) => a.id !== id));
     } catch { /* ignore */ }
+  }
+
+  function copiarLinkAcceso(acceso: { id: string; nombre: string; materia_id: string; clave: string }) {
+    const materia = materias.find((m) => m.id === acceso.materia_id);
+    if (!materia) return;
+    const origin = window.location.origin;
+    const link = `${origin}/dashboard/${materia.slug}?nombre=${encodeURIComponent(acceso.nombre)}&clave=${encodeURIComponent(acceso.clave)}`;
+    navigator.clipboard?.writeText(link).catch(() => {});
+    setCopiadoId(acceso.id);
+    window.setTimeout(() => setCopiadoId((prev) => (prev === acceso.id ? null : prev)), 2000);
   }
 
   async function toggleEstado(slug: string, currentEstado: string) {
@@ -820,7 +831,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
             Acceso especial por materia
           </h3>
           <p style={{ fontSize: "13px", color: "var(--color-text-faint)", marginBottom: "14px", fontFamily: "var(--font-inter)" }}>
-            Otorgá acceso de lectura a archivos privados para personas específicas. El link que generes incluirá su nombre.
+            Otorgá acceso de lectura a archivos privados para personas específicas. Cada persona recibe una clave única; el link generado incluye su nombre y su clave. Copiá el link y mandáselo por WhatsApp.
           </p>
           <div className="flex flex-wrap gap-2 mb-3">
             {materias.map((m) => (
@@ -878,36 +889,75 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
               ) : accesosLista.length === 0 ? (
                 <p style={{ fontSize: "13px", color: "var(--color-text-faint)" }}>Sin accesos especiales para esta materia</p>
               ) : (
-                <div className="space-y-1">
+                <div className="space-y-2">
                   {accesosLista.map((a) => (
                     <div
                       key={a.id}
-                      className="flex items-center justify-between"
                       style={{
-                        padding: "8px 12px",
+                        padding: "12px 14px",
                         background: "var(--color-ink)",
                         border: "1px solid var(--color-line-soft)",
                         borderRadius: 0,
                       }}
                     >
-                      <span style={{ fontSize: "14px", color: "var(--color-text)", fontFamily: "var(--font-inter)" }}>
-                        {a.nombre}
-                      </span>
-                      <button
-                        onClick={() => removeAcceso(a.id)}
-                        style={{
-                          padding: "4px 10px",
-                          fontSize: "11px",
-                          fontFamily: "var(--font-ibm-plex-mono)",
-                          background: "transparent",
-                          color: "var(--color-text-faint)",
-                          border: "1px solid var(--color-line)",
-                          borderRadius: 0,
-                          cursor: "pointer",
-                        }}
+                      <div className="flex items-center justify-between">
+                        <span style={{ fontSize: "14px", color: "var(--color-text)", fontFamily: "var(--font-inter)" }}>
+                          {a.nombre}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => copiarLinkAcceso(a)}
+                            style={{
+                              padding: "5px 12px",
+                              fontSize: "11px",
+                              fontFamily: "var(--font-ibm-plex-mono)",
+                              background: copiadoId === a.id ? "var(--color-gold)" : "transparent",
+                              color: copiadoId === a.id ? "var(--color-ink)" : "var(--color-gold)",
+                              border: `1px solid ${copiadoId === a.id ? "var(--color-gold)" : "var(--color-gold-dim)"}`,
+                              borderRadius: 0,
+                              cursor: "pointer",
+                              transition: "all 0.15s",
+                            }}
+                          >
+                            {copiadoId === a.id ? "Copiado ✓" : "Copiar link"}
+                          </button>
+                          <button
+                            onClick={() => removeAcceso(a.id)}
+                            style={{
+                              padding: "5px 10px",
+                              fontSize: "11px",
+                              fontFamily: "var(--font-ibm-plex-mono)",
+                              background: "transparent",
+                              color: "var(--color-text-faint)",
+                              border: "1px solid var(--color-line)",
+                              borderRadius: 0,
+                              cursor: "pointer",
+                            }}
+                          >
+                            Quitar
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        className="mt-2 flex items-center gap-2"
+                        style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}
                       >
-                        Quitar
-                      </button>
+                        <span>Clave:</span>
+                        <span
+                          style={{
+                            background: "var(--color-ink)",
+                            border: "1px dashed var(--color-gold-dim)",
+                            padding: "2px 8px",
+                            letterSpacing: "0.12em",
+                            color: "var(--color-gold)",
+                          }}
+                        >
+                          {a.clave}
+                        </span>
+                        <span style={{ color: "var(--color-text-faint)" }}>
+                          El link lleva su nombre + clave. Solo esa persona puede entrar.
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>
