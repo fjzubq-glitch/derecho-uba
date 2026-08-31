@@ -18,8 +18,7 @@ export async function POST(request: NextRequest) {
           nombre TEXT NOT NULL,
           materia_id UUID NOT NULL REFERENCES materias(id) ON DELETE CASCADE,
           clave TEXT,
-          created_at TIMESTAMPTZ DEFAULT now(),
-          UNIQUE(nombre, materia_id)
+          created_at TIMESTAMPTZ DEFAULT now()
         );
         ALTER TABLE accesos_especiales ADD COLUMN IF NOT EXISTS clave TEXT;
         CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -27,6 +26,8 @@ export async function POST(request: NextRequest) {
         DELETE FROM accesos_especiales a USING accesos_especiales b WHERE a.id > b.id AND a.clave = b.clave;
         ALTER TABLE accesos_especiales ALTER COLUMN clave SET NOT NULL;
         CREATE UNIQUE INDEX IF NOT EXISTS accesos_especiales_clave_key ON accesos_especiales (clave);
+        DROP CONSTRAINT IF EXISTS accesos_especiales_nombre_materia_id_key;
+        CREATE UNIQUE INDEX IF NOT EXISTS accesos_especiales_nombre_lower_key ON accesos_especiales (lower(nombre));
       `,
     } as never);
 

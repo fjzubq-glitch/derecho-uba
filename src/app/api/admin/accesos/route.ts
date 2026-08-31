@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
         if (esClave) {
           return NextResponse.json({ error: "No se pudo generar una clave única. Intentá de nuevo." }, { status: 409 });
         }
-        return NextResponse.json({ error: "Ya existe acceso para ese nombre en esta materia" }, { status: 409 });
+        return NextResponse.json({ error: "Ya existe una persona con ese nombre. Elegí otro nombre." }, { status: 409 });
       }
       throw error;
     }
