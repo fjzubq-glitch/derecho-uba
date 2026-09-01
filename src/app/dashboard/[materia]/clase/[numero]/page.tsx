@@ -930,10 +930,10 @@ if (isTranscription(tipo)) {
                 </div>
               )}
 
-              {/* Fila(s) inferior(es): contenido privado (verde) */}
+              {/* Fila(s) inferior(es): contenido privado (verde) — orden: cuestionario, ficha, material_privado */}
               {(esAdmin || tieneAcceso) && clase.archivos.some((a) => TIPOS_PRIVADOS.includes(a.tipo)) && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {(["cuestionario", "material_privado", "ficha"] as CardTipo[]).flatMap(renderCard)}
+                  {(["cuestionario", "ficha", "material_privado"] as CardTipo[]).flatMap(renderCard)}
                 </div>
               )}
             </>
