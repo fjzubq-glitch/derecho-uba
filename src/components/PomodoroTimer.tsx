@@ -169,7 +169,7 @@ export default function PomodoroTimer() {
   return (
     <>
       <style>{`@media (max-width: 768px) { .pomodoro-fab { bottom: auto !important; top: 8px !important; right: 8px !important; width: auto !important; height: 26px !important; border-radius: 13px !important; padding: 0 8px !important; font-size: 9px !important; opacity: 0.85; gap: 4px; } .pomodoro-panel { bottom: auto !important; top: 42px !important; right: 8px !important; border-radius: 0 !important; max-height: calc(100dvh - 56px) !important; overflow-y: auto !important; } .pomodoro-panel input[type="number"], .pomodoro-panel input[type="text"] { font-size: 12px !important; padding: 6px !important; } .pomodoro-panel .pom-digital { font-size: 24px !important; padding: 12px 10px !important; } } @media (min-width: 769px) { .pomodoro-panel { border-radius: 12px !important; overflow: hidden; width: 260px !important; padding: 14px !important; top: 80px !important; bottom: auto !important; } .pomodoro-panel .pom-digital { font-size: 24px !important; padding: 12px !important; } .pomodoro-panel .pom-digital .pom-time { font-size: 22px !important; } .pomodoro-panel input[type="number"], .pomodoro-panel input[type="text"] { font-size: 12px !important; padding: 6px !important; } .pomodoro-fab { opacity: 0.72; } .pomodoro-fab:hover { opacity: 1; } }`}</style>
-      {/* Floating button — desktop: flotante abajo; mobile: pill compacto arriba */}
+      {/* Floating button */}
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label="Temporizador"
@@ -177,29 +177,25 @@ export default function PomodoroTimer() {
         className="pomodoro-fab"
         style={{
           position: "fixed",
-          bottom: "88px",
+          bottom: "20px",
           right: "20px",
           zIndex: 90,
-          width: "44px",
-          height: "44px",
+          width: "36px",
+          height: "36px",
           borderRadius: "50%",
-          background: running ? "var(--color-gold)" : "rgba(24,24,28,0.72)",
-          border: `1px solid ${running ? "var(--color-gold)" : "rgba(185,154,98,0.28)"}`,
-          color: running ? "var(--color-ink)" : "var(--color-gold)",
+          background: running ? "rgba(185,154,98,0.15)" : "rgba(24,24,28,0.5)",
+          border: "1px solid rgba(185,154,98,0.15)",
+          color: "var(--color-text-faint)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          boxShadow: "0 2px 12px rgba(0,0,0,0.22)",
           backdropFilter: "blur(6px)",
           transition: "all 0.2s ease",
-          fontFamily: "var(--font-ibm-plex-mono)",
-          fontSize: "10px",
-          fontWeight: 700,
-          letterSpacing: "0.04em",
+          fontSize: "12px",
         }}
       >
-        {running ? display.slice(3) : "⏱"}
+        ⏱
       </button>
 
       {/* Panel — más sutil en desktop */}
