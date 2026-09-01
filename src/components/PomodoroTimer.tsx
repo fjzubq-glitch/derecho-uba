@@ -118,11 +118,13 @@ export default function PomodoroTimer() {
 
   return (
     <>
-      {/* Floating button */}
+      <style>{`@media (max-width: 768px) { .pomodoro-fab { bottom: auto !important; top: 14px !important; right: 12px !important; width: 44px !important; height: 44px !important; } .pomodoro-panel { bottom: auto !important; top: 64px !important; right: 12px !important; } }`}</style>
+      {/* Floating button — desktop: flotante abajo; mobile: arriba para no tapar cards */}
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label="Temporizador"
         title="Temporizador"
+        className="pomodoro-fab"
         style={{
           position: "fixed",
           bottom: "88px",
@@ -131,9 +133,9 @@ export default function PomodoroTimer() {
           width: "52px",
           height: "52px",
           borderRadius: "50%",
-          background: running ? "var(--color-gold)" : "var(--color-card)",
-          border: `1px solid ${running ? "var(--color-gold)" : "var(--color-line-soft)"}`,
-          color: running ? "var(--color-ink)" : "var(--color-gold)",
+          background: "var(--color-gold)",
+          border: "1px solid var(--color-gold)",
+          color: "var(--color-ink)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -142,7 +144,7 @@ export default function PomodoroTimer() {
           transition: "all 0.2s ease",
         }}
       >
-        <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", fontWeight: 600 }}>
+        <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", fontWeight: 700, letterSpacing: "0.04em" }}>
           {running ? display.slice(3) : "⏱"}
         </span>
       </button>
@@ -150,6 +152,7 @@ export default function PomodoroTimer() {
       {/* Panel */}
       {open && (
         <div
+          className="pomodoro-panel"
           style={{
             position: "fixed",
             bottom: "150px",
