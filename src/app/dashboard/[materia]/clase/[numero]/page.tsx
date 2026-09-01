@@ -7,7 +7,6 @@ import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2, Lock } from "@/components/icons";
 import { formatDuration, formatFechaLocal, isAdminSession } from "@/lib/utils";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
-import { getFavoritos, toggleFavorito } from "@/lib/favoritos";
 import { useAudio } from "@/components/AudioProvider";
 
 interface Archivo {
@@ -144,18 +143,6 @@ export default function ClaseNumeroPage() {
       .catch(() => { if (active) setTieneAcceso(false); });
     return () => { active = false; };
   }, [esAdmin, accesoClave, accesoNombre, materiaId]);
-
-  const [favoritos, setFavoritos] = useState<Set<string>>(new Set());
-  useEffect(() => { setFavoritos(getFavoritos()); }, []);
-  const handleToggleFav = (id: string, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    const esFav = toggleFavorito(id);
-    setFavoritos((prev) => {
-      const next = new Set(prev);
-      if (esFav) next.add(id); else next.delete(id);
-      return next;
-    });
-  };
 
   // Offline state
   const [offlineStatus, setOfflineStatus] = useState<Record<string, "idle" | "downloading" | "saved">>({});
@@ -409,7 +396,6 @@ if (isTranscription(tipo)) {
     const youtubeThumb = archivo.youtube_url ? youtubeThumbUrl(archivo.youtube_url) : null;
     const isActive = playingArchivoId === archivo.id;
     const esPrivado = TIPOS_PRIVADOS.includes(tipo);
-    const esFav = favoritos.has(archivo.id);
     const NEON = "#00FF55";
     const accentColor = esPrivado ? NEON : "var(--color-gold)";
     const accentBorder = esPrivado ? "rgba(0,255,85,0.35)" : "var(--color-gold-dim)";
@@ -472,12 +458,6 @@ if (isTranscription(tipo)) {
               }}
             >
               {config.label}
-              {archivo.duration_seconds ? (
-                <span style={{ color: "var(--color-text-faint)", fontSize: "10px", letterSpacing: "0.06em" }}>· {formatDuration(archivo.duration_seconds)}</span>
-              ) : null}
-              {archivo.play_count > 0 ? (
-                <span style={{ color: "var(--color-text-faint)", fontSize: "10px" }}>· {archivo.play_count} vistas</span>
-              ) : null}
               <div
                 className="flex items-end"
                 style={{ gap: "2px", height: "10px", opacity: isThisPlaying ? 1 : 0, transition: "opacity 0.2s ease" }}
@@ -525,25 +505,6 @@ if (isTranscription(tipo)) {
               </p>
             )}
           </div>
-          <button
-            onClick={(e) => handleToggleFav(archivo.id, e)}
-            title={esFav ? "Quitar de favoritos" : "Guardar en favoritos"}
-            style={{
-              background: esFav ? "var(--color-gold)" : "none",
-              border: `1px solid ${esFav ? "var(--color-gold)" : "var(--color-line)"}`,
-              cursor: "pointer",
-              padding: "6px 8px",
-              color: esFav ? "var(--color-ink)" : "var(--color-text-muted)",
-              flexShrink: 0,
-              marginTop: "14px",
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "10px",
-              letterSpacing: "0.06em",
-              transition: "all 0.2s ease",
-            }}
-          >
-            {esFav ? "★" : "☆"} {esFav ? "Guardado" : "Guardar"}
-          </button>
           {(tipo === "archivo" && archivo.storage_key) || (isTranscription(tipo) && (archivo.storage_key || archivo.contenido_texto)) ? (
             <button
               onClick={(e) => {

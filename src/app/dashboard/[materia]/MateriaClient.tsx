@@ -6,7 +6,7 @@ import PortalHeader from "@/components/PortalHeader";
 import WelcomeGate from "@/components/WelcomeGate";
 import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
-import { formatDuration, formatFechaLocal } from "@/lib/utils";
+import { formatFechaLocal } from "@/lib/utils";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
 import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Play } from "@/components/icons";
 
@@ -17,7 +17,6 @@ interface Archivo {
   storage_key: string | null;
   youtube_url: string | null;
   duration_seconds: number | null;
-  nota: string | null;
 }
 
 interface Clase {
@@ -437,8 +436,8 @@ export default function MateriaClient({
                       </p>
                     )}
                   </div>
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-3 flex-wrap">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
                       {clase.fecha ? (
                         <div
                           className="flex items-center gap-2"
@@ -447,7 +446,9 @@ export default function MateriaClient({
                           <Calendar style={{ width: "14px", height: "14px" }} />
                           {formatFechaLocal(clase.fecha)}
                         </div>
-                      ) : null}
+                      ) : (
+                        <div />
+                      )}
                       {clase.archivos.length > 0 && (
                         <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
                           {tieneRecurso(clase, "audio_clase") && <Headphones style={{ width: "12px", height: "12px" }} />}
@@ -458,27 +459,6 @@ export default function MateriaClient({
                           )}
                         </div>
                       )}
-                      {(() => {
-                        const totalSec = clase.archivos.reduce((s, a) => s + (a.duration_seconds || 0), 0);
-                        const conNota = clase.archivos.filter((a) => a.nota).length;
-                        return (
-                          <>
-                            {totalSec > 0 && (
-                              <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}>
-                                · {formatDuration(totalSec)}
-                              </span>
-                            )}
-                            <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}>
-                              · {clase.archivos.length} archivo{clase.archivos.length !== 1 ? "s" : ""}
-                            </span>
-                            {conNota > 0 && (
-                              <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-gold)", fontStyle: "italic" }}>
-                                · {conNota} nota{conNota !== 1 ? "s" : ""}
-                              </span>
-                            )}
-                          </>
-                        );
-                      })()}
                     </div>
                     <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} />
                   </div>
