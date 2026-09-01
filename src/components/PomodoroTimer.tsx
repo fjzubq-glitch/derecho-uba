@@ -13,31 +13,47 @@ function formatHMS(total: number): string {
 function playBeep(loop: boolean) {
   try {
     const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-    const playTone = (freq: number, start: number, dur: number, vol = 0.4) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.value = freq;
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      gain.gain.setValueAtTime(vol, start);
-      gain.gain.exponentialRampToValueAtTime(0.01, start + dur);
-      osc.start(start);
-      osc.stop(start + dur);
+
+    const pianoNote = (freq: number, start: number, dur: number, vol = 0.35) => {
+      // Seno fundamental
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = "sine";
+      osc1.frequency.value = freq;
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      gain1.gain.setValueAtTime(0, start);
+      gain1.gain.linearRampToValueAtTime(vol, start + 0.005);
+      gain1.gain.exponentialRampToValueAtTime(0.001, start + dur);
+      osc1.start(start);
+      osc1.stop(start + dur);
+
+      // Armónico cuadrada (riqueza del piano)
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = "square";
+      osc2.frequency.value = freq * 2;
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      gain2.gain.setValueAtTime(0, start);
+      gain2.gain.linearRampToValueAtTime(vol * 0.15, start + 0.003);
+      gain2.gain.exponentialRampToValueAtTime(0.001, start + dur * 0.6);
+      osc2.start(start);
+      osc2.stop(start + dur);
     };
+
     const now = ctx.currentTime;
-    // 4 repeticiones rápidas del arpeggio, cada 0.6s
-    for (let i = 0; i < 4; i++) {
-      const offset = now + i * 0.6;
-      playTone(523.25, offset, 0.4, 0.5);
-      playTone(659.25, offset + 0.1, 0.4, 0.5);
-      playTone(783.99, offset + 0.2, 0.5, 0.5);
-      // Octava alta para que se note sobre binaural
-      playTone(1046.50, offset + 0.3, 0.3, 0.35);
-    }
-    if (loop) {
-      setTimeout(() => playBeep(false), 3000);
-    }
+    // 4 acordes tipo piano, cada 0.5s
+    const chords = [
+      [523.25, 659.25, 783.99],  // Do-Mi-Sol
+      [587.33, 739.99, 880.00],  // Re-Fa#-La
+      [659.25, 783.99, 987.77],  // Mi-Sol-Si
+      [698.46, 880.00, 1046.50], // Fa-La-Do (octava alta)
+    ];
+    chords.forEach((chord, i) => {
+      const t = now + i * 0.5;
+      chord.forEach((freq) => pianoNote(freq, t, 0.8));
+    });
   } catch {}
 }
 
@@ -48,7 +64,6 @@ export default function PomodoroTimer() {
   const [minutes, setMinutes] = useState(30);
   const [seconds, setSeconds] = useState(0);
   const [title, setTitle] = useState("30 minutos");
-  const [loop, setLoop] = useState(false);
   const [totalSec, setTotalSec] = useState(30 * 60);
   const [remaining, setRemaining] = useState(30 * 60);
   const [running, setRunning] = useState(false);
@@ -76,14 +91,8 @@ export default function PomodoroTimer() {
     const left = Math.max(0, Math.ceil((endTimeRef.current - now) / 1000));
     setRemaining(left);
     if (left <= 0) {
-      playBeep(loop);
-      if (loop) {
-        const t = hours * 3600 + minutes * 60 + seconds;
-        endTimeRef.current = Date.now() + t * 1000;
-        setRemaining(t);
-      } else {
-        setRunning(false);
-      }
+      playBeep();
+      setRunning(false);
     }
   };
 
@@ -104,7 +113,7 @@ export default function PomodoroTimer() {
         intervalRef.current = null;
       }
     };
-  }, [running, totalSec, loop]);
+  }, [running, totalSec]);
 
   // Also catch visibility change so timer snaps when user returns to tab
   useEffect(() => {
@@ -439,11 +448,6 @@ export default function PomodoroTimer() {
                 }}
               />
             </div>
-
-            <label className="flex items-center gap-2" style={{ cursor: "pointer", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px", color: "var(--color-text-muted)" }}>
-              <input type="checkbox" checked={loop} onChange={(e) => setLoop(e.target.checked)} />
-              Repetir al terminar (loop)
-            </label>
           </div>
         </div>
       )}
