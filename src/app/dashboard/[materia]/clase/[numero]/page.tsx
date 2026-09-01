@@ -7,7 +7,6 @@ import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2, Lock } from "@/components/icons";
 import { formatDuration, formatFechaLocal, isAdminSession } from "@/lib/utils";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
-import { getVistosArchivos, markArchivoVisto } from "@/lib/progreso";
 import { useAudio } from "@/components/AudioProvider";
 
 interface Archivo {
@@ -144,13 +143,6 @@ export default function ClaseNumeroPage() {
       .catch(() => { if (active) setTieneAcceso(false); });
     return () => { active = false; };
   }, [esAdmin, accesoClave, accesoNombre, materiaId]);
-
-  const [vistosArchivos, setVistosArchivos] = useState<Set<string>>(new Set());
-  useEffect(() => { setVistosArchivos(getVistosArchivos()); }, []);
-  const marcarVisto = (archivoId: string) => {
-    markArchivoVisto(archivoId);
-    setVistosArchivos((prev) => new Set(prev).add(archivoId));
-  };
 
   // Offline state
   const [offlineStatus, setOfflineStatus] = useState<Record<string, "idle" | "downloading" | "saved">>({});
@@ -308,7 +300,6 @@ function handleAudioAction(archivo: Archivo) {
 
   function handleTranscriptionClick(archivo: Archivo) {
     if (!archivo) return;
-    marcarVisto(archivo.id);
     if (archivo.youtube_url) {
       window.open(archivo.youtube_url, "_blank");
       trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
@@ -324,7 +315,6 @@ function handleAudioAction(archivo: Archivo) {
 
    async function handleCardClick(archivo: Archivo | null) {
      if (!archivo) return;
-     marcarVisto(archivo.id);
 
      const visorHref = (archivoId: string, back: string) => {
        const base = `/visor/${archivoId}?back=${encodeURIComponent(back)}`;
@@ -406,7 +396,6 @@ if (isTranscription(tipo)) {
     const youtubeThumb = archivo.youtube_url ? youtubeThumbUrl(archivo.youtube_url) : null;
     const isActive = playingArchivoId === archivo.id;
     const esPrivado = TIPOS_PRIVADOS.includes(tipo);
-    const visto = vistosArchivos.has(archivo.id);
     const NEON = "#00FF55";
     const accentColor = esPrivado ? NEON : "var(--color-gold)";
     const accentBorder = esPrivado ? "rgba(0,255,85,0.35)" : "var(--color-gold-dim)";
@@ -439,36 +428,17 @@ if (isTranscription(tipo)) {
         onClick={() => handleCardClick(archivo)}
       >
         <div className="flex items-start justify-between gap-3" style={{ position: "relative", zIndex: 1 }}>
-          <div className="flex items-center gap-3">
-            <div
-              className="flex items-center justify-center flex-shrink-0"
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  border: `1px solid ${accentBorder}`,
-                  boxShadow: esPrivado ? "0 0 10px rgba(0,255,85,0.15)" : "none",
-                }}
-            >
-              {config.icon}
-            </div>
-            {visto && (
-              <span
-                className="flex items-center gap-1"
-                style={{
-                  background: esPrivado ? "rgba(0,255,85,0.12)" : "rgba(185,154,98,0.12)",
-                  border: `1px solid ${esPrivado ? "rgba(0,255,85,0.35)" : "var(--color-gold-dim)"}`,
-                  padding: "3px 7px",
-                  fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "9px",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: esPrivado ? "#00FF55" : "var(--color-gold)",
-                }}
-              >
-                <Check style={{ width: "10px", height: "10px" }} /> Visto
-              </span>
-            )}
+          <div
+            className="flex items-center justify-center flex-shrink-0"
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                border: `1px solid ${accentBorder}`,
+                boxShadow: esPrivado ? "0 0 10px rgba(0,255,85,0.15)" : "none",
+              }}
+          >
+            {config.icon}
           </div>
           <div className="flex-1 min-w-0">
             <div
