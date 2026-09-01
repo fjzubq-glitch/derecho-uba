@@ -118,8 +118,8 @@ export default function PomodoroTimer() {
 
   return (
     <>
-      <style>{`@media (max-width: 768px) { .pomodoro-fab { bottom: auto !important; top: 12px !important; right: 10px !important; width: 36px !important; height: 36px !important; font-size: 10px !important; opacity: 0.92; } .pomodoro-panel { bottom: auto !important; top: 56px !important; right: 10px !important; border-radius: 0 !important; } } @media (min-width: 769px) { .pomodoro-panel { border-radius: 16px !important; overflow: hidden; } .pomodoro-fab { opacity: 0.72; } .pomodoro-fab:hover { opacity: 1; } }`}</style>
-      {/* Floating button — desktop: flotante abajo; mobile: arriba para no tapar cards */}
+      <style>{`@media (max-width: 768px) { .pomodoro-fab { bottom: auto !important; top: 8px !important; right: 8px !important; width: auto !important; height: 26px !important; border-radius: 13px !important; padding: 0 8px !important; font-size: 9px !important; opacity: 0.85; gap: 4px; } .pomodoro-panel { bottom: auto !important; top: 42px !important; right: 8px !important; border-radius: 0 !important; max-height: calc(100dvh - 56px) !important; overflow-y: auto !important; } .pomodoro-panel input[type="number"], .pomodoro-panel input[type="text"] { font-size: 12px !important; padding: 6px !important; } .pomodoro-panel .pom-digital { font-size: 24px !important; padding: 12px 10px !important; } } @media (min-width: 769px) { .pomodoro-panel { border-radius: 16px !important; overflow: hidden; } .pomodoro-fab { opacity: 0.72; } .pomodoro-fab:hover { opacity: 1; } }`}</style>
+      {/* Floating button — desktop: flotante abajo; mobile: pill compacto arriba */}
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label="Temporizador"
@@ -143,27 +143,29 @@ export default function PomodoroTimer() {
           boxShadow: "0 2px 12px rgba(0,0,0,0.22)",
           backdropFilter: "blur(6px)",
           transition: "all 0.2s ease",
+          fontFamily: "var(--font-ibm-plex-mono)",
+          fontSize: "10px",
+          fontWeight: 700,
+          letterSpacing: "0.04em",
         }}
       >
-        <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.04em" }}>
-          {running ? display.slice(3) : "⏱"}
-        </span>
+        {running ? display.slice(3) : "⏱"}
       </button>
 
       {/* Panel — más sutil en desktop */}
       {open && (
-        <div
+          <div
           className="pomodoro-panel"
           style={{
             position: "fixed",
             bottom: "150px",
             right: "20px",
             zIndex: 90,
-            width: "min(340px, calc(100vw - 24px))",
+            width: "min(300px, calc(100vw - 16px))",
             background: "var(--color-card)",
             border: "1px solid rgba(255,255,255,0.08)",
             borderTop: "1px solid rgba(185,154,98,0.25)",
-            padding: "22px",
+            padding: "16px",
             borderRadius: 0,
             boxShadow: "0 16px 40px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.2)",
             backdropFilter: "blur(8px)",
@@ -191,6 +193,7 @@ export default function PomodoroTimer() {
 
           {/* Digital display — más delicado */}
           <div
+            className="pom-digital"
             style={{
               background: "rgba(5,7,12,0.6)",
               border: "1px solid rgba(255,255,255,0.06)",
