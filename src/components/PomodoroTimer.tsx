@@ -118,7 +118,7 @@ export default function PomodoroTimer() {
 
   return (
     <>
-      <style>{`@media (max-width: 768px) { .pomodoro-fab { bottom: auto !important; top: 14px !important; right: 12px !important; width: 44px !important; height: 44px !important; } .pomodoro-panel { bottom: auto !important; top: 64px !important; right: 12px !important; } }`}</style>
+      <style>{`@media (max-width: 768px) { .pomodoro-fab { bottom: auto !important; top: 14px !important; right: 12px !important; width: 44px !important; height: 44px !important; } .pomodoro-panel { bottom: auto !important; top: 64px !important; right: 12px !important; border-radius: 0 !important; } } @media (min-width: 769px) { .pomodoro-panel { border-radius: 16px !important; overflow: hidden; } }`}</style>
       {/* Floating button — desktop: flotante abajo; mobile: arriba para no tapar cards */}
       <button
         onClick={() => setOpen((v) => !v)}
@@ -149,7 +149,7 @@ export default function PomodoroTimer() {
         </span>
       </button>
 
-      {/* Panel */}
+      {/* Panel — más sutil en desktop */}
       {open && (
         <div
           className="pomodoro-panel"
@@ -160,10 +160,12 @@ export default function PomodoroTimer() {
             zIndex: 90,
             width: "min(340px, calc(100vw - 24px))",
             background: "var(--color-card)",
-            border: "1px solid var(--color-line-soft)",
-            borderTop: "2px solid var(--color-gold-dim)",
-            padding: "20px",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderTop: "1px solid rgba(185,154,98,0.25)",
+            padding: "22px",
+            borderRadius: 0,
+            boxShadow: "0 16px 40px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.2)",
+            backdropFilter: "blur(8px)",
           }}
         >
           <div className="flex items-center justify-between" style={{ marginBottom: "16px" }}>
@@ -186,14 +188,15 @@ export default function PomodoroTimer() {
             </button>
           </div>
 
-          {/* Digital display */}
+          {/* Digital display — más delicado */}
           <div
             style={{
-              background: "var(--color-ink)",
-              border: "1px solid var(--color-line-soft)",
-              padding: "16px",
+              background: "rgba(5,7,12,0.6)",
+              border: "1px solid rgba(255,255,255,0.06)",
+              borderRadius: "12px",
+              padding: "18px 16px",
               textAlign: "center",
-              marginBottom: "16px",
+              marginBottom: "18px",
               position: "relative",
               overflow: "hidden",
             }}
