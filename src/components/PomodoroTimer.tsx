@@ -118,7 +118,7 @@ export default function PomodoroTimer() {
 
   return (
     <>
-      <style>{`@media (max-width: 768px) { .pomodoro-fab { bottom: auto !important; top: 14px !important; right: 12px !important; width: 44px !important; height: 44px !important; } .pomodoro-panel { bottom: auto !important; top: 64px !important; right: 12px !important; border-radius: 0 !important; } } @media (min-width: 769px) { .pomodoro-panel { border-radius: 16px !important; overflow: hidden; } }`}</style>
+      <style>{`@media (max-width: 768px) { .pomodoro-fab { bottom: auto !important; top: 12px !important; right: 10px !important; width: 36px !important; height: 36px !important; font-size: 10px !important; opacity: 0.92; } .pomodoro-panel { bottom: auto !important; top: 56px !important; right: 10px !important; border-radius: 0 !important; } } @media (min-width: 769px) { .pomodoro-panel { border-radius: 16px !important; overflow: hidden; } .pomodoro-fab { opacity: 0.72; } .pomodoro-fab:hover { opacity: 1; } }`}</style>
       {/* Floating button — desktop: flotante abajo; mobile: arriba para no tapar cards */}
       <button
         onClick={() => setOpen((v) => !v)}
@@ -130,21 +130,22 @@ export default function PomodoroTimer() {
           bottom: "88px",
           right: "20px",
           zIndex: 90,
-          width: "52px",
-          height: "52px",
+          width: "44px",
+          height: "44px",
           borderRadius: "50%",
-          background: "var(--color-gold)",
-          border: "1px solid var(--color-gold)",
-          color: "var(--color-ink)",
+          background: running ? "var(--color-gold)" : "rgba(24,24,28,0.72)",
+          border: `1px solid ${running ? "var(--color-gold)" : "rgba(185,154,98,0.28)"}`,
+          color: running ? "var(--color-ink)" : "var(--color-gold)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.22)",
+          backdropFilter: "blur(6px)",
           transition: "all 0.2s ease",
         }}
       >
-        <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", fontWeight: 700, letterSpacing: "0.04em" }}>
+        <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.04em" }}>
           {running ? display.slice(3) : "⏱"}
         </span>
       </button>
