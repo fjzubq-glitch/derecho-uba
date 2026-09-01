@@ -13,25 +13,30 @@ function formatHMS(total: number): string {
 function playBeep(loop: boolean) {
   try {
     const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-    const playTone = (freq: number, start: number, dur: number) => {
+    const playTone = (freq: number, start: number, dur: number, vol = 0.4) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = "sine";
       osc.frequency.value = freq;
       osc.connect(gain);
       gain.connect(ctx.destination);
-      gain.gain.setValueAtTime(0.3, start);
+      gain.gain.setValueAtTime(vol, start);
       gain.gain.exponentialRampToValueAtTime(0.01, start + dur);
       osc.start(start);
       osc.stop(start + dur);
     };
     const now = ctx.currentTime;
-    // Piano-like arpeggio
-    playTone(523.25, now, 0.5);
-    playTone(659.25, now + 0.15, 0.5);
-    playTone(783.99, now + 0.3, 0.8);
+    // 4 repeticiones rápidas del arpeggio, cada 0.6s
+    for (let i = 0; i < 4; i++) {
+      const offset = now + i * 0.6;
+      playTone(523.25, offset, 0.4, 0.5);
+      playTone(659.25, offset + 0.1, 0.4, 0.5);
+      playTone(783.99, offset + 0.2, 0.5, 0.5);
+      // Octava alta para que se note sobre binaural
+      playTone(1046.50, offset + 0.3, 0.3, 0.35);
+    }
     if (loop) {
-      setTimeout(() => playBeep(false), 1200);
+      setTimeout(() => playBeep(false), 3000);
     }
   } catch {}
 }
