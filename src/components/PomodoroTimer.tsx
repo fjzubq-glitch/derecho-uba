@@ -372,19 +372,21 @@ export default function PomodoroTimer() {
               </div>
             </div>
 
-            <div className="flex gap-2 flex-wrap" style={{ marginBottom: "12px" }}>
+            <div className="flex gap-1.5" style={{ marginBottom: "12px" }}>
               {[5, 15, 25, 30, 45].map((m) => (
                 <button
                   key={m}
                   onClick={() => handlePreset(m)}
                   style={{
-                    padding: "6px 10px",
-                    fontSize: "11px",
+                    padding: "5px 6px",
+                    fontSize: "10px",
                     fontFamily: "var(--font-ibm-plex-mono)",
                     background: "transparent",
                     border: "1px solid var(--color-line)",
                     color: "var(--color-text-muted)",
                     cursor: "pointer",
+                    flex: "1 1 0",
+                    minWidth: 0,
                   }}
                 >
                   {m}m
