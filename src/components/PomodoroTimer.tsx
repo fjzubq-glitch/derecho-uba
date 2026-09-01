@@ -37,6 +37,7 @@ function playBeep(loop: boolean) {
 }
 
 export default function PomodoroTimer() {
+  const [isDesktop, setIsDesktop] = useState(false);
   const [open, setOpen] = useState(false);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(30);
@@ -47,6 +48,13 @@ export default function PomodoroTimer() {
   const [remaining, setRemaining] = useState(30 * 60);
   const [running, setRunning] = useState(false);
   const intervalRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth > 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // Sync totalSec when inputs change and not running
   useEffect(() => {
@@ -116,9 +124,11 @@ export default function PomodoroTimer() {
   const display = running || remaining !== totalSec ? formatHMS(remaining) : formatHMS(totalSec);
   const progress = totalSec > 0 ? (totalSec - remaining) / totalSec : 0;
 
+  if (!isDesktop) return null;
+
   return (
     <>
-      <style>{`@media (max-width: 768px) { .pomodoro-fab { bottom: auto !important; top: 8px !important; right: 8px !important; width: auto !important; height: 26px !important; border-radius: 13px !important; padding: 0 8px !important; font-size: 9px !important; opacity: 0.85; gap: 4px; } .pomodoro-panel { bottom: auto !important; top: 42px !important; right: 8px !important; border-radius: 0 !important; max-height: calc(100dvh - 56px) !important; overflow-y: auto !important; } .pomodoro-panel input[type="number"], .pomodoro-panel input[type="text"] { font-size: 12px !important; padding: 6px !important; } .pomodoro-panel .pom-digital { font-size: 24px !important; padding: 12px 10px !important; } } @media (min-width: 769px) { .pomodoro-panel { border-radius: 16px !important; overflow: hidden; } .pomodoro-fab { opacity: 0.72; } .pomodoro-fab:hover { opacity: 1; } }`}</style>
+      <style>{`@media (max-width: 768px) { .pomodoro-fab { bottom: auto !important; top: 8px !important; right: 8px !important; width: auto !important; height: 26px !important; border-radius: 13px !important; padding: 0 8px !important; font-size: 9px !important; opacity: 0.85; gap: 4px; } .pomodoro-panel { bottom: auto !important; top: 42px !important; right: 8px !important; border-radius: 0 !important; max-height: calc(100dvh - 56px) !important; overflow-y: auto !important; } .pomodoro-panel input[type="number"], .pomodoro-panel input[type="text"] { font-size: 12px !important; padding: 6px !important; } .pomodoro-panel .pom-digital { font-size: 24px !important; padding: 12px 10px !important; } } @media (min-width: 769px) { .pomodoro-panel { border-radius: 12px !important; overflow: hidden; width: 260px !important; padding: 14px !important; top: 80px !important; bottom: auto !important; } .pomodoro-panel .pom-digital { font-size: 24px !important; padding: 12px !important; } .pomodoro-panel .pom-digital .pom-time { font-size: 22px !important; } .pomodoro-panel input[type="number"], .pomodoro-panel input[type="text"] { font-size: 12px !important; padding: 6px !important; } .pomodoro-fab { opacity: 0.72; } .pomodoro-fab:hover { opacity: 1; } }`}</style>
       {/* Floating button — desktop: flotante abajo; mobile: pill compacto arriba */}
       <button
         onClick={() => setOpen((v) => !v)}
@@ -217,6 +227,7 @@ export default function PomodoroTimer() {
               }}
             />
             <p
+              className="pom-time"
               style={{
                 fontFamily: "var(--font-ibm-plex-mono)",
                 fontSize: "32px",
