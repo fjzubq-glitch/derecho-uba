@@ -14,6 +14,7 @@ interface ArchivoRow {
   storage_key: string | null;
   youtube_url: string | null;
   duration_seconds: number | null;
+  nota: string | null;
   orden: number | null;
   created_at: string;
 }
@@ -49,7 +50,7 @@ const getArchivos = (slug: string, claseIds: string[]) =>
     async () =>
       getSupabaseAdmin()
         .from("archivos")
-        .select("id, clase_id, tipo, nombre_display, storage_key, youtube_url, duration_seconds, orden, created_at")
+        .select("id, clase_id, tipo, nombre_display, storage_key, youtube_url, duration_seconds, nota, orden, created_at")
         .in("clase_id", claseIds)
         .order("orden")
         .order("created_at"),
