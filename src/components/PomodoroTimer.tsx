@@ -10,7 +10,13 @@ function formatHMS(total: number): string {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-function playBeep(loop: boolean) {
+function playBeepSequence() {
+  playBeepCore();
+  setTimeout(() => playBeepCore(), 2500);
+  setTimeout(() => playBeepCore(), 5000);
+}
+
+function playBeepCore() {
   try {
     const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
 
@@ -91,7 +97,7 @@ export default function PomodoroTimer() {
     const left = Math.max(0, Math.ceil((endTimeRef.current - now) / 1000));
     setRemaining(left);
     if (left <= 0) {
-      playBeep();
+      playBeepSequence();
       setRunning(false);
     }
   };
