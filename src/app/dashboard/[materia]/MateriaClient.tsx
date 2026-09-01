@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import WelcomeGate from "@/components/WelcomeGate";
@@ -8,7 +8,8 @@ import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
 import { formatFechaLocal } from "@/lib/utils";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
-import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Play } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Play, Check } from "@/components/icons";
+import { getVistosClases, markClaseVista } from "@/lib/progreso";
 
 interface Archivo {
   id: string;
@@ -47,10 +48,24 @@ export default function MateriaClient({
   acceso?: { clave: string | null; nombre: string | null };
 }) {
   const router = useRouter();
+  const [vistos, setVistos] = useState<Set<string>>(new Set());
+  const [busqueda, setBusqueda] = useState("");
+  const [filtroTipo, setFiltroTipo] = useState<string | null>(null);
 
   useEffect(() => {
     trackActivity({ tipo: "page_view", pagina: "materia", materia_slug: slug });
   }, [slug]);
+
+  useEffect(() => {
+    setVistos(getVistosClases());
+  }, []);
+
+  const handleClaseClick = (clase: Clase) => {
+    markClaseVista(clase.id);
+    setVistos((prev) => new Set(prev).add(clase.id));
+    trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
+    router.push(claseHref(clase.numero));
+  };
 
   const splitName = (n: string) => {
     const p = n.split(",");
@@ -60,6 +75,36 @@ export default function MateriaClient({
   const { title: materiaTitle, meta: materiaMeta } = materia ? splitName(materia.nombre) : { title: "", meta: null };
 
   const tieneRecurso = (c: Clase, tipo: string) => c.archivos.some((a) => a.tipo === tipo);
+
+  const tiposDisponibles = useMemo(() => {
+    const set = new Set<string>();
+    for (const c of clases) for (const a of c.archivos) set.add(a.tipo);
+    return [...set];
+  }, [clases]);
+
+  const clasesFiltradas = useMemo(() => {
+    let res = clases;
+    if (busqueda.trim()) {
+      const q = busqueda.trim().toLowerCase();
+      res = res.filter((c) => {
+        const hay = `${c.numero} ${c.titulo} ${c.tema || ""}`.toLowerCase();
+        if (hay.includes(q)) return true;
+        return c.archivos.some((a) => a.nombre_display.toLowerCase().includes(q));
+      });
+    }
+    if (filtroTipo) {
+      res = res.filter((c) => c.archivos.some((a) => a.tipo === filtroTipo));
+    }
+    return res;
+  }, [clases, busqueda, filtroTipo]);
+
+  const tipoLabel: Record<string, string> = {
+    audio_clase: "Audio",
+    clase_youtube: "Video",
+    transcripcion: "Transcripción",
+    archivo: "Archivo",
+    enlace: "Enlace",
+  };
 
   const enlaces = useMemo(() =>
     clases.flatMap((c) =>
@@ -345,6 +390,91 @@ export default function MateriaClient({
             </div>
           )}
 
+          {/* Buscador y filtro por tipo */}
+          {clases.length > 0 && (
+            <div style={{ marginBottom: "28px" }}>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div style={{ position: "relative", flex: 1 }}>
+                  <input
+                    type="text"
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                    placeholder="Buscar por título, tema o archivo..."
+                    style={{
+                      width: "100%",
+                      background: "var(--color-card)",
+                      border: "1px solid var(--color-line-soft)",
+                      borderRadius: 0,
+                      padding: "10px 14px 10px 36px",
+                      fontSize: "13px",
+                      color: "var(--color-text)",
+                      outline: "none",
+                      fontFamily: "var(--font-inter)",
+                    }}
+                  />
+                  <span style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-faint)", pointerEvents: "none" }}>
+                    <FileText style={{ width: "14px", height: "14px" }} />
+                  </span>
+                  {busqueda && (
+                    <button
+                      onClick={() => setBusqueda("")}
+                      style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)", fontSize: "12px" }}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              </div>
+              {tiposDisponibles.length > 0 && (
+                <div className="flex flex-wrap gap-2" style={{ marginTop: "12px" }}>
+                  <button
+                    onClick={() => setFiltroTipo(null)}
+                    style={{
+                      padding: "6px 12px",
+                      fontSize: "11px",
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                      background: filtroTipo === null ? "var(--color-gold)" : "transparent",
+                      color: filtroTipo === null ? "var(--color-ink)" : "var(--color-text-muted)",
+                      border: `1px solid ${filtroTipo === null ? "var(--color-gold)" : "var(--color-line)"}`,
+                      borderRadius: 0,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Todos
+                  </button>
+                  {tiposDisponibles.map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setFiltroTipo((prev) => (prev === t ? null : t))}
+                      style={{
+                        padding: "6px 12px",
+                        fontSize: "11px",
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        background: filtroTipo === t ? "var(--color-gold)" : "transparent",
+                        color: filtroTipo === t ? "var(--color-ink)" : "var(--color-text-muted)",
+                        border: `1px solid ${filtroTipo === t ? "var(--color-gold)" : "var(--color-line)"}`,
+                        borderRadius: 0,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {tipoLabel[t] || t}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {(busqueda.trim() || filtroTipo) && (
+                <p style={{ marginTop: "10px", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}>
+                  {clasesFiltradas.length} clase{clasesFiltradas.length !== 1 ? "s" : ""} encontrada{clasesFiltradas.length !== 1 ? "s" : ""}
+                  {busqueda.trim() ? ` para "${busqueda.trim()}"` : ""}
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Clases */}
           {clases.length === 0 ? (
             <div
@@ -363,23 +493,31 @@ export default function MateriaClient({
                 </span>
               </p>
             </div>
+          ) : clasesFiltradas.length === 0 ? (
+            <div
+              style={{
+                padding: "48px 24px",
+                textAlign: "center",
+                background: "var(--color-card)",
+                border: "1px solid var(--color-line-soft)",
+              }}
+            >
+              <p style={{ color: "var(--color-text-muted)", fontSize: "14px" }}>No hay clases que coincidan con el filtro.</p>
+            </div>
           ) : (
             <div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             >
-              {clases.map((clase, i) => (
+              {clasesFiltradas.map((clase, i) => (
                 <article
                   key={clase.id}
-                  onClick={() => {
-                    trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
-                    router.push(claseHref(clase.numero));
-                  }}
+                  onClick={() => handleClaseClick(clase)}
                   className="group card-reveal card-hover flex flex-col cursor-pointer h-full"
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
-                      trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
-                      router.push(claseHref(clase.numero));
+                      e.preventDefault();
+                      handleClaseClick(clase);
                     }
                   }}
                   style={{
@@ -387,10 +525,10 @@ export default function MateriaClient({
                     padding: "28px 24px",
                     animationDelay: `${i * 50}ms`,
                     transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease",
-                    border: "1px solid var(--color-line-soft)",
+                    border: `1px solid ${vistos.has(clase.id) ? "var(--color-gold-dim)" : "var(--color-line-soft)"}`,
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = vistos.has(clase.id) ? "var(--color-gold-dim)" : "var(--color-line-soft)"; }}
                 >
                   <div
                     style={{
@@ -406,6 +544,22 @@ export default function MateriaClient({
                     }}
                   >
                     <span>Clase {clase.numero.toString().padStart(2, "0")}</span>
+                    {vistos.has(clase.id) && (
+                      <span
+                        className="flex items-center gap-1"
+                        style={{
+                          background: "rgba(185,154,98,0.12)",
+                          border: "1px solid var(--color-gold-dim)",
+                          padding: "2px 7px",
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "9px",
+                          letterSpacing: "0.1em",
+                          color: "var(--color-gold)",
+                        }}
+                      >
+                        <Check style={{ width: "10px", height: "10px" }} /> Visto
+                      </span>
+                    )}
                   </div>
                   <div className="flex-1">
                     <h3
