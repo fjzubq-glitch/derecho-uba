@@ -47,6 +47,7 @@ export default function PomodoroTimer() {
   const [totalSec, setTotalSec] = useState(30 * 60);
   const [remaining, setRemaining] = useState(30 * 60);
   const [running, setRunning] = useState(false);
+  const endTimeRef = useRef<number>(0);
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -65,6 +66,22 @@ export default function PomodoroTimer() {
     }
   }, [hours, minutes, seconds, running]);
 
+  const tick = () => {
+    const now = Date.now();
+    const left = Math.max(0, Math.ceil((endTimeRef.current - now) / 1000));
+    setRemaining(left);
+    if (left <= 0) {
+      playBeep(loop);
+      if (loop) {
+        const t = hours * 3600 + minutes * 60 + seconds;
+        endTimeRef.current = Date.now() + t * 1000;
+        setRemaining(t);
+      } else {
+        setRunning(false);
+      }
+    }
+  };
+
   useEffect(() => {
     if (!running) {
       if (intervalRef.current) {
@@ -73,20 +90,9 @@ export default function PomodoroTimer() {
       }
       return;
     }
-    intervalRef.current = window.setInterval(() => {
-      setRemaining((prev) => {
-        if (prev <= 1) {
-          // Reached 0
-          playBeep(loop);
-          if (loop) {
-            return totalSec;
-          }
-          setRunning(false);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    // Recalc immediately in case we just resumed from background
+    tick();
+    intervalRef.current = window.setInterval(tick, 500);
     return () => {
       if (intervalRef.current) {
         window.clearInterval(intervalRef.current);
@@ -95,16 +101,30 @@ export default function PomodoroTimer() {
     };
   }, [running, totalSec, loop]);
 
+  // Also catch visibility change so timer snaps when user returns to tab
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible" && running) {
+        tick();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [running]);
+
   const handleStart = () => {
     const t = hours * 3600 + minutes * 60 + seconds;
     if (t <= 0) return;
-    if (!running && remaining !== t) {
-      // already has remaining from pause, resume
+    if (!running && remaining > 0 && remaining !== t) {
+      // Resume from pause
+      endTimeRef.current = Date.now() + remaining * 1000;
       setRunning(true);
       return;
     }
+    // Fresh start
     setTotalSec(t);
     setRemaining(t);
+    endTimeRef.current = Date.now() + t * 1000;
     setRunning(true);
   };
 
