@@ -88,46 +88,63 @@ export async function sincronizarRevisiones(): Promise<{ creadas: number }> {
   const claseConContenido = new Set<string>((archivos || []).map((a) => a.clase_id));
   const soloClases = (clasesConArchivos || []).filter((c) => claseConContenido.has(c.id));
 
+  // Evitar ON CONFLICT con índices parciales (fallaba con 42P10): insertar solo faltantes
+  const { data: existentesClase } = await supabase
+    .from("estudio_revisiones")
+    .select("clase_id, tipo")
+    .in("clase_id", soloClases.map((c) => c.id));
+  const keyExistenteClase = new Set((existentesClase || []).map((r) => `${r.clase_id}:${r.tipo}`));
+
   for (const c of soloClases) {
-    // Fecha de base: la más temprana de subida de contenido de esa clase
     const fechas = (archivos || [])
       .filter((a) => a.clase_id === c.id)
       .map((a) => String(a.created_at).slice(0, 10))
       .filter(Boolean)
       .sort();
     const base = fechas[0] || hoy;
-
     for (const item of CLASE_ITEMS) {
+      if (keyExistenteClase.has(`${c.id}:${item.tipo}`)) continue;
       const fecha = addDays(base, item.offset);
-      // Pre-crear también futuros (el filtro de cola decidirá si toca hoy)
-      const { error } = await supabase
-        .from("estudio_revisiones")
-        .upsert(
-          { materia_id: c.materia_id, clase_id: c.id, tipo: item.tipo, fecha_programada: fecha },
-          { onConflict: "clase_id,tipo", ignoreDuplicates: true }
-        );
-      if (!error) creadas++;
+      const { error } = await supabase.from("estudio_revisiones").insert({
+        materia_id: c.materia_id,
+        clase_id: c.id,
+        tipo: item.tipo,
+        fecha_programada: fecha,
+      });
+      if (!error) {
+        creadas++;
+        keyExistenteClase.add(`${c.id}:${item.tipo}`);
+      }
     }
   }
 
-  // 2) Refuerzo pre-examen desde materia_fechas (solo esas 2 materias)
   const { data: fechasExam } = await supabase
     .from("materia_fechas")
     .select("id, materia_id, titulo, fecha")
     .in("materia_id", [...idsCuatri])
     .gte("fecha", hoy);
 
+  const examIds = (fechasExam || []).map((e) => e.id);
+  const { data: existentesExam } = examIds.length
+    ? await supabase.from("estudio_revisiones").select("exam_date_id, tipo").in("exam_date_id", examIds)
+    : { data: [] as Array<{ exam_date_id: string; tipo: string }> };
+  const keyExistenteExam = new Set((existentesExam || []).map((r) => `${r.exam_date_id}:${r.tipo}`));
+
   for (const e of (fechasExam || [])) {
     for (const item of EXAMEN_ITEMS) {
+      if (keyExistenteExam.has(`${e.id}:${item.tipo}`)) continue;
       const fecha = addDays(String(e.fecha), item.offset);
-      if (fecha < hoy) continue; // ya pasó la fecha del refuerzo
-      const { error } = await supabase
-        .from("estudio_revisiones")
-        .upsert(
-          { materia_id: e.materia_id, exam_date_id: e.id, tipo: item.tipo, fecha_programada: fecha },
-          { onConflict: "exam_date_id,tipo", ignoreDuplicates: true }
-        );
-      if (!error) creadas++;
+      if (fecha < hoy) continue;
+      const { error } = await supabase.from("estudio_revisiones").insert({
+        materia_id: e.materia_id,
+        exam_date_id: e.id,
+        tipo: item.tipo,
+        fecha_programada: fecha,
+      });
+      if (!error) {
+        creadas++;
+        keyExistenteExam.add(`${e.id}:${item.tipo}`);
+      }
     }
   }
 
