@@ -64,10 +64,17 @@ export async function sincronizarRevisiones(): Promise<{ creadas: number }> {
   const hoy = hoyLocal();
   let creadas = 0;
 
-  // 1) Clases con material subido (materia + numero para linkear)
+  // Solo las 2 materias del cuatrimestre
+  const CUATRIMESTRE_SLUGS = ["contratos-ii", "derecho-comercial"];
+  const { data: materiasCuatri } = await supabase.from("materias").select("id, slug").in("slug", CUATRIMESTRE_SLUGS);
+  const idsCuatri = new Set((materiasCuatri || []).map((m) => m.id));
+  if (idsCuatri.size === 0) return { creadas };
+
+  // 1) Clases con material subido de esas 2 materias
   const { data: clasesConArchivos } = await supabase
     .from("clases")
-    .select("id, numero, titulo, materia_id");
+    .select("id, numero, titulo, materia_id")
+    .in("materia_id", [...idsCuatri]);
 
   const ids = (clasesConArchivos || []).map((c) => c.id);
   if (ids.length === 0) return { creadas };
@@ -92,7 +99,7 @@ export async function sincronizarRevisiones(): Promise<{ creadas: number }> {
 
     for (const item of CLASE_ITEMS) {
       const fecha = addDays(base, item.offset);
-      if (fecha > hoy) continue; // si la fecha ya pasó, igual la creamos para historial
+      // Pre-crear también futuros (el filtro de cola decidirá si toca hoy)
       const { error } = await supabase
         .from("estudio_revisiones")
         .upsert(
@@ -103,10 +110,11 @@ export async function sincronizarRevisiones(): Promise<{ creadas: number }> {
     }
   }
 
-  // 2) Refuerzo pre-examen desde materia_fechas (parciales/finales/exámenes)
+  // 2) Refuerzo pre-examen desde materia_fechas (solo esas 2 materias)
   const { data: fechasExam } = await supabase
     .from("materia_fechas")
     .select("id, materia_id, titulo, fecha")
+    .in("materia_id", [...idsCuatri])
     .gte("fecha", hoy);
 
   for (const e of (fechasExam || [])) {
