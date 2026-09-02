@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/estudio",
+      "schedule": "0 */2 * * *"
+    }
+  ]
+}
