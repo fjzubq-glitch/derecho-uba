@@ -83,12 +83,17 @@ export default function PomodoroTimer() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Sync totalSec when inputs change and not running
+  // Sync remaining with inputs ONLY when inputs change and timer hasn't started yet
+  const prevInputsRef = useRef(`${hours}:${minutes}:${seconds}`);
   useEffect(() => {
-    if (!running) {
-      const t = hours * 3600 + minutes * 60 + seconds;
-      setTotalSec(t);
-      setRemaining(t);
+    const key = `${hours}:${minutes}:${seconds}`;
+    if (key !== prevInputsRef.current) {
+      prevInputsRef.current = key;
+      if (!running) {
+        const t = hours * 3600 + minutes * 60 + seconds;
+        setTotalSec(t);
+        setRemaining(t);
+      }
     }
   }, [hours, minutes, seconds, running]);
 
@@ -195,7 +200,21 @@ export default function PomodoroTimer() {
           fontSize: "12px",
         }}
       >
-        ⏱
+        <span style={{ position: "relative" }}>
+          ⏱
+          {running && (
+            <span style={{
+              position: "absolute",
+              top: "-1px",
+              right: "-3px",
+              width: "6px",
+              height: "6px",
+              borderRadius: "50%",
+              background: "#22c55e",
+              boxShadow: "0 0 4px #22c55e",
+            }} />
+          )}
+        </span>
       </button>
 
       {/* Panel — más sutil en desktop */}
