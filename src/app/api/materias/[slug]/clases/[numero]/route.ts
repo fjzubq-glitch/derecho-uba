@@ -63,7 +63,7 @@ export async function GET(
   const data = await unstable_cache(
     () => getClaseData(slug, num),
     ["clase-detalle", slug, String(num)],
-    { revalidate: 300 },
+    { revalidate: 300, tags: ["clase-detalle", `clase-${slug}-${num}`] },
   )();
 
   if (!data.materia || !data.clase) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { revalidateTag, revalidatePath } from "next/cache";
 import { uploadToR2 } from "@/lib/r2";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
@@ -161,6 +162,30 @@ export async function POST(request: NextRequest) {
     if (insertErrors.length > 0) {
       return NextResponse.json({ ok: false, error: insertErrors.join("; ") }, { status: 500 });
     }
+
+    // Invalidar cache de la clase para que el pptx aparezca al instante
+    try {
+      let slug: string | null = null;
+      if (materiaId) {
+        const { data: m } = await getSupabaseAdmin().from("materias").select("slug").eq("id", materiaId).single();
+        slug = m?.slug || null;
+      } else if (claseId) {
+        const { data: c } = await getSupabaseAdmin().from("clases").select("materia_id, numero").eq("id", claseId).single();
+        if (c?.materia_id) {
+          const { data: m } = await getSupabaseAdmin().from("materias").select("slug").eq("id", c.materia_id).single();
+          slug = m?.slug || null;
+          if (slug) revalidateTag(`clase-${slug}-${c.numero}`);
+        }
+      }
+      if (slug && claseNumero) {
+        revalidateTag(`clase-${slug}-${claseNumero}`);
+        revalidateTag("clase-detalle");
+        revalidatePath(`/dashboard/${slug}/clase/${claseNumero}`);
+        revalidatePath(`/dashboard/${slug}`);
+      }
+      revalidatePath("/dashboard");
+      revalidatePath("/api/materias");
+    } catch {}
 
     return NextResponse.json({ ok: true, claseId: targetClaseId });
   } catch (error: unknown) {
