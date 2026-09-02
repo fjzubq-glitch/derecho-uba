@@ -8,6 +8,7 @@ const AdminMaterias = React.lazy(() => import("@/components/AdminMaterias"));
 
 import { ArrowLeft, BarChart3, Headphones, FileText, Shield, ChevronDown, Loader2 } from "@/components/icons";
 import { setAdminSession } from "@/lib/utils";
+import { getAccesosInfo, registrarAcceso } from "@/lib/analytics-limiter";
 
 interface Materia {
   id: string;
@@ -116,6 +117,7 @@ export default function AdminPage() {
   });
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"upload" | "manage" | "analytics">("upload");
+  const [analyticsBloqueo, setAnalyticsBloqueo] = useState<null | { usados: number; limite: number; ventana: string; proxima: string }>(null);
   const [claseEditar, setClaseEditar] = useState<{ claseId: string; materiaId: string } | null>(null);
   const [visitantesUnicos, setVisitantesUnicos] = useState(0);
   const [tasaRegistro, setTasaRegistro] = useState(0);
@@ -183,9 +185,9 @@ export default function AdminPage() {
     })();
   }, []);
 
-  // Presencia en vivo: polling mientras esté en la pestaña Analytics
+  // Presencia en vivo: polling mientras esté en la pestaña Analytics y no bloqueado
   useEffect(() => {
-    if (!authenticated || activeTab !== "analytics") return;
+    if (!authenticated || activeTab !== "analytics" || analyticsBloqueo) return;
     let ok = true;
     const cargarPresencia = async () => {
       try {
@@ -204,7 +206,7 @@ export default function AdminPage() {
       ok = false;
       clearInterval(id);
     };
-  }, [authenticated, activeTab]);
+  }, [authenticated, activeTab, analyticsBloqueo]);
 
   const loadAdminData = useCallback(async () => {
     try {
@@ -233,13 +235,33 @@ export default function AdminPage() {
     // Cargamos materias/clases al entrar a Subir (para los dropdowns) o Analytics.
     // El resto de la data pesada (estadísticas) solo se usa en Analytics,
     // pero loadAdminData trae ambas; el costo es aceptable.
-    if (authenticated && (activeTab === "upload" || activeTab === "analytics")) {
+    if (authenticated && activeTab === "upload") {
       loadAdminData();
     }
-  }, [authenticated, activeTab, loadAdminData]);
+    if (authenticated && activeTab === "analytics" && !analyticsBloqueo) {
+      loadAdminData();
+    }
+  }, [authenticated, activeTab, analyticsBloqueo, loadAdminData]);
 
   function cambiarPeriodo(p: Periodo) {
     setPeriodo(p);
+  }
+
+  function handleTabChange(tab: "upload" | "manage" | "analytics") {
+    if (tab === "analytics") {
+      const info = getAccesosInfo();
+      if (!info.permitido) {
+        setAnalyticsBloqueo({ usados: info.usados, limite: info.limite, ventana: info.ventana, proxima: info.proximaVentanaLabel });
+        setActiveTab("analytics");
+        return;
+      }
+      const res = registrarAcceso();
+      setAnalyticsBloqueo(null);
+      // opcional: podrías guardar res.usados para mostrar contador
+      setActiveTab("analytics");
+      return;
+    }
+    setActiveTab(tab);
   }
 
   async function verEstudiante(nombre: string) {
@@ -699,7 +721,7 @@ export default function AdminPage() {
             {(["upload", "manage", "analytics"] as const).map((tab) => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => handleTabChange(tab)}
                 className={tab !== "analytics" ? "border-b sm:border-b-0 sm:border-r" : "border-0"}
                 style={{
                   flex: 1,
@@ -892,7 +914,28 @@ export default function AdminPage() {
           {/* Analytics Tab */}
           {activeTab === "analytics" && (
             <div className="space-y-6">
-              {analyticsLoading ? (
+              {analyticsBloqueo ? (
+                <div
+                  style={{
+                    background: "var(--color-card)",
+                    border: "1px solid var(--color-line-soft)",
+                    padding: "48px 32px",
+                    textAlign: "center",
+                  }}
+                >
+                  <p style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontSize: "20px", color: "var(--color-text)", marginBottom: "12px" }}>
+                    Límite de accesos alcanzado
+                  </p>
+                  <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.6, maxWidth: "520px", margin: "0 auto 16px" }}>
+                    Ya usaste {analyticsBloqueo.usados}/{analyticsBloqueo.limite} accesos de la {analyticsBloqueo.ventana === "manana" ? "mañana" : "noche"}.
+                    <br />
+                    Volvé a intentarlo a partir de las <strong style={{ color: "var(--color-gold)" }}>{analyticsBloqueo.proxima}</strong> para no perder tiempo estudiando.
+                  </p>
+                  <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", letterSpacing: "0.08em", color: "var(--color-text-faint)" }}>
+                    Mañana 06:00–17:59 = 1 acceso · Noche 18:00–05:59 = 2 accesos (hora Argentina)
+                  </p>
+                </div>
+              ) : analyticsLoading ? (
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-4 overflow-hidden" style={{ background: "var(--color-line-soft)", gap: "1px" }}>
                     {[1, 2, 3, 4].map((i) => (
