@@ -130,76 +130,110 @@ export default function AdminEstudio() {
           </p>
         </div>
       ) : (
-        <div className="space-y-2">
-          {revisiones.map((r) => {
-            const d = diffDias(r.fecha_programada);
-            const esClase = !!r.clase_numero;
-            const titulo = esClase
-              ? `${r.materia_nombre || "Materia"} · Clase ${r.clase_numero}${r.clase_titulo ? ` — ${r.clase_titulo}` : ""}`
-              : `${r.materia_nombre || "Materia"} · ${r.fecha_programada}`;
-            return (
-              <div
-                key={r.id}
-                className="flex items-center gap-4"
+        <div className="space-y-8">
+          {(() => {
+            const grupos = new Map<string, { nombre: string; items: Revision[] }>();
+            for (const r of revisiones) {
+              const key = r.materia_slug || r.materia_nombre || "otra";
+              const g = grupos.get(key) || { nombre: r.materia_nombre || key, items: [] };
+              g.items.push(r);
+              grupos.set(key, g);
+            }
+            return [...grupos.values()].map((grupo) => (
+              <section
+                key={grupo.nombre}
                 style={{
                   background: "var(--color-card)",
                   border: "1px solid var(--color-line-soft)",
-                  padding: "14px 18px",
+                  overflow: "hidden",
                 }}
               >
-                <span
-                  className="flex items-center justify-center flex-shrink-0"
+                <div
+                  className="flex items-center justify-between"
                   style={{
-                    width: "34px",
-                    height: "34px",
-                    borderRadius: "50%",
-                    border: "1px solid var(--color-gold-dim)",
-                    color: "var(--color-gold)",
+                    padding: "14px 18px",
+                    borderBottom: "1px solid var(--color-line-soft)",
+                    background: "var(--color-ink-2)",
                   }}
                 >
-                  {esClase ? <BookOpen style={{ width: "15px", height: "15px" }} /> : <Calendar style={{ width: "15px", height: "15px" }} />}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {titulo}
-                  </p>
-                  <div className="flex items-center gap-2" style={{ marginTop: "3px" }}>
-                    <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-gold)" }}>
-                      {TIPO_LABEL[r.tipo] || r.tipo}
-                    </span>
-                    <span style={{ color: "var(--color-line)" }}>·</span>
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "var(--color-text-muted)" }}>
-                      <Clock style={{ width: "11px", height: "11px" }} />
-                      {labelDia(d)}
-                    </span>
-                  </div>
+                  <span style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontSize: "16px", fontWeight: 500, color: "var(--color-text)" }}>
+                    {grupo.nombre}
+                  </span>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>
+                    {grupo.items.length} pendiente{grupo.items.length > 1 ? "s" : ""}
+                  </span>
                 </div>
-                <button
-                  onClick={() => marcar(r.id)}
-                  disabled={marcando === r.id}
-                  style={{
-                    padding: "7px 14px",
-                    background: "var(--color-gold)",
-                    color: "var(--color-ink)",
-                    border: "none",
-                    cursor: "pointer",
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "11px",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    opacity: marcando === r.id ? 0.6 : 1,
-                    flexShrink: 0,
-                  }}
-                >
-                  {marcando === r.id ? <Loader2 style={{ width: "12px", height: "12px", animation: "spin 1s linear infinite" }} /> : <Check style={{ width: "12px", height: "12px" }} />}
-                  Listo
-                </button>
-              </div>
-            );
-          })}
+                <div>
+                  {grupo.items.map((r) => {
+                    const d = diffDias(r.fecha_programada);
+                    const esClase = !!r.clase_numero;
+                    const titulo = esClase ? `Clase ${r.clase_numero}${r.clase_titulo ? ` — ${r.clase_titulo}` : ""}` : r.fecha_programada;
+                    return (
+                      <div
+                        key={r.id}
+                        className="flex items-center gap-4"
+                        style={{
+                          padding: "12px 18px",
+                          borderBottom: "1px solid var(--color-line-soft)",
+                        }}
+                      >
+                        <span
+                          className="flex items-center justify-center flex-shrink-0"
+                          style={{
+                            width: "30px",
+                            height: "30px",
+                            borderRadius: "50%",
+                            border: "1px solid var(--color-gold-dim)",
+                            color: "var(--color-gold)",
+                          }}
+                        >
+                          {esClase ? <BookOpen style={{ width: "13px", height: "13px" }} /> : <Calendar style={{ width: "13px", height: "13px" }} />}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p style={{ fontSize: "13px", fontWeight: 500, color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {titulo}
+                          </p>
+                          <div className="flex items-center gap-2" style={{ marginTop: "2px" }}>
+                            <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-gold)" }}>
+                              {TIPO_LABEL[r.tipo] || r.tipo}
+                            </span>
+                            <span style={{ color: "var(--color-line)" }}>·</span>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "var(--color-text-muted)" }}>
+                              <Clock style={{ width: "11px", height: "11px" }} />
+                              {labelDia(d)}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => marcar(r.id)}
+                          disabled={marcando === r.id}
+                          style={{
+                            padding: "6px 12px",
+                            background: "var(--color-gold)",
+                            color: "var(--color-ink)",
+                            border: "none",
+                            cursor: "pointer",
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "11px",
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            opacity: marcando === r.id ? 0.6 : 1,
+                            flexShrink: 0,
+                          }}
+                        >
+                          {marcando === r.id ? <Loader2 style={{ width: "12px", height: "12px", animation: "spin 1s linear infinite" }} /> : <Check style={{ width: "12px", height: "12px" }} />}
+                          Listo
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            ));
+          })()}
         </div>
       )}
     </div>
