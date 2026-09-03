@@ -192,37 +192,42 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
             </Link>
           )}
 
-          {/* LED de administrador: verde = sesión activa, rojo = cerrada */}
-          <div className="flex items-center" style={{ gap: "6px" }}>
+          {/* LED admin — atajo directo en todas las pestañas */}
+          <div className="flex items-center" style={{ gap: "8px" }}>
             <button
               onClick={handleGoAdmin}
-              aria-label={adminActive ? "Panel de administración (sesión activa)" : "Panel de administración (sesión cerrada)"}
-              title={adminActive ? "Admin activo — abrir panel" : "Admin: sesión cerrada — abrir panel"}
-              className="flex items-center justify-center"
+              aria-label={adminActive ? "Admin activo — abrir panel" : "Admin — abrir panel"}
+              title={adminActive ? "Admin activo — click para ir al panel" : "Ir al panel de administración"}
+              className="flex items-center justify-center gap-1.5"
               style={{
-                width: "32px",
                 height: "32px",
-                borderRadius: "50%",
-                background: "none",
+                padding: adminActive ? "0 10px 0 8px" : "0",
+                width: adminActive ? "auto" : "32px",
+                borderRadius: "16px",
+                background: adminActive ? "rgba(111, 160, 107, 0.12)" : "none",
                 border: adminActive ? "1px solid rgba(111, 160, 107, 0.45)" : "1px solid var(--color-line)",
                 cursor: "pointer",
-                padding: 0,
-                transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-                boxShadow: adminActive ? "0 0 10px rgba(111, 160, 107, 0.25)" : "none",
+                transition: "border-color 0.2s ease, background 0.2s ease",
+                boxShadow: adminActive ? "0 0 10px rgba(111, 160, 107, 0.18)" : "none",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = adminActive ? "#6FA06B" : "var(--color-gold-dim)")}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = adminActive ? "rgba(111, 160, 107, 0.45)" : "var(--color-line)")}
             >
               <span
                 style={{
-                  width: "10px",
-                  height: "10px",
+                  width: "8px",
+                  height: "8px",
                   borderRadius: "50%",
                   background: adminActive ? "#6FA06B" : "var(--color-danger)",
                   boxShadow: adminActive ? "0 0 6px rgba(111, 160, 107, 0.9)" : "none",
-                  transition: "background 0.3s ease",
+                  flexShrink: 0,
                 }}
               />
+              {adminActive && (
+                <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "#6FA06B", fontWeight: 600 }}>
+                  ADMIN
+                </span>
+              )}
             </button>
             {adminActive && (
               <button
