@@ -34,26 +34,22 @@ export async function GET(request: Request) {
       .maybeSingle();
 
     if (!notif) {
-      // Agrupar por materia para un mensaje más limpio
-      const porMateria = new Map<string, { nombre: string; total: number }>();
-      for (const r of revisiones) {
-        const key = r.materia_nombre || "General";
-        const cur = porMateria.get(key) || { nombre: key, total: 0 };
-        cur.total += 1;
-        porMateria.set(key, cur);
-      }
-
-      const lineas = [...porMateria.values()].map(
-        (m) => `• ${m.nombre}: ${m.total} repaso${m.total > 1 ? "s" : ""}`
-      );
+      // Plan de 2 por día: solo notificar las 2 más antiguas
+      const hoyLista = revisiones.slice(0, 2);
+      const lineas = hoyLista.map((r) => {
+        const mat = r.materia_nombre || "Materia";
+        const cl = r.clase_numero ? `Clase ${r.clase_numero}${r.clase_titulo ? ` — ${r.clase_titulo}` : ""}` : "";
+        const tipo = r.tipo === "repaso1" ? "3d" : r.tipo === "repaso2" ? "7d" : r.tipo === "repaso3" ? "21d" : r.tipo;
+        return `• ${mat} · ${cl} (${tipo})`;
+      });
 
       const texto = [
-        `<b>📚 Plan de estudio de hoy</b>`,
+        `<b>📚 Plan de estudio — hoy 08:00</b>`,
         ``,
-        `Tenés <b>${revisiones.length}</b> repaso${revisiones.length > 1 ? "s" : ""} pendiente${revisiones.length > 1 ? "s" : ""}:`,
+        `Hoy te tocan <b>${hoyLista.length}</b> repasos:`,
         ...lineas,
         ``,
-        `Entrá al panel → pestaña <b>Estudio</b> para verlos y marcarlos.`,
+        `Entrá a /admin → <b>Estudio</b> para marcarlos. Quedan ${revisiones.length - hoyLista.length} en cola.`,
       ].join("\n");
 
       await enviarTelegram(texto);
