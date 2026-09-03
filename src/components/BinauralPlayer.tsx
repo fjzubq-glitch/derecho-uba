@@ -7,12 +7,10 @@ export default function BinauralPlayer() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const [open, setOpen] = useState(false);
-  const [volume, setVolume] = useState(0.6);
   const [isAdmin, setIsAdmin] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // solo para admin (si no hay audio o no es admin, no mostrar)
     fetch("/api/admin/binaural")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
@@ -21,12 +19,10 @@ export default function BinauralPlayer() {
           setFileName(d.binaural.file_name);
           setIsAdmin(true);
         } else if (d?.ok) {
-          // sin audio pero es admin -> no mostrar player hasta que suba
           setIsAdmin(false);
         }
       })
       .catch(() => {});
-    // check admin via presence of cookie? si la api anterior dio 401, no es admin
     fetch("/api/admin/binaural")
       .then((r) => {
         if (r.status !== 401) setIsAdmin(true);
@@ -34,11 +30,8 @@ export default function BinauralPlayer() {
       .catch(() => {});
   }, []);
 
-  useEffect(() => {
-    if (audioRef.current) audioRef.current.volume = volume;
-  }, [volume]);
-
-  if (!isAdmin || !hasAudio) return null;
+  if (!isAdmin) return null;
+  if (!hasAudio) return null; // solo aparece cuando ya subiste audio en Estudio
 
   return (
     <>
@@ -114,7 +107,7 @@ export default function BinauralPlayer() {
           <p style={{ fontSize: "12px", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: "10px" }}>
             {fileName || "binaural"}
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex justify-center">
             <button
               onClick={() => {
                 if (!audioRef.current) return;
@@ -122,28 +115,19 @@ export default function BinauralPlayer() {
                 else audioRef.current.play().catch(() => {});
               }}
               style={{
-                padding: "6px 12px",
+                padding: "8px 18px",
                 background: "var(--color-gold)",
                 color: "var(--color-ink)",
                 border: "none",
                 cursor: "pointer",
                 fontFamily: "var(--font-ibm-plex-mono)",
                 fontSize: "11px",
-                letterSpacing: "0.06em",
+                letterSpacing: "0.08em",
                 textTransform: "uppercase",
               }}
             >
               {playing ? "Pausar" : "Play"}
             </button>
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.05}
-              value={volume}
-              onChange={(e) => setVolume(Number(e.target.value))}
-              style={{ flex: 1 }}
-            />
           </div>
           <p style={{ fontSize: "10px", color: "var(--color-text-faint)", marginTop: "8px" }}>En loop · solo vos lo escuchás</p>
         </div>
