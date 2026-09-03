@@ -19,8 +19,9 @@ function playBeepSequence() {
 function playBeepCore() {
   try {
     const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    if (ctx.state === "suspended") ctx.resume().catch(() => {});
 
-    const pianoNote = (freq: number, start: number, dur: number, vol = 0.35) => {
+    const pianoNote = (freq: number, start: number, dur: number, vol = 0.6) => {
       // Seno fundamental
       const osc1 = ctx.createOscillator();
       const gain1 = ctx.createGain();
