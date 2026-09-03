@@ -120,6 +120,23 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<"upload" | "manage" | "analytics" | "estudio">("upload");
   const [analyticsBloqueo, setAnalyticsBloqueo] = useState<null | { usados: number; limite: number; ventana: string; proxima: string }>(null);
   const [claseEditar, setClaseEditar] = useState<{ claseId: string; materiaId: string } | null>(null);
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const editId = sp.get("edit");
+    const materiaSlug = sp.get("materia");
+    if (editId && materias.length > 0) {
+      let matId: string | null = null;
+      if (materiaSlug) {
+        const mat = materias.find((m) => m.slug === materiaSlug);
+        if (mat) matId = mat.id;
+      }
+      if (!matId) matId = materias[0]?.id || null;
+      if (matId) {
+        setClaseEditar({ claseId: editId, materiaId: matId });
+        setActiveTab("upload");
+      }
+    }
+  }, [materias]);
   const [visitantesUnicos, setVisitantesUnicos] = useState(0);
   const [tasaRegistro, setTasaRegistro] = useState(0);
   const [totalVisitas, setTotalVisitas] = useState(0);
