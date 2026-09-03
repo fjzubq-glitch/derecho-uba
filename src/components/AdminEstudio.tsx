@@ -101,11 +101,47 @@ export default function AdminEstudio() {
   const subirBinaural = async (file: File) => {
     setBinauralSubiendo(true);
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/admin/binaural", { method: "POST", body: fd });
-      const data = await res.json();
-      if (data.ok) setBinauralInfo({ file_name: file.name });
+      // Archivos grandes (>4MB) por partes para evitar límite de Vercel (4.5MB)
+      if (file.size > 4 * 1024 * 1024) {
+        const CHUNK = 1024 * 1024;
+        const sessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        const total = Math.ceil(file.size / CHUNK);
+        for (let i = 0; i < total; i++) {
+          const slice = file.slice(i * CHUNK, Math.min((i + 1) * CHUNK, file.size));
+          const base64 = await new Promise<string>((res) => {
+            const r = new FileReader();
+            r.onload = () => res((r.result as string).split(",")[1]);
+            r.readAsDataURL(slice);
+          });
+          const pr = await fetch("/api/upload-chunk", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sessionId, partNumber: i + 1, data: base64 }),
+          });
+          if (!pr.ok) throw new Error("chunk " + (i + 1));
+        }
+        const ext = (file.name.split(".").pop() || "mp3").toLowerCase();
+        const finalKey = `personal/binaural-${Date.now()}.${ext}`;
+        const ar = await fetch("/api/upload-assemble", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId, totalParts: total, finalKey, contentType: file.type || "audio/mpeg", fileType: "audio_clase" }),
+        });
+        if (!ar.ok) throw new Error("assemble");
+        const rr = await fetch("/api/admin/binaural/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ storageKey: finalKey, fileName: file.name, fileSize: file.size }),
+        });
+        const d = await rr.json();
+        if (d.ok) setBinauralInfo({ file_name: file.name });
+      } else {
+        const fd = new FormData();
+        fd.append("file", file);
+        const res = await fetch("/api/admin/binaural", { method: "POST", body: fd });
+        const data = await res.json();
+        if (data.ok) setBinauralInfo({ file_name: file.name });
+      }
     } catch {}
     setBinauralSubiendo(false);
   };
