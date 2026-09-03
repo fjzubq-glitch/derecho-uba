@@ -35,6 +35,11 @@ function labelDia(d: number): string {
   return `en ${d} día${d > 1 ? "s" : ""}`;
 }
 
+function fmtFecha(fechaISO: string): string {
+  const [y, m, d] = fechaISO.split("-");
+  return `${d}/${m}/${y}`;
+}
+
 export default function AdminEstudio() {
   const [revisiones, setRevisiones] = useState<Revision[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,7 +121,7 @@ export default function AdminEstudio() {
       {!loading && !error && hoyItems.length > 0 && (
         <div style={{ background: "var(--color-card)", border: "1px solid var(--color-gold-dim)", padding: "16px 18px" }}>
           <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gold)", marginBottom: "10px" }}>
-            Hoy te tocan — {hoyStr}
+            Hoy te tocan — {fmtFecha(hoyStr)}
           </p>
           <div className="space-y-2">
             {hoyItems.map((r) => (
@@ -281,7 +286,7 @@ export default function AdminEstudio() {
                                 key={r.id}
                                 onClick={() => marcar(r.id)}
                                 disabled={marcando === r.id || futuro}
-                                title={`${TIPO_LABEL[tipo] || tipo} · ${r.fecha_programada} ${hecha ? "(hecho - click para desmarcar)" : futuro ? "(futuro)" : "(click para marcar)"}`}
+                                title={`${TIPO_LABEL[tipo] || tipo} · ${fmtFecha(r.fecha_programada)} ${hecha ? "(hecho - click para desmarcar)" : futuro ? "(futuro)" : "(click para marcar)"}`}
                                 style={{
                                   width: "32px",
                                   height: "32px",
