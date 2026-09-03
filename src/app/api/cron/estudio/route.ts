@@ -2,17 +2,16 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { sincronizarRevisiones, obtenerColaHoy, hoyLocal } from "@/lib/estudio";
 import { enviarTelegram } from "@/lib/telegram";
+import { isAdminRequest } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
-// Se invoca por Vercel Cron (sin sesión de admin).
-// Protegemos con CRON_SECRET si está definido.
 export async function GET(request: Request) {
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret) {
-    const auth = request.headers.get("authorization");
-    if (auth !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ ok: false, error: "No autorizado" }, { status: 401 });
-    }
+  const auth = request.headers.get("authorization");
+  const esCronValido = cronSecret ? auth === `Bearer ${cronSecret}` : true;
+  const esAdmin = isAdminRequest(request.headers.get("cookie"));
+  if (!esCronValido && !esAdmin) {
+    return NextResponse.json({ ok: false, error: "No autorizado" }, { status: 401 });
   }
 
   try {

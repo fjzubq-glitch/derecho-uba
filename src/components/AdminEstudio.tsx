@@ -71,6 +71,19 @@ export default function AdminEstudio() {
     cargar();
   }, []);
 
+  // Fallback: si entrás entre 08:00-08:15 y el cron de Vercel se atrasó, dispará el aviso vos mismo
+  useEffect(() => {
+    try {
+      const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires", hour: "2-digit", minute: "2-digit", hour12: false });
+      const parts = fmt.formatToParts(new Date());
+      const h = Number(parts.find((p) => p.type === "hour")!.value);
+      const m = Number(parts.find((p) => p.type === "minute")!.value);
+      if (h === 8 && m >= 0 && m <= 15) {
+        fetch("/api/cron/estudio").catch(() => {});
+      }
+    } catch {}
+  }, []);
+
   const marcar = async (id: string) => {
     setMarcando(id);
     try {
