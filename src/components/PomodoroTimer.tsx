@@ -164,11 +164,19 @@ export default function PomodoroTimer() {
     };
   }, [running, totalSec]);
 
-  // Also catch visibility change so timer snaps when user returns to tab
+  // Al volver a la pestaña, recalcular desde el estado compartido (no reiniciar)
   useEffect(() => {
     const onVisible = () => {
-      if (document.visibilityState === "visible" && running) {
-        tick();
+      if (document.visibilityState === "visible") {
+        const shared = readPomoShared();
+        if (shared && shared.running && shared.endTime > Date.now()) {
+          endTimeRef.current = shared.endTime;
+          setTotalSec(shared.totalSec);
+          setRemaining(Math.max(0, Math.ceil((shared.endTime - Date.now()) / 1000)));
+          setRunning(true);
+        } else if (running) {
+          tick();
+        }
       }
     };
     document.addEventListener("visibilitychange", onVisible);
