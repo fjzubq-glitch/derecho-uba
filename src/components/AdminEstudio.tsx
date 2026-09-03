@@ -67,12 +67,14 @@ export default function AdminEstudio() {
   const marcar = async (id: string) => {
     setMarcando(id);
     try {
-      await fetch("/api/admin/estudio", {
+      const res = await fetch("/api/admin/estudio", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-      setRevisiones((prev) => prev.map((r) => (r.id === id ? { ...r, hecha: true } : r)));
+      const data = await res.json();
+      const nuevaHecha = data.hecha;
+      setRevisiones((prev) => prev.map((r) => (r.id === id ? { ...r, hecha: typeof nuevaHecha === "boolean" ? nuevaHecha : !r.hecha, completada_at: typeof nuevaHecha === "boolean" && nuevaHecha ? new Date().toISOString() : null } : r)));
     } catch {
       // silencioso
     } finally {
@@ -235,9 +237,9 @@ export default function AdminEstudio() {
                             return (
                               <button
                                 key={r.id}
-                                onClick={() => !hecha && marcar(r.id)}
-                                disabled={hecha || marcando === r.id || futuro}
-                                title={`${TIPO_LABEL[tipo] || tipo} · ${r.fecha_programada} ${hecha ? "(hecho)" : futuro ? "(futuro)" : ""}`}
+                                onClick={() => marcar(r.id)}
+                                disabled={marcando === r.id || futuro}
+                                title={`${TIPO_LABEL[tipo] || tipo} · ${r.fecha_programada} ${hecha ? "(hecho - click para desmarcar)" : futuro ? "(futuro)" : "(click para marcar)"}`}
                                 style={{
                                   width: "32px",
                                   height: "32px",
@@ -247,7 +249,7 @@ export default function AdminEstudio() {
                                   border: `1px solid ${hecha ? "var(--color-gold)" : vencido ? "var(--color-gold-dim)" : "var(--color-line-soft)"}`,
                                   background: hecha ? "var(--color-gold)" : vencido ? "transparent" : "var(--color-ink)",
                                   color: hecha ? "var(--color-ink)" : vencido ? "var(--color-gold)" : "var(--color-text-faint)",
-                                  cursor: hecha || futuro ? "default" : "pointer",
+                                  cursor: futuro ? "default" : "pointer",
                                   opacity: futuro ? 0.5 : marcando === r.id ? 0.6 : 1,
                                   fontFamily: "var(--font-ibm-plex-mono)",
                                   fontSize: "11px",

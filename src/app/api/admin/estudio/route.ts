@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/auth";
-import { obtenerPlanCompleto, marcarHecha, sincronizarRevisiones } from "@/lib/estudio";
+import { obtenerPlanCompleto, toggleHecha, sincronizarRevisiones } from "@/lib/estudio";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
@@ -27,11 +27,11 @@ export async function POST(request: Request) {
     if (!id) {
       return NextResponse.json({ ok: false, error: "Falta id" }, { status: 400 });
     }
-    const res = await marcarHecha(id);
+    const res = await toggleHecha(id);
     if (!res.ok) {
-      return NextResponse.json({ ok: false, error: "No se pudo marcar" }, { status: 500 });
+      return NextResponse.json({ ok: false, error: "No se pudo actualizar" }, { status: 500 });
     }
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, hecha: res.hecha });
   } catch (e) {
     console.error("Estudio POST error:", e);
     return NextResponse.json({ ok: false, error: "Error al marcar" }, { status: 500 });

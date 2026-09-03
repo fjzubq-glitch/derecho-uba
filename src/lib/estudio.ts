@@ -239,3 +239,15 @@ export async function marcarHecha(id: string): Promise<{ ok: boolean }> {
     .eq("id", id);
   return { ok: !error };
 }
+
+export async function toggleHecha(id: string): Promise<{ ok: boolean; hecha: boolean }> {
+  const supabase = getSupabaseAdmin();
+  const { data: cur } = await supabase.from("estudio_revisiones").select("hecha").eq("id", id).single();
+  if (!cur) return { ok: false, hecha: false };
+  const nuevo = !cur.hecha;
+  const { error } = await supabase
+    .from("estudio_revisiones")
+    .update({ hecha: nuevo, completada_at: nuevo ? new Date().toISOString() : null })
+    .eq("id", id);
+  return { ok: !error, hecha: nuevo };
+}
