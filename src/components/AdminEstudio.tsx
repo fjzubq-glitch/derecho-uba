@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { BookOpen, Calendar, Check, Clock, Loader2 } from "@/components/icons";
+import { BookOpen, Calendar, Check, ChevronDown, Clock, Loader2 } from "@/components/icons";
 
 interface Revision {
   id: string;
@@ -40,6 +40,7 @@ export default function AdminEstudio() {
   const [loading, setLoading] = useState(true);
   const [marcando, setMarcando] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [abiertas, setAbiertas] = useState<Set<string>>(new Set());
 
   const cargar = async () => {
     setLoading(true);
@@ -162,20 +163,26 @@ export default function AdminEstudio() {
             return [...porMateria.values()].map((mat) => {
               const clasesOrdenadas = [...mat.clases.values()].sort((a, b) => (a.numero || 0) - (b.numero || 0));
               const pendientesMat = clasesOrdenadas.reduce((acc, c) => acc + [...c.items.values()].filter((r) => !r.hecha && r.fecha_programada <= hoyStr).length, 0);
+              const abierta = abiertas.has(mat.nombre);
               return (
                 <section
                   key={mat.nombre}
                   style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", overflow: "hidden" }}
                 >
-                  <div
-                    className="flex items-center justify-between"
-                    style={{ padding: "14px 18px", borderBottom: "1px solid var(--color-line-soft)", background: "var(--color-ink-2)" }}
+                  <button
+                    onClick={() => setAbiertas((prev) => { const n = new Set(prev); if (n.has(mat.nombre)) n.delete(mat.nombre); else n.add(mat.nombre); return n; })}
+                    className="flex items-center justify-between w-full text-left"
+                    style={{ padding: "14px 18px", background: "var(--color-ink-2)", border: "none", borderBottom: abierta ? "1px solid var(--color-line-soft)" : "none", cursor: "pointer", width: "100%" }}
                   >
                     <span style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontSize: "16px", fontWeight: 500, color: "var(--color-text)" }}>{mat.nombre}</span>
-                    <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>
-                      {pendientesMat} pendiente{pendientesMat !== 1 ? "s" : ""} · {clasesOrdenadas.length} clases
+                    <span className="flex items-center gap-3">
+                      <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>
+                        {pendientesMat} pendiente{pendientesMat !== 1 ? "s" : ""} · {clasesOrdenadas.length} clases
+                      </span>
+                      <ChevronDown style={{ width: "14px", height: "14px", color: "var(--color-text-muted)", transform: abierta ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
                     </span>
-                  </div>
+                  </button>
+                  {abierta && (
                   <div>
                     {clasesOrdenadas.map((clase) => (
                       <div
@@ -255,6 +262,7 @@ export default function AdminEstudio() {
                       </div>
                     ))}
                   </div>
+                  )}
                 </section>
               );
             });
