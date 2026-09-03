@@ -89,6 +89,7 @@ export default function PomodoroTimer() {
   const [running, setRunning] = useState(false);
   const endTimeRef = useRef<number>(0);
   const intervalRef = useRef<number | null>(null);
+  const timeoutRef = useRef<number | null>(null);
   const bcRef = useRef<BroadcastChannel | null>(null);
 
   useEffect(() => {
@@ -117,10 +118,20 @@ export default function PomodoroTimer() {
     const left = Math.max(0, Math.ceil((endTimeRef.current - now) / 1000));
     setRemaining(left);
     if (left <= 0) {
-      if (document.visibilityState === "visible") playBeepSequence();
+      playBeepSequence();
       setRunning(false);
       writePomoShared({ running: false, endTime: 0, totalSec, remaining: 0 });
       try { bcRef.current?.postMessage({ type: "reset", totalSec }); } catch {}
+      // Notificación del sistema aunque estés en otra pestaña
+      try {
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification("Pomodoro terminado", { body: title || "Tiempo cumplido" });
+        } else if ("Notification" in window && Notification.permission !== "denied") {
+          Notification.requestPermission().then((p) => {
+            if (p === "granted") new Notification("Pomodoro terminado", { body: title || "Tiempo cumplido" });
+          });
+        }
+      } catch {}
     }
   };
 
@@ -130,15 +141,25 @@ export default function PomodoroTimer() {
         window.clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
       return;
     }
-    // Recalc immediately in case we just resumed from background
     tick();
     intervalRef.current = window.setInterval(tick, 500);
+    const delay = Math.max(0, endTimeRef.current - Date.now());
+    if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+    timeoutRef.current = window.setTimeout(() => tick(), delay);
     return () => {
       if (intervalRef.current) {
         window.clearInterval(intervalRef.current);
         intervalRef.current = null;
+      }
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
     };
   }, [running, totalSec]);
