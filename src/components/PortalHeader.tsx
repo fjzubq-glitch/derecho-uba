@@ -192,22 +192,20 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
             </Link>
           )}
 
-          {/* LED admin — atajo directo en todas las pestañas */}
+          {/* LED admin */}
           <div className="flex items-center" style={{ gap: "8px" }}>
             <button
               onClick={handleGoAdmin}
-              aria-label={adminActive ? "Admin activo — abrir panel" : "Admin — abrir panel"}
+              aria-label={adminActive ? "Admin activo" : "Admin"}
               title={adminActive ? "Admin activo — click para ir al panel" : "Ir al panel de administración"}
-              className="flex items-center justify-center gap-1.5"
+              className="flex items-center justify-center"
               style={{
+                width: "32px",
                 height: "32px",
-                padding: adminActive ? "0 10px 0 8px" : "0",
-                width: adminActive ? "auto" : "32px",
-                borderRadius: "16px",
-                background: adminActive ? "rgba(111, 160, 107, 0.12)" : "none",
+                borderRadius: "50%",
+                background: "none",
                 border: adminActive ? "1px solid rgba(111, 160, 107, 0.45)" : "1px solid var(--color-line)",
                 cursor: "pointer",
-                transition: "border-color 0.2s ease, background 0.2s ease",
                 boxShadow: adminActive ? "0 0 10px rgba(111, 160, 107, 0.18)" : "none",
               }}
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = adminActive ? "#6FA06B" : "var(--color-gold-dim)")}
@@ -220,14 +218,8 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
                   borderRadius: "50%",
                   background: adminActive ? "#6FA06B" : "var(--color-danger)",
                   boxShadow: adminActive ? "0 0 6px rgba(111, 160, 107, 0.9)" : "none",
-                  flexShrink: 0,
                 }}
               />
-              {adminActive && (
-                <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "#6FA06B", fontWeight: 600 }}>
-                  ADMIN
-                </span>
-              )}
             </button>
             {adminActive && (
               <button
