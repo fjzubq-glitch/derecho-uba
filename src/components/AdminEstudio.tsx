@@ -84,6 +84,8 @@ export default function AdminEstudio() {
 
   const hoyStr = new Date().toISOString().slice(0, 10);
 
+  const hoyItems = revisiones.filter((r) => !r.hecha && r.fecha_programada <= hoyStr && r.clase_numero).slice(0, 2);
+
   return (
     <div className="space-y-6">
       {/* Cabeza */}
@@ -105,10 +107,50 @@ export default function AdminEstudio() {
             Plan de estudio
           </h3>
           <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>
-            Repaso espaciado · 3 / 7 / 21 días + pre-examen
+            Repaso espaciado · 2 por día · 08:00 Telegram
           </p>
         </div>
       </div>
+
+      {/* Hoy te tocan */}
+      {!loading && !error && hoyItems.length > 0 && (
+        <div style={{ background: "var(--color-card)", border: "1px solid var(--color-gold-dim)", padding: "16px 18px" }}>
+          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gold)", marginBottom: "10px" }}>
+            Hoy te tocan — {hoyStr}
+          </p>
+          <div className="space-y-2">
+            {hoyItems.map((r) => (
+              <div key={r.id} className="flex items-center justify-between gap-3" style={{ padding: "10px 12px", background: "var(--color-ink)", border: "1px solid var(--color-line-soft)" }}>
+                <div className="min-w-0">
+                  <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {r.materia_nombre} · Clase {r.clase_numero}
+                    {r.clase_titulo ? ` — ${r.clase_titulo}` : ""}
+                  </p>
+                  <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-gold)", marginTop: "2px" }}>
+                    {TIPO_LABEL[r.tipo] || r.tipo} · {labelDia(diffDias(r.fecha_programada))}
+                  </p>
+                </div>
+                <button
+                  onClick={() => marcar(r.id)}
+                  disabled={marcando === r.id}
+                  style={{ padding: "6px 12px", background: "var(--color-gold)", color: "var(--color-ink)", border: "none", cursor: "pointer", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", letterSpacing: "0.06em", textTransform: "uppercase", display: "inline-flex", alignItems: "center", gap: "6px", opacity: marcando === r.id ? 0.6 : 1 }}
+                >
+                  {marcando === r.id ? <Loader2 style={{ width: "12px", height: "12px", animation: "spin 1s linear infinite" }} /> : <Check style={{ width: "12px", height: "12px" }} />}
+                  Listo
+                </button>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)", marginTop: "10px" }}>
+            También te llega a las 08:00 por Telegram. Marcá acá y mañana te tocan las siguientes 2.
+          </p>
+        </div>
+      )}
+      {!loading && !error && hoyItems.length === 0 && revisiones.filter((r) => !r.hecha && r.clase_numero).length > 0 && (
+        <div style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", padding: "16px 18px", textAlign: "center" }}>
+          <p style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>Ya completaste las 2 de hoy. ¡Bien ahí! Mañana te tocan las siguientes.</p>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex items-center gap-2" style={{ padding: "24px 0", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px" }}>
