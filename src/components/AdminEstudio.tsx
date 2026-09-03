@@ -71,13 +71,15 @@ export default function AdminEstudio() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-      setRevisiones((prev) => prev.filter((r) => r.id !== id));
+      setRevisiones((prev) => prev.map((r) => (r.id === id ? { ...r, hecha: true } : r)));
     } catch {
       // silencioso
     } finally {
       setMarcando(null);
     }
   };
+
+  const hoyStr = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="space-y-6">
@@ -132,107 +134,130 @@ export default function AdminEstudio() {
       ) : (
         <div className="space-y-8">
           {(() => {
-            const grupos = new Map<string, { nombre: string; items: Revision[] }>();
+            // Agrupar por materia -> clases
+            const porMateria = new Map<string, { nombre: string; clases: Map<string, { numero: number | null; titulo: string | null; items: Map<string, Revision> }> }>();
             for (const r of revisiones) {
-              const key = r.materia_slug || r.materia_nombre || "otra";
-              const g = grupos.get(key) || { nombre: r.materia_nombre || key, items: [] };
-              g.items.push(r);
-              grupos.set(key, g);
+              if (!r.clase_numero) continue; // solo clases para la vista de cuadros; exámenes van aparte
+              const mKey = r.materia_slug || r.materia_nombre || "otra";
+              let mat = porMateria.get(mKey);
+              if (!mat) {
+                mat = { nombre: r.materia_nombre || mKey, clases: new Map() };
+                porMateria.set(mKey, mat);
+              }
+              const cKey = String(r.clase_numero);
+              let clase = mat.clases.get(cKey);
+              if (!clase) {
+                clase = { numero: r.clase_numero ?? null, titulo: r.clase_titulo ?? null, items: new Map() };
+                mat.clases.set(cKey, clase);
+              }
+              clase.items.set(r.tipo, r);
             }
-            return [...grupos.values()].map((grupo) => (
-              <section
-                key={grupo.nombre}
-                style={{
-                  background: "var(--color-card)",
-                  border: "1px solid var(--color-line-soft)",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  className="flex items-center justify-between"
-                  style={{
-                    padding: "14px 18px",
-                    borderBottom: "1px solid var(--color-line-soft)",
-                    background: "var(--color-ink-2)",
-                  }}
-                >
-                  <span style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontSize: "16px", fontWeight: 500, color: "var(--color-text)" }}>
-                    {grupo.nombre}
-                  </span>
-                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>
-                    {grupo.items.length} pendiente{grupo.items.length > 1 ? "s" : ""}
-                  </span>
+            if (porMateria.size === 0) {
+              return (
+                <div style={{ padding: "16px", color: "var(--color-text-muted)", fontSize: "13px" }}>
+                  No hay clases con plan aún. Subí contenido a una clase y aparecerá aquí.
                 </div>
-                <div>
-                  {grupo.items.map((r) => {
-                    const d = diffDias(r.fecha_programada);
-                    const esClase = !!r.clase_numero;
-                    const titulo = esClase ? `Clase ${r.clase_numero}${r.clase_titulo ? ` — ${r.clase_titulo}` : ""}` : r.fecha_programada;
-                    return (
+              );
+            }
+            return [...porMateria.values()].map((mat) => {
+              const clasesOrdenadas = [...mat.clases.values()].sort((a, b) => (a.numero || 0) - (b.numero || 0));
+              const pendientesMat = clasesOrdenadas.reduce((acc, c) => acc + [...c.items.values()].filter((r) => !r.hecha && r.fecha_programada <= hoyStr).length, 0);
+              return (
+                <section
+                  key={mat.nombre}
+                  style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", overflow: "hidden" }}
+                >
+                  <div
+                    className="flex items-center justify-between"
+                    style={{ padding: "14px 18px", borderBottom: "1px solid var(--color-line-soft)", background: "var(--color-ink-2)" }}
+                  >
+                    <span style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontSize: "16px", fontWeight: 500, color: "var(--color-text)" }}>{mat.nombre}</span>
+                    <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>
+                      {pendientesMat} pendiente{pendientesMat !== 1 ? "s" : ""} · {clasesOrdenadas.length} clases
+                    </span>
+                  </div>
+                  <div>
+                    {clasesOrdenadas.map((clase) => (
                       <div
-                        key={r.id}
-                        className="flex items-center gap-4"
-                        style={{
-                          padding: "12px 18px",
-                          borderBottom: "1px solid var(--color-line-soft)",
-                        }}
+                        key={String(clase.numero)}
+                        className="flex items-center gap-3"
+                        style={{ padding: "12px 18px", borderBottom: "1px solid var(--color-line-soft)" }}
                       >
                         <span
                           className="flex items-center justify-center flex-shrink-0"
-                          style={{
-                            width: "30px",
-                            height: "30px",
-                            borderRadius: "50%",
-                            border: "1px solid var(--color-gold-dim)",
-                            color: "var(--color-gold)",
-                          }}
+                          style={{ width: "30px", height: "30px", borderRadius: "50%", border: "1px solid var(--color-gold-dim)", color: "var(--color-gold)" }}
                         >
-                          {esClase ? <BookOpen style={{ width: "13px", height: "13px" }} /> : <Calendar style={{ width: "13px", height: "13px" }} />}
+                          <BookOpen style={{ width: "13px", height: "13px" }} />
                         </span>
                         <div className="flex-1 min-w-0">
                           <p style={{ fontSize: "13px", fontWeight: 500, color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                            {titulo}
+                            Clase {clase.numero}
+                            {clase.titulo ? ` — ${clase.titulo}` : ""}
                           </p>
-                          <div className="flex items-center gap-2" style={{ marginTop: "2px" }}>
-                            <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-gold)" }}>
-                              {TIPO_LABEL[r.tipo] || r.tipo}
-                            </span>
-                            <span style={{ color: "var(--color-line)" }}>·</span>
-                            <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "var(--color-text-muted)" }}>
-                              <Clock style={{ width: "11px", height: "11px" }} />
-                              {labelDia(d)}
-                            </span>
-                          </div>
+                          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)", marginTop: "2px" }}>
+                            Repasos
+                          </p>
                         </div>
-                        <button
-                          onClick={() => marcar(r.id)}
-                          disabled={marcando === r.id}
-                          style={{
-                            padding: "6px 12px",
-                            background: "var(--color-gold)",
-                            color: "var(--color-ink)",
-                            border: "none",
-                            cursor: "pointer",
-                            fontFamily: "var(--font-ibm-plex-mono)",
-                            fontSize: "11px",
-                            letterSpacing: "0.08em",
-                            textTransform: "uppercase",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "6px",
-                            opacity: marcando === r.id ? 0.6 : 1,
-                            flexShrink: 0,
-                          }}
-                        >
-                          {marcando === r.id ? <Loader2 style={{ width: "12px", height: "12px", animation: "spin 1s linear infinite" }} /> : <Check style={{ width: "12px", height: "12px" }} />}
-                          Listo
-                        </button>
+                        <div className="flex items-center gap-2">
+                          {(["repaso1", "repaso2", "repaso3"] as const).map((tipo) => {
+                            const r = clase.items.get(tipo) as Revision | undefined;
+                            const label = tipo === "repaso1" ? "3" : tipo === "repaso2" ? "7" : "21";
+                            if (!r) {
+                              return (
+                                <span
+                                  key={tipo}
+                                  style={{
+                                    width: "32px",
+                                    height: "32px",
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    border: "1px dashed var(--color-line)",
+                                    fontFamily: "var(--font-ibm-plex-mono)",
+                                    fontSize: "11px",
+                                    color: "var(--color-text-faint)",
+                                  }}
+                                >
+                                  {label}
+                                </span>
+                              );
+                            }
+                            const hecha = r.hecha;
+                            const vencido = !hecha && r.fecha_programada <= hoyStr;
+                            const futuro = !hecha && r.fecha_programada > hoyStr;
+                            return (
+                              <button
+                                key={r.id}
+                                onClick={() => !hecha && marcar(r.id)}
+                                disabled={hecha || marcando === r.id || futuro}
+                                title={`${TIPO_LABEL[tipo] || tipo} · ${r.fecha_programada} ${hecha ? "(hecho)" : futuro ? "(futuro)" : ""}`}
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  border: `1px solid ${hecha ? "var(--color-gold)" : vencido ? "var(--color-gold-dim)" : "var(--color-line-soft)"}`,
+                                  background: hecha ? "var(--color-gold)" : vencido ? "transparent" : "var(--color-ink)",
+                                  color: hecha ? "var(--color-ink)" : vencido ? "var(--color-gold)" : "var(--color-text-faint)",
+                                  cursor: hecha || futuro ? "default" : "pointer",
+                                  opacity: futuro ? 0.5 : marcando === r.id ? 0.6 : 1,
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "11px",
+                                  fontWeight: 600,
+                                }}
+                              >
+                                {hecha ? <Check style={{ width: "12px", height: "12px" }} /> : marcando === r.id ? <Loader2 style={{ width: "12px", height: "12px", animation: "spin 1s linear infinite" }} /> : label}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </section>
-            ));
+                    ))}
+                  </div>
+                </section>
+              );
+            });
           })()}
         </div>
       )}

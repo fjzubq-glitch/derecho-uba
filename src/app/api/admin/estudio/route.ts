@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/auth";
-import { obtenerColaHoy, marcarHecha, sincronizarRevisiones } from "@/lib/estudio";
+import { obtenerPlanCompleto, marcarHecha, sincronizarRevisiones } from "@/lib/estudio";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   }
   try {
     await sincronizarRevisiones();
-    const { revisiones } = await obtenerColaHoy();
+    const { revisiones } = await obtenerPlanCompleto();
     return NextResponse.json({ ok: true, revisiones, hoy: new Date().toISOString() });
   } catch (e) {
     console.error("Estudio GET error:", e);

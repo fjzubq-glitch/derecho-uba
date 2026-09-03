@@ -199,6 +199,38 @@ export async function obtenerColaHoy(): Promise<{
   return { revisiones };
 }
 
+// Plan completo para la UI: todas las revisiones de las 2 materias, enriquecidas
+export async function obtenerPlanCompleto(): Promise<{
+  revisiones: Array<Revision & { materia_slug?: string; materia_nombre?: string; clase_numero?: number | null; clase_titulo?: string | null }>;
+}> {
+  const supabase = getSupabaseAdmin();
+  const CUATRIMESTRE_SLUGS = ["contratos-ii", "derecho-comercial"];
+  const { data: mats } = await supabase.from("materias").select("id").in("slug", CUATRIMESTRE_SLUGS);
+  const ids = (mats || []).map((m) => m.id);
+  if (ids.length === 0) return { revisiones: [] };
+  const { data } = await supabase
+    .from("estudio_revisiones")
+    .select("*")
+    .in("materia_id", ids)
+    .order("fecha_programada", { ascending: true });
+  const revis = (data || []) as Revision[];
+  if (revis.length === 0) return { revisiones: [] };
+  const materiaIds = [...new Set(revis.map((r) => r.materia_id).filter(Boolean) as string[])];
+  const claseIds = [...new Set(revis.map((r) => r.clase_id).filter(Boolean) as string[])];
+  const [materiasRes, clasesRes] = await Promise.all([
+    supabase.from("materias").select("id, nombre, slug").in("id", materiaIds),
+    claseIds.length ? supabase.from("clases").select("id, numero, titulo").in("id", claseIds) : Promise.resolve({ data: [] as Array<{ id: string; numero: number; titulo: string }> }),
+  ]);
+  const materiasMap = new Map((materiasRes.data || []).map((m) => [m.id, m]));
+  const clasesMap = new Map(((clasesRes.data || []) as Array<{ id: string; numero: number; titulo: string }>).map((c) => [c.id, c]));
+  const revisiones = revis.map((r) => {
+    const m = r.materia_id ? materiasMap.get(r.materia_id) : undefined;
+    const c = r.clase_id ? clasesMap.get(r.clase_id) : undefined;
+    return { ...r, materia_slug: m?.slug, materia_nombre: m?.nombre, clase_numero: c?.numero ?? null, clase_titulo: c?.titulo ?? null };
+  });
+  return { revisiones };
+}
+
 export async function marcarHecha(id: string): Promise<{ ok: boolean }> {
   const supabase = getSupabaseAdmin();
   const { error } = await supabase
