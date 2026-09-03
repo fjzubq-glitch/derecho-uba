@@ -417,8 +417,10 @@ export default function MateriaClient({
                       <span
                         style={{
                           padding: "2px 6px",
-                          background: "var(--color-gold)",
-                          color: "var(--color-ink)",
+                          background: "rgba(0,255,85,0.1)",
+                          border: "1px solid rgba(0,255,85,0.35)",
+                          color: "#00FF55",
+                          boxShadow: "0 0 8px rgba(0,255,85,0.18)",
                           fontSize: "8px",
                           letterSpacing: "0.1em",
                           fontWeight: 700,
