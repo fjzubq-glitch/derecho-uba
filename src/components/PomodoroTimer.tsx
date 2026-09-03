@@ -182,11 +182,11 @@ export default function PomodoroTimer() {
         className="pomodoro-fab"
         style={{
           position: "fixed",
-          bottom: "20px",
-          right: "20px",
+          bottom: "48px",
+          right: "24px",
           zIndex: 90,
-          width: "36px",
-          height: "36px",
+          width: "32px",
+          height: "32px",
           borderRadius: "50%",
           background: running ? "rgba(185,154,98,0.15)" : "rgba(24,24,28,0.5)",
           border: "1px solid rgba(185,154,98,0.15)",
@@ -197,7 +197,7 @@ export default function PomodoroTimer() {
           cursor: "pointer",
           backdropFilter: "blur(6px)",
           transition: "all 0.2s ease",
-          fontSize: "12px",
+          fontSize: "11px",
         }}
       >
         <span style={{ position: "relative" }}>
