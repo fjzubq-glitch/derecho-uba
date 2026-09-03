@@ -37,7 +37,7 @@ const getClases = (slug: string, materiaId: string) =>
     async () =>
       getSupabaseAdmin()
         .from("clases")
-        .select("id, numero, titulo, tema, fecha")
+        .select("id, numero, titulo, tema, fecha, created_at")
         .eq("materia_id", materiaId)
         .order("numero"),
     ["clases", slug],

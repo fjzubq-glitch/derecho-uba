@@ -25,7 +25,14 @@ interface Clase {
   titulo: string;
   tema: string | null;
   fecha: string;
+  created_at?: string;
   archivos: Archivo[];
+}
+
+function esNuevaClase(created_at?: string): boolean {
+  if (!created_at) return false;
+  const created = new Date(created_at).getTime();
+  return Date.now() - created < 24 * 60 * 60 * 1000 && Date.now() >= created;
 }
 
 interface MateriaData {
@@ -406,6 +413,20 @@ export default function MateriaClient({
                     }}
                   >
                     <span>Clase {clase.numero.toString().padStart(2, "0")}</span>
+                    {esNuevaClase(clase.created_at) && (
+                      <span
+                        style={{
+                          padding: "2px 6px",
+                          background: "var(--color-gold)",
+                          color: "var(--color-ink)",
+                          fontSize: "8px",
+                          letterSpacing: "0.1em",
+                          fontWeight: 700,
+                        }}
+                      >
+                        NEW
+                      </span>
+                    )}
                   </div>
                   <div className="flex-1">
                     <h3
