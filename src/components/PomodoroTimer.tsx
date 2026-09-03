@@ -63,6 +63,19 @@ function playBeepCore() {
   } catch {}
 }
 
+const POMO_KEY = "pomodoro_shared";
+
+function readPomoShared(): { running: boolean; endTime: number; totalSec: number; remaining: number } | null {
+  try {
+    const raw = localStorage.getItem(POMO_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+function writePomoShared(data: { running: boolean; endTime: number; totalSec: number; remaining: number }) {
+  try { localStorage.setItem(POMO_KEY, JSON.stringify(data)); } catch {}
+}
+
 export default function PomodoroTimer() {
   const [isDesktop, setIsDesktop] = useState(false);
   const [open, setOpen] = useState(false);
@@ -75,6 +88,7 @@ export default function PomodoroTimer() {
   const [running, setRunning] = useState(false);
   const endTimeRef = useRef<number>(0);
   const intervalRef = useRef<number | null>(null);
+  const bcRef = useRef<BroadcastChannel | null>(null);
 
   useEffect(() => {
     const check = () => setIsDesktop(window.innerWidth > 768);
@@ -102,8 +116,10 @@ export default function PomodoroTimer() {
     const left = Math.max(0, Math.ceil((endTimeRef.current - now) / 1000));
     setRemaining(left);
     if (left <= 0) {
-      playBeepSequence();
+      if (document.visibilityState === "visible") playBeepSequence();
       setRunning(false);
+      writePomoShared({ running: false, endTime: 0, totalSec, remaining: 0 });
+      try { bcRef.current?.postMessage({ type: "reset", totalSec }); } catch {}
     }
   };
 
@@ -137,26 +153,90 @@ export default function PomodoroTimer() {
     return () => document.removeEventListener("visibilitychange", onVisible);
   }, [running]);
 
+  // Sincronización entre pestañas (mismo flotante, led y control)
+  useEffect(() => {
+    const shared = readPomoShared();
+    if (shared && shared.running && shared.endTime > Date.now()) {
+      endTimeRef.current = shared.endTime;
+      setTotalSec(shared.totalSec);
+      setRemaining(Math.max(0, Math.ceil((shared.endTime - Date.now()) / 1000)));
+      setRunning(true);
+    }
+    try {
+      bcRef.current = new BroadcastChannel("pomodoro");
+      bcRef.current.onmessage = (e: MessageEvent) => {
+        const d = e.data as { type: string; endTime?: number; totalSec?: number; remaining?: number };
+        if (d?.type === "start" && d.endTime) {
+          endTimeRef.current = d.endTime;
+          if (typeof d.totalSec === "number") setTotalSec(d.totalSec);
+          if (typeof d.remaining === "number") setRemaining(d.remaining);
+          else setRemaining(Math.max(0, Math.ceil((d.endTime - Date.now()) / 1000)));
+          setRunning(true);
+        } else if (d?.type === "pause") {
+          setRunning(false);
+          if (typeof d.remaining === "number") setRemaining(d.remaining);
+        } else if (d?.type === "reset" && typeof d.totalSec === "number") {
+          setRunning(false);
+          setTotalSec(d.totalSec);
+          setRemaining(d.totalSec);
+        }
+      };
+    } catch {}
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== POMO_KEY || !e.newValue) return;
+      try {
+        const d = JSON.parse(e.newValue);
+        if (d.running && d.endTime > Date.now()) {
+          endTimeRef.current = d.endTime;
+          if (typeof d.totalSec === "number") setTotalSec(d.totalSec);
+          setRemaining(Math.max(0, Math.ceil((d.endTime - Date.now()) / 1000)));
+          setRunning(true);
+        } else {
+          setRunning(false);
+          if (typeof d.remaining === "number") setRemaining(d.remaining);
+          if (typeof d.totalSec === "number") setTotalSec(d.totalSec);
+        }
+      } catch {}
+    };
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      try { bcRef.current?.close(); } catch {}
+    };
+  }, []);
+
   const handleStart = () => {
     const t = hours * 3600 + minutes * 60 + seconds;
     if (t <= 0) return;
     if (!running && remaining > 0 && remaining !== t) {
       // Resume from pause
-      endTimeRef.current = Date.now() + remaining * 1000;
+      const end = Date.now() + remaining * 1000;
+      endTimeRef.current = end;
       setRunning(true);
+      writePomoShared({ running: true, endTime: end, totalSec, remaining });
+      try { bcRef.current?.postMessage({ type: "start", endTime: end, totalSec, remaining }); } catch {}
       return;
     }
     // Fresh start
+    const end = Date.now() + t * 1000;
     setTotalSec(t);
     setRemaining(t);
-    endTimeRef.current = Date.now() + t * 1000;
+    endTimeRef.current = end;
     setRunning(true);
+    writePomoShared({ running: true, endTime: end, totalSec: t, remaining: t });
+    try { bcRef.current?.postMessage({ type: "start", endTime: end, totalSec: t, remaining: t }); } catch {}
   };
 
-  const handlePause = () => setRunning(false);
+  const handlePause = () => {
+    setRunning(false);
+    writePomoShared({ running: false, endTime: 0, totalSec, remaining });
+    try { bcRef.current?.postMessage({ type: "pause", remaining }); } catch {}
+  };
   const handleReset = () => {
     setRunning(false);
     setRemaining(totalSec);
+    writePomoShared({ running: false, endTime: 0, totalSec, remaining: totalSec });
+    try { bcRef.current?.postMessage({ type: "reset", totalSec }); } catch {}
   };
 
   const handlePreset = (m: number) => {

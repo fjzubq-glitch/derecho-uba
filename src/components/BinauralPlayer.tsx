@@ -9,6 +9,8 @@ export default function BinauralPlayer() {
   const [open, setOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const bcRef = useRef<BroadcastChannel | null>(null);
+  const BINAURAL_KEY = "binaural_shared";
 
   useEffect(() => {
     fetch("/api/admin/binaural")
@@ -28,6 +30,43 @@ export default function BinauralPlayer() {
         if (r.status !== 401) setIsAdmin(true);
       })
       .catch(() => {});
+  }, []);
+
+  // Sincronización entre pestañas (mismo flotante, led y control)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(BINAURAL_KEY);
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (typeof d.playing === "boolean") setPlaying(d.playing);
+      }
+    } catch {}
+    try {
+      bcRef.current = new BroadcastChannel("binaural");
+      bcRef.current.onmessage = (e: MessageEvent) => {
+        const d = e.data as { type: string };
+        if (d?.type === "play") setPlaying(true);
+        else if (d?.type === "pause") {
+          setPlaying(false);
+          try { audioRef.current?.pause(); } catch {}
+        }
+      };
+    } catch {}
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== BINAURAL_KEY || !e.newValue) return;
+      try {
+        const d = JSON.parse(e.newValue);
+        if (typeof d.playing === "boolean") {
+          setPlaying(d.playing);
+          if (!d.playing) { try { audioRef.current?.pause(); } catch {} }
+        }
+      } catch {}
+    };
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      try { bcRef.current?.close(); } catch {}
+    };
   }, []);
 
   if (!isAdmin) return null;
@@ -111,8 +150,17 @@ export default function BinauralPlayer() {
             <button
               onClick={() => {
                 if (!audioRef.current) return;
-                if (playing) audioRef.current.pause();
-                else audioRef.current.play().catch(() => {});
+                if (playing) {
+                  audioRef.current.pause();
+                  setPlaying(false);
+                  try { localStorage.setItem(BINAURAL_KEY, JSON.stringify({ playing: false, t: Date.now() })); } catch {}
+                  try { bcRef.current?.postMessage({ type: "pause" }); } catch {}
+                } else {
+                  audioRef.current.play().catch(() => {});
+                  setPlaying(true);
+                  try { localStorage.setItem(BINAURAL_KEY, JSON.stringify({ playing: true, t: Date.now() })); } catch {}
+                  try { bcRef.current?.postMessage({ type: "play" }); } catch {}
+                }
               }}
               style={{
                 padding: "8px 18px",
