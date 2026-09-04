@@ -182,8 +182,8 @@ export default function BinauralPlayer() {
                   className="bw-bar"
                   style={{
                     height: `${h}px`,
-                    animation: playing ? `binauralWave 0.7s ease-in-out ${i * 0.04}s infinite` : "none",
-                    opacity: playing ? 0.9 : 0.32,
+                    animation: `binauralWave ${playing ? "0.7s" : "1.4s"} ease-in-out ${i * 0.04}s infinite`,
+                    opacity: playing ? 0.9 : 0.45,
                   }}
                 />
               );
