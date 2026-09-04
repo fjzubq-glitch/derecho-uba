@@ -90,6 +90,8 @@ export default function PomodoroTimer() {
   const endTimeRef = useRef<number>(0);
   const intervalRef = useRef<number | null>(null);
   const timeoutRef = useRef<number | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const fabRef = useRef<HTMLButtonElement | null>(null);
   const bcRef = useRef<BroadcastChannel | null>(null);
 
   useEffect(() => {
@@ -235,6 +237,26 @@ export default function PomodoroTimer() {
     };
   }, []);
 
+  // Cerrar al clickear afuera y cuando se abre binaural
+  useEffect(() => {
+    if (!open) return;
+    const onClickOutside = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (panelRef.current?.contains(t) || fabRef.current?.contains(t)) return;
+      setOpen(false);
+      try { window.dispatchEvent(new CustomEvent("close-floating-panels")); } catch {}
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    const onCloseAll = () => setOpen(false);
+    window.addEventListener("close-floating-panels" as never, onCloseAll as never);
+    window.addEventListener("close-floating-panel-pomo" as never, onCloseAll as never);
+    return () => {
+      document.removeEventListener("mousedown", onClickOutside);
+      window.removeEventListener("close-floating-panels" as never, onCloseAll as never);
+      window.removeEventListener("close-floating-panel-pomo" as never, onCloseAll as never);
+    };
+  }, [open]);
+
   const handleStart = () => {
     const t = hours * 3600 + minutes * 60 + seconds;
     if (t <= 0) return;
@@ -286,7 +308,12 @@ export default function PomodoroTimer() {
       <style>{`@media (max-width: 768px) { .pomodoro-fab { bottom: auto !important; top: 8px !important; right: 8px !important; width: auto !important; height: 26px !important; border-radius: 13px !important; padding: 0 8px !important; font-size: 9px !important; opacity: 0.85; gap: 4px; } .pomodoro-panel { bottom: auto !important; top: 42px !important; right: 8px !important; border-radius: 0 !important; max-height: calc(100dvh - 56px) !important; overflow-y: auto !important; } .pomodoro-panel input[type="number"], .pomodoro-panel input[type="text"] { font-size: 12px !important; padding: 6px !important; } .pomodoro-panel .pom-digital { font-size: 24px !important; padding: 12px 10px !important; } } @media (min-width: 769px) { .pomodoro-panel { border-radius: 12px !important; overflow: hidden; width: 260px !important; padding: 14px !important; top: 80px !important; bottom: auto !important; } .pomodoro-panel .pom-digital { font-size: 24px !important; padding: 12px !important; } .pomodoro-panel .pom-digital .pom-time { font-size: 22px !important; } .pomodoro-panel input[type="number"], .pomodoro-panel input[type="text"] { font-size: 12px !important; padding: 6px !important; } .pomodoro-fab { opacity: 0.72; } .pomodoro-fab:hover { opacity: 1; } }`}</style>
       {/* Floating button */}
       <button
-        onClick={() => setOpen((v) => !v)}
+        ref={fabRef}
+        onClick={() => {
+          const n = !open;
+          setOpen(n);
+          if (n) { try { window.dispatchEvent(new CustomEvent("close-floating-panels")); } catch {} }
+        }}
         aria-label="Temporizador"
         title="Temporizador"
         className="pomodoro-fab"
@@ -330,6 +357,7 @@ export default function PomodoroTimer() {
       {/* Panel — más sutil en desktop */}
       {open && (
           <div
+          ref={panelRef}
           className="pomodoro-panel"
           style={{
             position: "fixed",

@@ -4,12 +4,8 @@ import { isAdminRequest } from "@/lib/auth";
 import { getObjectStream, uploadToR2 } from "@/lib/r2";
 export const dynamic = "force-dynamic";
 
-// GET /api/admin/binaural -> metadata
-// GET /api/admin/binaural?stream=1 -> stream audio (solo admin)
+// GET /api/admin/binaural -> metadata/stream para todos si hay audio (solo admin puede subir)
 export async function GET(request: NextRequest) {
-  if (!isAdminRequest(request.headers.get("cookie"))) {
-    return NextResponse.json({ ok: false, error: "No autorizado" }, { status: 401 });
-  }
   const stream = request.nextUrl.searchParams.get("stream");
   const supabase = getSupabaseAdmin();
   const { data } = await supabase.from("personal_binaural").select("*").order("created_at", { ascending: false }).limit(1).maybeSingle();

@@ -69,8 +69,28 @@ export default function BinauralPlayer() {
     };
   }, []);
 
-  if (!isAdmin) return null;
-  if (!hasAudio) return null; // solo aparece cuando ya subiste audio en Estudio
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const fabRef = useRef<HTMLButtonElement | null>(null);
+
+  // Cerrar al clickear afuera (también cierra Pomodoro si está abierto via evento)
+  useEffect(() => {
+    if (!open) return;
+    const onClickOutside = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (panelRef.current?.contains(t) || fabRef.current?.contains(t)) return;
+      setOpen(false);
+      try { window.dispatchEvent(new CustomEvent("close-floating-panels")); } catch {}
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    const onCloseAll = () => setOpen(false);
+    window.addEventListener("close-floating-panels" as never, onCloseAll as never);
+    return () => {
+      document.removeEventListener("mousedown", onClickOutside);
+      window.removeEventListener("close-floating-panels" as never, onCloseAll as never);
+    };
+  }, [open]);
+
+  if (!hasAudio) return null;
 
   return (
     <>
@@ -85,7 +105,12 @@ export default function BinauralPlayer() {
       />
       {/* Botón flotante izquierda */}
       <button
-        onClick={() => setOpen((v) => !v)}
+        ref={fabRef}
+        onClick={() => {
+          const n = !open;
+          setOpen(n);
+          if (n) { try { window.dispatchEvent(new CustomEvent("close-floating-panels-pomo")); } catch {} }
+        }}
         aria-label="Música binaural"
         title={fileName || "Binaural"}
         style={{
@@ -129,6 +154,7 @@ export default function BinauralPlayer() {
       <style>{`@keyframes binauralWave { 0%,100% { transform: scaleY(0.5); opacity: 0.6; } 50% { transform: scaleY(1); opacity: 1; } } .bw-bar { width: 2px; background: #7B8CFF; border-radius: 1px; display: inline-block; transform-origin: center; }`}</style>
       {open && (
         <div
+          ref={panelRef}
           style={{
             position: "fixed",
             bottom: "88px",
@@ -138,15 +164,16 @@ export default function BinauralPlayer() {
             background: "rgba(24,24,28,0.88)",
             border: "1px solid rgba(255,255,255,0.08)",
             borderRadius: "14px",
-            padding: "12px 10px",
+            padding: "10px 10px 12px",
             backdropFilter: "blur(8px)",
             boxShadow: "0 8px 24px rgba(0,0,0,0.28)",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
           }}
         >
-          <div className="flex items-center" style={{ flex: 1, height: "28px", gap: "2px", justifyContent: "center" }}>
+          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-text-faint)", textAlign: "center", marginBottom: "8px" }}>
+            Música binaural
+          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div className="flex items-center" style={{ flex: 1, height: "28px", gap: "2px", justifyContent: "center" }}>
             {Array.from({ length: 36 }).map((_, i) => {
               const h = [4, 6, 8, 12, 16, 20, 14, 9, 5, 7, 11, 15, 18, 13, 8, 4, 6, 10, 12, 16, 22, 18, 12, 7, 4, 6, 9, 13, 17, 12, 8, 5, 7, 10, 14, 9][i] || 6;
               return (
@@ -195,6 +222,7 @@ export default function BinauralPlayer() {
           >
             {playing ? "⏸" : "▶"}
           </button>
+          </div>
         </div>
       )}
     </>
