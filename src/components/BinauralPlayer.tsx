@@ -126,6 +126,7 @@ export default function BinauralPlayer() {
         </span>
       </button>
 
+      <style>{`@keyframes binauralWave { 0%,100% { transform: scaleY(0.5); opacity: 0.6; } 50% { transform: scaleY(1); opacity: 1; } } .bw-bar { width: 2px; background: #7B8CFF; border-radius: 1px; display: inline-block; transform-origin: center; }`}</style>
       {open && (
         <div
           style={{
@@ -133,49 +134,67 @@ export default function BinauralPlayer() {
             bottom: "88px",
             left: "24px",
             zIndex: 90,
-            width: "160px",
+            width: "220px",
             background: "rgba(24,24,28,0.88)",
             border: "1px solid rgba(255,255,255,0.08)",
-            borderRadius: "12px",
-            padding: "12px",
+            borderRadius: "14px",
+            padding: "12px 10px",
             backdropFilter: "blur(8px)",
             boxShadow: "0 8px 24px rgba(0,0,0,0.28)",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
           }}
         >
-          <div className="flex justify-center">
-            <button
-              onClick={() => {
-                if (!audioRef.current) return;
-                if (playing) {
-                  audioRef.current.pause();
-                  setPlaying(false);
-                  try { localStorage.setItem(BINAURAL_KEY, JSON.stringify({ playing: false, t: Date.now() })); } catch {}
-                  try { bcRef.current?.postMessage({ type: "pause" }); } catch {}
-                } else {
-                  audioRef.current.play().catch(() => {});
-                  setPlaying(true);
-                  try { localStorage.setItem(BINAURAL_KEY, JSON.stringify({ playing: true, t: Date.now() })); } catch {}
-                  try { bcRef.current?.postMessage({ type: "play" }); } catch {}
-                }
-              }}
-              aria-label={playing ? "Pausar" : "Reproducir"}
-              style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "50%",
-                background: "var(--color-gold)",
-                color: "var(--color-ink)",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "12px",
-              }}
-            >
-              {playing ? "⏸" : "▶"}
-            </button>
+          <div className="flex items-center" style={{ flex: 1, height: "28px", gap: "2px", justifyContent: "center" }}>
+            {Array.from({ length: 36 }).map((_, i) => {
+              const h = [4, 6, 8, 12, 16, 20, 14, 9, 5, 7, 11, 15, 18, 13, 8, 4, 6, 10, 12, 16, 22, 18, 12, 7, 4, 6, 9, 13, 17, 12, 8, 5, 7, 10, 14, 9][i] || 6;
+              return (
+                <span
+                  key={i}
+                  className="bw-bar"
+                  style={{
+                    height: `${h}px`,
+                    animation: playing ? `binauralWave 0.7s ease-in-out ${i * 0.04}s infinite` : "none",
+                    opacity: playing ? 0.9 : 0.32,
+                  }}
+                />
+              );
+            })}
           </div>
+          <button
+            onClick={() => {
+              if (!audioRef.current) return;
+              if (playing) {
+                audioRef.current.pause();
+                setPlaying(false);
+                try { localStorage.setItem(BINAURAL_KEY, JSON.stringify({ playing: false, t: Date.now() })); } catch {}
+                try { bcRef.current?.postMessage({ type: "pause" }); } catch {}
+              } else {
+                audioRef.current.play().catch(() => {});
+                setPlaying(true);
+                try { localStorage.setItem(BINAURAL_KEY, JSON.stringify({ playing: true, t: Date.now() })); } catch {}
+                try { bcRef.current?.postMessage({ type: "play" }); } catch {}
+              }
+            }}
+            aria-label={playing ? "Pausar" : "Reproducir"}
+            style={{
+              width: "26px",
+              height: "26px",
+              borderRadius: "50%",
+              background: "var(--color-gold)",
+              color: "var(--color-ink)",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "10px",
+              flexShrink: 0,
+            }}
+          >
+            {playing ? "⏸" : "▶"}
+          </button>
         </div>
       )}
     </>
