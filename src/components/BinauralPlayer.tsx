@@ -162,19 +162,22 @@ export default function BinauralPlayer() {
                   try { bcRef.current?.postMessage({ type: "play" }); } catch {}
                 }
               }}
+              aria-label={playing ? "Pausar" : "Reproducir"}
               style={{
-                padding: "8px 18px",
+                width: "36px",
+                height: "36px",
+                borderRadius: "50%",
                 background: "var(--color-gold)",
                 color: "var(--color-ink)",
                 border: "none",
                 cursor: "pointer",
-                fontFamily: "var(--font-ibm-plex-mono)",
-                fontSize: "11px",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "14px",
               }}
             >
-              {playing ? "Pausar" : "Play"}
+              {playing ? "⏸" : "▶"}
             </button>
           </div>
           <p style={{ fontSize: "10px", color: "var(--color-text-faint)", marginTop: "8px" }}>En loop · solo vos lo escuchás</p>

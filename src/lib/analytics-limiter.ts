@@ -80,3 +80,20 @@ export function registrarAcceso(now = new Date()): { usados: number; limite: num
   } catch {}
   return { usados, limite: v.limite };
 }
+
+export function intentarAcceder(now = new Date()): { permitido: boolean; usados: number; limite: number; ventana: Ventana; clave: string; proximaVentanaLabel: string } {
+  const v = getVentanaActual(now);
+  const key = storageKey(v.clave, v.ventana);
+  let usados = 0;
+  try {
+    const raw = localStorage.getItem(key);
+    usados = raw ? Number(raw) || 0 : 0;
+  } catch {}
+  if (usados >= v.limite) {
+    return { permitido: false, usados, limite: v.limite, ventana: v.ventana, clave: v.clave, proximaVentanaLabel: v.proximaVentanaLabel };
+  }
+  try {
+    localStorage.setItem(key, String(usados + 1));
+  } catch {}
+  return { permitido: true, usados: usados + 1, limite: v.limite, ventana: v.ventana, clave: v.clave, proximaVentanaLabel: v.proximaVentanaLabel };
+}

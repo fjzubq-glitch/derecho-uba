@@ -9,7 +9,7 @@ const AdminEstudio = React.lazy(() => import("@/components/AdminEstudio"));
 
 import { ArrowLeft, BarChart3, Headphones, FileText, Shield, ChevronDown, Loader2 } from "@/components/icons";
 import { setAdminSession } from "@/lib/utils";
-import { getAccesosInfo, registrarAcceso } from "@/lib/analytics-limiter";
+import { intentarAcceder } from "@/lib/analytics-limiter";
 
 interface Materia {
   id: string;
@@ -267,15 +267,13 @@ export default function AdminPage() {
 
   function handleTabChange(tab: "upload" | "manage" | "analytics" | "estudio") {
     if (tab === "analytics") {
-      const info = getAccesosInfo();
-      if (!info.permitido) {
-        setAnalyticsBloqueo({ usados: info.usados, limite: info.limite, ventana: info.ventana, proxima: info.proximaVentanaLabel });
+      const res = intentarAcceder();
+      if (!res.permitido) {
+        setAnalyticsBloqueo({ usados: res.usados, limite: res.limite, ventana: res.ventana, proxima: res.proximaVentanaLabel });
         setActiveTab("analytics");
         return;
       }
-      const res = registrarAcceso();
       setAnalyticsBloqueo(null);
-      // opcional: podrías guardar res.usados para mostrar contador
       setActiveTab("analytics");
       return;
     }
