@@ -151,7 +151,7 @@ export default function BinauralPlayer() {
         </span>
       </button>
 
-      <style>{`@keyframes binauralWave { 0% { height: 4px; opacity: 0.45; } 25% { height: 18px; opacity: 1; } 50% { height: 8px; opacity: 0.7; } 75% { height: 14px; opacity: 0.9; } 100% { height: 4px; opacity: 0.45; } } .bw-bar { width: 2px; background: #7B8CFF; border-radius: 1px; display: inline-block; }`}</style>
+      <style>{`@keyframes binauralWave { 0%,100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } } .bw-bar { width: 2px; background: #7B8CFF; border-radius: 1px; display: inline-block; transform-origin: bottom; }`}</style>
       {open && (
         <div
           ref={panelRef}
@@ -170,7 +170,7 @@ export default function BinauralPlayer() {
           }}
         >
           <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "8px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-text-faint)", textAlign: "center", marginBottom: "8px", fontWeight: 300 }}>
-            Sonido binaural para estudiar
+            Sonido binaural
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <div className="flex items-center" style={{ flex: 1, height: "28px", gap: "2px", justifyContent: "center" }}>
@@ -182,8 +182,8 @@ export default function BinauralPlayer() {
                   className="bw-bar"
                   style={{
                     height: `${h}px`,
-                    animation: `binauralWave 0.9s ease-in-out ${i * 0.05}s infinite`,
-                    opacity: playing ? 0.95 : 0.5,
+                    animation: `binauralWave 0.9s ease-in-out ${i * 0.06}s infinite`,
+                    opacity: 0.85,
                   }}
                 />
               );
