@@ -197,6 +197,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
 
   async function loadAccesos(materiaId: string) {
     setAccesosMateriaId(materiaId);
+    setAccesoNombre("");
     setAccesoLoading(true);
     try {
       const res = await fetch(`/api/admin/accesos?materia_id=${materiaId}`);
@@ -226,7 +227,8 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     setAccesoLoading(false);
   }
 
-  async function removeAcceso(id: string) {
+  async function removeAcceso(id: string, nombre: string) {
+    if (!confirm(`¿Quitar acceso especial a "${nombre}"?`)) return;
     try {
       const res = await fetch(`/api/admin/accesos?id=${id}`, { method: "DELETE" });
       const json = await res.json();
@@ -828,7 +830,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                             {copiadoId === a.id ? "Copiado ✓" : "Copiar link"}
                           </button>
                           <button
-                            onClick={() => removeAcceso(a.id)}
+                            onClick={() => removeAcceso(a.id, a.nombre)}
                             style={{
                               padding: "5px 10px",
                               fontSize: "11px",
@@ -954,6 +956,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
           </div>
         </div>
       )}
+
 
       {loading ? (
         <div className="skeleton" style={{ height: "220px" }} />

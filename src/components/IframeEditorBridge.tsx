@@ -35,6 +35,9 @@ export default function IframeEditorBridge({ srcDoc, archivoId, sandbox }: Props
 
   useEffect(() => {
     function onMessage(e: MessageEvent) {
+      // Solo aceptar mensajes del iframe propio (mitiga forgeries desde
+      // otras ventanas/pestañas abiertas en el mismo navegador).
+      if (e.source !== iframeRef.current?.contentWindow) return;
       if (
         e.data?.type === "cuestionario-editor-save" &&
         typeof e.data.html === "string"
