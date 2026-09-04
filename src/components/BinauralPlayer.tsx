@@ -151,7 +151,7 @@ export default function BinauralPlayer() {
         </span>
       </button>
 
-      <style>{`@keyframes binauralWave { 0%,100% { transform: scaleY(0.5); opacity: 0.6; } 50% { transform: scaleY(1); opacity: 1; } } .bw-bar { width: 2px; background: #7B8CFF; border-radius: 1px; display: inline-block; transform-origin: center; }`}</style>
+      <style>{`@keyframes binauralWave { 0%,100% { transform: scaleY(0.45); opacity: 0.55; } 50% { transform: scaleY(1); opacity: 1; } } @keyframes binauralPulse { 0%,100% { opacity: 0.35; } 50% { opacity: 0.85; } } .bw-bar { width: 2px; background: #7B8CFF; border-radius: 1px; display: inline-block; transform-origin: center; }`}</style>
       {open && (
         <div
           ref={panelRef}
@@ -182,8 +182,8 @@ export default function BinauralPlayer() {
                   className="bw-bar"
                   style={{
                     height: `${h}px`,
-                    animation: `binauralWave ${playing ? "0.7s" : "1.4s"} ease-in-out ${i * 0.04}s infinite`,
-                    opacity: playing ? 0.9 : 0.45,
+                    animation: `binauralWave 0.9s ease-in-out ${i * 0.05}s infinite`,
+                    opacity: playing ? 0.95 : 0.5,
                   }}
                 />
               );
