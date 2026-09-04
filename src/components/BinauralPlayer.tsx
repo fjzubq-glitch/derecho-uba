@@ -133,19 +133,15 @@ export default function BinauralPlayer() {
             bottom: "88px",
             left: "24px",
             zIndex: 90,
-            width: "260px",
-            background: "var(--color-card)",
-            border: "1px solid var(--color-line-soft)",
-            padding: "14px",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
+            width: "160px",
+            background: "rgba(24,24,28,0.88)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: "12px",
+            padding: "12px",
+            backdropFilter: "blur(8px)",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.28)",
           }}
         >
-          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-text-faint)", marginBottom: "8px" }}>
-            Música binaural
-          </p>
-          <p style={{ fontSize: "12px", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: "10px" }}>
-            {fileName || "binaural"}
-          </p>
           <div className="flex justify-center">
             <button
               onClick={() => {
@@ -164,8 +160,8 @@ export default function BinauralPlayer() {
               }}
               aria-label={playing ? "Pausar" : "Reproducir"}
               style={{
-                width: "36px",
-                height: "36px",
+                width: "32px",
+                height: "32px",
                 borderRadius: "50%",
                 background: "var(--color-gold)",
                 color: "var(--color-ink)",
@@ -174,13 +170,12 @@ export default function BinauralPlayer() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "14px",
+                fontSize: "12px",
               }}
             >
               {playing ? "⏸" : "▶"}
             </button>
           </div>
-          <p style={{ fontSize: "10px", color: "var(--color-text-faint)", marginTop: "8px" }}>En loop · solo vos lo escuchás</p>
         </div>
       )}
     </>
