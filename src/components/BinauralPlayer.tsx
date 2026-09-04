@@ -151,7 +151,6 @@ export default function BinauralPlayer() {
         </span>
       </button>
 
-      <style>{`@keyframes binauralWave { 0%,100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } } .bw-bar { width: 2px; background: #7B8CFF; border-radius: 1px; display: inline-block; transform-origin: bottom; will-change: transform; }`}</style>
       {open && (
         <div
           ref={panelRef}
@@ -160,35 +159,20 @@ export default function BinauralPlayer() {
             bottom: "88px",
             left: "24px",
             zIndex: 90,
-            width: "150px",
+            width: "140px",
             background: "rgba(24,24,28,0.92)",
             border: "1px solid rgba(255,255,255,0.08)",
             borderRadius: "12px",
-            padding: "8px",
+            padding: "10px",
             backdropFilter: "blur(8px)",
             boxShadow: "0 8px 24px rgba(0,0,0,0.28)",
+            textAlign: "center",
           }}
         >
-          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "7px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-text-faint)", textAlign: "center", marginBottom: "6px", fontWeight: 300 }}>
+          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "7px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-text-faint)", marginBottom: "8px", fontWeight: 300 }}>
             Sonido binaural
           </p>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <div className="flex items-center" style={{ flex: 1, height: "20px", gap: "1px", justifyContent: "center" }}>
-            {Array.from({ length: 24 }).map((_, i) => {
-              const h = [4, 7, 11, 15, 18, 13, 8, 5, 7, 10, 14, 18, 16, 10, 6, 8, 12, 16, 13, 8, 5, 7, 10, 12][i] || 6;
-              return (
-                <span
-                  key={i}
-                  className="bw-bar"
-                  style={{
-                    height: `${h}px`,
-                    animation: `binauralWave 1s ease-in-out ${i * 0.07}s infinite`,
-                    opacity: 0.9,
-                  }}
-                />
-              );
-            })}
-          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
           <button
             onClick={() => {
               if (!audioRef.current) return;
