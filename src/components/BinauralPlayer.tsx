@@ -169,8 +169,8 @@ export default function BinauralPlayer() {
             boxShadow: "0 8px 24px rgba(0,0,0,0.28)",
           }}
         >
-          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-text-faint)", textAlign: "center", marginBottom: "8px" }}>
-            Música binaural
+          <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "8px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-text-faint)", textAlign: "center", marginBottom: "8px", fontWeight: 300 }}>
+            Sonido binaural para estudiar
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <div className="flex items-center" style={{ flex: 1, height: "28px", gap: "2px", justifyContent: "center" }}>
