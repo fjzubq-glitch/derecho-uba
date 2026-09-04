@@ -146,6 +146,7 @@ export default function MateriaClient({
                   letterSpacing: "-0.02em",
                   maxWidth: "760px",
                   overflowWrap: "break-word",
+                  textWrap: "balance",
                 }}
               >
                 {materiaTitle}
