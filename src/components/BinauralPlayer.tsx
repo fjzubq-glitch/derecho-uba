@@ -151,7 +151,7 @@ export default function BinauralPlayer() {
         </span>
       </button>
 
-      <style>{`@keyframes binauralWave { 0%,100% { transform: scaleY(0.45); opacity: 0.55; } 50% { transform: scaleY(1); opacity: 1; } } @keyframes binauralPulse { 0%,100% { opacity: 0.35; } 50% { opacity: 0.85; } } .bw-bar { width: 2px; background: #7B8CFF; border-radius: 1px; display: inline-block; transform-origin: center; }`}</style>
+      <style>{`@keyframes binauralWave { 0% { height: 4px; opacity: 0.45; } 25% { height: 18px; opacity: 1; } 50% { height: 8px; opacity: 0.7; } 75% { height: 14px; opacity: 0.9; } 100% { height: 4px; opacity: 0.45; } } .bw-bar { width: 2px; background: #7B8CFF; border-radius: 1px; display: inline-block; }`}</style>
       {open && (
         <div
           ref={panelRef}
