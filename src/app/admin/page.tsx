@@ -135,6 +135,10 @@ export default function AdminPage() {
       if (matId) {
         setClaseEditar({ claseId: editId, materiaId: matId });
         setActiveTab("upload");
+        // Consumir el parámetro una sola vez: si queda en la URL, cada
+        // recarga de materias (p.ej. al entrar a Analytics) forzaría
+        // de vuelta al tab Subir y se perdería el ingreso.
+        router.replace("/admin", { scroll: false });
       }
     }
   }, [materias]);
