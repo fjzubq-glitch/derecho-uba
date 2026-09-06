@@ -9,7 +9,7 @@ const AdminEstudio = React.lazy(() => import("@/components/AdminEstudio"));
 
 import { ArrowLeft, BarChart3, Headphones, FileText, Shield, ChevronDown, Loader2 } from "@/components/icons";
 import { setAdminSession } from "@/lib/utils";
-import { intentarAcceder } from "@/lib/analytics-limiter";
+import { intentarAcceder, getAccesosInfo } from "@/lib/analytics-limiter";
 
 interface Materia {
   id: string;
@@ -119,6 +119,7 @@ export default function AdminPage() {
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"upload" | "manage" | "analytics" | "estudio">("upload");
   const [analyticsBloqueo, setAnalyticsBloqueo] = useState<null | { usados: number; limite: number; ventana: string; proxima: string }>(null);
+  const [analyticsConfirm, setAnalyticsConfirm] = useState<null | { usados: number; limite: number; ventana: string; proxima: string }>(null);
   const [claseEditar, setClaseEditar] = useState<{ claseId: string; materiaId: string } | null>(null);
   useEffect(() => {
     const sp = new URLSearchParams(window.location.search);
@@ -205,7 +206,7 @@ export default function AdminPage() {
 
   // Presencia en vivo: polling mientras esté en la pestaña Analytics y no bloqueado
   useEffect(() => {
-    if (!authenticated || activeTab !== "analytics" || analyticsBloqueo) return;
+    if (!authenticated || activeTab !== "analytics" || analyticsBloqueo || analyticsConfirm) return;
     let ok = true;
     const cargarPresencia = async () => {
       try {
@@ -224,7 +225,7 @@ export default function AdminPage() {
       ok = false;
       clearInterval(id);
     };
-  }, [authenticated, activeTab, analyticsBloqueo]);
+  }, [authenticated, activeTab, analyticsBloqueo, analyticsConfirm]);
 
   const loadAdminData = useCallback(async () => {
     try {
@@ -256,10 +257,10 @@ export default function AdminPage() {
     if (authenticated && activeTab === "upload") {
       loadAdminData();
     }
-    if (authenticated && activeTab === "analytics" && !analyticsBloqueo) {
+    if (authenticated && activeTab === "analytics" && !analyticsBloqueo && !analyticsConfirm) {
       loadAdminData();
     }
-  }, [authenticated, activeTab, analyticsBloqueo, loadAdminData]);
+  }, [authenticated, activeTab, analyticsBloqueo, analyticsConfirm, loadAdminData]);
 
   function cambiarPeriodo(p: Periodo) {
     setPeriodo(p);
@@ -267,17 +268,38 @@ export default function AdminPage() {
 
   function handleTabChange(tab: "upload" | "manage" | "analytics" | "estudio") {
     if (tab === "analytics") {
-      const res = intentarAcceder();
-      if (!res.permitido) {
-        setAnalyticsBloqueo({ usados: res.usados, limite: res.limite, ventana: res.ventana, proxima: res.proximaVentanaLabel });
+      // Ya estamos en analytics: no consumir otro ingreso por re-clicks
+      if (activeTab === "analytics") return;
+      // Mostrar cartel de confirmación ANTES de consumir el ingreso
+      const info = getAccesosInfo();
+      if (!info.permitido) {
+        setAnalyticsConfirm(null);
+        setAnalyticsBloqueo({ usados: info.usados, limite: info.limite, ventana: info.ventana, proxima: info.proximaVentanaLabel });
         setActiveTab("analytics");
         return;
       }
       setAnalyticsBloqueo(null);
+      setAnalyticsConfirm({ usados: info.usados, limite: info.limite, ventana: info.ventana, proxima: info.proximaVentanaLabel });
       setActiveTab("analytics");
       return;
     }
+    setAnalyticsConfirm(null);
     setActiveTab(tab);
+  }
+
+  function confirmarIngresoAnalytics() {
+    const res = intentarAcceder();
+    setAnalyticsConfirm(null);
+    if (!res.permitido) {
+      setAnalyticsBloqueo({ usados: res.usados, limite: res.limite, ventana: res.ventana, proxima: res.proximaVentanaLabel });
+      return;
+    }
+    setAnalyticsBloqueo(null);
+  }
+
+  function cancelarIngresoAnalytics() {
+    setAnalyticsConfirm(null);
+    setActiveTab("upload");
   }
 
   async function verEstudiante(nombre: string) {
@@ -938,7 +960,66 @@ export default function AdminPage() {
           {/* Analytics Tab */}
           {activeTab === "analytics" && (
             <div className="space-y-6">
-              {analyticsBloqueo ? (
+              {analyticsConfirm ? (
+                <div
+                  style={{
+                    background: "var(--color-card)",
+                    border: "1px solid var(--color-line-soft)",
+                    padding: "48px 32px",
+                    textAlign: "center",
+                  }}
+                >
+                  <p style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontSize: "20px", color: "var(--color-text)", marginBottom: "12px" }}>
+                    Ingresar a Analytics
+                  </p>
+                  <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.6, maxWidth: "520px", margin: "0 auto 8px" }}>
+                    {analyticsConfirm.ventana === "manana"
+                      ? "A la mañana solo podés ingresar 1 vez."
+                      : "A la noche tenés 2 ingresos."}{" "}
+                    Ya usaste {analyticsConfirm.usados} de {analyticsConfirm.limite}.
+                  </p>
+                  <p style={{ fontSize: "13px", color: "var(--color-gold)", lineHeight: 1.6, maxWidth: "520px", margin: "0 auto 20px" }}>
+                    Al entrar se consume 1 ingreso.
+                  </p>
+                  <div className="flex items-center justify-center gap-3" style={{ marginBottom: "16px" }}>
+                    <button
+                      onClick={confirmarIngresoAnalytics}
+                      style={{
+                        padding: "10px 22px",
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "11px",
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                        background: "var(--color-gold)",
+                        color: "var(--color-ink)",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Entrar a Analytics
+                    </button>
+                    <button
+                      onClick={cancelarIngresoAnalytics}
+                      style={{
+                        padding: "10px 22px",
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "11px",
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                        background: "transparent",
+                        color: "var(--color-text-muted)",
+                        border: "1px solid var(--color-line)",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Volver
+                    </button>
+                  </div>
+                  <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", letterSpacing: "0.08em", color: "var(--color-text-faint)" }}>
+                    Mañana 06:00–17:59 = 1 acceso · Noche 18:00–05:59 = 2 accesos (hora Argentina)
+                  </p>
+                </div>
+              ) : analyticsBloqueo ? (
                 <div
                   style={{
                     background: "var(--color-card)",
