@@ -30,10 +30,17 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Modo HTML crudo: se guarda tal cual, sin regenerar su estructura.
     if (typeof body.html === "string" && body.html.trim() !== "") {
-      await uploadToR2(archivo.storage_key, Buffer.from(body.html, "utf-8"), "text/html; charset=utf-8");
+      // Quitar copias del bridge inyectado por el visor (se reinyecta al renderizar).
+      // Sin esto, cada guardado duplica el script dentro del HTML almacenado.
+      const limpio = body.html.replace(/<script[^>]*>[\s\S]*?cuestionario-editor-save[\s\S]*?<\/script>/g, (m: string) => {
+        // Solo quitar si el bloque script es corto (bridge ~500 chars); si el
+        // match abarca medio documento, no tocar nada (protección anti-regex).
+        return m.length < 3000 ? "" : m;
+      });
+      await uploadToR2(archivo.storage_key, Buffer.from(limpio, "utf-8"), "text/html; charset=utf-8");
       const { error: updErr } = await getSupabaseAdmin()
         .from("archivos")
-        .update({ contenido_texto: body.html, contenido: null })
+        .update({ contenido_texto: limpio, contenido: null })
         .eq("id", id);
       if (updErr) {
         return NextResponse.json({ error: "Error al guardar: " + updErr.message }, { status: 500 });
