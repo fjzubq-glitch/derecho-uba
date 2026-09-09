@@ -50,6 +50,12 @@ export default function AdminPremios() {
   const [selected, setSelected] = useState<string | null>(null);
   const [tiposAbiertos, setTiposAbiertos] = useState<Set<string>>(new Set());
   const [rankingAbierto, setRankingAbierto] = useState(false);
+  // Selección múltiple para otorgamiento en lote
+  const [archivosSel, setArchivosSel] = useState<Set<string>>(new Set());
+  const [personasSel, setPersonasSel] = useState<string[]>([]);
+  const [confirmando, setConfirmando] = useState(false);
+  const [batchBusy, setBatchBusy] = useState(false);
+  const [personaExtra, setPersonaExtra] = useState("");
   const [loading, setLoading] = useState(true);
   const [nombreManual, setNombreManual] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -133,6 +139,44 @@ export default function AdminPremios() {
   const grantsSel = grants.filter((g) => g.archivo_id === selected);
   const grantedNames = new Set(grantsSel.map((g) => g.nombre.trim().toLowerCase()));
 
+  const toggleArchivo = (id: string) => {
+    setArchivosSel((prev) => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+  };
+  const togglePersona = (nombre: string) => {
+    const nom = nombre.trim();
+    if (!nom) return;
+    setPersonasSel((prev) => (prev.some((p) => p.toLowerCase() === nom.toLowerCase()) ? prev.filter((p) => p.toLowerCase() !== nom.toLowerCase()) : [...prev, nom]));
+  };
+  const archivosSelObjs = privados.filter((p) => archivosSel.has(p.archivo_id));
+
+  const confirmarLote = async () => {
+    if (archivosSel.size === 0 || personasSel.length === 0) return;
+    setBatchBusy(true);
+    setMsg("");
+    let ok = 0, ya = 0, fail = 0;
+    for (const a of archivosSelObjs) {
+      for (const nom of personasSel) {
+        try {
+          const res = await fetch("/api/admin/accesos-archivo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ archivo_id: a.archivo_id, nombre: nom }),
+          });
+          const data = await res.json();
+          if (data.ok) ok++;
+          else if (res.status === 409) ya++;
+          else fail++;
+        } catch { fail++; }
+      }
+    }
+    setBatchBusy(false);
+    setConfirmando(false);
+    setArchivosSel(new Set());
+    setPersonasSel([]);
+    await cargar(slug, dias);
+    setMsg(`Listo: ${ok} otorgados${ya > 0 ? `, ${ya} ya los tenían` : ""}${fail > 0 ? `, ${fail} fallaron` : ""}.`);
+  };
+
   return (
     <div className="space-y-6" style={{ marginTop: "32px" }}>
       <div className="flex items-center gap-3 flex-wrap">
@@ -199,6 +243,104 @@ export default function AdminPremios() {
         </div>
       )}
 
+      {/* Barra de selección múltiple */}
+      {(archivosSel.size > 0 || personasSel.length > 0) && !confirmando && (
+        <div className="flex items-center gap-3 flex-wrap" style={{ padding: "10px 14px", background: "rgba(0,255,85,0.05)", border: "1px solid rgba(0,255,85,0.25)" }}>
+          <span style={{ fontSize: "13px", color: "var(--color-text)" }}>
+            <strong style={{ color: "#00FF55" }}>{archivosSel.size}</strong> archivo{archivosSel.size !== 1 ? "s" : ""} ·{" "}
+            <strong style={{ color: "#00FF55" }}>{personasSel.length}</strong> persona{personasSel.length !== 1 ? "s" : ""}
+          </span>
+          {personasSel.length > 0 && (
+            <span style={{ fontSize: "12px", color: "var(--color-text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+              {personasSel.join(", ")}
+            </span>
+          )}
+          <span className="flex-1" />
+          <button
+            onClick={() => { setConfirmando(true); }}
+            disabled={archivosSel.size === 0 || personasSel.length === 0}
+            style={{ padding: "7px 14px", background: archivosSel.size > 0 && personasSel.length > 0 ? "var(--color-gold)" : "var(--color-line)", color: "var(--color-ink)", border: "none", cursor: archivosSel.size > 0 && personasSel.length > 0 ? "pointer" : "default", fontSize: "11px", fontFamily: "var(--font-ibm-plex-mono)", textTransform: "uppercase" }}
+          >
+            Revisar y confirmar
+          </button>
+          <button
+            onClick={() => { setArchivosSel(new Set()); setPersonasSel([]); }}
+            style={{ padding: "7px 12px", background: "transparent", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", cursor: "pointer", fontSize: "11px", fontFamily: "var(--font-ibm-plex-mono)", textTransform: "uppercase" }}
+          >
+            Limpiar
+          </button>
+        </div>
+      )}
+
+      {/* Panel de confirmación */}
+      {confirmando && (
+        <div style={{ padding: "16px 18px", background: "var(--color-card)", border: "1px solid var(--color-gold-dim)" }}>
+          <p style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontSize: "16px", color: "var(--color-text)", marginBottom: "4px" }}>
+            Confirmar otorgamientos
+          </p>
+          <p style={{ fontSize: "12px", color: "var(--color-text-muted)", marginBottom: "12px" }}>
+            Se habilitarán <strong style={{ color: "#00FF55" }}>{archivosSel.size * personasSel.length}</strong> accesos. Revisá bien antes de confirmar.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ marginBottom: "12px" }}>
+            <div>
+              <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text-faint)", marginBottom: "6px" }}>
+                Archivos ({archivosSel.size})
+              </p>
+              {archivosSelObjs.map((a) => (
+                <p key={a.archivo_id} style={{ fontSize: "12px", color: "var(--color-text)", padding: "3px 0" }}>
+                  Clase {a.clase_numero} — {a.archivo_nombre}
+                </p>
+              ))}
+            </div>
+            <div>
+              <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text-faint)", marginBottom: "6px" }}>
+                Personas ({personasSel.length})
+              </p>
+              {personasSel.map((n) => (
+                <div key={n} className="flex items-center justify-between gap-2" style={{ padding: "3px 0" }}>
+                  <span style={{ fontSize: "12px", color: "var(--color-text)" }}>{n}</span>
+                  <button onClick={() => togglePersona(n)} title="Quitar" style={{ background: "none", border: "none", cursor: "pointer", color: "#E05555", padding: "2px" }}>
+                    <X style={{ width: "11px", height: "11px" }} />
+                  </button>
+                </div>
+              ))}
+              <div className="flex gap-2" style={{ marginTop: "8px" }}>
+                <input
+                  type="text"
+                  value={personaExtra}
+                  onChange={(e) => setPersonaExtra(e.target.value)}
+                  placeholder="Agregar nombre…"
+                  onKeyDown={(e) => { if (e.key === "Enter" && personaExtra.trim()) { togglePersona(personaExtra); setPersonaExtra(""); } }}
+                  style={{ flex: 1, background: "var(--color-ink)", border: "1px solid var(--color-line-soft)", padding: "6px 10px", fontSize: "12px", color: "var(--color-text)" }}
+                />
+                <button
+                  onClick={() => { if (personaExtra.trim()) { togglePersona(personaExtra); setPersonaExtra(""); } }}
+                  style={{ padding: "6px 10px", background: "transparent", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", cursor: "pointer", fontSize: "11px" }}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={confirmarLote}
+              disabled={batchBusy || archivosSel.size === 0 || personasSel.length === 0}
+              style={{ padding: "9px 18px", background: "var(--color-gold)", color: "var(--color-ink)", border: "none", cursor: batchBusy ? "wait" : "pointer", fontSize: "12px", fontFamily: "var(--font-ibm-plex-mono)", textTransform: "uppercase", opacity: batchBusy ? 0.6 : 1 }}
+            >
+              {batchBusy ? "Otorgando…" : `Confirmar (${archivosSel.size * personasSel.length})`}
+            </button>
+            <button
+              onClick={() => setConfirmando(false)}
+              disabled={batchBusy}
+              style={{ padding: "9px 14px", background: "transparent", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", cursor: "pointer", fontSize: "12px", fontFamily: "var(--font-ibm-plex-mono)", textTransform: "uppercase" }}
+            >
+              Volver
+            </button>
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex items-center gap-2" style={{ padding: "24px 0", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px" }}>
           <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> Cargando…
@@ -233,31 +375,40 @@ export default function AdminPremios() {
                         <ChevronDown style={{ width: "13px", height: "13px", color: "var(--color-text-muted)", transform: abierto ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
                       </button>
                       {abierto && g.items.map((p) => (
-                        <button
+                        <div
                           key={p.archivo_id}
-                          onClick={() => setSelected(p.archivo_id)}
-                          className="flex items-center gap-3 w-full text-left"
+                          className="flex items-center gap-2 w-full"
                           style={{
-                            padding: "8px 16px 8px 20px",
+                            padding: "8px 16px 8px 12px",
                             background: selected === p.archivo_id ? "rgba(185,154,98,0.07)" : "transparent",
-                            border: "none",
                             borderTop: "1px solid var(--color-line-soft)",
-                            cursor: "pointer",
-                            width: "100%",
                           }}
                         >
-                          <BookOpen style={{ width: "13px", height: "13px", color: "var(--color-gold)", flexShrink: 0 }} />
-                          <span className="flex-1 min-w-0">
-                            <span style={{ display: "block", fontSize: "13px", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                              Clase {p.clase_numero} — {p.archivo_nombre}
-                            </span>
-                            {p.conGrant > 0 && (
-                              <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "#00FF55" }}>
-                                {p.conGrant} con acceso
+                          <input
+                            type="checkbox"
+                            checked={archivosSel.has(p.archivo_id)}
+                            onChange={() => toggleArchivo(p.archivo_id)}
+                            title="Seleccionar para otorgar en lote"
+                            style={{ width: "15px", height: "15px", accentColor: "var(--color-gold)", cursor: "pointer", flexShrink: 0 }}
+                          />
+                          <button
+                            onClick={() => setSelected(p.archivo_id)}
+                            className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                            style={{ background: "transparent", border: "none", cursor: "pointer", padding: 0 }}
+                          >
+                            <BookOpen style={{ width: "13px", height: "13px", color: "var(--color-gold)", flexShrink: 0 }} />
+                            <span className="flex-1 min-w-0">
+                              <span style={{ display: "block", fontSize: "13px", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                Clase {p.clase_numero} — {p.archivo_nombre}
                               </span>
-                            )}
-                          </span>
-                        </button>
+                              {p.conGrant > 0 && (
+                                <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "#00FF55" }}>
+                                  {p.conGrant} con acceso
+                                </span>
+                              )}
+                            </span>
+                          </button>
+                        </div>
                       ))}
                     </div>
                   );
@@ -335,8 +486,16 @@ export default function AdminPremios() {
                 ) : (
                   ranking.slice(0, 10).map((r, i) => {
                     const yaTiene = grantedNames.has(r.nombre.trim().toLowerCase());
+                    const enLote = personasSel.some((p) => p.toLowerCase() === r.nombre.trim().toLowerCase());
                     return (
-                      <div key={r.nombre} className="flex items-center gap-3" style={{ padding: "7px 0", borderBottom: "1px solid var(--color-line-soft)" }}>
+                      <div key={r.nombre} className="flex items-center gap-2" style={{ padding: "7px 0", borderBottom: "1px solid var(--color-line-soft)" }}>
+                        <input
+                          type="checkbox"
+                          checked={enLote}
+                          onChange={() => togglePersona(r.nombre)}
+                          title="Seleccionar para otorgar en lote"
+                          style={{ width: "15px", height: "15px", accentColor: "var(--color-gold)", cursor: "pointer", flexShrink: 0 }}
+                        />
                         <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: i < 3 ? "var(--color-gold)" : "var(--color-text-faint)", width: "18px" }}>
                           {String(i + 1).padStart(2, "0")}
                         </span>
