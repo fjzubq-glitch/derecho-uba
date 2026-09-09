@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { BookOpen, Check, Loader2, Lock, X } from "@/components/icons";
+import { BookOpen, Check, ChevronDown, Loader2, Lock, X } from "@/components/icons";
 
 interface Privado {
   archivo_id: string;
@@ -48,6 +48,7 @@ export default function AdminPremios() {
   const [grants, setGrants] = useState<Grant[]>([]);
   const [ranking, setRanking] = useState<RankRow[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
+  const [tiposAbiertos, setTiposAbiertos] = useState<Set<string>>(new Set(["cuestionario"]));
   const [loading, setLoading] = useState(true);
   const [nombreManual, setNombreManual] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -211,35 +212,53 @@ export default function AdminPremios() {
             {privados.length === 0 ? (
               <p style={{ padding: "16px", fontSize: "13px", color: "var(--color-text-muted)" }}>No hay archivos privados en esta materia.</p>
             ) : (
-              privados.map((p) => (
-                <button
-                  key={p.archivo_id}
-                  onClick={() => setSelected(p.archivo_id)}
-                  className="flex items-center gap-3 w-full text-left"
-                  style={{
-                    padding: "10px 16px",
-                    borderBottom: "1px solid var(--color-line-soft)",
-                    background: selected === p.archivo_id ? "rgba(185,154,98,0.07)" : "transparent",
-                    border: "none",
-                    borderBottomWidth: "1px",
-                    borderBottomStyle: "solid",
-                    borderBottomColor: "var(--color-line-soft)",
-                    cursor: "pointer",
-                    width: "100%",
-                  }}
-                >
-                  <BookOpen style={{ width: "13px", height: "13px", color: "var(--color-gold)", flexShrink: 0 }} />
-                  <span className="flex-1 min-w-0">
-                    <span style={{ display: "block", fontSize: "13px", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      Clase {p.clase_numero} — {p.archivo_nombre}
-                    </span>
-                    <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)" }}>
-                      {TIPO_LABEL[p.archivo_tipo] || p.archivo_tipo}
-                      {p.conGrant > 0 && <span style={{ color: "#00FF55" }}> · {p.conGrant} con acceso</span>}
-                    </span>
-                  </span>
-                </button>
-              ))
+              (["cuestionario", "material_privado", "ficha"] as const)
+                .map((tipo) => ({ tipo, items: privados.filter((p) => p.archivo_tipo === tipo) }))
+                .filter((g) => g.items.length > 0)
+                .map((g) => {
+                  const abierto = tiposAbiertos.has(g.tipo);
+                  return (
+                    <div key={g.tipo} style={{ borderBottom: "1px solid var(--color-line-soft)" }}>
+                      <button
+                        onClick={() => setTiposAbiertos((prev) => { const n = new Set(prev); if (n.has(g.tipo)) n.delete(g.tipo); else n.add(g.tipo); return n; })}
+                        className="flex items-center justify-between w-full"
+                        style={{ padding: "10px 16px", background: "transparent", border: "none", cursor: "pointer", width: "100%" }}
+                      >
+                        <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gold)" }}>
+                          {TIPO_LABEL[g.tipo]} · {g.items.length}
+                        </span>
+                        <ChevronDown style={{ width: "13px", height: "13px", color: "var(--color-text-muted)", transform: abierto ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
+                      </button>
+                      {abierto && g.items.map((p) => (
+                        <button
+                          key={p.archivo_id}
+                          onClick={() => setSelected(p.archivo_id)}
+                          className="flex items-center gap-3 w-full text-left"
+                          style={{
+                            padding: "8px 16px 8px 20px",
+                            background: selected === p.archivo_id ? "rgba(185,154,98,0.07)" : "transparent",
+                            border: "none",
+                            borderTop: "1px solid var(--color-line-soft)",
+                            cursor: "pointer",
+                            width: "100%",
+                          }}
+                        >
+                          <BookOpen style={{ width: "13px", height: "13px", color: "var(--color-gold)", flexShrink: 0 }} />
+                          <span className="flex-1 min-w-0">
+                            <span style={{ display: "block", fontSize: "13px", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              Clase {p.clase_numero} — {p.archivo_nombre}
+                            </span>
+                            {p.conGrant > 0 && (
+                              <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "#00FF55" }}>
+                                {p.conGrant} con acceso
+                              </span>
+                            )}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })
             )}
           </section>
 

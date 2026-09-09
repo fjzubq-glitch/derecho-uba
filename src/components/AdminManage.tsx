@@ -84,7 +84,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const [processing, setProcessing] = useState(false);
   const [message, setMessage] = useState("");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const [filtroMateria, setFiltroMateria] = useState("todas");
+  const [filtroMateria, setFiltroMateria] = useState("");
   const [editandoCuestionario, setEditandoCuestionario] = useState<{ archivoId: string; nombre: string; html: string } | null>(null);
   const [cuestionarioSaving, setCuestionarioSaving] = useState(false);
   const [accesosMateriaId, setAccesosMateriaId] = useState<string | null>(null);
@@ -1022,7 +1022,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 width: "min(220px, 100%)",
               }}
             >
-              <option value="todas">Todas las materias</option>
+              <option value="">Elegí una materia…</option>
               {materias.map((m) => (
                 <option key={m.id} value={m.slug}>
                   {m.nombre}
@@ -1031,7 +1031,21 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
             </select>
           </div>
 
-          {clases.filter((c) => filtroMateria === "todas" || c.materia_slug === filtroMateria).length === 0 ? (
+          {!filtroMateria ? (
+            <div
+              style={{
+                padding: "40px 24px",
+                textAlign: "center",
+                background: "var(--color-card)",
+                border: "1px solid var(--color-line-soft)",
+                borderRadius: 0,
+              }}
+            >
+              <p style={{ fontSize: "14px", color: "var(--color-text-muted)", lineHeight: 1.7 }}>
+                Seleccioná una materia arriba para ver y editar su contenido.
+              </p>
+            </div>
+          ) : clases.filter((c) => c.materia_slug === filtroMateria).length === 0 ? (
             <div
               style={{
                 padding: "40px 24px",
@@ -1051,7 +1065,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
             </div>
           ) : (
             clases
-            .filter((c) => filtroMateria === "todas" || c.materia_slug === filtroMateria)
+            .filter((c) => c.materia_slug === filtroMateria)
             .map((clase) => (
             <div
               key={clase.id}
