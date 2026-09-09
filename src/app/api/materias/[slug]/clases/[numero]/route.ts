@@ -86,13 +86,30 @@ export async function GET(
 
   // El filtrado de tipos privados es por-request (depende de esAdmin / acceso)
   // y no se cachea, así el cache compartido no filtra para el rol equivocado.
+  // Además: grants por archivo (premios) — un alumno con grant ve ESE archivo
+  // aunque no tenga la clave de la materia. Se identifica solo por nombre.
+  const TIPOS_PRIVADOS = ["cuestionario", "material_privado", "ficha"];
+  let grantedIds: string[] = [];
+  if (!esAdmin && !tieneAcceso && nombre) {
+    const privados = (data.clase.archivos || []).filter((a) => TIPOS_PRIVADOS.includes(a.tipo));
+    if (privados.length > 0) {
+      const { data: grants } = await getSupabaseAdmin()
+        .from("accesos_archivo")
+        .select("archivo_id")
+        .in("archivo_id", privados.map((a) => a.id))
+        .ilike("nombre", nombre);
+      grantedIds = (grants || []).map((g) => g.archivo_id);
+    }
+  }
+  const grantSet = new Set(grantedIds);
   const visibles = (data.clase.archivos || []).filter(
-    (a) => esAdmin || tieneAcceso || (a.tipo !== "cuestionario" && a.tipo !== "material_privado" && a.tipo !== "ficha"),
+    (a) => esAdmin || tieneAcceso || grantSet.has(a.id) || !TIPOS_PRIVADOS.includes(a.tipo),
   );
 
   return NextResponse.json({
     materia: data.materia,
     clase: { ...data.clase, archivos: visibles },
     adjacentes: data.adjacentes,
+    grants: grantedIds,
   });
 }

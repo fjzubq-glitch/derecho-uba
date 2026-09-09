@@ -6,6 +6,7 @@ import Image from "next/image";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2, Lock } from "@/components/icons";
 import { formatDuration, formatFechaLocal, isAdminSession } from "@/lib/utils";
+import { getPortalUserName } from "@/lib/portalUser";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
 import { useAudio } from "@/components/AudioProvider";
 
@@ -129,6 +130,7 @@ export default function ClaseNumeroPage() {
   const accesoClave = searchParams.get("clave")?.trim() || null;
   const accesoNombre = searchParams.get("nombre")?.trim() || null;
   const [tieneAcceso, setTieneAcceso] = useState(false);
+  const [grants, setGrants] = useState<string[]>([]);
   const materiaId = materia?.id ?? null;
 
   useEffect(() => {
@@ -202,9 +204,20 @@ async function loadData() {
     const cacheKey = `materia:${materiaSlug}:clase:${numero}`;
     const num = parseInt(numero);
     try {
-      const res = await fetch(`/api/materias/${materiaSlug}/clases/${numero}`);
+      // Pasamos clave+nombre (URL) y nombre del portal (localStorage) para que
+      // la API incluya privados por acceso especial o por grant por archivo.
+      const qp = new URLSearchParams();
+      const urlClave = new URLSearchParams(window.location.search).get("clave")?.trim();
+      const urlNombre = new URLSearchParams(window.location.search).get("nombre")?.trim();
+      const portalNombre = getPortalUserName();
+      if (urlClave) qp.set("clave", urlClave);
+      const nombreFinal = urlNombre || portalNombre;
+      if (nombreFinal) qp.set("nombre", nombreFinal);
+      const qs = qp.toString();
+      const res = await fetch(`/api/materias/${materiaSlug}/clases/${numero}${qs ? `?${qs}` : ""}`);
       const data = await res.json();
       if (data.materia) setMateria(data.materia);
+      if (Array.isArray(data.grants)) setGrants(data.grants);
       if (data.clase) {
         setClase(data.clase);
         saveClaseOffline(cacheKey, data);
@@ -316,13 +329,18 @@ function handleAudioAction(archivo: Archivo) {
    async function handleCardClick(archivo: Archivo | null) {
      if (!archivo) return;
 
-     const visorHref = (archivoId: string, back: string) => {
-       const base = `/visor/${archivoId}?back=${encodeURIComponent(back)}`;
-       if (accesoClave && accesoNombre) {
-         return `${base}&nombre=${encodeURIComponent(accesoNombre)}&clave=${encodeURIComponent(accesoClave)}`;
-       }
-       return `${base}&nombre=${encodeURIComponent(archivo.nombre_display)}`;
-     };
+      const visorHref = (archivoId: string, back: string) => {
+        const base = `/visor/${archivoId}?back=${encodeURIComponent(back)}`;
+        if (accesoClave && accesoNombre) {
+          return `${base}&nombre=${encodeURIComponent(accesoNombre)}&clave=${encodeURIComponent(accesoClave)}`;
+        }
+        // Nombre del portal para que el visor valide grants por archivo
+        const portalNombre = getPortalUserName();
+        if (portalNombre) {
+          return `${base}&nombre=${encodeURIComponent(portalNombre)}`;
+        }
+        return `${base}&nombre=${encodeURIComponent(archivo.nombre_display)}`;
+      };
 
      const tipo = archivo.tipo as CardTipo;
 if (isTranscription(tipo)) {
@@ -383,7 +401,10 @@ if (isTranscription(tipo)) {
     }
 
     if (TIPOS_PRIVADOS.includes(tipo) && !esAdmin && !tieneAcceso) {
-      return [];
+      const conGrant = archivos.filter((a) => grants.includes(a.id));
+      if (conGrant.length === 0) return [];
+      const base = TIPOS_ORDEN.slice(0, TIPOS_ORDEN.indexOf(tipo)).reduce((s, t) => s + getArchivos(t).length, 0);
+      return conGrant.map((archivo, i) => renderArchivoCard(tipo, archivo, isThisPlaying, base + i));
     }
 
     const base = TIPOS_ORDEN.slice(0, TIPOS_ORDEN.indexOf(tipo)).reduce((s, t) => s + getArchivos(t).length, 0);

@@ -6,6 +6,7 @@ const AdminUpload = React.lazy(() => import("@/components/AdminUpload"));
 const AdminManage = React.lazy(() => import("@/components/AdminManage"));
 const AdminMaterias = React.lazy(() => import("@/components/AdminMaterias"));
 const AdminEstudio = React.lazy(() => import("@/components/AdminEstudio"));
+const AdminPremios = React.lazy(() => import("@/components/AdminPremios"));
 
 import { ArrowLeft, BarChart3, Headphones, FileText, Shield, ChevronDown, Loader2 } from "@/components/icons";
 import { setAdminSession } from "@/lib/utils";
@@ -950,6 +951,9 @@ export default function AdminPage() {
                     setActiveTab("upload");
                   }}
                 />
+              </Suspense>
+              <Suspense fallback={<div className="flex items-center gap-2" style={{ padding: "16px 0", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px" }}><Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> Cargando…</div>}>
+                <AdminPremios />
               </Suspense>
             </>
           )}

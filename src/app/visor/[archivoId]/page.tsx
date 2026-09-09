@@ -56,6 +56,19 @@ export default async function VisorPage({
     }
   }
 
+  // Grant por archivo (premio): el alumno ve ESE archivo privado solo con su nombre
+  let tieneGrantArchivo = false;
+  if (!esAdmin && !tieneAccesoEspecial && nombreVisitante && archivo) {
+    const { data: grant } = await getSupabaseAdmin()
+      .from("accesos_archivo")
+      .select("id")
+      .eq("archivo_id", archivoId)
+      .ilike("nombre", nombreVisitante)
+      .maybeSingle();
+    tieneGrantArchivo = !!grant;
+  }
+  if (tieneGrantArchivo) tieneAccesoEspecial = true;
+
   type Modo = "srcdoc" | "iframe" | "imagen" | "externo" | "error";
   let modo: Modo = "error";
   let iframeSrc: string | null = null;
