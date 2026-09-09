@@ -33,10 +33,6 @@ export default async function VisorPage({
     .eq("id", archivoId)
     .single();
 
-  // Sin allow-same-origin: el contenido del iframe queda en un origen opaco y
-  // no puede leer cookies, localStorage ni acceder al padre (mitiga XSS/session
-  // theft si el contenido embebido resultara comprometido).
-  const iframeSandbox = "allow-scripts allow-forms allow-popups allow-modals";
   const isImage = (key: string | null) =>
     !!key && /\.(jpe?g|png|gif|webp|svg|bmp|avif|jfif|heic|heif|tiff?|ico)$/i.test(key);
 
@@ -67,6 +63,8 @@ export default async function VisorPage({
   let externalUrl: string | null = null;
   let errorMsg: string | null = null;
   let esCuestionario = false;
+  // Sandbox: cuestionario necesita same-origin para localStorage
+  let iframeSandbox = "allow-scripts allow-forms allow-popups allow-modals";
 
   if (archivo) {
     if (archivo.tipo === "cuestionario") {
@@ -141,6 +139,8 @@ export default async function VisorPage({
   } else {
     errorMsg = "Archivo no encontrado";
   }
+
+  if (esCuestionario) iframeSandbox = "allow-scripts allow-forms allow-popups allow-modals allow-same-origin";
 
   const ocultarHeader = archivo?.tipo === "material_privado";
 
