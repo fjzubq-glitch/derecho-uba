@@ -64,17 +64,19 @@ export async function GET(request: NextRequest) {
           const claseMap = new Map((clases || []).map((c) => [c.id, c]));
           const grantCount = new Map<string, number>();
           for (const g of grants || []) grantCount.set(g.archivo_id, (grantCount.get(g.archivo_id) || 0) + 1);
-          privados = (archs || []).map((a) => {
-            const c = claseMap.get(a.clase_id);
-            return {
-              archivo_id: a.id,
-              archivo_nombre: a.nombre_display,
-              archivo_tipo: a.tipo,
-              clase_numero: c?.numero ?? null,
-              clase_titulo: c?.titulo || "",
-              conGrant: grantCount.get(a.id) || 0,
-            };
-          });
+          privados = (archs || [])
+            .map((a) => {
+              const c = claseMap.get(a.clase_id);
+              return {
+                archivo_id: a.id,
+                archivo_nombre: a.nombre_display,
+                archivo_tipo: a.tipo,
+                clase_numero: c?.numero ?? null,
+                clase_titulo: c?.titulo || "",
+                conGrant: grantCount.get(a.id) || 0,
+              };
+            })
+            .sort((x, y) => (x.clase_numero ?? 9999) - (y.clase_numero ?? 9999) || x.archivo_nombre.localeCompare(y.archivo_nombre));
         }
       }
     }

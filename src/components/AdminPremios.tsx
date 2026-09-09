@@ -49,6 +49,7 @@ export default function AdminPremios() {
   const [ranking, setRanking] = useState<RankRow[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [tiposAbiertos, setTiposAbiertos] = useState<Set<string>>(new Set());
+  const [rankingAbierto, setRankingAbierto] = useState(false);
   const [loading, setLoading] = useState(true);
   const [nombreManual, setNombreManual] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -318,11 +319,18 @@ export default function AdminPremios() {
                   </button>
                 </div>
 
-                {/* Ranking propuesto */}
-                <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text-faint)", marginBottom: "8px" }}>
-                  Ranking de interacción · top
-                </p>
-                {ranking.length === 0 ? (
+                {/* Ranking propuesto (colapsable) */}
+                <button
+                  onClick={() => setRankingAbierto((v) => !v)}
+                  className="flex items-center justify-between w-full"
+                  style={{ background: "transparent", border: "none", cursor: "pointer", padding: "4px 0", marginBottom: "4px", width: "100%" }}
+                >
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>
+                    Ranking de interacción · top
+                  </span>
+                  <ChevronDown style={{ width: "13px", height: "13px", color: "var(--color-text-muted)", transform: rankingAbierto ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
+                </button>
+                {rankingAbierto && (ranking.length === 0 ? (
                   <p style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Sin actividad en el período.</p>
                 ) : (
                   ranking.slice(0, 10).map((r, i) => {
@@ -354,7 +362,7 @@ export default function AdminPremios() {
                       </div>
                     );
                   })
-                )}
+                ))}
               </div>
             )}
           </section>
