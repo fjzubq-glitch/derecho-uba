@@ -958,6 +958,8 @@ if (isTranscription(tipo)) {
                 if (privadosVisibles.length === 0) return null;
                 return (
                   <>
+                    {/* Header verde solo para admin/acceso total; premiadas ven solo cards */}
+                    {puedeVerTodo && (
                     <div
                       style={{
                         padding: "16px 20px",
@@ -997,7 +999,11 @@ if (isTranscription(tipo)) {
                         </span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    )}
+                    <div
+                      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                      style={!puedeVerTodo && clase.archivos.some((a) => !TIPOS_PRIVADOS.includes(a.tipo)) ? { marginTop: "32px" } : undefined}
+                    >
                       {(["cuestionario", "ficha", "material_privado"] as CardTipo[]).flatMap(renderCard)}
                     </div>
                   </>
