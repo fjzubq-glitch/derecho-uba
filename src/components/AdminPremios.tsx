@@ -145,7 +145,18 @@ export default function AdminPremios() {
   const grantedNames = new Set(grantsSel.map((g) => g.nombre.trim().toLowerCase()));
 
   const toggleArchivo = (id: string) => {
-    setArchivosSel((prev) => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+    setArchivosSel((prev) => {
+      const n = new Set(prev);
+      if (n.has(id)) {
+        n.delete(id);
+      } else {
+        n.add(id);
+        // Al tildar, también abrir su detalle con el ranking
+        setSelected(id);
+        setRankingAbierto(true);
+      }
+      return n;
+    });
   };
   const togglePersona = (nombre: string) => {
     const nom = nombre.trim();
