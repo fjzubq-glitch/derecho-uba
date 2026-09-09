@@ -949,55 +949,60 @@ if (isTranscription(tipo)) {
                 );
               })()}
 
-              {/* Separador: header verde entre público y privado */}
-              {(esAdmin || tieneAcceso) && clase.archivos.some((a) => TIPOS_PRIVADOS.includes(a.tipo)) && (
-                <div
-                  style={{
-                    padding: "16px 20px",
-                    marginTop: clase.archivos.some((a) => !TIPOS_PRIVADOS.includes(a.tipo)) ? "32px" : "0",
-                    marginBottom: "20px",
-                    background: "linear-gradient(135deg, rgba(0,255,85,0.12) 0%, rgba(0,255,85,0.04) 100%)",
-                    border: "1px solid rgba(0,255,85,0.35)",
-                    boxShadow: "0 0 20px rgba(0,255,85,0.15), inset 0 0 20px rgba(0,255,85,0.05)",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                  }}
-                >
-                  <Lock style={{ width: "18px", height: "18px", color: "#00FF55", flexShrink: 0 }} />
-                  <div>
-                    <span
+              {/* Separador + fila privada: admin/acceso ven todo; con grant solo sus archivos */}
+              {(() => {
+                const puedeVerTodo = esAdmin || tieneAcceso;
+                const privadosVisibles = puedeVerTodo
+                  ? clase.archivos.filter((a) => TIPOS_PRIVADOS.includes(a.tipo))
+                  : clase.archivos.filter((a) => TIPOS_PRIVADOS.includes(a.tipo) && grants.includes(a.id));
+                if (privadosVisibles.length === 0) return null;
+                return (
+                  <>
+                    <div
                       style={{
-                        fontFamily: "var(--font-ibm-plex-mono)",
-                        fontSize: "11px",
-                        letterSpacing: "0.14em",
-                        textTransform: "uppercase",
-                        color: "#00FF55",
-                        fontWeight: 600,
+                        padding: "16px 20px",
+                        marginTop: clase.archivos.some((a) => !TIPOS_PRIVADOS.includes(a.tipo)) ? "32px" : "0",
+                        marginBottom: "20px",
+                        background: "linear-gradient(135deg, rgba(0,255,85,0.12) 0%, rgba(0,255,85,0.04) 100%)",
+                        border: "1px solid rgba(0,255,85,0.35)",
+                        boxShadow: "0 0 20px rgba(0,255,85,0.15), inset 0 0 20px rgba(0,255,85,0.05)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
                       }}
                     >
-                      {esAdmin ? "Material del administrador" : "Material privado"}
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: "var(--font-ibm-plex-mono)",
-                        fontSize: "11px",
-                        color: "var(--color-text-faint)",
-                        marginLeft: "8px",
-                      }}
-                    >
-                      {clase.archivos.filter((a) => TIPOS_PRIVADOS.includes(a.tipo)).length} archivo{clase.archivos.filter((a) => TIPOS_PRIVADOS.includes(a.tipo)).length !== 1 ? "s" : ""}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {/* Fila(s) inferior(es): contenido privado (verde) — orden: cuestionario, ficha, material_privado */}
-              {(esAdmin || tieneAcceso) && clase.archivos.some((a) => TIPOS_PRIVADOS.includes(a.tipo)) && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {(["cuestionario", "ficha", "material_privado"] as CardTipo[]).flatMap(renderCard)}
-                </div>
-              )}
+                      <Lock style={{ width: "18px", height: "18px", color: "#00FF55", flexShrink: 0 }} />
+                      <div>
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "11px",
+                            letterSpacing: "0.14em",
+                            textTransform: "uppercase",
+                            color: "#00FF55",
+                            fontWeight: 600,
+                          }}
+                        >
+                          {esAdmin ? "Material del administrador" : "Material privado"}
+                        </span>
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "11px",
+                            color: "var(--color-text-faint)",
+                            marginLeft: "8px",
+                          }}
+                        >
+                          {privadosVisibles.length} archivo{privadosVisibles.length !== 1 ? "s" : ""}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {(["cuestionario", "ficha", "material_privado"] as CardTipo[]).flatMap(renderCard)}
+                    </div>
+                  </>
+                );
+              })()}
             </>
           )}
         </div>
