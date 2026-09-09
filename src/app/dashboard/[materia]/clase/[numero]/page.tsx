@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2, Lock } from "@/components/icons";
 import { formatDuration, formatFechaLocal, isAdminSession } from "@/lib/utils";
-import { getPortalUserName } from "@/lib/portalUser";
+import { getPortalUserName, PORTAL_USER_EVENT } from "@/lib/portalUser";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
 import { useAudio } from "@/components/AudioProvider";
 
@@ -155,13 +155,32 @@ export default function ClaseNumeroPage() {
   // Transcription expand
   const [openTranscripcion, setOpenTranscripcion] = useState(false);
 
+  // Nombre del portal (para grants por archivo). Se re-fetch al aparecer/cambiar,
+  // así funciona aunque se entre directo a la URL sin pasar por el portón.
+  const [portalNombre, setPortalNombre] = useState<string | null>(null);
+  const nombreFetchRef = useRef<string | null | undefined>(undefined);
+  useEffect(() => {
+    const sync = () => {
+      const n = getPortalUserName();
+      setPortalNombre((prev) => (prev === n ? prev : n));
+    };
+    sync();
+    window.addEventListener(PORTAL_USER_EVENT, sync);
+    return () => window.removeEventListener(PORTAL_USER_EVENT, sync);
+  }, []);
+
   useEffect(() => {
     if (materiaSlug && numero) {
-      loadData();
       trackActivity({ tipo: "page_view", pagina: "clase_detalle", materia_slug: materiaSlug });
+      const urlNombre = new URLSearchParams(window.location.search).get("nombre")?.trim() || null;
+      const efectivo = urlNombre || portalNombre;
+      if (nombreFetchRef.current !== efectivo) {
+        nombreFetchRef.current = efectivo;
+        loadData();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [materiaSlug, numero]);
+  }, [materiaSlug, numero, portalNombre]);
 
   useEffect(() => {
     if (!clase) return;
