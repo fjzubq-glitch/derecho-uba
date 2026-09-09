@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { unstable_cache } from "next/cache";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
+import { TIPOS_PRIVADOS, tieneGrant } from "@/lib/privados";
 export const dynamic = "force-dynamic";
 
 async function getClaseData(slug: string, num: number) {
@@ -87,18 +88,23 @@ export async function GET(
   // El filtrado de tipos privados es por-request (depende de esAdmin / acceso)
   // y no se cachea, así el cache compartido no filtra para el rol equivocado.
   // Además: grants por archivo (premios) — un alumno con grant ve ESE archivo
-  // aunque no tenga la clave de la materia. Se identifica solo por nombre.
-  const TIPOS_PRIVADOS = ["cuestionario", "material_privado", "ficha"];
+  // aunque no tenga la clave de la materia. Se identifica solo por nombre
+  // (comparación normalizada: ignora mayúsculas, tildes y espacios de más).
   let grantedIds: string[] = [];
   if (!esAdmin && !tieneAcceso && nombre) {
     const privados = (data.clase.archivos || []).filter((a) => TIPOS_PRIVADOS.includes(a.tipo));
     if (privados.length > 0) {
       const { data: grants } = await getSupabaseAdmin()
         .from("accesos_archivo")
-        .select("archivo_id")
-        .in("archivo_id", privados.map((a) => a.id))
-        .ilike("nombre", nombre);
-      grantedIds = (grants || []).map((g) => g.archivo_id);
+        .select("archivo_id, nombre")
+        .in("archivo_id", privados.map((a) => a.id));
+      const porArchivo = new Map<string, Array<{ nombre?: string | null }>>();
+      for (const g of grants || []) {
+        const list = porArchivo.get(g.archivo_id) || [];
+        list.push({ nombre: g.nombre });
+        porArchivo.set(g.archivo_id, list);
+      }
+      grantedIds = privados.filter((a) => tieneGrant(porArchivo.get(a.id) || [], nombre)).map((a) => a.id);
     }
   }
   const grantSet = new Set(grantedIds);

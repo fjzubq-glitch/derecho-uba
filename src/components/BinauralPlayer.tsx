@@ -7,7 +7,6 @@ export default function BinauralPlayer() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const [open, setOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const bcRef = useRef<BroadcastChannel | null>(null);
   const BINAURAL_KEY = "binaural_shared";
@@ -19,15 +18,7 @@ export default function BinauralPlayer() {
         if (d?.ok && d?.binaural) {
           setHasAudio(true);
           setFileName(d.binaural.file_name);
-          setIsAdmin(true);
-        } else if (d?.ok) {
-          setIsAdmin(false);
         }
-      })
-      .catch(() => {});
-    fetch("/api/admin/binaural")
-      .then((r) => {
-        if (r.status !== 401) setIsAdmin(true);
       })
       .catch(() => {});
   }, []);

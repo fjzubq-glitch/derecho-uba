@@ -5,6 +5,7 @@ import { isAdminRequest, verifyVisorToken } from "@/lib/auth";
 import ZoomableImage from "@/components/ZoomableImage";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { getObjectStream } from "@/lib/r2";
+import { tieneGrant } from "@/lib/privados";
 
 const BRIDGE_SCRIPT_ADMIN = `<script>(function(){function h(){try{window.parent.postMessage({type:"cuestionario-editor-save",html:"<!DOCTYPE html>\\n"+document.documentElement.outerHTML},"*")}catch(e){}}function hook(){if(typeof EditorManager!=="undefined"&&EditorManager.saveContent){var o=EditorManager.saveContent.bind(EditorManager);EditorManager.saveContent=function(){o();h()}}else setTimeout(hook,200)}hook();document.addEventListener("visibilitychange",function(){if(document.visibilityState==="hidden")h()})})();<` + `/script>`;
 
@@ -57,15 +58,14 @@ export default async function VisorPage({
   }
 
   // Grant por archivo (premio): el alumno ve ESE archivo privado solo con su nombre
+  // (comparación normalizada: ignora mayúsculas, tildes y espacios de más)
   let tieneGrantArchivo = false;
   if (!esAdmin && !tieneAccesoEspecial && nombreVisitante && archivo) {
-    const { data: grant } = await getSupabaseAdmin()
+    const { data: grants } = await getSupabaseAdmin()
       .from("accesos_archivo")
-      .select("id")
-      .eq("archivo_id", archivoId)
-      .ilike("nombre", nombreVisitante)
-      .maybeSingle();
-    tieneGrantArchivo = !!grant;
+      .select("nombre")
+      .eq("archivo_id", archivoId);
+    tieneGrantArchivo = tieneGrant(grants || [], nombreVisitante);
   }
   if (tieneGrantArchivo) tieneAccesoEspecial = true;
 
@@ -137,11 +137,17 @@ export default async function VisorPage({
         iframeSrcDoc = archivo.contenido_texto;
         modo = "srcdoc";
       } else if (archivo.storage_key) {
+        // Propagar identidad al stream para que valide grants/accesos (misma página, sin nueva exposición)
+        const sq = new URLSearchParams();
+        if (token) sq.set("t", token);
+        if (nombreVisitante) sq.set("nombre", nombreVisitante);
+        if (claveVisitante) sq.set("clave", claveVisitante);
+        const streamQs = sq.toString() ? `?${sq.toString()}` : "";
         if (isImage(archivo.storage_key)) {
-          iframeSrc = `/api/stream/${archivoId}`;
+          iframeSrc = `/api/stream/${archivoId}${streamQs}`;
           modo = "imagen";
         } else {
-          iframeSrc = `/api/stream/${archivoId}`;
+          iframeSrc = `/api/stream/${archivoId}${streamQs}`;
           modo = "iframe";
         }
       } else {

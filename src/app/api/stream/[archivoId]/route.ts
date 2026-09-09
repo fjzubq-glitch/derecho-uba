@@ -3,6 +3,7 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 import { getObjectStream } from "@/lib/r2";
 import { ipFromRequest, isRateLimited } from "@/lib/simpleRateLimit";
 import { isAdminRequest } from "@/lib/auth";
+import { tieneGrant } from "@/lib/privados";
 export const dynamic = "force-dynamic";
 
 
@@ -14,7 +15,7 @@ export async function GET(
 
   const { data: archivo, error } = await getSupabaseAdmin()
     .from("archivos")
-    .select("storage_key, youtube_url, cloudinary_url, tipo, contenido_texto, nombre_display")
+    .select("storage_key, youtube_url, cloudinary_url, tipo, contenido_texto, nombre_display, clase_id")
     .eq("id", archivoId)
     .single();
 
@@ -22,9 +23,45 @@ export async function GET(
     return new Response("File not found", { status: 404 });
   }
 
-  // Los cuestionarios, material privado y fichas solo son accesibles para el administrador
-  if ((archivo.tipo === "cuestionario" || archivo.tipo === "material_privado" || archivo.tipo === "ficha") && !isAdminRequest(request.headers.get("cookie"))) {
-    return new Response("File not found", { status: 404 });
+  // Privados: admin, token de visor, acceso especial (clave+nombre) o grant por archivo (nombre)
+  if (archivo.tipo === "cuestionario" || archivo.tipo === "material_privado" || archivo.tipo === "ficha") {
+    const esAdmin = isAdminRequest(request.headers.get("cookie"));
+    if (!esAdmin) {
+      const url = new URL(request.url);
+      const t = url.searchParams.get("t");
+      const nombre = url.searchParams.get("nombre")?.trim() || null;
+      const clave = url.searchParams.get("clave")?.trim().toUpperCase() || null;
+      let ok = false;
+      if (t) {
+        const { verifyVisorToken } = await import("@/lib/auth");
+        ok = verifyVisorToken(t, archivoId);
+      }
+      if (!ok && nombre) {
+        const { data: grants } = await getSupabaseAdmin()
+          .from("accesos_archivo")
+          .select("nombre")
+          .eq("archivo_id", archivoId);
+        ok = tieneGrant(grants || [], nombre);
+      }
+      if (!ok && nombre && clave && archivo.clase_id) {
+        const { data: clase } = await getSupabaseAdmin()
+          .from("clases")
+          .select("materia_id")
+          .eq("id", archivo.clase_id)
+          .single();
+        if (clase) {
+          const { data: acceso } = await getSupabaseAdmin()
+            .from("accesos_especiales")
+            .select("id")
+            .eq("materia_id", clase.materia_id)
+            .eq("clave", clave)
+            .ilike("nombre", nombre)
+            .maybeSingle();
+          ok = !!acceso;
+        }
+      }
+      if (!ok) return new Response("File not found", { status: 404 });
+    }
   }
 
   if (archivo.youtube_url) {

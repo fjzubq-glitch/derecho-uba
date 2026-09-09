@@ -7,6 +7,7 @@ import { trackActivity } from "@/lib/tracking";
 import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Download, RotateCcw, Check, Loader2, Link2, Lock } from "@/components/icons";
 import { formatDuration, formatFechaLocal, isAdminSession } from "@/lib/utils";
 import { getPortalUserName, PORTAL_USER_EVENT } from "@/lib/portalUser";
+import { TIPOS_PRIVADOS } from "@/lib/privados";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
 import { useAudio } from "@/components/AudioProvider";
 
@@ -105,7 +106,7 @@ const CARD_CONFIG: Record<CardTipo, {
   },
 };
 
-  const TIPOS_PRIVADOS: string[] = ["cuestionario", "material_privado", "ficha"];
+
 
 const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario", "material_privado", "ficha"];
 
@@ -220,17 +221,18 @@ async function eliminarOffline(archivo: Archivo) {
   }
 
 async function loadData() {
-    const cacheKey = `materia:${materiaSlug}:clase:${numero}`;
+    const urlClave = new URLSearchParams(window.location.search).get("clave")?.trim() || null;
+    const urlNombre = new URLSearchParams(window.location.search).get("nombre")?.trim() || null;
+    const nombreFinal = urlNombre || getPortalUserName();
+    // La key offline incluye el nombre: un grant revocado o cambio de usuario
+    // no debe reutilizar contenido privado cacheado de otra identidad.
+    const cacheKey = `materia:${materiaSlug}:clase:${numero}:n:${(nombreFinal || "").toLowerCase()}`;
     const num = parseInt(numero);
     try {
       // Pasamos clave+nombre (URL) y nombre del portal (localStorage) para que
       // la API incluya privados por acceso especial o por grant por archivo.
       const qp = new URLSearchParams();
-      const urlClave = new URLSearchParams(window.location.search).get("clave")?.trim();
-      const urlNombre = new URLSearchParams(window.location.search).get("nombre")?.trim();
-      const portalNombre = getPortalUserName();
       if (urlClave) qp.set("clave", urlClave);
-      const nombreFinal = urlNombre || portalNombre;
       if (nombreFinal) qp.set("nombre", nombreFinal);
       const qs = qp.toString();
       const res = await fetch(`/api/materias/${materiaSlug}/clases/${numero}${qs ? `?${qs}` : ""}`);
@@ -353,12 +355,13 @@ function handleAudioAction(archivo: Archivo) {
         if (accesoClave && accesoNombre) {
           return `${base}&nombre=${encodeURIComponent(accesoNombre)}&clave=${encodeURIComponent(accesoClave)}`;
         }
-        // Nombre del portal para que el visor valide grants por archivo
+        // Nombre del portal para que el visor valide grants por archivo.
+        // Sin nombre no se manda nada (antes se mandaba el nombre del archivo, erróneo).
         const portalNombre = getPortalUserName();
         if (portalNombre) {
           return `${base}&nombre=${encodeURIComponent(portalNombre)}`;
         }
-        return `${base}&nombre=${encodeURIComponent(archivo.nombre_display)}`;
+        return base;
       };
 
      const tipo = archivo.tipo as CardTipo;
@@ -558,7 +561,9 @@ if (isTranscription(tipo)) {
               onClick={(e) => {
                 e.stopPropagation();
                 if (archivo.storage_key) {
-                  window.open(`/api/stream/${archivo.id}?download=1`, "_blank");
+                  const dlNombre = accesoNombre || getPortalUserName();
+                  const dlQs = dlNombre ? `?download=1&nombre=${encodeURIComponent(dlNombre)}` : "?download=1";
+                  window.open(`/api/stream/${archivo.id}${dlQs}`, "_blank");
                   trackActivity({ tipo: "file_download", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
                 } else if (archivo.contenido_texto) {
                   descargarTexto(archivo);

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
+import { TIPOS_PRIVADOS, normalizarNombreGrant } from "@/lib/privados";
 export const dynamic = "force-dynamic";
-
-const TIPOS_PRIVADOS = ["cuestionario", "material_privado", "ficha"];
 
 // GET: lista todos los grants con contexto (materia/clase/archivo).
 // Solo archivos privados.
@@ -113,9 +112,20 @@ export async function POST(request: NextRequest) {
   }
   try {
     const { archivo_id, nombre } = await request.json();
-    const nom = String(nombre || "").trim();
+    const nom = String(nombre || "").trim().replace(/\s+/g, " ");
     if (!archivo_id || !nom) {
       return NextResponse.json({ ok: false, error: "Faltan datos" }, { status: 400 });
+    }
+    // Evitar duplicados que solo difieren en tildes/espacios (el índice único solo cubre case)
+    const { data: existentes } = await getSupabaseAdmin()
+      .from("accesos_archivo")
+      .select("nombre")
+      .eq("archivo_id", archivo_id);
+    const yaExiste = (existentes || []).some(
+      (g) => normalizarNombreGrant(g.nombre) === normalizarNombreGrant(nom),
+    );
+    if (yaExiste) {
+      return NextResponse.json({ ok: false, error: "Ya tiene acceso a este archivo" }, { status: 409 });
     }
     const supabase = getSupabaseAdmin();
     const { data: archivo } = await supabase
