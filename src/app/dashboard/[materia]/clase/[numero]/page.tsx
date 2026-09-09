@@ -436,11 +436,17 @@ if (isTranscription(tipo)) {
     const youtubeThumb = archivo.youtube_url ? youtubeThumbUrl(archivo.youtube_url) : null;
     const isActive = playingArchivoId === archivo.id;
     const esPrivado = TIPOS_PRIVADOS.includes(tipo);
-    // Premio silencioso: relieve dorado delicado solo visible para el premiado
+    // Premio silencioso: para la premiada (sin admin ni clave) la card se ve
+    // como contenido común: sin verde, sin candado, sin "privado".
     const esPremio = grants.includes(archivo.id);
+    const esPremioSolo = esPremio && !esAdmin && !tieneAcceso;
     const NEON = "#00FF55";
-    const accentColor = esPrivado ? NEON : "var(--color-gold)";
+    const accentColor = esPremioSolo ? "var(--color-gold)" : esPrivado ? NEON : "var(--color-gold)";
     const accentBorder = esPremio ? "var(--color-gold-dim)" : esPrivado ? "rgba(0,255,85,0.35)" : "var(--color-gold-dim)";
+    const labelShown = esPremioSolo ? "MATERIAL" : config.label;
+    const iconShown = esPremioSolo
+      ? <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
+      : config.icon;
 
     return (
       <article
@@ -455,18 +461,18 @@ if (isTranscription(tipo)) {
         }}
         className="card-reveal card-hover"
         style={{
-          background: esPrivado ? "linear-gradient(135deg, rgba(0,255,85,0.06) 0%, rgba(0,255,85,0.02) 100%)" : "var(--color-card)",
+          background: esPremioSolo ? "var(--color-card)" : esPrivado ? "linear-gradient(135deg, rgba(0,255,85,0.06) 0%, rgba(0,255,85,0.02) 100%)" : "var(--color-card)",
           padding: "28px 24px",
           position: "relative",
           opacity: 1,
           cursor: "pointer",
           animationDelay: `${cardIndex * 55}ms`,
           transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
-          boxShadow: isActive ? "inset 0 0 0 1px var(--color-gold)" : esPremio ? "0 0 18px rgba(185,154,98,0.16), 0 0 15px rgba(0,255,85,0.08)" : esPrivado ? "0 0 15px rgba(0,255,85,0.1), inset 0 0 15px rgba(0,255,85,0.03)" : "none",
+          boxShadow: isActive ? "inset 0 0 0 1px var(--color-gold)" : esPremio ? "0 0 18px rgba(185,154,98,0.16)" : esPrivado ? "0 0 15px rgba(0,255,85,0.1), inset 0 0 15px rgba(0,255,85,0.03)" : "none",
           border: esPremio ? "1px solid var(--color-gold-dim)" : esPrivado ? "1px solid rgba(0,255,85,0.35)" : "1px solid var(--color-line-soft)",
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.background = esPrivado ? "linear-gradient(135deg, rgba(0,255,85,0.1) 0%, rgba(0,255,85,0.04) 100%)" : "var(--color-card-hover)"; e.currentTarget.style.borderColor = accentBorder; }}
-        onMouseLeave={(e) => { e.currentTarget.style.background = esPrivado ? "linear-gradient(135deg, rgba(0,255,85,0.06) 0%, rgba(0,255,85,0.02) 100%)" : "var(--color-card)"; e.currentTarget.style.borderColor = esPrivado ? "rgba(0,255,85,0.35)" : "var(--color-line-soft)"; }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = esPremioSolo ? "var(--color-card-hover)" : esPrivado ? "linear-gradient(135deg, rgba(0,255,85,0.1) 0%, rgba(0,255,85,0.04) 100%)" : "var(--color-card-hover)"; e.currentTarget.style.borderColor = accentBorder; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = esPremioSolo ? "var(--color-card)" : esPrivado ? "linear-gradient(135deg, rgba(0,255,85,0.06) 0%, rgba(0,255,85,0.02) 100%)" : "var(--color-card)"; e.currentTarget.style.borderColor = esPremio ? "var(--color-gold-dim)" : esPrivado ? "rgba(0,255,85,0.35)" : "var(--color-line-soft)"; }}
         onClick={() => handleCardClick(archivo)}
       >
         <div className="flex items-start justify-between gap-3" style={{ position: "relative", zIndex: 1 }}>
@@ -477,11 +483,11 @@ if (isTranscription(tipo)) {
                 height: "40px",
                 borderRadius: "50%",
                 border: `1px solid ${accentBorder}`,
-                boxShadow: esPrivado ? "0 0 10px rgba(0,255,85,0.15)" : "none",
+                boxShadow: !esPremioSolo && esPrivado ? "0 0 10px rgba(0,255,85,0.15)" : "none",
               }}
-          >
-            {config.icon}
-          </div>
+            >
+              {iconShown}
+            </div>
           <div className="flex-1 min-w-0">
             <div
               style={{
@@ -499,7 +505,7 @@ if (isTranscription(tipo)) {
                 lineHeight: 1.4,
               }}
             >
-              {config.label}
+              {labelShown}
               <div
                 className="flex items-end"
                 style={{ gap: "2px", height: "10px", opacity: isThisPlaying ? 1 : 0, transition: "opacity 0.2s ease" }}
