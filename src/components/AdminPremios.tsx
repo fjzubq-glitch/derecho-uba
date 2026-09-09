@@ -500,7 +500,7 @@ export default function AdminPremios() {
                 {rankingAbierto && (ranking.length === 0 ? (
                   <p style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Sin actividad en el período.</p>
                 ) : (
-                  ranking.slice(0, 10).map((r, i) => {
+                  ranking.slice(0, 3).map((r, i) => {
                     const yaTiene = grantedNames.has(r.nombre.trim().toLowerCase());
                     const enLote = personasSel.some((p) => p.toLowerCase() === r.nombre.trim().toLowerCase());
                     return (
