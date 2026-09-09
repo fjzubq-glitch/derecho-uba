@@ -135,6 +135,11 @@ export default function AdminPremios() {
     }
   };
 
+  const seleccionarArchivo = (id: string) => {
+    setSelected(id);
+    setRankingAbierto(true);
+  };
+
   const sel = privados.find((p) => p.archivo_id === selected) || null;
   const grantsSel = grants.filter((g) => g.archivo_id === selected);
   const grantedNames = new Set(grantsSel.map((g) => g.nombre.trim().toLowerCase()));
@@ -392,7 +397,7 @@ export default function AdminPremios() {
                             style={{ width: "15px", height: "15px", accentColor: "var(--color-gold)", cursor: "pointer", flexShrink: 0 }}
                           />
                           <button
-                            onClick={() => setSelected(p.archivo_id)}
+                            onClick={() => seleccionarArchivo(p.archivo_id)}
                             className="flex items-center gap-3 flex-1 min-w-0 text-left"
                             style={{ background: "transparent", border: "none", cursor: "pointer", padding: 0 }}
                           >
