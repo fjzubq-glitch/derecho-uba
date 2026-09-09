@@ -192,36 +192,36 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
             </Link>
           )}
 
-          {/* LED admin */}
-          <div className="flex items-center" style={{ gap: "8px" }}>
-            <button
-              onClick={handleGoAdmin}
-              aria-label={adminActive ? "Admin activo" : "Admin"}
-              title={adminActive ? "Admin activo — click para ir al panel" : "Ir al panel de administración"}
-              className="flex items-center justify-center"
-              style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "50%",
-                background: "none",
-                border: adminActive ? "1px solid rgba(111, 160, 107, 0.45)" : "1px solid var(--color-line)",
-                cursor: "pointer",
-                boxShadow: adminActive ? "0 0 10px rgba(111, 160, 107, 0.18)" : "none",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = adminActive ? "#6FA06B" : "var(--color-gold-dim)")}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = adminActive ? "rgba(111, 160, 107, 0.45)" : "var(--color-line)")}
-            >
-              <span
+          {/* LED admin — solo visible con sesión activa (los alumnos no lo ven) */}
+          {adminActive && (
+            <div className="flex items-center" style={{ gap: "8px" }}>
+              <button
+                onClick={handleGoAdmin}
+                aria-label="Admin activo"
+                title="Admin activo — click para ir al panel"
+                className="flex items-center justify-center"
                 style={{
-                  width: "8px",
-                  height: "8px",
+                  width: "32px",
+                  height: "32px",
                   borderRadius: "50%",
-                  background: adminActive ? "#6FA06B" : "var(--color-danger)",
-                  boxShadow: adminActive ? "0 0 6px rgba(111, 160, 107, 0.9)" : "none",
+                  background: "none",
+                  border: "1px solid rgba(111, 160, 107, 0.45)",
+                  cursor: "pointer",
+                  boxShadow: "0 0 10px rgba(111, 160, 107, 0.18)",
                 }}
-              />
-            </button>
-            {adminActive && (
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#6FA06B")}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(111, 160, 107, 0.45)")}
+              >
+                <span
+                  style={{
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    background: "#6FA06B",
+                    boxShadow: "0 0 6px rgba(111, 160, 107, 0.9)",
+                  }}
+                />
+              </button>
               <button
                 onClick={handleLogoutAdmin}
                 title="Cerrar sesión de administrador"
@@ -242,8 +242,8 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
               >
                 <X style={{ width: "10px", height: "10px", opacity: 0.6 }} />
               </button>
-            )}
-          </div>
+            </div>
+          )}
 
           <a
             href={PLANIFICADOR_URL}
