@@ -48,7 +48,7 @@ export default function AdminPremios() {
   const [grants, setGrants] = useState<Grant[]>([]);
   const [ranking, setRanking] = useState<RankRow[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
-  const [tiposAbiertos, setTiposAbiertos] = useState<Set<string>>(new Set(["cuestionario"]));
+  const [tiposAbiertos, setTiposAbiertos] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [nombreManual, setNombreManual] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -65,8 +65,10 @@ export default function AdminPremios() {
       if (r1.ok) {
         setPrivados(r1.privados || []);
         setGrants(r1.grants || []);
-        if (!selected || !(r1.privados || []).some((p: Privado) => p.archivo_id === selected)) {
-          setSelected((r1.privados || [])[0]?.archivo_id || null);
+        // Sin preselección: el detalle solo aparece al elegir un archivo.
+        // Si había uno elegido y sigue existiendo, se mantiene.
+        if (selected && !(r1.privados || []).some((p: Privado) => p.archivo_id === selected)) {
+          setSelected(null);
         }
       }
       if (r2.ok) setRanking(r2.ranking || []);
