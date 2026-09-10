@@ -275,54 +275,50 @@ export default function HomeClient({
 
       {/* ═══════════ BUSCADOR DE LEYES ═══════════ */}
       <section>
-        <div className="pad-lateral" style={{ padding: "48px 48px 0" }}>
+        <div className="pad-lateral" style={{ padding: "32px 48px 0" }}>
           <a
             href="/leyes"
-            className="group flex items-center gap-5"
+            className="group flex items-center gap-3"
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "20px",
+              gap: "14px",
               background: "var(--color-card)",
-              border: "1px solid rgba(76, 175, 125, 0.3)",
-              padding: "24px 28px",
+              border: "1px solid rgba(76, 175, 125, 0.25)",
+              padding: "14px 20px",
               textDecoration: "none",
               transition: "border-color 0.25s ease, box-shadow 0.25s ease",
-              boxShadow: "0 0 20px rgba(76, 175, 125, 0.08)",
-              position: "relative",
-              overflow: "hidden",
+              boxShadow: "0 0 14px rgba(76, 175, 125, 0.06)",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "rgba(76, 175, 125, 0.55)";
-              e.currentTarget.style.boxShadow = "0 0 30px rgba(76, 175, 125, 0.15)";
+              e.currentTarget.style.borderColor = "rgba(76, 175, 125, 0.5)";
+              e.currentTarget.style.boxShadow = "0 0 22px rgba(76, 175, 125, 0.12)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "rgba(76, 175, 125, 0.3)";
-              e.currentTarget.style.boxShadow = "0 0 20px rgba(76, 175, 125, 0.08)";
+              e.currentTarget.style.borderColor = "rgba(76, 175, 125, 0.25)";
+              e.currentTarget.style.boxShadow = "0 0 14px rgba(76, 175, 125, 0.06)";
             }}
           >
-            {/* Icono */}
             <div
               className="flex items-center justify-center flex-shrink-0"
               style={{
-                width: "48px",
-                height: "48px",
+                width: "34px",
+                height: "34px",
                 borderRadius: "50%",
-                border: "1px solid rgba(76, 175, 125, 0.4)",
-                background: "rgba(76, 175, 125, 0.06)",
+                border: "1px solid rgba(76, 175, 125, 0.35)",
+                background: "rgba(76, 175, 125, 0.05)",
               }}
             >
-              <Scale style={{ width: "20px", height: "20px", color: "#4CAF7D" }} />
+              <Scale style={{ width: "15px", height: "15px", color: "#4CAF7D" }} />
             </div>
 
-            {/* Texto */}
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <span
                   style={{
                     fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                     fontWeight: 500,
-                    fontSize: "17px",
+                    fontSize: "14px",
                     color: "var(--color-text)",
                   }}
                 >
@@ -333,10 +329,10 @@ export default function HomeClient({
                     background: "#4CAF7D",
                     color: "#0C0B09",
                     fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "9px",
+                    fontSize: "8px",
                     fontWeight: 700,
                     letterSpacing: "0.06em",
-                    padding: "3px 7px",
+                    padding: "2px 6px",
                     lineHeight: 1,
                     textTransform: "uppercase",
                   }}
@@ -348,9 +344,9 @@ export default function HomeClient({
                 className="block"
                 style={{
                   fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "11px",
+                  fontSize: "10px",
                   color: "var(--color-text-faint)",
-                  marginTop: "4px",
+                  marginTop: "2px",
                   letterSpacing: "0.02em",
                 }}
               >
@@ -358,12 +354,11 @@ export default function HomeClient({
               </span>
             </div>
 
-            {/* Flecha */}
             <ArrowRight
               style={{
-                width: "16px",
-                height: "16px",
-                color: "rgba(76, 175, 125, 0.5)",
+                width: "14px",
+                height: "14px",
+                color: "rgba(76, 175, 125, 0.45)",
                 flexShrink: 0,
                 transition: "transform 0.2s ease, color 0.2s ease",
               }}
