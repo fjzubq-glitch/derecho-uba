@@ -3,7 +3,7 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 import { getObjectStream } from "@/lib/r2";
 import { ipFromRequest, isRateLimited } from "@/lib/simpleRateLimit";
 import { isAdminRequest } from "@/lib/auth";
-import { tieneGrant } from "@/lib/privados";
+import { TIPOS_PRIVADOS, tieneGrant } from "@/lib/privados";
 export const dynamic = "force-dynamic";
 
 
@@ -24,7 +24,7 @@ export async function GET(
   }
 
   // Privados: admin, token de visor, acceso especial (clave+nombre) o grant por archivo (nombre)
-  if (archivo.tipo === "cuestionario" || archivo.tipo === "material_privado" || archivo.tipo === "ficha") {
+  if (TIPOS_PRIVADOS.includes(archivo.tipo)) {
     const esAdmin = isAdminRequest(request.headers.get("cookie"));
     if (!esAdmin) {
       const url = new URL(request.url);

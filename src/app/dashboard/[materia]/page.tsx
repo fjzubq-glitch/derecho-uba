@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { unstable_cache } from "next/cache";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
+import { TIPOS_PRIVADOS } from "@/lib/privados";
 import MateriaClient from "./MateriaClient";
 
 export const dynamic = "force-dynamic";
@@ -95,7 +96,6 @@ export default async function MateriaPage({
     ? await getArchivos(slug, claseIds)
     : { data: [] as ArchivoRow[] };
 
-  const TIPOS_PRIVADOS = ["cuestionario", "material_privado", "ficha"];
   const porClase = new Map<string, ArchivoRow[]>();
   for (const a of archivos || []) {
     if (!esAdmin && !tieneAcceso && TIPOS_PRIVADOS.includes(a.tipo)) continue;

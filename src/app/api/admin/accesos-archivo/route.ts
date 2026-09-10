@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: "Archivo no encontrado" }, { status: 404 });
     }
     if (!TIPOS_PRIVADOS.includes(archivo.tipo)) {
-      return NextResponse.json({ ok: false, error: "Solo archivos privados (cuestionario, material privado, ficha)" }, { status: 400 });
+      return NextResponse.json({ ok: false, error: "Solo archivos privados (cuestionario, material privado, ficha, lexpodcast)" }, { status: 400 });
     }
     const { data, error } = await supabase
       .from("accesos_archivo")

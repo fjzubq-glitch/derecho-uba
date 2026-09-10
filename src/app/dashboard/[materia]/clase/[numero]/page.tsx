@@ -201,7 +201,19 @@ export default function ClaseNumeroPage() {
   }, [clase]);
 
   function audioSourceUrl(archivo: Archivo) {
-    return archivo.cloudinary_url || `/api/stream/${archivo.id}`;
+    if (archivo.cloudinary_url) return archivo.cloudinary_url;
+    let url = `/api/stream/${archivo.id}`;
+    // Los tipos privados exigen nombre (grant) o clave+nombre en el stream.
+    // Sin esto, un premiado vería la card pero el audio daría 404.
+    if (TIPOS_PRIVADOS.includes(archivo.tipo)) {
+      const qp = new URLSearchParams();
+      const nom = accesoNombre || portalNombre;
+      if (nom) qp.set("nombre", nom);
+      if (accesoClave) qp.set("clave", accesoClave);
+      const qs = qp.toString();
+      if (qs) url += `?${qs}`;
+    }
+    return url;
   }
 
   async function guardarOffline(archivo: Archivo) {
