@@ -91,6 +91,17 @@ function parseQuery(q: string): { tipoDetectado: string; numeroDetectado: string
 function mapSupabaseRow(r: SupabaseRow): LeyResultado {
   const anio = r.fecha_sancion ? String(r.fecha_sancion).slice(0, 4) : "";
   const texto = r.texto_actualizado || r.texto_original || "";
+
+  // El titulo_resumido suele ser generico ("APROBACION", "REGIMEN"); el tema
+  // real esta en titulo_sumario. Mostramos el tema y, si aplica, la accion.
+  const tema = (r.titulo_sumario || "").trim();
+  const accion = (r.titulo_resumido || "").trim();
+  let descripcion = tema || accion;
+  const accionMod = /MODIFICACION|MODIFICA|ABROGA|DEROGA|SUSTITU|ADECUACION|INCORPORA|PROMULGACION|REFORMA/;
+  if (tema && accion && accion.toUpperCase() !== tema.toUpperCase() && accionMod.test(accion.toUpperCase())) {
+    descripcion = `${tema} — ${accion}`;
+  }
+
   return {
     id: r.id_norma,
     tipo: r.tipo_norma,
@@ -98,7 +109,7 @@ function mapSupabaseRow(r: SupabaseRow): LeyResultado {
     anio,
     dependencia: r.organismo_origen || "",
     fecha: r.fecha_sancion || "",
-    descripcion: r.titulo_resumido || r.titulo_sumario || "",
+    descripcion,
     resumen: r.texto_resumido || "",
     url: `${INFOLEG_BASE}/verNorma.do?id=${r.id_norma}`,
     textoUrl: texto || null,
