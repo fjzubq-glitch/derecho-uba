@@ -368,7 +368,7 @@ export default function AdminPage() {
     claseTitulo: string,
     claseFecha: string,
     items: Array<{
-      tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha";
+      tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha" | "lexpodcast";
       nombre: string;
       archivo?: File;
       driveLink?: string;

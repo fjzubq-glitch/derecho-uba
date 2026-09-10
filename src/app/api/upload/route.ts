@@ -128,9 +128,9 @@ export async function POST(request: NextRequest) {
 
       if (storageKey) {
         const fileName = String(storageKey).split("/").pop() || "";
-        const isAudio = item.tipo === "audio_clase" || item.tipo === "podcast";
+        const isAudio = item.tipo === "audio_clase" || item.tipo === "podcast" || item.tipo === "lexpodcast";
         const validation = isAudio
-          ? validateAudioFile({ name: fileName, size: Number(fileSize) || 0, type: item.tipo === "audio_clase" || item.tipo === "podcast" ? "audio/mpeg" : undefined })
+          ? validateAudioFile({ name: fileName, size: Number(fileSize) || 0, type: item.tipo === "audio_clase" || item.tipo === "podcast" || item.tipo === "lexpodcast" ? "audio/mpeg" : undefined })
           : validateDocumentFile({ name: fileName, size: Number(fileSize) || 0 });
         if (!validation.ok) {
           insertErrors.push(validation.error || "Archivo inválido");

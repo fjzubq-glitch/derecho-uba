@@ -6,7 +6,7 @@ import { formatFechaLocal } from "@/lib/utils";
 import { Upload, FileText, X, Check, Loader2, Headphones, Link2, Play, Lock } from "@/components/icons";
 
 interface UploadItem {
-  tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha";
+  tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha" | "lexpodcast";
   nombre: string;
   archivo?: File;
   driveLink?: string;
@@ -112,6 +112,13 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const [fichaNombre, setFichaNombre] = useState("");
   const [fichaUrl, setFichaUrl] = useState("");
 
+  const [lexpodcastNombre, setLexpodcastNombre] = useState("");
+  const [lexpodcastFile, setLexpodcastFile] = useState<File | null>(null);
+  const [lexpodcastLink, setLexpodcastLink] = useState("");
+  const [lexpodcastUseLink, setLexpodcastUseLink] = useState(false);
+  const lexpodcastInputRef = useRef<HTMLInputElement>(null);
+  const [lexpodcastDropHover, setLexpodcastDropHover] = useState(false);
+
   const [claseYoutubeItems, setClaseYoutubeItems] = useState<Array<{ nombre: string; url: string }>>([{ nombre: "", url: "" }]);
 
   const [cloudinaryUrl, setCloudinaryUrl] = useState("");
@@ -130,9 +137,10 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const hasEnlace = enlaceUrl.trim() !== "";
   const hasClaseYoutube = claseYoutubeItems.some((i) => i.url.trim() !== "");
   const hasMaterialPrivado = materialPrivadoFile !== null || (materialPrivadoUseLink && materialPrivadoLink.trim() !== "");
+  const hasLexpodcast = lexpodcastFile !== null || (lexpodcastUseLink && lexpodcastLink.trim() !== "");
   const hasFicha = fichaUrl.trim() !== "";
 
-  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasEnlace, hasClaseYoutube, hasCuestionario, hasMaterialPrivado, hasFicha].filter(Boolean).length;
+  const loadedCount = [hasAudio, hasTranscripcion, hasArchivo, hasEnlace, hasClaseYoutube, hasCuestionario, hasMaterialPrivado, hasLexpodcast, hasFicha].filter(Boolean).length;
   useEffect(() => {
     if (materias.length > 0 && !materiaId) {
       setMateriaId(materias[0].id);
@@ -290,6 +298,14 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
       items.push({ tipo: "ficha", nombre: fichaNombre || `Ficha`, driveLink: fichaUrl.trim() });
     }
 
+    if (hasLexpodcast) {
+      if (lexpodcastUseLink && lexpodcastLink) {
+        items.push({ tipo: "lexpodcast", nombre: lexpodcastNombre || `LexPodcast`, cloudinaryUrl: lexpodcastLink });
+      } else if (lexpodcastFile) {
+        items.push({ tipo: "lexpodcast", nombre: lexpodcastNombre || `LexPodcast`, archivo: lexpodcastFile });
+      }
+    }
+
     claseYoutubeItems.forEach((item, idx) => {
       if (item.url.trim()) {
         items.push({ tipo: "clase_youtube", nombre: item.nombre.trim() || `Clase Virtual ${claseYoutubeItems.filter((i) => i.url.trim()).length > 1 ? idx + 1 : ""}`.trim(), driveLink: item.url.trim() });
@@ -345,6 +361,10 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     setMaterialPrivadoUseLink(false);
     setFichaNombre("");
     setFichaUrl("");
+    setLexpodcastNombre("");
+    setLexpodcastFile(null);
+    setLexpodcastLink("");
+    setLexpodcastUseLink(false);
     setClaseYoutubeItems([{ nombre: "", url: "" }]);
   };
 
@@ -1165,6 +1185,63 @@ Clase Virtual
           </p>
         </div>
 
+        {/* LexPodcast (audio privado, solo admin + premios) */}
+        <div style={{ padding: "24px", border: "1px dashed var(--color-gold-dim)", borderRadius: 0 }}>
+          <h3 style={sectionHeaderStyle}>
+            <Headphones style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
+            LexPodcast
+          </h3>
+
+          <input
+            type="text"
+            value={lexpodcastNombre}
+            onChange={(e) => setLexpodcastNombre(e.target.value)}
+            placeholder="Nombre del podcast (ej: LexPodcast Clase 5)"
+            aria-label="Nombre del LexPodcast"
+            style={{ ...inputStyle, marginBottom: "16px" }}
+          />
+
+          <div className="flex flex-wrap gap-4 mb-4">
+            <Radio checked={!lexpodcastUseLink} onChange={() => setLexpodcastUseLink(false)} label="Subir audio desde PC" />
+            <Radio checked={lexpodcastUseLink} onChange={() => setLexpodcastUseLink(true)} label="Link de Cloudinary" />
+          </div>
+
+          {lexpodcastUseLink ? (
+            <input
+              type="url"
+              value={lexpodcastLink}
+              onChange={(e) => setLexpodcastLink(e.target.value)}
+              placeholder="https://res.cloudinary.com/.../audio.mp3"
+              aria-label="URL de Cloudinary del LexPodcast"
+              style={inputStyle}
+            />
+          ) : (
+            <div className="space-y-3">
+              <DropZone
+                file={lexpodcastFile}
+                onFile={(f) => setLexpodcastFile(f)}
+                onClear={() => setLexpodcastFile(null)}
+                hover={lexpodcastDropHover}
+                onHover={setLexpodcastDropHover}
+                inputRef={lexpodcastInputRef}
+              />
+              <input
+                ref={lexpodcastInputRef}
+                type="file"
+                accept="audio/*"
+                onChange={(e) => {
+                  const f = e.target.files?.[0] || null;
+                  if (f) setLexpodcastFile(f);
+                }}
+                style={{ display: "none" }}
+              />
+            </div>
+          )}
+          <p style={{ fontSize: "11px", color: "var(--color-text-faint)", fontFamily: "var(--font-ibm-plex-mono)", marginTop: "8px" }}>
+            Solo visible para el administrador. Se puede otorgar como premio a los mejores rankeados.
+          </p>
+        </div>
+
         </div>
       </div>
 
@@ -1192,6 +1269,7 @@ Clase Virtual
               { label: "Enlace", ready: hasEnlace },
               { label: "Cuestionario", ready: hasCuestionario },
               { label: "Material privado", ready: hasMaterialPrivado },
+              { label: "LexPodcast", ready: hasLexpodcast },
               { label: "Ficha", ready: hasFicha },
             ].map((item) => (
             <div key={item.label} className="flex items-center gap-2">
@@ -1227,10 +1305,10 @@ Clase Virtual
           style={{
             fontFamily: "var(--font-ibm-plex-mono)",
             fontSize: "12px",
-            color: loadedCount === 7 ? "var(--color-gold)" : "var(--color-text-muted)",
+            color: loadedCount === 9 ? "var(--color-gold)" : "var(--color-text-muted)",
           }}
         >
-          {loadedCount}/8 cargados
+          {loadedCount}/9 cargados
         </span>
       </div>
 

@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     const fileName = finalKey.split("/").pop() || finalKey;
 
-    const KNOWN_TYPES = ["audio_clase", "podcast", "transcripcion", "archivo", "enlace", "cuestionario", "material_privado", "ficha"];
+    const KNOWN_TYPES = ["audio_clase", "podcast", "transcripcion", "archivo", "enlace", "cuestionario", "material_privado", "ficha", "lexpodcast"];
     if (!KNOWN_TYPES.includes(fileType)) {
       return NextResponse.json({ error: "fileType inválido" }, { status: 400 });
     }
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     const combined = Buffer.concat(parts);
 
-    const isAudio = fileType === "audio_clase" || fileType === "podcast";
+    const isAudio = fileType === "audio_clase" || fileType === "podcast" || fileType === "lexpodcast";
     const validation = isAudio
       ? validateAudioFile({ name: fileName, size: combined.length, type: contentType })
       : validateDocumentFile({ name: fileName, size: combined.length });
