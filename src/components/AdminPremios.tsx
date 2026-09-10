@@ -29,6 +29,20 @@ interface RankRow {
   conGrant: boolean;
 }
 
+interface RepArchivo {
+  archivo_id: string;
+  archivo_nombre: string;
+  archivo_tipo: string;
+  clase_numero: number | null;
+  materia_slug: string;
+  materia_label: string;
+}
+
+interface RepGrant {
+  archivo_id: string;
+  nombre: string;
+}
+
 const MATERIAS = [
   { slug: "derecho-comercial", label: "Derecho Comercial" },
   { slug: "contratos-ii", label: "Contratos II" },
@@ -61,6 +75,13 @@ export default function AdminPremios() {
   const [nombreManual, setNombreManual] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState("");
+  // Control de accesos (informe global premiados × archivos)
+  const [repAbierto, setRepAbierto] = useState(false);
+  const [repLoading, setRepLoading] = useState(false);
+  const [repBusy, setRepBusy] = useState(false);
+  const [repArchivos, setRepArchivos] = useState<RepArchivo[]>([]);
+  const [repGrants, setRepGrants] = useState<RepGrant[]>([]);
+  const [repMsg, setRepMsg] = useState("");
 
   const cargar = async (s: string, d: string) => {
     setLoading(true);
@@ -92,6 +113,70 @@ export default function AdminPremios() {
     cargar(slug, dias);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, dias]);
+
+  // Informe global: todos los grants + todos los privados de las 3 materias.
+  // Se carga bajo demanda al abrir la sección.
+  const cargarReporte = async () => {
+    setRepLoading(true);
+    setRepMsg("");
+    try {
+      const resps = await Promise.all([
+        fetch("/api/admin/accesos-archivo").then((r) => r.json()),
+        ...MATERIAS.map((m) => fetch(`/api/admin/accesos-archivo?materia_slug=${encodeURIComponent(m.slug)}`).then((r) => r.json())),
+      ]);
+      const [g, ...perMat] = resps as Array<{ ok?: boolean; error?: string; grants?: Array<{ archivo_id: string; nombre: string }>; privados?: Privado[] }>;
+      const archs: RepArchivo[] = [];
+      perMat.forEach((rm, i) => {
+        for (const p of rm.privados || []) {
+          archs.push({
+            archivo_id: p.archivo_id,
+            archivo_nombre: p.archivo_nombre,
+            archivo_tipo: p.archivo_tipo,
+            clase_numero: p.clase_numero,
+            materia_slug: MATERIAS[i].slug,
+            materia_label: MATERIAS[i].label,
+          });
+        }
+      });
+      archs.sort((a, b) => a.materia_label.localeCompare(b.materia_label) || (a.clase_numero ?? 9999) - (b.clase_numero ?? 9999) || a.archivo_nombre.localeCompare(b.archivo_nombre));
+      setRepArchivos(archs);
+      setRepGrants((g.grants || []).map((x) => ({ archivo_id: x.archivo_id, nombre: x.nombre })));
+      if (!g.ok) setRepMsg(g.error || "Error al cargar");
+    } catch {
+      setRepMsg("No se pudo cargar el control");
+    } finally {
+      setRepLoading(false);
+    }
+  };
+
+  // Otorga los accesos faltantes para que todos queden con lo mismo.
+  const igualarAccesos = async (filas: Array<{ nombre: string; ids: Set<string> }>) => {
+    const faltantes: Array<{ archivo_id: string; nombre: string }> = [];
+    for (const f of filas) {
+      for (const a of repArchivos) {
+        if (!f.ids.has(a.archivo_id)) faltantes.push({ archivo_id: a.archivo_id, nombre: f.nombre });
+      }
+    }
+    if (faltantes.length === 0) return;
+    if (!window.confirm(`Se otorgarán ${faltantes.length} accesos faltantes para igualar a todos. ¿Confirmar?`)) return;
+    setRepBusy(true);
+    let ok = 0, fail = 0;
+    for (const f of faltantes) {
+      try {
+        const res = await fetch("/api/admin/accesos-archivo", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(f),
+        });
+        if (res.ok) ok++;
+        else fail++;
+      } catch { fail++; }
+    }
+    setRepBusy(false);
+    await cargarReporte();
+    await cargar(slug, dias);
+    setRepMsg(`Igualado: ${ok} otorgados${fail > 0 ? `, ${fail} fallaron` : ""}.`);
+  };
 
   const otorgar = async (archivo_id: string, nombre: string) => {
     const nom = nombre.trim();
@@ -165,6 +250,25 @@ export default function AdminPremios() {
     setPersonasSel((prev) => (prev.some((p) => p.toLowerCase() === nom.toLowerCase()) ? prev.filter((p) => p.toLowerCase() !== nom.toLowerCase()) : [...prev, nom]));
   };
   const archivosSelObjs = privados.filter((p) => archivosSel.has(p.archivo_id));
+
+  // ── Derivados del control de accesos ──
+  const repIdsExistentes = new Set(repArchivos.map((a) => a.archivo_id));
+  const repHuerfanos = repGrants.filter((g) => !repIdsExistentes.has(g.archivo_id));
+  const repAlumnosMap = new Map<string, { nombre: string; ids: Set<string> }>();
+  for (const g of repGrants) {
+    if (!repIdsExistentes.has(g.archivo_id)) continue;
+    const k = g.nombre.trim().toLowerCase();
+    if (!k) continue;
+    const e = repAlumnosMap.get(k) || { nombre: g.nombre.trim(), ids: new Set<string>() };
+    e.ids.add(g.archivo_id);
+    repAlumnosMap.set(k, e);
+  }
+  const repFilas = [...repAlumnosMap.values()].sort((a, b) => b.ids.size - a.ids.size || a.nombre.localeCompare(b.nombre));
+  const repFirmas = new Set(repFilas.map((f) => [...f.ids].sort().join("|")));
+  const repTodosIguales = repFilas.length > 0 && repFirmas.size === 1;
+  const repFaltantesTotal = repFilas.reduce((s, f) => s + (repArchivos.length - f.ids.size), 0);
+  const repConteoPorArchivo = new Map<string, number>();
+  for (const f of repFilas) for (const id of f.ids) repConteoPorArchivo.set(id, (repConteoPorArchivo.get(id) || 0) + 1);
 
   const confirmarLote = async () => {
     if (archivosSel.size === 0 || personasSel.length === 0) return;
@@ -541,9 +645,125 @@ export default function AdminPremios() {
                 ))}
               </div>
             )}
-          </section>
-        </div>
-      )}
+            </section>
+          </div>
+        )}
+
+      {/* Control de accesos: informe global premiados × archivos */}
+      <section style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)" }}>
+        <button
+          onClick={() => { if (!repAbierto && repArchivos.length === 0 && !repLoading) cargarReporte(); setRepAbierto(!repAbierto); }}
+          className="flex items-center justify-between w-full"
+          style={{ padding: "12px 16px", background: "var(--color-ink-2)", border: "none", borderBottom: repAbierto ? "1px solid var(--color-line-soft)" : "none", cursor: "pointer", width: "100%" }}
+        >
+          <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gold)" }}>
+            Control de accesos · qué tiene cada premiado{repFilas.length > 0 ? ` · ${repFilas.length} premiados × ${repArchivos.length} archivos` : ""}
+          </span>
+          <ChevronDown style={{ width: "13px", height: "13px", color: "var(--color-text-muted)", transform: repAbierto ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
+        </button>
+        {repAbierto && (
+          <div style={{ padding: "14px 16px" }}>
+            {repLoading ? (
+              <div className="flex items-center gap-2" style={{ padding: "12px 0", color: "var(--color-text-muted)", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px" }}>
+                <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> Cargando control…
+              </div>
+            ) : (
+              <>
+                {repMsg && <p style={{ fontSize: "12px", color: "var(--color-gold)", marginBottom: "10px" }}>{repMsg}</p>}
+                {repFilas.length === 0 ? (
+                  <p style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>Todavía no hay accesos otorgados.</p>
+                ) : (
+                  <>
+                    <div style={{ padding: "10px 14px", marginBottom: "12px", background: repTodosIguales ? "rgba(0,255,85,0.05)" : "rgba(255,180,0,0.07)", border: repTodosIguales ? "1px solid rgba(0,255,85,0.25)" : "1px solid rgba(255,180,0,0.35)" }}>
+                      <p style={{ fontSize: "13px", color: repTodosIguales ? "#00FF55" : "#FFB400" }}>
+                        {repTodosIguales
+                          ? `✓ Todos tienen exactamente el mismo acceso (${repArchivos.length} archivos cada uno).`
+                          : `⚠ Hay diferencias: faltan ${repFaltantesTotal} accesos para que todos queden iguales.`}
+                      </p>
+                    </div>
+                    {repHuerfanos.length > 0 && (
+                      <p style={{ fontSize: "12px", color: "#E05555", marginBottom: "12px" }}>
+                        {repHuerfanos.length} acceso{repHuerfanos.length !== 1 ? "s apuntan" : " apunta"} a un archivo ya eliminado (huérfano{repHuerfanos.length !== 1 ? "s" : ""}).
+                      </p>
+                    )}
+                    <div style={{ overflowX: "auto" }}>
+                      <table style={{ borderCollapse: "collapse", minWidth: "100%", fontSize: "12px" }}>
+                        <thead>
+                          <tr>
+                            <th style={{ textAlign: "left", padding: "6px 10px", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--color-text-faint)", borderBottom: "1px solid var(--color-line-soft)", position: "sticky", left: 0, background: "var(--color-card)", minWidth: "150px" }}>
+                              Premiado
+                            </th>
+                            {repArchivos.map((a) => (
+                              <th key={a.archivo_id} title={`${a.materia_label} · Clase ${a.clase_numero} — ${a.archivo_nombre}`} style={{ padding: "6px 8px", borderBottom: "1px solid var(--color-line-soft)", maxWidth: "130px" }}>
+                                <span style={{ display: "block", fontSize: "10px", fontWeight: 400, color: "var(--color-text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                  {a.archivo_nombre}
+                                </span>
+                                <span style={{ display: "block", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", color: "var(--color-text-faint)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                  {a.materia_label === "Derecho Comercial" ? "Com" : a.materia_label === "Contratos I" ? "CI" : "CII"} · C{a.clase_numero} · {(TIPO_LABEL[a.archivo_tipo] || a.archivo_tipo).slice(0, 4)}.
+                                </span>
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {repFilas.map((f) => {
+                            const completo = f.ids.size === repArchivos.length;
+                            return (
+                              <tr key={f.nombre}>
+                                <td style={{ padding: "6px 10px", borderBottom: "1px solid var(--color-line-soft)", position: "sticky", left: 0, background: "var(--color-card)" }}>
+                                  <span style={{ display: "block", fontSize: "13px", color: "var(--color-text)" }}>{f.nombre}</span>
+                                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: completo ? "#00FF55" : "#FFB400" }}>
+                                    {f.ids.size}/{repArchivos.length}{completo ? " · completo" : " · parcial"}
+                                  </span>
+                                </td>
+                                {repArchivos.map((a) => (
+                                  <td key={a.archivo_id} style={{ textAlign: "center", padding: "6px 8px", borderBottom: "1px solid var(--color-line-soft)", color: f.ids.has(a.archivo_id) ? "#00FF55" : "var(--color-text-faint)", fontSize: "13px" }}>
+                                    {f.ids.has(a.archivo_id) ? "✓" : "·"}
+                                  </td>
+                                ))}
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <td style={{ padding: "6px 10px", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)", position: "sticky", left: 0, background: "var(--color-card)" }}>
+                              Con acceso
+                            </td>
+                            {repArchivos.map((a) => (
+                              <td key={a.archivo_id} style={{ textAlign: "center", padding: "6px 8px", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
+                                {repConteoPorArchivo.get(a.archivo_id) || 0}
+                              </td>
+                            ))}
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                    <div className="flex gap-2 flex-wrap" style={{ marginTop: "12px" }}>
+                      <button
+                        onClick={() => cargarReporte()}
+                        disabled={repLoading || repBusy}
+                        style={{ padding: "7px 14px", background: "transparent", border: "1px solid var(--color-line)", color: "var(--color-text-muted)", cursor: "pointer", fontSize: "11px", fontFamily: "var(--font-ibm-plex-mono)", textTransform: "uppercase" }}
+                      >
+                        Actualizar
+                      </button>
+                      {!repTodosIguales && (
+                        <button
+                          onClick={() => igualarAccesos(repFilas)}
+                          disabled={repBusy || repLoading}
+                          style={{ padding: "7px 14px", background: "var(--color-gold)", color: "var(--color-ink)", border: "none", cursor: repBusy ? "wait" : "pointer", fontSize: "11px", fontFamily: "var(--font-ibm-plex-mono)", textTransform: "uppercase", opacity: repBusy ? 0.6 : 1 }}
+                        >
+                          {repBusy ? "Igualando…" : `Igualar accesos (${repFaltantesTotal})`}
+                        </button>
+                      )}
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
