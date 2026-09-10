@@ -42,7 +42,7 @@ interface Clase {
 }
 
 interface EditData {
-  tipo: "clase" | "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha";
+  tipo: "clase" | "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha" | "lexpodcast";
   id: string;
   data: Record<string, string | number>;
 }
@@ -143,6 +143,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
         id,
         numero,
         titulo,
+        tema,
         fecha,
         materias!inner(id, nombre, slug)
       `)

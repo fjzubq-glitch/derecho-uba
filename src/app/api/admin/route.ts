@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { uploadToR2, deleteFromR2 } from "@/lib/r2";
 import { isAdminRequest } from "@/lib/auth";
@@ -32,31 +33,25 @@ export async function PUT(request: NextRequest) {
         .eq("id", id);
 
       if (error) throw error;
-    }
 
-    if (tipo !== "clase") {
-      const updateData: Record<string, string> = { nombre_display: data.nombre_display };
-      if (data.nota !== undefined) updateData.nota = data.nota;
-      if (data.youtube_url !== undefined) updateData.youtube_url = data.youtube_url;
-
-      const { error } = await getSupabaseAdmin()
-        .from("archivos")
-        .update(updateData)
-        .eq("id", id);
-
-      if (error) throw error;
-    }
-
-    if (tipo === "archivo_nota") {
-      const { error } = await getSupabaseAdmin()
-        .from("archivos")
-        .update({ nota: data.nota || null })
-        .eq("id", id);
-
-      if (error) throw error;
-    }
-
-    if (tipo === "archivo_link") {
+      const { data: clase } = await getSupabaseAdmin()
+        .from("clases")
+        .select("materias!inner(slug)")
+        .eq("id", id)
+        .single();
+      const slug = (clase?.materias as unknown as { slug: string })?.slug;
+      if (slug) {
+        const { data: cls } = await getSupabaseAdmin()
+          .from("clases")
+          .select("numero")
+          .eq("id", id)
+          .single();
+        if (cls) {
+          revalidateTag(`clase-${slug}-${cls.numero}`);
+          revalidateTag("clase-detalle");
+        }
+      }
+    } else if (tipo === "archivo_link") {
       const updateData: Record<string, string> = { nombre_display: data.nombre_display };
       if (data.youtube_url !== undefined) updateData.youtube_url = data.youtube_url;
       if (data.cloudinary_url !== undefined) updateData.cloudinary_url = data.cloudinary_url;
@@ -67,6 +62,18 @@ export async function PUT(request: NextRequest) {
         .eq("id", id);
 
       if (error) throw error;
+      revalidateTag("clase-detalle");
+    } else {
+      const updateData: Record<string, string> = { nombre_display: data.nombre_display };
+      if (data.nota !== undefined) updateData.nota = data.nota;
+
+      const { error } = await getSupabaseAdmin()
+        .from("archivos")
+        .update(updateData)
+        .eq("id", id);
+
+      if (error) throw error;
+      revalidateTag("clase-detalle");
     }
 
     return NextResponse.json({ ok: true });
