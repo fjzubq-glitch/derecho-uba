@@ -322,7 +322,7 @@ export default function HomeClient({
                     color: "var(--color-text)",
                   }}
                 >
-                  Buscador de Leyes
+                  LexSearch
                 </span>
                 <span
                   style={{
@@ -350,7 +350,7 @@ export default function HomeClient({
                   letterSpacing: "0.02em",
                 }}
               >
-                Legislación argentina · Nación y Provincia de Buenos Aires
+                Buscador de leyes
               </span>
             </div>
 
