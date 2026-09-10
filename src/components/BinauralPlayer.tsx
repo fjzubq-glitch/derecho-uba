@@ -7,20 +7,16 @@ export default function BinauralPlayer() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const [open, setOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const bcRef = useRef<BroadcastChannel | null>(null);
   const BINAURAL_KEY = "binaural_shared";
 
   useEffect(() => {
-    fetch("/api/admin/binaural")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => {
-        if (d?.ok && d?.binaural) {
-          setHasAudio(true);
-          setFileName(d.binaural.file_name);
-        }
-      })
-      .catch(() => {});
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Sincronización entre pestañas (mismo flotante, led y control)
@@ -81,7 +77,7 @@ export default function BinauralPlayer() {
     };
   }, [open]);
 
-  if (!hasAudio) return null;
+  if (!hasAudio || isMobile) return null;
 
   return (
     <>
