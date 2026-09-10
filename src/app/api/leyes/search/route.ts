@@ -435,7 +435,7 @@ export async function GET(request: NextRequest) {
     const parsed = parseQuery(q);
     const tipoDetectado = parsed.tipoDetectado || tipo;
     const numeroDetectado = parsed.numeroDetectado || numero;
-    const textoBusqueda = parsed.textoLimpio || q;
+    const textoBusqueda = parsed.textoLimpio;
 
     // 1) Supabase (dataset InfoLeg). Solo si el tipo es de los importados o no hay filtro.
     const tipoApto = !tipoDetectado || TIPOS_SUPABASE.has(tipoDetectado);
