@@ -149,11 +149,15 @@ export default function AdminPremios() {
     }
   };
 
-  // Otorga los accesos faltantes para que todos queden con lo mismo.
+  // Otorga los accesos faltantes (solo sobre archivos ya compartidos) para que todos queden con lo mismo.
   const igualarAccesos = async (filas: Array<{ nombre: string; ids: Set<string> }>) => {
+    const permitidos = repArchivos.filter((a) => {
+      const k = a.archivo_id;
+      return filas.some((f) => f.ids.has(k));
+    });
     const faltantes: Array<{ archivo_id: string; nombre: string }> = [];
     for (const f of filas) {
-      for (const a of repArchivos) {
+      for (const a of permitidos) {
         if (!f.ids.has(a.archivo_id)) faltantes.push({ archivo_id: a.archivo_id, nombre: f.nombre });
       }
     }
@@ -264,11 +268,13 @@ export default function AdminPremios() {
     repAlumnosMap.set(k, e);
   }
   const repFilas = [...repAlumnosMap.values()].sort((a, b) => b.ids.size - a.ids.size || a.nombre.localeCompare(b.nombre));
-  const repFirmas = new Set(repFilas.map((f) => [...f.ids].sort().join("|")));
-  const repTodosIguales = repFilas.length > 0 && repFirmas.size === 1;
-  const repFaltantesTotal = repFilas.reduce((s, f) => s + (repArchivos.length - f.ids.size), 0);
   const repConteoPorArchivo = new Map<string, number>();
   for (const f of repFilas) for (const id of f.ids) repConteoPorArchivo.set(id, (repConteoPorArchivo.get(id) || 0) + 1);
+  // Solo archivos compartidos (con al menos 1 acceso): así la tabla no se hace interminable.
+  const repPermitidos = repArchivos.filter((a) => (repConteoPorArchivo.get(a.archivo_id) || 0) > 0);
+  const repFirmas = new Set(repFilas.map((f) => [...f.ids].sort().join("|")));
+  const repTodosIguales = repFilas.length > 0 && repFirmas.size === 1;
+  const repFaltantesTotal = repFilas.reduce((s, f) => s + (repPermitidos.length - f.ids.size), 0);
 
   const confirmarLote = async () => {
     if (archivosSel.size === 0 || personasSel.length === 0) return;
@@ -657,7 +663,7 @@ export default function AdminPremios() {
           style={{ padding: "12px 16px", background: "var(--color-ink-2)", border: "none", borderBottom: repAbierto ? "1px solid var(--color-line-soft)" : "none", cursor: "pointer", width: "100%" }}
         >
           <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gold)" }}>
-            Control de accesos · qué tiene cada premiado{repFilas.length > 0 ? ` · ${repFilas.length} premiados × ${repArchivos.length} archivos` : ""}
+            Control de accesos · qué tiene cada premiado{repFilas.length > 0 ? ` · ${repFilas.length} premiados × ${repPermitidos.length} compartidos` : ""}
           </span>
           <ChevronDown style={{ width: "13px", height: "13px", color: "var(--color-text-muted)", transform: repAbierto ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }} />
         </button>
@@ -677,7 +683,7 @@ export default function AdminPremios() {
                     <div style={{ padding: "10px 14px", marginBottom: "12px", background: repTodosIguales ? "rgba(0,255,85,0.05)" : "rgba(255,180,0,0.07)", border: repTodosIguales ? "1px solid rgba(0,255,85,0.25)" : "1px solid rgba(255,180,0,0.35)" }}>
                       <p style={{ fontSize: "13px", color: repTodosIguales ? "#00FF55" : "#FFB400" }}>
                         {repTodosIguales
-                          ? `✓ Todos tienen exactamente el mismo acceso (${repArchivos.length} archivos cada uno).`
+                          ? `✓ Todos tienen exactamente el mismo acceso (${repPermitidos.length} archivos compartidos cada uno).`
                           : `⚠ Hay diferencias: faltan ${repFaltantesTotal} accesos para que todos queden iguales.`}
                       </p>
                     </div>
@@ -686,6 +692,9 @@ export default function AdminPremios() {
                         {repHuerfanos.length} acceso{repHuerfanos.length !== 1 ? "s apuntan" : " apunta"} a un archivo ya eliminado (huérfano{repHuerfanos.length !== 1 ? "s" : ""}).
                       </p>
                     )}
+                    <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-text-faint)", marginBottom: "10px" }}>
+                      Mostrando {repPermitidos.length} compartidos de {repArchivos.length} privados
+                    </p>
                     <div style={{ overflowX: "auto" }}>
                       <table style={{ borderCollapse: "collapse", minWidth: "100%", fontSize: "12px" }}>
                         <thead>
@@ -693,7 +702,7 @@ export default function AdminPremios() {
                             <th style={{ textAlign: "left", padding: "6px 10px", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--color-text-faint)", borderBottom: "1px solid var(--color-line-soft)", position: "sticky", left: 0, background: "var(--color-card)", minWidth: "150px" }}>
                               Premiado
                             </th>
-                            {repArchivos.map((a) => (
+                            {repPermitidos.map((a) => (
                               <th key={a.archivo_id} title={`${a.materia_label} · Clase ${a.clase_numero} — ${a.archivo_nombre}`} style={{ padding: "6px 8px", borderBottom: "1px solid var(--color-line-soft)", maxWidth: "130px" }}>
                                 <span style={{ display: "block", fontSize: "10px", fontWeight: 400, color: "var(--color-text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                                   {a.archivo_nombre}
@@ -707,16 +716,16 @@ export default function AdminPremios() {
                         </thead>
                         <tbody>
                           {repFilas.map((f) => {
-                            const completo = f.ids.size === repArchivos.length;
+                            const completo = f.ids.size === repPermitidos.length;
                             return (
                               <tr key={f.nombre}>
                                 <td style={{ padding: "6px 10px", borderBottom: "1px solid var(--color-line-soft)", position: "sticky", left: 0, background: "var(--color-card)" }}>
                                   <span style={{ display: "block", fontSize: "13px", color: "var(--color-text)" }}>{f.nombre}</span>
                                   <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: completo ? "#00FF55" : "#FFB400" }}>
-                                    {f.ids.size}/{repArchivos.length}{completo ? " · completo" : " · parcial"}
+                                    {f.ids.size}/{repPermitidos.length}{completo ? " · completo" : " · parcial"}
                                   </span>
                                 </td>
-                                {repArchivos.map((a) => (
+                                {repPermitidos.map((a) => (
                                   <td key={a.archivo_id} style={{ textAlign: "center", padding: "6px 8px", borderBottom: "1px solid var(--color-line-soft)", color: f.ids.has(a.archivo_id) ? "#00FF55" : "var(--color-text-faint)", fontSize: "13px" }}>
                                     {f.ids.has(a.archivo_id) ? "✓" : "·"}
                                   </td>
@@ -730,7 +739,7 @@ export default function AdminPremios() {
                             <td style={{ padding: "6px 10px", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)", position: "sticky", left: 0, background: "var(--color-card)" }}>
                               Con acceso
                             </td>
-                            {repArchivos.map((a) => (
+                            {repPermitidos.map((a) => (
                               <td key={a.archivo_id} style={{ textAlign: "center", padding: "6px 8px", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-muted)" }}>
                                 {repConteoPorArchivo.get(a.archivo_id) || 0}
                               </td>
