@@ -40,6 +40,9 @@ if (!supabaseUrl || !serviceKey) {
   process.exit(1);
 }
 
+console.log(`Supabase URL: ${supabaseUrl} (len ${supabaseUrl.length})`);
+console.log(`Service key presente: ${!!serviceKey} (len ${serviceKey.length})`);
+
 const supabase = createClient(supabaseUrl, serviceKey, {
   auth: { persistSession: false },
 });

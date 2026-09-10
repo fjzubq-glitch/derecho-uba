@@ -60,7 +60,15 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: node scripts/importar-infoleg.mjs
+        run: |
+          node scripts/importar-infoleg.mjs > /tmp/import.log 2>&1
+          CODE=$?
+          cat /tmp/import.log
+          if [ "$CODE" -ne 0 ]; then
+            MSG=$(tail -c 1200 /tmp/import.log | tr '\n' ' ' | tr -s ' ')
+            echo "::error title=Fallo importacion InfoLeg::$MSG"
+            exit $CODE
+          fi
 
       - name: Marcar como importado
         if: steps.cache.outputs.cache-hit != 'true'
