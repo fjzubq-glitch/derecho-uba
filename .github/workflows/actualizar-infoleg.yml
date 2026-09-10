@@ -1,0 +1,61 @@
+name: Actualizar base InfoLeg
+
+# Corre todos los dias a las 06:00 UTC (03:00 hora argentina).
+# Solo reimporta si el dataset cambio (se compara el ETag del ZIP).
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: actualizar-infoleg
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Obtener ETag del dataset
+        id: etag
+        run: |
+          URL="https://datos.jus.gob.ar/dataset/d9a963ea-8b1d-4ca3-9dd9-07a4773e8c23/resource/bf0ec116-ad4e-4572-a476-e57167a84403/download/base-infoleg-normativa-nacional.zip"
+          ETAG=$(curl -sI "$URL" | tr -d '\r' | awk -F': ' 'tolower($1)=="etag"{print $2}' | tr -d '"' | tr -cd '[:alnum:].-')
+          echo "valor=$ETAG" >> "$GITHUB_OUTPUT"
+          echo "ETag del dataset: $ETAG"
+
+      - name: Restaurar marca de importacion
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: .infoleg-importado
+          key: infoleg-${{ steps.etag.outputs.valor }}
+
+      - name: Importar a Supabase
+        if: steps.cache.outputs.cache-hit != 'true'
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/importar-infoleg.mjs
+
+      - name: Marcar como importado
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .infoleg-importado
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > .infoleg-importado/ultimo.txt
+
+      - name: Sin cambios
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: echo "El dataset no cambio desde la ultima importacion. Nada que hacer."
