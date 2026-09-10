@@ -129,13 +129,13 @@ function scoreLey(r: SupabaseRow, qn: string): number {
   const rank = Math.min(Math.max(r.rank || 0, 0), 1);
 
   let s = rank * 10;
-  if (sumario === qn) s += 500;
-  if (resumen === qn) s += 400;
+  if (sumario === qn) s += 400;
+  if (resumen === qn) s += 300;
   if (sumario.startsWith(qn)) s += 100;
   if (resumen.startsWith(qn)) s += 80;
   if (sumario.includes(qn)) s += 30;
 
-  s += Math.min(r.modificada_por || 0, 50) * 8;
+  s += Math.min(r.modificada_por || 0, 50) * 12;
 
   if (r.tipo_norma === "Ley") s += 150;
   else if (r.tipo_norma === "Decreto/Ley") s += 120;
