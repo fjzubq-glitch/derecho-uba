@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useRef, useEffect } from "react";
+import Link from "next/link";
 import { Search, ExternalLink, ChevronDown, Loader2, ArrowLeft } from "@/components/icons";
 
 interface LeyResultado {
@@ -14,6 +15,7 @@ interface LeyResultado {
   resumen: string;
   url: string;
   consolidatedUrl?: string | null;
+  textoUrl?: string | null;
   label?: string;
 }
 
@@ -142,7 +144,7 @@ export default function LeyesClient() {
     <div style={{ minHeight: "100vh", background: "var(--color-ink)" }}>
       <div style={{ maxWidth: "860px", margin: "0 auto", padding: "40px 22px 80px" }}>
         {/* Botón volver */}
-        <a
+        <Link
           href="/"
           className="flex items-center gap-2"
           style={{
@@ -162,7 +164,7 @@ export default function LeyesClient() {
         >
           <ArrowLeft style={{ width: "14px", height: "14px" }} />
           Volver al inicio
-        </a>
+        </Link>
 
         {/* Header */}
         <div style={{ marginBottom: "36px" }}>
@@ -557,15 +559,47 @@ export default function LeyesClient() {
                         </div>
                       )}
                     </div>
-                    <ExternalLink
-                      style={{
-                        width: "14px",
-                        height: "14px",
-                        color: "var(--color-text-faint)",
-                        flexShrink: 0,
-                        marginTop: "4px",
-                      }}
-                    />
+                    {r.textoUrl ? (
+                      <a
+                        href={r.textoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        title="Ver texto de la norma"
+                        className="flex items-center gap-1 flex-shrink-0"
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "10px",
+                          letterSpacing: "0.04em",
+                          textTransform: "uppercase",
+                          color: "var(--color-gold)",
+                          textDecoration: "none",
+                          border: "1px solid var(--color-gold-dim)",
+                          padding: "5px 9px",
+                          marginTop: "2px",
+                          transition: "border-color 0.2s, color 0.2s",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = "var(--color-gold)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                        }}
+                      >
+                        Texto
+                        <ExternalLink style={{ width: "10px", height: "10px" }} />
+                      </a>
+                    ) : (
+                      <ExternalLink
+                        style={{
+                          width: "14px",
+                          height: "14px",
+                          color: "var(--color-text-faint)",
+                          flexShrink: 0,
+                          marginTop: "4px",
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               )
