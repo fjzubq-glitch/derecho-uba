@@ -53,8 +53,12 @@ async function getDashboardPayload(dias: number | null) {
   const tasaRegistro = pageViews ? Math.round((registros / pageViews) * 1000) / 10 : 0;
 
   // ── Contenido más popular ──
+  // Los eventos de actividad guardan archivo_id sin FK: si un archivo fue
+  // eliminado, sus reproducciones quedan huérfanas. Se buscan más IDs de los
+  // necesarios y se descartan los huérfanos para que no ocupen puestos
+  // (antes se mostraban como "— Clase 00" con título vacío).
   const popCounts = calcularPopCounts(eventos);
-  const popIds = [...popCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([id]) => id);
+  const popIds = [...popCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 30).map(([id]) => id);
 
   let contenidoPopular: Array<{
     archivo_id: string;
@@ -79,19 +83,22 @@ async function getDashboardPayload(dias: number | null) {
       : { data: null };
     const popArchivoMap = new Map((popArchivoRows || []).map((a) => [a.id, a]));
     const popClaseMap = new Map((popClaseRowsSupabase || []).map((c) => [c.id, c]));
-    contenidoPopular = popIds.map((id) => {
-      const archivo = popArchivoMap.get(id);
-      const clase = archivo?.clase_id ? popClaseMap.get(archivo.clase_id) : undefined;
-      return {
-        archivo_id: id,
-        nombre_display: archivo?.nombre_display || "",
-        tipo: archivo?.tipo || "",
-        materia: (clase?.materias as { nombre?: string } | undefined)?.nombre || "",
-        clase_numero: clase?.numero || 0,
-        clase_titulo: clase?.titulo || "",
-        total_reproducciones: popCounts.get(id) || 0,
-      };
-    });
+    contenidoPopular = popIds
+      .filter((id) => popArchivoMap.has(id))
+      .map((id) => {
+        const archivo = popArchivoMap.get(id);
+        const clase = archivo?.clase_id ? popClaseMap.get(archivo.clase_id) : undefined;
+        return {
+          archivo_id: id,
+          nombre_display: archivo?.nombre_display || "",
+          tipo: archivo?.tipo || "",
+          materia: (clase?.materias as { nombre?: string } | undefined)?.nombre || "",
+          clase_numero: clase?.numero || 0,
+          clase_titulo: clase?.titulo || "",
+          total_reproducciones: popCounts.get(id) || 0,
+        };
+      })
+      .slice(0, 10);
   }
 
   // ── All-time: total de personas registradas (solo tipo usuario_registrado) ──

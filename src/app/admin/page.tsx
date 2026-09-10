@@ -247,7 +247,7 @@ export default function AdminPage() {
       if (data.contenidoPorTipo) setContenidoPorTipo(data.contenidoPorTipo);
       if (data.estudiantes) setEstudiantes(data.estudiantes);
       if (data.materiasStats) setMateriasStats(data.materiasStats);
-      if (data.contenidoPopular) setContenidoPopular(data.contenidoPopular);
+      if (data.contenidoPopular) setContenidoPopular((data.contenidoPopular as ContenidoPopular[]).filter((p) => p.nombre_display || p.clase_titulo));
       setTotalRegistradosAllTime(data.totalRegistradosAllTime || 0);
     } catch (e) {
       console.error("Error loading admin data:", e);
