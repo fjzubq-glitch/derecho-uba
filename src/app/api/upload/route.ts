@@ -180,6 +180,8 @@ export async function POST(request: NextRequest) {
       if (slug && claseNumero) {
         revalidateTag(`clase-${slug}-${claseNumero}`);
         revalidateTag("clase-detalle");
+        revalidateTag(`materia-${slug}`);
+        revalidateTag("materias");
         revalidatePath(`/dashboard/${slug}/clase/${claseNumero}`);
         revalidatePath(`/dashboard/${slug}`);
       }

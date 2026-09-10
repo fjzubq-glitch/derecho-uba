@@ -8,26 +8,25 @@ export const dynamic = "force-dynamic";
 async function getClaseData(slug: string, num: number) {
   const supabase = getSupabaseAdmin();
 
-  const { data: materia } = await supabase
-    .from("materias")
-    .select("id, nombre, estado")
-    .eq("slug", slug)
-    .single();
+  // Materia + clase en 1 sola query con join (antes eran 2 secuenciales).
+  const { data: claseRows } = await supabase
+    .from("clases")
+    .select("id, numero, titulo, tema, fecha, materias!inner(id, nombre, estado)")
+    .eq("numero", num)
+    .eq("materias.slug", slug)
+    .limit(1);
 
-  if (!materia) {
+  const row = (claseRows || [])[0] as unknown as {
+    id: string; numero: number; titulo: string; tema: string | null; fecha: string | null;
+    materias: { id: string; nombre: string; estado: string };
+  } | undefined;
+
+  if (!row) {
     return { materia: null, clase: null, adjacentes: [] as unknown[] };
   }
 
-  const { data: clase } = await supabase
-    .from("clases")
-    .select("id, numero, titulo, tema, fecha")
-    .eq("materia_id", materia.id)
-    .eq("numero", num)
-    .single();
-
-  if (!clase) {
-    return { materia, clase: null, adjacentes: [] as unknown[] };
-  }
+  const materia = row.materias;
+  const clase = { id: row.id, numero: row.numero, titulo: row.titulo, tema: row.tema, fecha: row.fecha };
 
   const [archivosRes, vecinosRes] = await Promise.all([
     supabase

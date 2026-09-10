@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import { unstable_cache } from "next/cache";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { hashIp } from "@/lib/hashIp";
 import HomeClient from "./HomeClient";
@@ -14,26 +15,26 @@ interface MateriaRow {
   anio: string | null;
   turno: string | null;
   clases: { id: string }[] | null;
-  materia_fechas: { id: string; titulo: string; fecha: string }[] | null;
 }
 
 interface MateriaWithRel extends MateriaRow {
   clases: { id: string }[] | null;
-  materia_fechas: { id: string; titulo: string; fecha: string }[] | null;
 }
 
 const TIPOS_CONTENIDO = ["play_start", "play_complete", "transcription_view", "youtube_open"];
 
-async function loadMaterias() {
-  try {
+// Cacheado 5 min: es igual para todos los visitantes. Sin esto, el uso de
+// headers() en loadContinuar vuelve la home 100% dinámica y cada visita
+// pagaba estas 2 queries a Supabase.
+const getMateriasCacheadas = unstable_cache(
+  async () => {
     const supabase = getSupabaseAdmin();
 
     const { data } = await supabase
       .from("materias")
       .select(`
-        *,
-        clases ( id ),
-        materia_fechas ( id, titulo, fecha )
+        id, nombre, slug, comision, catedra, anio, turno,
+        clases ( id )
       `)
       .order("nombre");
 
@@ -64,6 +65,14 @@ async function loadMaterias() {
       total_clases: m.clases?.length || 0,
       clase_ids: (m.clases || []).map((c) => c.id),
     }));
+  },
+  ["home-materias"],
+  { revalidate: 300, tags: ["materias"] },
+)();
+
+async function loadMaterias() {
+  try {
+    return await getMateriasCacheadas;
   } catch {
     return [];
   }

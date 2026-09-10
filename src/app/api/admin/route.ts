@@ -49,6 +49,7 @@ export async function PUT(request: NextRequest) {
         if (cls) {
           revalidateTag(`clase-${slug}-${cls.numero}`);
           revalidateTag("clase-detalle");
+          revalidateTag("materias");
         }
       }
     } else if (tipo === "archivo_link") {
@@ -63,6 +64,7 @@ export async function PUT(request: NextRequest) {
 
       if (error) throw error;
       revalidateTag("clase-detalle");
+      revalidateTag("materias");
     } else {
       const updateData: Record<string, string> = { nombre_display: data.nombre_display };
       if (data.nota !== undefined) updateData.nota = data.nota;
@@ -74,6 +76,7 @@ export async function PUT(request: NextRequest) {
 
       if (error) throw error;
       revalidateTag("clase-detalle");
+      revalidateTag("materias");
     }
 
     return NextResponse.json({ ok: true });
@@ -131,6 +134,8 @@ export async function POST(request: NextRequest) {
 
     if (error) throw error;
 
+    revalidateTag("clase-detalle");
+    revalidateTag("materias");
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Replace error:", error);
@@ -185,6 +190,8 @@ export async function DELETE(request: NextRequest) {
       if (error) throw error;
     }
 
+    revalidateTag("clase-detalle");
+    revalidateTag("materias");
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Delete error:", error);

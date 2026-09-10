@@ -30,32 +30,21 @@ const getMateriaConFechas = (slug: string) =>
         .eq("slug", slug)
         .single(),
     ["materia-con-fechas", slug],
-    { revalidate: REVALIDATE }
+    { revalidate: REVALIDATE, tags: ["materias", `materia-${slug}`] }
   )();
 
-const getClases = (slug: string, materiaId: string) =>
+// Una sola query con join (antes eran 2 roundtrips secuenciales a Supabase:
+// clases y luego archivos). El orden por clase se aplica en JS.
+const getClasesConArchivos = (slug: string, materiaId: string) =>
   unstable_cache(
     async () =>
       getSupabaseAdmin()
         .from("clases")
-        .select("id, numero, titulo, tema, fecha, created_at")
+        .select("id, numero, titulo, tema, fecha, created_at, archivos(id, clase_id, tipo, nombre_display, storage_key, youtube_url, duration_seconds, orden, created_at)")
         .eq("materia_id", materiaId)
         .order("numero"),
-    ["clases", slug],
-    { revalidate: REVALIDATE }
-  )();
-
-const getArchivos = (slug: string, claseIds: string[]) =>
-  unstable_cache(
-    async () =>
-      getSupabaseAdmin()
-        .from("archivos")
-        .select("id, clase_id, tipo, nombre_display, storage_key, youtube_url, duration_seconds, orden, created_at")
-        .in("clase_id", claseIds)
-        .order("orden")
-        .order("created_at"),
-    ["archivos", slug],
-    { revalidate: REVALIDATE }
+    ["clases-archivos", slug],
+    { revalidate: REVALIDATE, tags: ["materias", `materia-${slug}`] }
   )();
 
 export default async function MateriaPage({
@@ -89,24 +78,24 @@ export default async function MateriaPage({
     tieneAcceso = !!acceso;
   }
 
-  const { data: clases } = await getClases(slug, materia.id);
+  const { data: clases } = await getClasesConArchivos(slug, materia.id);
 
-  const claseIds = (clases || []).map((c) => c.id);
-  const { data: archivos } = claseIds.length
-    ? await getArchivos(slug, claseIds)
-    : { data: [] as ArchivoRow[] };
-
-  const porClase = new Map<string, ArchivoRow[]>();
-  for (const a of archivos || []) {
-    if (!esAdmin && !tieneAcceso && TIPOS_PRIVADOS.includes(a.tipo)) continue;
-    const list = porClase.get(a.clase_id) || [];
-    list.push(a);
-    porClase.set(a.clase_id, list);
-  }
-
-  const clasesWithFiles = (clases || []).map((c) => {
-    const archivosDeClase = porClase.get(c.id) || [];
-    return { ...c, archivos: archivosDeClase };
+  const clasesWithFiles = ((clases || []) as Array<{
+    id: string; numero: number; titulo: string; tema: string | null; fecha: string | null; created_at: string;
+    archivos: ArchivoRow[] | null;
+  }>).map((c) => {
+    const archivosDeClase = [...(c.archivos || [])]
+      .filter((a) => esAdmin || tieneAcceso || !TIPOS_PRIVADOS.includes(a.tipo))
+      .sort((a, b) => (a.orden ?? 9999) - (b.orden ?? 9999) || (a.created_at < b.created_at ? -1 : 1));
+    return {
+      id: c.id,
+      numero: c.numero,
+      titulo: c.titulo,
+      tema: c.tema,
+      fecha: c.fecha || "",
+      created_at: c.created_at,
+      archivos: archivosDeClase,
+    };
   });
 
   const fechas = (materia as unknown as { materia_fechas?: { id: string; titulo: string; fecha: string }[] }).materia_fechas || [];
