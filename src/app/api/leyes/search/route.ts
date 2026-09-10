@@ -47,12 +47,21 @@ function decodeBuffer(buf: ArrayBuffer): string {
   return decoder.decode(buf);
 }
 
-/** Detectar patrones tipo "ley 26994" o "decreto 123/2020" en el query */
+/** Detectar patrones tipo "ley 26994", "ley 19.550" o "decreto 123/2020" en el query */
 function parseQuery(q: string): { tipoDetectado: string; numeroDetectado: string; textoLimpio: string } {
-  const match = q.match(/^(ley|decreto|resolución|resolucion|disposición|disposicion|acordada|ordenanza)\s+(?:n[°º]?\s*)?(\d+)(?:\s*\/\s*\d{4})?$/i);
+  // "ley 19550", "ley 19.550", "decreto 123/2020", "resolución 662"
+  const match = q.match(/^(ley|decreto|resolución|resolucion|disposición|disposicion|acordada|ordenanza)\s+(?:n[°º]?\s*)?(\d[\d.]*)/i);
   if (match) {
     const tipo = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
-    return { tipoDetectado: tipo, numeroDetectado: match[2], textoLimpio: "" };
+    const numero = match[2].replace(/\./g, ""); // quitar puntos: "19.550" → "19550"
+    return { tipoDetectado: tipo, numeroDetectado: numero, textoLimpio: "" };
+  }
+  // "ley de contrato de trabajo", "ley general de sociedades" → tipo detectado
+  const tipoMatch = q.match(/^(ley|decreto|resolución|resolucion|disposición|disposicion)\s+(?:general\s+)?de\s+/i);
+  if (tipoMatch) {
+    const tipo = tipoMatch[1].charAt(0).toUpperCase() + tipoMatch[1].slice(1).toLowerCase();
+    const textoLimpio = q.replace(/^(ley|decreto|resolución|resolucion|disposición|disposicion)\s+(?:general\s+)?de\s+/i, "").trim();
+    return { tipoDetectado: tipo, numeroDetectado: "", textoLimpio };
   }
   return { tipoDetectado: "", numeroDetectado: "", textoLimpio: q };
 }
@@ -84,9 +93,13 @@ function calcularScore(resumen: string, palabras: string[], queryCompleto: strin
   for (const p of palabras) {
     if (resumenLower.includes(p)) hits++;
   }
+  // Score base: proporción de palabras que coinciden
   const scoreBase = (hits / palabras.length) * 10;
+  // Bonus: si el query completo aparece como frase en el resumen
   const fraseBonus = resumenLower.includes(queryCompleto) ? 15 : 0;
-  return scoreBase + fraseBonus;
+  // Bonus: si la mayoría de palabras coinciden (70%+), bonus extra
+  const majorityBonus = (hits / palabras.length) >= 0.7 ? 8 : 0;
+  return scoreBase + fraseBonus + majorityBonus;
 }
 
 function parseResultados(html: string): { resultados: LeyResultado[]; total: number; paginas: number } {
