@@ -140,9 +140,31 @@ export default function LeyesClient() {
     return parts.join(" ");
   };
 
+  const labelStyle: React.CSSProperties = {
+    display: "block",
+    fontFamily: "var(--font-ibm-plex-mono)",
+    fontSize: "9px",
+    letterSpacing: "0.12em",
+    textTransform: "uppercase",
+    color: "var(--color-text-faint)",
+    marginBottom: "6px",
+  };
+
+  const fieldStyle: React.CSSProperties = {
+    width: "100%",
+    padding: "11px 12px",
+    background: "var(--color-ink)",
+    border: "1px solid var(--color-line)",
+    color: "var(--color-text)",
+    fontFamily: "var(--font-inter)",
+    fontSize: "13px",
+    outline: "none",
+    transition: "border-color 0.2s ease",
+  };
+
   return (
     <div style={{ minHeight: "100vh", background: "var(--color-ink)" }}>
-      <div style={{ maxWidth: "860px", margin: "0 auto", padding: "40px 22px 80px" }}>
+      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "44px 24px 96px" }}>
         {/* Botón volver */}
         <Link
           href="/"
@@ -156,7 +178,7 @@ export default function LeyesClient() {
             letterSpacing: "0.06em",
             color: "var(--color-text-muted)",
             textDecoration: "none",
-            marginBottom: "28px",
+            marginBottom: "32px",
             transition: "color 0.2s ease",
           }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
@@ -167,7 +189,21 @@ export default function LeyesClient() {
         </Link>
 
         {/* Header */}
-        <div style={{ marginBottom: "36px" }}>
+        <div style={{ marginBottom: "32px" }}>
+          <div
+            className="flex items-center gap-3"
+            style={{
+              marginBottom: "14px",
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "10px",
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: "var(--color-gold)",
+            }}
+          >
+            <span style={{ width: "20px", height: "1px", background: "var(--color-gold-dim)" }} />
+            Buscador
+          </div>
           <h1
             style={{
               fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
@@ -195,9 +231,9 @@ export default function LeyesClient() {
         <div
           style={{
             background: "var(--color-card)",
-            border: "1px solid var(--color-line)",
-            padding: "20px",
-            marginBottom: "24px",
+            border: "1px solid var(--color-line-soft)",
+            padding: "22px 22px 20px",
+            marginBottom: "28px",
           }}
         >
           {/* Input principal */}
@@ -205,12 +241,12 @@ export default function LeyesClient() {
             <Search
               style={{
                 position: "absolute",
-                left: "14px",
+                left: "16px",
                 top: "50%",
                 transform: "translateY(-50%)",
                 width: "16px",
                 height: "16px",
-                color: "var(--color-text-muted)",
+                color: "var(--color-text-faint)",
               }}
             />
             <input
@@ -218,39 +254,41 @@ export default function LeyesClient() {
               value={query}
               onChange={(e) => handleTextChange(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Buscar por texto libre..."
+              placeholder="Buscar por nombre, tema o número de norma..."
               style={{
                 width: "100%",
-                padding: "12px 14px 12px 42px",
+                padding: "15px 16px 15px 46px",
                 background: "var(--color-ink)",
                 border: "1px solid var(--color-line)",
                 color: "var(--color-text)",
                 fontFamily: "var(--font-inter)",
-                fontSize: "14px",
+                fontSize: "15px",
                 outline: "none",
-                transition: "border-color 0.2s",
+                transition: "border-color 0.2s ease, box-shadow 0.2s ease",
               }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--color-line)")}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(var(--color-gold-rgb), 0.06)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-line)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             />
           </div>
 
           {/* Filtros */}
-          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "16px" }}>
-            <div style={{ flex: "1 1 160px" }}>
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "flex-end" }}>
+            <div style={{ flex: "1 1 150px", minWidth: 0 }}>
+              <label style={labelStyle}>Tipo</label>
               <div style={{ position: "relative" }}>
                 <select
                   value={tipo}
                   onChange={(e) => setTipo(e.target.value)}
                   style={{
-                    width: "100%",
-                    padding: "10px 32px 10px 12px",
-                    background: "var(--color-ink)",
-                    border: "1px solid var(--color-line)",
+                    ...fieldStyle,
+                    paddingRight: "32px",
                     color: tipo ? "var(--color-text)" : "var(--color-text-muted)",
-                    fontFamily: "var(--font-inter)",
-                    fontSize: "13px",
-                    outline: "none",
                     appearance: "none",
                     cursor: "pointer",
                   }}
@@ -264,7 +302,7 @@ export default function LeyesClient() {
                 <ChevronDown
                   style={{
                     position: "absolute",
-                    right: "10px",
+                    right: "11px",
                     top: "50%",
                     transform: "translateY(-50%)",
                     width: "14px",
@@ -275,67 +313,57 @@ export default function LeyesClient() {
                 />
               </div>
             </div>
-            <div style={{ flex: "0 1 100px" }}>
+            <div style={{ flex: "0 1 90px" }}>
+              <label style={labelStyle}>N°</label>
               <input
                 type="number"
                 value={numero}
                 onChange={(e) => setNumero(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="N°"
+                placeholder="—"
                 min="1"
-                style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  background: "var(--color-ink)",
-                  border: "1px solid var(--color-line)",
-                  color: "var(--color-text)",
-                  fontFamily: "var(--font-inter)",
-                  fontSize: "13px",
-                  outline: "none",
-                }}
+                style={fieldStyle}
               />
             </div>
             <div style={{ flex: "0 1 80px" }}>
+              <label style={labelStyle}>Año</label>
               <input
                 type="number"
                 value={anio}
                 onChange={(e) => setAnio(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Año"
+                placeholder="—"
                 min="1853"
                 max="2030"
-                style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  background: "var(--color-ink)",
-                  border: "1px solid var(--color-line)",
-                  color: "var(--color-text)",
-                  fontFamily: "var(--font-inter)",
-                  fontSize: "13px",
-                  outline: "none",
-                }}
+                style={fieldStyle}
               />
             </div>
+            <button
+              onClick={() => buscar(1)}
+              disabled={loading || (!query && !tipo && !numero)}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                background: "var(--color-gold)",
+                color: "var(--color-ink)",
+                border: "none",
+                padding: "11px 26px",
+                fontFamily: "var(--font-inter)",
+                fontSize: "13px",
+                fontWeight: 600,
+                cursor: loading || (!query && !tipo && !numero) ? "not-allowed" : "pointer",
+                opacity: loading || (!query && !tipo && !numero) ? 0.5 : 1,
+                transition: "opacity 0.2s ease, background 0.2s ease",
+                flex: "0 0 auto",
+              }}
+              onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "var(--color-gold-dim)"; }}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-gold)")}
+            >
+              {loading ? "Buscando..." : "Buscar"}
+            </button>
           </div>
-
-          <button
-            onClick={() => buscar(1)}
-            disabled={loading || (!query && !tipo && !numero)}
-            style={{
-              background: "var(--color-gold)",
-              color: "var(--color-ink)",
-              border: "none",
-              padding: "10px 28px",
-              fontFamily: "var(--font-inter)",
-              fontSize: "13px",
-              fontWeight: 600,
-              cursor: loading || (!query && !tipo && !numero) ? "not-allowed" : "pointer",
-              opacity: loading || (!query && !tipo && !numero) ? 0.5 : 1,
-              transition: "opacity 0.2s",
-            }}
-          >
-            {loading ? "Buscando..." : "Buscar"}
-          </button>
         </div>
 
         {/* Resultados */}
@@ -355,145 +383,181 @@ export default function LeyesClient() {
         )}
 
         {total > 0 && (
-          <div
-            style={{
-              fontFamily: "var(--font-ibm-plex-mono)",
-              fontSize: "11px",
-              color: "var(--color-text-faint)",
-              letterSpacing: "0.04em",
-              marginBottom: "16px",
-            }}
-          >
-            {total.toLocaleString("es-AR")} norma{total !== 1 ? "s" : ""} encontrada{total !== 1 ? "s" : ""}
-            {paginas > 1 && ` · Página ${page} de ${paginas}`}
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "18px" }}>
+            <span
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "11px",
+                color: "var(--color-text-faint)",
+                letterSpacing: "0.04em",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {total.toLocaleString("es-AR")} norma{total !== 1 ? "s" : ""} encontrada{total !== 1 ? "s" : ""}
+              {paginas > 1 && ` · Página ${page} de ${paginas}`}
+            </span>
+            <span style={{ flex: 1, height: "1px", background: "var(--color-line-soft)" }} />
           </div>
         )}
 
         {resultados.length > 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-            {resultados.map((r) => (
-              r.consolidatedUrl ? (
-                /* Card destacada: texto consolidado */
-                <div
-                  key={r.id}
-                  style={{
-                    background: "var(--color-card)",
-                    border: "1px solid var(--color-gold-dim)",
-                    padding: "20px 22px",
-                    transition: "border-color 0.15s",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "12px" }}>
-                    <div style={{ minWidth: 0 }}>
-                      <div className="flex items-center gap-2" style={{ marginBottom: "6px" }}>
-                        <div
-                          style={{
-                            fontFamily: "var(--font-fraunces)",
-                            fontSize: "16px",
-                            fontWeight: 500,
-                            color: "var(--color-gold)",
-                          }}
-                        >
-                          {formatearTipoNumero(r)}
-                        </div>
-                        <span
-                          style={{
-                            fontFamily: "var(--font-ibm-plex-mono)",
-                            fontSize: "9px",
-                            letterSpacing: "0.08em",
-                            textTransform: "uppercase",
-                            color: "var(--color-gold)",
-                            background: "var(--color-gold-soft)",
-                            padding: "3px 8px",
-                          }}
-                        >
-                          Texto completo
-                        </span>
-                      </div>
-                      <div
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {resultados.map((r, i) => {
+              const esPrincipal = i === 0;
+              const textoLink = r.consolidatedUrl || r.textoUrl || null;
+
+              if (esPrincipal) {
+                return (
+                  <div
+                    key={r.id}
+                    style={{
+                      position: "relative",
+                      background: "linear-gradient(180deg, rgba(76, 175, 125, 0.055), rgba(76, 175, 125, 0.015))",
+                      border: "1px solid rgba(76, 175, 125, 0.42)",
+                      boxShadow: "0 0 26px rgba(76, 175, 125, 0.10)",
+                      padding: "20px 22px 20px 25px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        position: "absolute",
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: "3px",
+                        background: "linear-gradient(180deg, #4CAF7D, rgba(76, 175, 125, 0.12))",
+                      }}
+                    />
+                    <div className="flex items-center gap-2" style={{ marginBottom: "9px", flexWrap: "wrap" }}>
+                      <span
                         style={{
-                          fontFamily: "var(--font-inter)",
-                          fontSize: "14px",
-                          fontWeight: 600,
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontSize: "17px",
+                          fontWeight: 500,
                           color: "var(--color-text)",
-                          marginBottom: "4px",
                         }}
                       >
-                        {r.descripcion || r.label}
-                      </div>
+                        {formatearTipoNumero(r)}
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "9px",
+                          letterSpacing: "0.08em",
+                          textTransform: "uppercase",
+                          color: "#7FD9A8",
+                          background: "rgba(76, 175, 125, 0.12)",
+                          border: "1px solid rgba(76, 175, 125, 0.35)",
+                          padding: "3px 8px",
+                        }}
+                      >
+                        Mejor coincidencia
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-inter)",
+                        fontSize: "15px",
+                        fontWeight: 600,
+                        color: "var(--color-text)",
+                        marginBottom: "5px",
+                        lineHeight: 1.35,
+                      }}
+                    >
+                      {r.descripcion || r.label}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "11px",
+                        color: "var(--color-text-muted)",
+                      }}
+                    >
+                      {r.dependencia}
+                      {r.fecha ? <span style={{ marginLeft: "10px", color: "var(--color-text-faint)" }}>{r.fecha}</span> : null}
+                    </div>
+                    {r.resumen && (
                       <div
                         style={{
                           fontFamily: "var(--font-inter)",
-                          fontSize: "12px",
-                          color: "var(--color-text-muted)",
+                          fontSize: "12.5px",
+                          color: "var(--color-text-faint)",
+                          marginTop: "10px",
+                          lineHeight: 1.55,
                         }}
                       >
-                        {r.dependencia}
+                        {r.resumen.length > 240 ? r.resumen.slice(0, 240) + "..." : r.resumen}
                       </div>
+                    )}
+                    <div style={{ marginTop: "16px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                      {textoLink && (
+                        <a
+                          href={textoLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "7px",
+                            background: "#4CAF7D",
+                            color: "#0C0B09",
+                            padding: "10px 20px",
+                            fontFamily: "var(--font-inter)",
+                            fontSize: "13px",
+                            fontWeight: 600,
+                            textDecoration: "none",
+                            transition: "background 0.2s ease",
+                            boxShadow: "0 0 16px rgba(76, 175, 125, 0.20)",
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = "#5FBF8E")}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = "#4CAF7D")}
+                        >
+                          Ver texto completo
+                          <ExternalLink style={{ width: "12px", height: "12px" }} />
+                        </a>
+                      )}
+                      <a
+                        href={r.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "7px",
+                          background: "none",
+                          border: "1px solid var(--color-line)",
+                          color: "var(--color-text-muted)",
+                          padding: "10px 18px",
+                          fontFamily: "var(--font-inter)",
+                          fontSize: "13px",
+                          textDecoration: "none",
+                          transition: "border-color 0.2s ease",
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
+                        onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-line)")}
+                      >
+                        Ver en InfoLeg
+                        <ExternalLink style={{ width: "11px", height: "11px" }} />
+                      </a>
                     </div>
                   </div>
-                  <div style={{ marginTop: "14px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                    <a
-                      href={r.consolidatedUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        background: "var(--color-gold)",
-                        color: "var(--color-ink)",
-                        padding: "10px 20px",
-                        fontFamily: "var(--font-inter)",
-                        fontSize: "13px",
-                        fontWeight: 600,
-                        textDecoration: "none",
-                        transition: "background 0.2s",
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-gold-dim)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-gold)")}
-                    >
-                      Ver texto completo
-                      <ExternalLink style={{ width: "12px", height: "12px" }} />
-                    </a>
-                    <a
-                      href={r.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        background: "none",
-                        border: "1px solid var(--color-line)",
-                        color: "var(--color-text-muted)",
-                        padding: "10px 18px",
-                        fontFamily: "var(--font-inter)",
-                        fontSize: "13px",
-                        textDecoration: "none",
-                        transition: "border-color 0.2s",
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-line)")}
-                    >
-                      Ver en InfoLeg
-                      <ExternalLink style={{ width: "11px", height: "11px" }} />
-                    </a>
-                  </div>
-                </div>
-              ) : (
-                /* Card normal */
+                );
+              }
+
+              return (
                 <div
                   key={r.id}
                   onClick={() => handleSelectNorma(r.id)}
                   style={{
                     background: "var(--color-card)",
                     border: "1px solid var(--color-line-soft)",
-                    padding: "16px 18px",
+                    padding: "15px 18px 15px 20px",
                     cursor: "pointer",
-                    transition: "border-color 0.15s, background 0.15s",
+                    transition: "border-color 0.15s ease, background 0.15s ease",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = "var(--color-gold-dim)";
@@ -508,8 +572,8 @@ export default function LeyesClient() {
                     <div style={{ minWidth: 0 }}>
                       <div
                         style={{
-                          fontFamily: "var(--font-fraunces)",
-                          fontSize: "15px",
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontSize: "14px",
                           fontWeight: 500,
                           color: "var(--color-gold)",
                           marginBottom: "4px",
@@ -519,17 +583,15 @@ export default function LeyesClient() {
                       </div>
                       <div
                         style={{
-                          fontFamily: "var(--font-inter)",
-                          fontSize: "12px",
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "10.5px",
                           color: "var(--color-text-muted)",
                           marginBottom: "6px",
                         }}
                       >
                         {r.dependencia}
                         {r.fecha && (
-                          <span style={{ marginLeft: "12px", color: "var(--color-text-faint)" }}>
-                            {r.fecha}
-                          </span>
+                          <span style={{ marginLeft: "10px", color: "var(--color-text-faint)" }}>{r.fecha}</span>
                         )}
                       </div>
                       {r.descripcion && (
@@ -538,7 +600,7 @@ export default function LeyesClient() {
                             fontFamily: "var(--font-inter)",
                             fontSize: "13px",
                             color: "var(--color-text)",
-                            lineHeight: 1.4,
+                            lineHeight: 1.45,
                           }}
                         >
                           {r.descripcion}
@@ -548,14 +610,13 @@ export default function LeyesClient() {
                         <div
                           style={{
                             fontFamily: "var(--font-inter)",
-                            fontSize: "12px",
-                            fontStyle: "italic",
+                            fontSize: "11.5px",
                             color: "var(--color-text-faint)",
                             marginTop: "6px",
-                            lineHeight: 1.4,
+                            lineHeight: 1.5,
                           }}
                         >
-                          {r.resumen.length > 200 ? r.resumen.slice(0, 200) + "..." : r.resumen}
+                          {r.resumen.length > 180 ? r.resumen.slice(0, 180) + "..." : r.resumen}
                         </div>
                       )}
                     </div>
@@ -569,21 +630,23 @@ export default function LeyesClient() {
                         className="flex items-center gap-1 flex-shrink-0"
                         style={{
                           fontFamily: "var(--font-ibm-plex-mono)",
-                          fontSize: "10px",
-                          letterSpacing: "0.04em",
+                          fontSize: "9px",
+                          letterSpacing: "0.06em",
                           textTransform: "uppercase",
-                          color: "var(--color-gold)",
+                          color: "var(--color-text-muted)",
                           textDecoration: "none",
-                          border: "1px solid var(--color-gold-dim)",
+                          border: "1px solid var(--color-line)",
                           padding: "5px 9px",
                           marginTop: "2px",
-                          transition: "border-color 0.2s, color 0.2s",
+                          transition: "border-color 0.2s ease, color 0.2s ease",
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.borderColor = "var(--color-gold)";
+                          e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                          e.currentTarget.style.color = "var(--color-gold)";
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                          e.currentTarget.style.borderColor = "var(--color-line)";
+                          e.currentTarget.style.color = "var(--color-text-muted)";
                         }}
                       >
                         Texto
@@ -602,26 +665,36 @@ export default function LeyesClient() {
                     )}
                   </div>
                 </div>
-              )
-            ))}
+              );
+            })}
           </div>
         )}
 
         {/* Paginación */}
         {paginas > 1 && (
-          <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "28px" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", marginTop: "32px" }}>
             {page > 1 && (
               <button
                 onClick={() => buscar(page - 1)}
                 disabled={loading}
                 style={{
-                  background: "var(--color-card)",
+                  background: "none",
                   border: "1px solid var(--color-line)",
                   color: "var(--color-text-muted)",
-                  padding: "8px 16px",
+                  padding: "9px 18px",
                   fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "12px",
-                  cursor: "pointer",
+                  fontSize: "11px",
+                  letterSpacing: "0.04em",
+                  cursor: loading ? "default" : "pointer",
+                  transition: "border-color 0.2s ease, color 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                  e.currentTarget.style.color = "var(--color-gold)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--color-line)";
+                  e.currentTarget.style.color = "var(--color-text-muted)";
                 }}
               >
                 ← Anterior
@@ -629,10 +702,10 @@ export default function LeyesClient() {
             )}
             <span
               style={{
-                padding: "8px 16px",
                 fontFamily: "var(--font-ibm-plex-mono)",
-                fontSize: "12px",
+                fontSize: "11px",
                 color: "var(--color-text-faint)",
+                letterSpacing: "0.06em",
               }}
             >
               {page} / {paginas}
@@ -642,13 +715,23 @@ export default function LeyesClient() {
                 onClick={() => buscar(page + 1)}
                 disabled={loading}
                 style={{
-                  background: "var(--color-card)",
+                  background: "none",
                   border: "1px solid var(--color-line)",
                   color: "var(--color-text-muted)",
-                  padding: "8px 16px",
+                  padding: "9px 18px",
                   fontFamily: "var(--font-ibm-plex-mono)",
-                  fontSize: "12px",
-                  cursor: "pointer",
+                  fontSize: "11px",
+                  letterSpacing: "0.04em",
+                  cursor: loading ? "default" : "pointer",
+                  transition: "border-color 0.2s ease, color 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                  e.currentTarget.style.color = "var(--color-gold)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--color-line)";
+                  e.currentTarget.style.color = "var(--color-text-muted)";
                 }}
               >
                 Siguiente →
@@ -659,46 +742,95 @@ export default function LeyesClient() {
 
         {/* Empty state */}
         {!loading && resultados.length === 0 && !error && total === 0 && (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "60px 20px",
-              color: "var(--color-text-faint)",
-            }}
-          >
-            <Search style={{ width: "32px", height: "32px", marginBottom: "16px", opacity: 0.3 }} />
+          <div style={{ textAlign: "center", padding: "72px 20px" }}>
+            <div
+              className="flex items-center justify-center"
+              style={{
+                width: "52px",
+                height: "52px",
+                margin: "0 auto 20px",
+                borderRadius: "50%",
+                border: "1px solid var(--color-line)",
+              }}
+            >
+              <Search style={{ width: "20px", height: "20px", color: "var(--color-text-faint)" }} />
+            </div>
             <div
               style={{
                 fontFamily: "var(--font-inter)",
-                fontSize: "14px",
+                fontSize: "15px",
+                color: "var(--color-text)",
                 marginBottom: "8px",
               }}
             >
-              Buscá leyes, decretos, resoluciones y otras normas
+              Buscá leyes, decretos y códigos
             </div>
             <div
               style={{
                 fontFamily: "var(--font-ibm-plex-mono)",
                 fontSize: "11px",
+                color: "var(--color-text-faint)",
                 letterSpacing: "0.04em",
               }}
             >
               Datos provistos por InfoLeg · Ministerio de Justicia
+            </div>
+            <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap", marginTop: "24px" }}>
+              {["Código Civil y Comercial", "Código Penal", "Ley de Contrato de Trabajo"].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => {
+                    setQuery(s);
+                    buscar(1, s, undefined, undefined, undefined);
+                  }}
+                  style={{
+                    background: "none",
+                    border: "1px solid var(--color-line)",
+                    color: "var(--color-text-muted)",
+                    padding: "7px 13px",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "10.5px",
+                    cursor: "pointer",
+                    transition: "border-color 0.2s ease, color 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                    e.currentTarget.style.color = "var(--color-gold)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "var(--color-line)";
+                    e.currentTarget.style.color = "var(--color-text-muted)";
+                  }}
+                >
+                  {s}
+                </button>
+              ))}
             </div>
           </div>
         )}
 
         {/* Loading */}
         {loading && resultados.length === 0 && (
-          <div style={{ textAlign: "center", padding: "40px" }}>
+          <div style={{ textAlign: "center", padding: "60px 20px" }}>
             <Loader2
               style={{
-                width: "24px",
-                height: "24px",
+                width: "22px",
+                height: "22px",
                 color: "var(--color-gold)",
                 animation: "spin 1s linear infinite",
               }}
             />
+            <div
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "11px",
+                letterSpacing: "0.06em",
+                color: "var(--color-text-faint)",
+                marginTop: "14px",
+              }}
+            >
+              Buscando...
+            </div>
           </div>
         )}
       </div>
