@@ -38,7 +38,7 @@ interface MateriaData {
   nombre: string;
 }
 
-type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha";
+type CardTipo = "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha" | "lexpodcast";
 
 function isHtmlArchivo(a: Archivo | null): boolean {
   if (!a || !a.storage_key) return false;
@@ -104,11 +104,16 @@ const CARD_CONFIG: Record<CardTipo, {
     label: "FICHA",
     subtitle: () => "Abrir enlace de Notion",
   },
+  lexpodcast: {
+    icon: <Headphones style={{ width: "18px", height: "18px", color: "var(--color-admin)" }} />,
+    label: "LEXPODCAST",
+    subtitle: () => "Escuchar podcast",
+  },
 };
 
 
 
-const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario", "material_privado", "ficha"];
+const TIPOS_ORDEN: CardTipo[] = ["audio_clase", "clase_youtube", "transcripcion", "archivo", "enlace", "cuestionario", "material_privado", "ficha", "lexpodcast"];
 
 export default function ClaseNumeroPage() {
   const params = useParams();
@@ -279,7 +284,7 @@ function getArchivos(tipo: CardTipo): Archivo[] {
   }
 
     function isAudioTipo(tipo: CardTipo) {
-      return tipo === "audio_clase";
+      return tipo === "audio_clase" || tipo === "lexpodcast";
     }
 
     function isTranscription(tipo: CardTipo) {
@@ -1015,7 +1020,7 @@ if (isTranscription(tipo)) {
                       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
                       style={!puedeVerTodo && clase.archivos.some((a) => !TIPOS_PRIVADOS.includes(a.tipo)) ? { marginTop: "32px" } : undefined}
                     >
-                      {(["cuestionario", "ficha", "material_privado"] as CardTipo[]).flatMap(renderCard)}
+                      {(["cuestionario", "ficha", "material_privado", "lexpodcast"] as CardTipo[]).flatMap(renderCard)}
                     </div>
                   </>
                 );
