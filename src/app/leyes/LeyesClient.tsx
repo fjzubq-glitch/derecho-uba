@@ -172,10 +172,10 @@ export default function LeyesClient() {
               fontSize: "clamp(26px, 4vw, 34px)",
               fontWeight: 500,
               color: "var(--color-text)",
-              marginBottom: "4px",
+              marginBottom: "8px",
             }}
           >
-            Lex<span style={{ color: "var(--color-gold)" }}>Search</span>
+            Normas y <span style={{ color: "var(--color-gold)" }}>Leyes</span>
           </h1>
           <p
             style={{
@@ -185,7 +185,7 @@ export default function LeyesClient() {
               letterSpacing: "0.04em",
             }}
           >
-            Buscador de leyes
+            Legislación argentina · Nación y Provincia de Buenos Aires
           </p>
         </div>
 
