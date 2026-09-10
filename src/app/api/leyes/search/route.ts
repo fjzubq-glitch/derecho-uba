@@ -27,6 +27,16 @@ const TIPO_A_CODIGO_INFOLEG: Record<string, string> = {
   Ordenanza: "28",
 };
 
+const CODIGO_INFOLEG_A_TIPO: Record<string, string> = {
+  "1": "Ley",
+  "2": "Decreto",
+  "8": "Decisión Administrativa",
+  "3": "Resolución",
+  "4": "Disposición",
+  "12": "Acordada",
+  "28": "Ordenanza",
+};
+
 interface LeyResultado {
   id: string;
   tipo: string;
@@ -37,11 +47,36 @@ interface LeyResultado {
   descripcion: string;
   resumen: string;
   url: string;
+  score?: number;
 }
 
 function decodeBuffer(buf: Buffer): string {
   const decoder = new TextDecoder("iso-8859-1");
   return decoder.decode(buf);
+}
+
+/** Detectar patrones tipo "ley 26994" o "decreto 123/2020" en el query */
+function parseQuery(q: string): { tipoDetectado: string; numeroDetectado: string; textoLimpio: string } {
+  const match = q.match(/^(ley|decreto|resolución|resolucion|disposición|disposicion|acordada|ordenanza)\s+(?:n[°º]?\s*)?(\d+)(?:\s*\/\s*\d{4})?$/i);
+  if (match) {
+    const tipo = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
+    return { tipoDetectado: tipo, numeroDetectado: match[2], textoLimpio: "" };
+  }
+  return { tipoDetectado: "", numeroDetectado: "", textoLimpio: q };
+}
+
+/** Calcular score de relevancia: cuántas palabras del query aparecen en el resumen */
+function calcularScore(resumen: string, palabras: string[], queryCompleto: string): number {
+  if (!resumen || palabras.length === 0) return 0;
+  const resumenLower = resumen.toLowerCase();
+  let hits = 0;
+  for (const p of palabras) {
+    if (resumenLower.includes(p)) hits++;
+  }
+  const scoreBase = (hits / palabras.length) * 10;
+  // Bonus: si el query completo aparece como frase en el resumen
+  const fraseBonus = resumenLower.includes(queryCompleto) ? 15 : 0;
+  return scoreBase + fraseBonus;
 }
 
 function parseResultados(html: string): { resultados: LeyResultado[]; total: number; paginas: number } {
@@ -53,29 +88,19 @@ function parseResultados(html: string): { resultados: LeyResultado[]; total: num
   const paginasMatch = html.match(/en\s*(\d+)\s*p&aacute;ginas/);
   const paginas = paginasMatch ? parseInt(paginasMatch[1], 10) : 1;
 
-  // Split by <tr> tags to get individual rows
   const rows = html.split(/<tr>/);
 
   for (const row of rows) {
-    // Must contain vr_azul11 (result row) and verNorma link
     if (!row.includes('class="vr_azul11"') || !row.includes("verNorma.do")) continue;
 
-    // Extract ID
     const idMatch = row.match(/verNorma\.do[^"]*\?id=(\d+)/);
     if (!idMatch) continue;
     const id = idMatch[1];
 
-    // Extract the <a> tag content (type + number + year)
-    // The <a> tag contains the full text like "Resolución\n\t662\n\t/ 2026"
     const aTagMatch = row.match(/class="vr_azul11">\s*(?:<br\/?>)?\s*<a[^>]*>([\s\S]*?)<\/a>/);
     if (!aTagMatch) continue;
 
-    // Clean the <a> tag content: collapse all whitespace
     const tipoCompleto = aTagMatch[1].replace(/[\s\t\n\r]+/g, " ").trim();
-    // Parse formats:
-    //   "Ley 27801" (sin año)
-    //   "Resolución 662 / 2026" (con año)
-    //   "Decreto DNU 585 / 2026" (subtipo + año)
     const tipoParsed = tipoCompleto.match(/^(.*?)\s+(\d+(?:\s*(?:GENERAL|DNU|Reglamentario))?)\s*\/\s*(\d{4})$/i)
       || tipoCompleto.match(/^(.*?)\s+(\d+)$/i);
     let tipo = "";
@@ -89,15 +114,12 @@ function parseResultados(html: string): { resultados: LeyResultado[]; total: num
       tipo = tipoCompleto;
     }
 
-    // Extract dependencia (text right after </a><br/>)
     const depMatch = row.match(/<\/a><br\/?>\s*([\s\S]*?)<br\/?>/);
     const dependencia = depMatch ? depMatch[1].replace(/<[^>]*>/g, "").replace(/[\s\t\n\r]+/g, " ").trim() : "";
 
-    // Extract date from the second <td>
     const fechaMatch = row.match(/<td[^>]*align="center">\s*(?:<[^>]*>)*\s*(\d{2}-\w{3}-\d{4})/);
     const fecha = fechaMatch ? fechaMatch[1] : "";
 
-    // Extract description and summary from the third <td>
     const descTdMatch = row.match(/<td valign="top">\s*<b>([\s\S]*?)<\/b>\s*([\s\S]*?)(?:<span class="vr_marron10"><i>([\s\S]*?)<\/i><\/span>)?\s*<\/td>/);
     let descripcion = "";
     let resumen = "";
@@ -123,14 +145,30 @@ function parseResultados(html: string): { resultados: LeyResultado[]; total: num
     });
   }
 
-  // Sort: Ley first, then Decreto, then others by original order
+  return { resultados, total, paginas };
+}
+
+function sortResultados(resultados: LeyResultado[], palabrasQuery: string[], queryCompleto: string): LeyResultado[] {
+  // Calcular score por resumen
+  for (const r of resultados) {
+    r.score = calcularScore(r.resumen, palabrasQuery, queryCompleto) * 1
+      + calcularScore(r.descripcion, palabrasQuery, queryCompleto) * 0.5;
+    // Bonus: si el número de la norma coincide con alguna palabra numérica del query
+    if (r.numero && palabrasQuery.includes(r.numero)) {
+      r.score += 20;
+    }
+  }
+
+  // Sort: mayor score primero, desempate por tipo (Ley primero)
   resultados.sort((a, b) => {
+    const scoreDiff = (b.score || 0) - (a.score || 0);
+    if (scoreDiff !== 0) return scoreDiff;
     const orderA = ORDEN_TIPOS[a.tipo] ?? 99;
     const orderB = ORDEN_TIPOS[b.tipo] ?? 99;
     return orderA - orderB;
   });
 
-  return { resultados, total, paginas };
+  return resultados;
 }
 
 async function fetchInfoLeg(q: string, tipoCodigo: string, numero: string, anio: string, page: number): Promise<{ resultados: LeyResultado[]; total: number; paginas: number }> {
@@ -185,23 +223,37 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const tipoCodigo = TIPO_A_CODIGO_INFOLEG[tipo] || "";
+    // Detectar si el query contiene "ley 26994" o similar
+    const parsed = parseQuery(q);
+    const tipoDetectado = parsed.tipoDetectado || tipo;
+    const numeroDetectado = parsed.numeroDetectado || numero;
+    const textoBusqueda = parsed.textoLimpio || q;
 
-    if (tipoCodigo || page > 1) {
-      // Filtro explícito o paginación: un solo request
-      const parsed = await fetchInfoLeg(q, tipoCodigo, numero, anio, page);
-      return NextResponse.json({ ...parsed, page });
+    const tipoCodigo = TIPO_A_CODIGO_INFOLEG[tipoDetectado] || "";
+    const palabrasQuery = textoBusqueda.toLowerCase().split(/\s+/).filter(w => w.length > 2 && w !== "para" && w !== "por" && w !== "con" && w !== "una" && w !== "uno" && w !== "las" && w !== "los");
+
+    // Si detectamos tipo+numbero, buscar directamente por número
+    if (tipoDetectado && numeroDetectado) {
+      const tipoCod = TIPO_A_CODIGO_INFOLEG[tipoDetectado] || "";
+      const parsed = await fetchInfoLeg("", tipoCod, numeroDetectado, "", 1);
+      return NextResponse.json({ ...parsed, page: 1 });
     }
 
-    // Sin filtro de tipo, page 1: 2 requests en paralelo
-    // 1) Todos los tipos (para total + paginas + otros tipos)
-    // 2) Solo Leyes (para asegurar que aparezcan primero)
+    if (tipoCodigo || page > 1) {
+      const result = await fetchInfoLeg(textoBusqueda, tipoCodigo, numeroDetectado, anio, page);
+      result.resultados = sortResultados(result.resultados, palabrasQuery, textoBusqueda.toLowerCase());
+      return NextResponse.json({ ...result, page });
+    }
+
+    // Page 1 sin filtro: requests en paralelo
+    // 1) Todos los tipos
+    // 2) Solo Leyes
     const [allParsed, leyesParsed] = await Promise.all([
-      fetchInfoLeg(q, "", numero, anio, 1),
-      fetchInfoLeg(q, "1", numero, anio, 1),
+      fetchInfoLeg(textoBusqueda, "", numeroDetectado, anio, 1),
+      fetchInfoLeg(textoBusqueda, "1", numeroDetectado, anio, 1),
     ]);
 
-    // Merge: Leyes primero, luego el resto (deduplicados por ID)
+    // Merge + dedup + sort por relevancia
     const seenIds = new Set<string>();
     const merged: LeyResultado[] = [];
 
@@ -218,8 +270,10 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    const sorted = sortResultados(merged, palabrasQuery, textoBusqueda.toLowerCase());
+
     return NextResponse.json({
-      resultados: merged,
+      resultados: sorted,
       total: allParsed.total,
       paginas: allParsed.paginas,
       page: 1,
