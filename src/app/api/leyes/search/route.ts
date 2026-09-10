@@ -27,36 +27,6 @@ const TIPO_A_CODIGO_INFOLEG: Record<string, string> = {
   Ordenanza: "28",
 };
 
-const CODIGO_INFOLEG_A_TIPO: Record<string, string> = {
-  "1": "Ley",
-  "2": "Decreto",
-  "8": "Decisión Administrativa",
-  "3": "Resolución",
-  "4": "Disposición",
-  "12": "Acordada",
-  "28": "Ordenanza",
-};
-
-/**
- * Mapping de códigos/leyes conocidas → ID de InfoLeg.
- * Cuando el usuario busca "codigo civil y comercial", buscamos directamente
- * el ID de InfoLeg y extraemos el link al texto completo/consolidado.
- */
-const CODIGOS_CONOCIDOS: Record<string, { idInfoleg: string; numero: string; label: string }> = {
-  "codigo civil y comercial": { idInfoleg: "235975", numero: "26994", label: "Código Civil y Comercial de la Nación" },
-  "codigo civil": { idInfoleg: "235975", numero: "26994", label: "Código Civil y Comercial de la Nación" },
-  "cod civil y comercial": { idInfoleg: "235975", numero: "26994", label: "Código Civil y Comercial de la Nación" },
-  "codigo penal": { idInfoleg: "16546", numero: "11179", label: "Código Penal de la Nación" },
-  "cod penal": { idInfoleg: "16546", numero: "11179", label: "Código Penal de la Nación" },
-  "codigo del trabajo": { idInfoleg: "64555", numero: "25323", label: "Ley de Contrato de Trabajo" },
-  "codigo de el trabajo": { idInfoleg: "64555", numero: "25323", label: "Ley de Contrato de Trabajo" },
-  "codigo tributario": { idInfoleg: "18771", numero: "11683", label: "Código Tributario (Procedimiento Fiscal)" },
-  "codigo aduanero": { idInfoleg: "197785", numero: "22415", label: "Código Aduanero" },
-  "codigo civil y comercial de la nacion": { idInfoleg: "235975", numero: "26994", label: "Código Civil y Comercial de la Nación" },
-  "constitucion nacional": { idInfoleg: "804", numero: "24430", label: "Constitución de la Nación Argentina" },
-  "constitucion de la nacion": { idInfoleg: "804", numero: "24430", label: "Constitución de la Nación Argentina" },
-};
-
 interface LeyResultado {
   id: string;
   tipo: string;
@@ -87,7 +57,7 @@ function parseQuery(q: string): { tipoDetectado: string; numeroDetectado: string
   return { tipoDetectado: "", numeroDetectado: "", textoLimpio: q };
 }
 
-/** Buscar el link "Texto completo" (norma.htm) desde la página de detalle de InfoLeg */
+/** Buscar el link "Texto actualizado" (taxact.htm) o "Texto completo" (norma.htm) desde la página de detalle de InfoLeg */
 async function fetchConsolidatedUrl(idInfoleg: string): Promise<string | null> {
   try {
     const res = await fetch(`${INFOLEG_BASE}/verNorma.do?id=${idInfoleg}`, {
@@ -97,8 +67,9 @@ async function fetchConsolidatedUrl(idInfoleg: string): Promise<string | null> {
     if (!res.ok) return null;
     const buf = await res.arrayBuffer();
     const html = decodeBuffer(buf);
-    // Buscar link a norma.htm (texto completo consolidado)
-    const match = html.match(/<a\s+href='(anexos\/[^']*norma\.htm)'/);
+    // Priorizar "texto actualizado" (consolidado), si no existe usar "texto completo"
+    const match = html.match(/<a\s+href='(anexos\/[^']*taxact\.htm)'/)
+      || html.match(/<a\s+href='(anexos\/[^']*norma\.htm)'/);
     return match ? `${INFOLEG_BASE}/${match[1]}` : null;
   } catch {
     return null;
@@ -114,7 +85,6 @@ function calcularScore(resumen: string, palabras: string[], queryCompleto: strin
     if (resumenLower.includes(p)) hits++;
   }
   const scoreBase = (hits / palabras.length) * 10;
-  // Bonus: si el query completo aparece como frase en el resumen
   const fraseBonus = resumenLower.includes(queryCompleto) ? 15 : 0;
   return scoreBase + fraseBonus;
 }
@@ -189,17 +159,14 @@ function parseResultados(html: string): { resultados: LeyResultado[]; total: num
 }
 
 function sortResultados(resultados: LeyResultado[], palabrasQuery: string[], queryCompleto: string): LeyResultado[] {
-  // Calcular score por resumen
   for (const r of resultados) {
     r.score = calcularScore(r.resumen, palabrasQuery, queryCompleto) * 1
       + calcularScore(r.descripcion, palabrasQuery, queryCompleto) * 0.5;
-    // Bonus: si el número de la norma coincide con alguna palabra numérica del query
     if (r.numero && palabrasQuery.includes(r.numero)) {
       r.score += 20;
     }
   }
 
-  // Sort: mayor score primero, desempate por tipo (Ley primero)
   resultados.sort((a, b) => {
     const scoreDiff = (b.score || 0) - (a.score || 0);
     if (scoreDiff !== 0) return scoreDiff;
@@ -241,7 +208,7 @@ async function fetchInfoLeg(q: string, tipoCodigo: string, numero: string, anio:
 
   if (!res.ok) throw new Error("InfoLeg fetch failed");
 
-    const buf = await res.arrayBuffer();
+  const buf = await res.arrayBuffer();
   const html = decodeBuffer(buf);
   return parseResultados(html);
 }
@@ -263,7 +230,6 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Detectar si el query contiene "ley 26994" o similar
     const parsed = parseQuery(q);
     const tipoDetectado = parsed.tipoDetectado || tipo;
     const numeroDetectado = parsed.numeroDetectado || numero;
@@ -272,52 +238,24 @@ export async function GET(request: NextRequest) {
     const tipoCodigo = TIPO_A_CODIGO_INFOLEG[tipoDetectado] || "";
     const palabrasQuery = textoBusqueda.toLowerCase().split(/\s+/).filter(w => w.length > 2 && w !== "para" && w !== "por" && w !== "con" && w !== "una" && w !== "uno" && w !== "las" && w !== "los");
 
-    // Si detectamos tipo+numbero, buscar directamente por número
+    let result: { resultados: LeyResultado[]; total: number; paginas: number };
+
     if (tipoDetectado && numeroDetectado) {
+      // Búsqueda directa por tipo + número
       const tipoCod = TIPO_A_CODIGO_INFOLEG[tipoDetectado] || "";
-      const result = await fetchInfoLeg("", tipoCod, numeroDetectado, "", 1);
-      // Buscar consolidated URL para el primer resultado
-      if (result.resultados.length > 0) {
-        const consolidatedUrl = await fetchConsolidatedUrl(result.resultados[0].id);
-        if (consolidatedUrl) {
-          result.resultados[0].consolidatedUrl = consolidatedUrl;
-          result.resultados[0].label = "Texto completo de la norma";
-        }
-      }
-      return NextResponse.json({ ...result, page: 1 });
-    }
-
-    // Detectar códigos conocidos (ej: "codigo civil y comercial")
-    const queryNormalizado = textoBusqueda.toLowerCase().trim();
-    const codigoConocido = CODIGOS_CONOCIDOS[queryNormalizado];
-
-    if (codigoConocido) {
-      // Fetch en paralelo: el código conocido + búsqueda normal
-      const [consolidatedUrl, allParsed, leyesParsed] = await Promise.all([
-        fetchConsolidatedUrl(codigoConocido.idInfoleg),
+      result = await fetchInfoLeg("", tipoCod, numeroDetectado, "", 1);
+    } else if (tipoCodigo || page > 1) {
+      result = await fetchInfoLeg(textoBusqueda, tipoCodigo, numeroDetectado, anio, page);
+      result.resultados = sortResultados(result.resultados, palabrasQuery, textoBusqueda.toLowerCase());
+    } else {
+      // Page 1 sin filtro: requests en paralelo
+      const [allParsed, leyesParsed] = await Promise.all([
         fetchInfoLeg(textoBusqueda, "", numeroDetectado, anio, 1),
         fetchInfoLeg(textoBusqueda, "1", numeroDetectado, anio, 1),
       ]);
 
-      // Crear resultado "destacado" con el texto consolidado
-      const destacado: LeyResultado = {
-        id: codigoConocido.idInfoleg,
-        tipo: "Ley",
-        numero: codigoConocido.numero,
-        anio: "",
-        dependencia: "HONORABLE CONGRESO DE LA NACION ARGENTINA",
-        fecha: "",
-        descripcion: codigoConocido.label,
-        resumen: consolidatedUrl ? "Texto completo consolidado de la norma" : "",
-        url: `${INFOLEG_BASE}/verNorma.do?id=${codigoConocido.idInfoleg}`,
-        consolidatedUrl,
-        label: "Texto completo de la norma",
-        score: 1000,
-      };
-
-      // Merge + dedup (el destacado primero, luego el resto sin repetir)
-      const merged: LeyResultado[] = [destacado];
-      const seenIds = new Set<string>([codigoConocido.idInfoleg]);
+      const seenIds = new Set<string>();
+      const merged: LeyResultado[] = [];
 
       for (const r of leyesParsed.resultados) {
         if (!seenIds.has(r.id)) {
@@ -332,51 +270,23 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      return NextResponse.json({
-        resultados: merged,
-        total: allParsed.total + 1,
+      result = {
+        resultados: sortResultados(merged, palabrasQuery, textoBusqueda.toLowerCase()),
+        total: allParsed.total,
         paginas: allParsed.paginas,
-        page: 1,
-      });
+      };
     }
 
-    if (tipoCodigo || page > 1) {
-      const result = await fetchInfoLeg(textoBusqueda, tipoCodigo, numeroDetectado, anio, page);
-      result.resultados = sortResultados(result.resultados, palabrasQuery, textoBusqueda.toLowerCase());
-      return NextResponse.json({ ...result, page });
-    }
-
-    // Page 1 sin filtro: requests en paralelo
-    const [allParsed, leyesParsed] = await Promise.all([
-      fetchInfoLeg(textoBusqueda, "", numeroDetectado, anio, 1),
-      fetchInfoLeg(textoBusqueda, "1", numeroDetectado, anio, 1),
-    ]);
-
-    // Merge + dedup + sort por relevancia
-    const seenIds = new Set<string>();
-    const merged: LeyResultado[] = [];
-
-    for (const r of leyesParsed.resultados) {
-      if (!seenIds.has(r.id)) {
-        seenIds.add(r.id);
-        merged.push(r);
-      }
-    }
-    for (const r of allParsed.resultados) {
-      if (!seenIds.has(r.id)) {
-        seenIds.add(r.id);
-        merged.push(r);
+    // Para page 1: fetch "texto actualizado" del primer resultado
+    if (page === 1 && result.resultados.length > 0) {
+      const consolidatedUrl = await fetchConsolidatedUrl(result.resultados[0].id);
+      if (consolidatedUrl) {
+        result.resultados[0].consolidatedUrl = consolidatedUrl;
+        result.resultados[0].label = "Texto actualizado de la norma";
       }
     }
 
-    const sorted = sortResultados(merged, palabrasQuery, textoBusqueda.toLowerCase());
-
-    return NextResponse.json({
-      resultados: sorted,
-      total: allParsed.total,
-      paginas: allParsed.paginas,
-      page: 1,
-    });
+    return NextResponse.json({ ...result, page });
   } catch (err) {
     console.error("Error searching InfoLeg:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
