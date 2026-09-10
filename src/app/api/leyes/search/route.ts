@@ -106,6 +106,47 @@ function mapSupabaseRow(r: SupabaseRow): LeyResultado {
   };
 }
 
+const MOD_PAT = /MODIFICACION|MODIFICA|ABROGA|DEROGA|SUSTITU|ADECUACION|INCORPORA|PROMULGACION|REFORMA/;
+
+/** Normaliza un título: mayúsculas, sin acentos, espacios colapsados. */
+function normTit(s: string | null | undefined): string {
+  return (s || "")
+    .toUpperCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * Score de relevancia: premia coincidencia de título/sumario, leyes base
+ * (modificadas muchas veces) y tipo Ley; penaliza modificatorias.
+ */
+function scoreLey(r: SupabaseRow, qn: string): number {
+  if (!qn) return 0;
+  const resumen = normTit(r.titulo_resumido);
+  const sumario = normTit(r.titulo_sumario);
+  const rank = Math.min(Math.max(r.rank || 0, 0), 1);
+
+  let s = rank * 10;
+  if (sumario === qn) s += 500;
+  if (resumen === qn) s += 400;
+  if (sumario.startsWith(qn)) s += 100;
+  if (resumen.startsWith(qn)) s += 80;
+  if (sumario.includes(qn)) s += 30;
+
+  s += Math.min(r.modificada_por || 0, 50) * 8;
+
+  if (r.tipo_norma === "Ley") s += 150;
+  else if (r.tipo_norma === "Decreto/Ley") s += 120;
+  else if (r.tipo_norma === "Decreto") s += 10;
+
+  if (MOD_PAT.test(resumen) && !MOD_PAT.test(qn)) s -= 200;
+  if (MOD_PAT.test(sumario) && !MOD_PAT.test(qn)) s -= 100;
+
+  return s;
+}
+
 /** Buscar en Supabase (dataset InfoLeg). Devuelve null si falla. */
 async function buscarEnSupabase(
   q: string,
@@ -116,32 +157,50 @@ async function buscarEnSupabase(
 ): Promise<{ resultados: LeyResultado[]; total: number; paginas: number } | null> {
   try {
     const supabase = getSupabaseAdmin();
-    const offset = (page - 1) * PAGE_SIZE;
 
-    const [{ data, error }, { data: totalData, error: totalError }] = await Promise.all([
-      supabase.rpc("buscar_leyes_infoleg", {
-        q,
-        tipo_filtro: tipo,
-        numero_filtro: numero,
-        anio_filtro: anio,
-        limite: PAGE_SIZE,
-        desplazamiento: offset,
-      }),
-      supabase.rpc("contar_leyes_infoleg", {
-        q,
-        tipo_filtro: tipo,
-        numero_filtro: numero,
-        anio_filtro: anio,
-      }),
-    ]);
-
-    if (error || totalError) return null;
+    // Traemos hasta 300 candidatos y re-ordenamos por relevancia en memoria.
+    // (La función SQL devuelve por ts_rank, que satura y deja ganar a modificatorias.)
+    const { data, error } = await supabase.rpc("buscar_leyes_infoleg", {
+      q,
+      tipo_filtro: tipo,
+      numero_filtro: numero,
+      anio_filtro: anio,
+      limite: 300,
+      desplazamiento: 0,
+    });
+    if (error) return null;
 
     const rows = (data || []) as SupabaseRow[];
-    const total = Number(totalData) || 0;
+
+    // Asegurar que las leyes base (coincidencia directa de título) estén incluidas
+    const qTrim = q.trim();
+    if (qTrim) {
+      const like = `%${qTrim}%`;
+      const [{ data: bySum }, { data: byRes }] = await Promise.all([
+        supabase.from("leyes_infoleg").select("*").ilike("titulo_sumario", like).limit(40),
+        supabase.from("leyes_infoleg").select("*").ilike("titulo_resumido", like).limit(40),
+      ]);
+      const ids = new Set(rows.map((r) => r.id_norma));
+      for (const r of [...(bySum || []), ...(byRes || [])] as SupabaseRow[]) {
+        if (!ids.has(r.id_norma)) {
+          ids.add(r.id_norma);
+          rows.push(r);
+        }
+      }
+    }
+
+    const qn = normTit(q);
+    const ranked = rows
+      .map((r) => ({ r, s: scoreLey(r, qn) }))
+      .sort((a, b) => b.s - a.s)
+      .map((x) => x.r);
+
+    const offset = (page - 1) * PAGE_SIZE;
+    const pageRows = ranked.slice(offset, offset + PAGE_SIZE).map(mapSupabaseRow);
+    const total = ranked.length;
 
     return {
-      resultados: rows.map(mapSupabaseRow),
+      resultados: pageRows,
       total,
       paginas: Math.max(1, Math.ceil(total / PAGE_SIZE)),
     };

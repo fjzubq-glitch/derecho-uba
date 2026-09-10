@@ -1,6 +1,6 @@
 -- 029: Mejora del ranking de LexSearch
--- Problema: ts_rank satura en 1.0 y las leyes modificatorias aparecían primero.
--- Solución: score compuesto que premia coincidencia de título/sumario, leyes base
+-- Problema: ts_rank satura en 1.0 y las leyes modificatorias aparecian primero.
+-- Solucion: score compuesto que premia coincidencia de titulo/sumario, leyes base
 -- (muchas veces modificadas) y tipo Ley, y penaliza modificatorias.
 
 CREATE OR REPLACE FUNCTION norm_tit(t TEXT)
@@ -94,3 +94,5 @@ BEGIN
     LIMIT limite OFFSET desplazamiento;
 END;
 $$;
+
+NOTIFY pgrst, 'reload schema';
