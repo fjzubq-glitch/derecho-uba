@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Shield, BookOpen, X } from "@/components/icons";
+import { Shield, BookOpen, Scale, X } from "@/components/icons";
 import { clearAdminSession } from "@/lib/utils";
 import { getPortalUserName, PORTAL_USER_EVENT } from "@/lib/portalUser";
 
@@ -244,6 +244,37 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
               </button>
             </div>
           )}
+
+          <Link
+            href="/leyes"
+            className="flex items-center gap-2"
+            style={{
+              background: "none",
+              border: "1px solid var(--color-line)",
+              color: "var(--color-text-muted)",
+              padding: "9px 16px",
+              cursor: "pointer",
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "11px",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              lineHeight: 1,
+              transition: "border-color 0.2s ease, color 0.2s ease",
+              whiteSpace: "nowrap",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "var(--color-gold)";
+              e.currentTarget.style.color = "var(--color-gold)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "var(--color-line)";
+              e.currentTarget.style.color = "var(--color-text-muted)";
+            }}
+          >
+            <Scale style={{ width: "13px", height: "13px" }} />
+            <span className="hidden sm:inline">Normas</span>
+          </Link>
 
           <a
             href={PLANIFICADOR_URL}
