@@ -13,6 +13,8 @@ interface LeyResultado {
   descripcion: string;
   resumen: string;
   url: string;
+  consolidatedUrl?: string | null;
+  label?: string;
 }
 
 interface NormaDetalle {
@@ -368,91 +370,205 @@ export default function LeyesClient() {
         {resultados.length > 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
             {resultados.map((r) => (
-              <div
-                key={r.id}
-                onClick={() => handleSelectNorma(r.id)}
-                style={{
-                  background: "var(--color-card)",
-                  border: "1px solid var(--color-line-soft)",
-                  padding: "16px 18px",
-                  cursor: "pointer",
-                  transition: "border-color 0.15s, background 0.15s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--color-gold-dim)";
-                  e.currentTarget.style.background = "var(--color-card-hover)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "var(--color-line-soft)";
-                  e.currentTarget.style.background = "var(--color-card)";
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "12px" }}>
-                  <div style={{ minWidth: 0 }}>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-fraunces)",
-                        fontSize: "15px",
-                        fontWeight: 500,
-                        color: "var(--color-gold)",
-                        marginBottom: "4px",
-                      }}
-                    >
-                      {formatearTipoNumero(r)}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-inter)",
-                        fontSize: "12px",
-                        color: "var(--color-text-muted)",
-                        marginBottom: "6px",
-                      }}
-                    >
-                      {r.dependencia}
-                      {r.fecha && (
-                        <span style={{ marginLeft: "12px", color: "var(--color-text-faint)" }}>
-                          {r.fecha}
+              r.consolidatedUrl ? (
+                /* Card destacada: texto consolidado */
+                <div
+                  key={r.id}
+                  style={{
+                    background: "var(--color-card)",
+                    border: "1px solid var(--color-gold-dim)",
+                    padding: "20px 22px",
+                    transition: "border-color 0.15s",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "12px" }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div className="flex items-center gap-2" style={{ marginBottom: "6px" }}>
+                        <div
+                          style={{
+                            fontFamily: "var(--font-fraunces)",
+                            fontSize: "16px",
+                            fontWeight: 500,
+                            color: "var(--color-gold)",
+                          }}
+                        >
+                          {formatearTipoNumero(r)}
+                        </div>
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "9px",
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                            color: "var(--color-gold)",
+                            background: "var(--color-gold-soft)",
+                            padding: "3px 8px",
+                          }}
+                        >
+                          Texto completo
                         </span>
-                      )}
-                    </div>
-                    {r.descripcion && (
+                      </div>
                       <div
                         style={{
                           fontFamily: "var(--font-inter)",
-                          fontSize: "13px",
+                          fontSize: "14px",
+                          fontWeight: 600,
                           color: "var(--color-text)",
-                          lineHeight: 1.4,
+                          marginBottom: "4px",
                         }}
                       >
-                        {r.descripcion}
+                        {r.descripcion || r.label}
                       </div>
-                    )}
-                    {r.resumen && (
                       <div
                         style={{
                           fontFamily: "var(--font-inter)",
                           fontSize: "12px",
-                          fontStyle: "italic",
-                          color: "var(--color-text-faint)",
-                          marginTop: "6px",
-                          lineHeight: 1.4,
+                          color: "var(--color-text-muted)",
                         }}
                       >
-                        {r.resumen.length > 200 ? r.resumen.slice(0, 200) + "..." : r.resumen}
+                        {r.dependencia}
                       </div>
-                    )}
+                    </div>
                   </div>
-                  <ExternalLink
-                    style={{
-                      width: "14px",
-                      height: "14px",
-                      color: "var(--color-text-faint)",
-                      flexShrink: 0,
-                      marginTop: "4px",
-                    }}
-                  />
+                  <div style={{ marginTop: "14px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                    <a
+                      href={r.consolidatedUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        background: "var(--color-gold)",
+                        color: "var(--color-ink)",
+                        padding: "10px 20px",
+                        fontFamily: "var(--font-inter)",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        textDecoration: "none",
+                        transition: "background 0.2s",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-gold-dim)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-gold)")}
+                    >
+                      Ver texto completo
+                      <ExternalLink style={{ width: "12px", height: "12px" }} />
+                    </a>
+                    <a
+                      href={r.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        background: "none",
+                        border: "1px solid var(--color-line)",
+                        color: "var(--color-text-muted)",
+                        padding: "10px 18px",
+                        fontFamily: "var(--font-inter)",
+                        fontSize: "13px",
+                        textDecoration: "none",
+                        transition: "border-color 0.2s",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-gold-dim)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-line)")}
+                    >
+                      Ver en InfoLeg
+                      <ExternalLink style={{ width: "11px", height: "11px" }} />
+                    </a>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* Card normal */
+                <div
+                  key={r.id}
+                  onClick={() => handleSelectNorma(r.id)}
+                  style={{
+                    background: "var(--color-card)",
+                    border: "1px solid var(--color-line-soft)",
+                    padding: "16px 18px",
+                    cursor: "pointer",
+                    transition: "border-color 0.15s, background 0.15s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "var(--color-gold-dim)";
+                    e.currentTarget.style.background = "var(--color-card-hover)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "var(--color-line-soft)";
+                    e.currentTarget.style.background = "var(--color-card)";
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "12px" }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-fraunces)",
+                          fontSize: "15px",
+                          fontWeight: 500,
+                          color: "var(--color-gold)",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        {formatearTipoNumero(r)}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-inter)",
+                          fontSize: "12px",
+                          color: "var(--color-text-muted)",
+                          marginBottom: "6px",
+                        }}
+                      >
+                        {r.dependencia}
+                        {r.fecha && (
+                          <span style={{ marginLeft: "12px", color: "var(--color-text-faint)" }}>
+                            {r.fecha}
+                          </span>
+                        )}
+                      </div>
+                      {r.descripcion && (
+                        <div
+                          style={{
+                            fontFamily: "var(--font-inter)",
+                            fontSize: "13px",
+                            color: "var(--color-text)",
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          {r.descripcion}
+                        </div>
+                      )}
+                      {r.resumen && (
+                        <div
+                          style={{
+                            fontFamily: "var(--font-inter)",
+                            fontSize: "12px",
+                            fontStyle: "italic",
+                            color: "var(--color-text-faint)",
+                            marginTop: "6px",
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          {r.resumen.length > 200 ? r.resumen.slice(0, 200) + "..." : r.resumen}
+                        </div>
+                      )}
+                    </div>
+                    <ExternalLink
+                      style={{
+                        width: "14px",
+                        height: "14px",
+                        color: "var(--color-text-faint)",
+                        flexShrink: 0,
+                        marginTop: "4px",
+                      }}
+                    />
+                  </div>
+                </div>
+              )
             ))}
           </div>
         )}

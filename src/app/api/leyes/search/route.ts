@@ -37,6 +37,30 @@ const CODIGO_INFOLEG_A_TIPO: Record<string, string> = {
   "28": "Ordenanza",
 };
 
+/**
+ * Mapping de códigos/leyes conocidas → ID de InfoLeg.
+ * Cuando el usuario busca "codigo civil y comercial", buscamos directamente
+ * el ID de InfoLeg y extraemos el link al texto completo/consolidado.
+ */
+const CODIGOS_CONOCIDOS: Record<string, { idInfoleg: string; numero: string; label: string }> = {
+  "codigo civil y comercial": { idInfoleg: "235975", numero: "26994", label: "Código Civil y Comercial de la Nación" },
+  "codigo civil": { idInfoleg: "235975", numero: "26994", label: "Código Civil y Comercial de la Nación" },
+  "cod civil y comercial": { idInfoleg: "235975", numero: "26994", label: "Código Civil y Comercial de la Nación" },
+  "codigo penal": { idInfoleg: "200848", numero: "11179", label: "Código Penal de la Nación" },
+  "cod penal": { idInfoleg: "200848", numero: "11179", label: "Código Penal de la Nación" },
+  "codigo procesal penal": { idInfoleg: "204826", numero: "27372", label: "Código Procesal Penal de la Nación" },
+  "codigo procesal civil": { idInfoleg: "206039", numero: "17565", label: "Código Procesal Civil y Comercial de la Nación" },
+  "codigo commercial": { idInfoleg: "235975", numero: "26994", label: "Código Civil y Comercial de la Nación" },
+  "codigo de comercio": { idInfoleg: "235975", numero: "26994", label: "Código Civil y Comercial de la Nación" },
+  "codigo de el trabajo": { idInfoleg: "197842", numero: "25323", label: "Código del Trabajo" },
+  "codigo del trabajo": { idInfoleg: "197842", numero: "25323", label: "Código del Trabajo" },
+  "codigo tributario": { idInfoleg: "197810", numero: "11683", label: "Código Tributario" },
+  "codigo aduanero": { idInfoleg: "197785", numero: "22415", label: "Código Aduanero" },
+  "codigo civil y comercial de la nacion": { idInfoleg: "235975", numero: "26994", label: "Código Civil y Comercial de la Nación" },
+  "constitucion nacional": { idInfoleg: "56", numero: "24430", label: "Constitución de la Nación Argentina" },
+  "constitucion de la nacion": { idInfoleg: "56", numero: "24430", label: "Constitución de la Nación Argentina" },
+};
+
 interface LeyResultado {
   id: string;
   tipo: string;
@@ -48,9 +72,11 @@ interface LeyResultado {
   resumen: string;
   url: string;
   score?: number;
+  consolidatedUrl?: string | null;
+  label?: string;
 }
 
-function decodeBuffer(buf: Buffer): string {
+function decodeBuffer(buf: ArrayBuffer): string {
   const decoder = new TextDecoder("iso-8859-1");
   return decoder.decode(buf);
 }
@@ -63,6 +89,24 @@ function parseQuery(q: string): { tipoDetectado: string; numeroDetectado: string
     return { tipoDetectado: tipo, numeroDetectado: match[2], textoLimpio: "" };
   }
   return { tipoDetectado: "", numeroDetectado: "", textoLimpio: q };
+}
+
+/** Buscar el link "Texto completo" (norma.htm) desde la página de detalle de InfoLeg */
+async function fetchConsolidatedUrl(idInfoleg: string): Promise<string | null> {
+  try {
+    const res = await fetch(`${INFOLEG_BASE}/verNorma.do?id=${idInfoleg}`, {
+      headers: { "User-Agent": "DerechoUBA-LawSearch/1.0" },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) return null;
+    const buf = await res.arrayBuffer();
+    const html = decodeBuffer(buf);
+    // Buscar link a norma.htm (texto completo consolidado)
+    const match = html.match(/<a\s+href='(anexos\/[^']*norma\.htm)'/);
+    return match ? `${INFOLEG_BASE}/${match[1]}` : null;
+  } catch {
+    return null;
+  }
 }
 
 /** Calcular score de relevancia: cuántas palabras del query aparecen en el resumen */
@@ -201,7 +245,7 @@ async function fetchInfoLeg(q: string, tipoCodigo: string, numero: string, anio:
 
   if (!res.ok) throw new Error("InfoLeg fetch failed");
 
-  const buf = Buffer.from(await res.arrayBuffer());
+    const buf = await res.arrayBuffer();
   const html = decodeBuffer(buf);
   return parseResultados(html);
 }
@@ -235,8 +279,69 @@ export async function GET(request: NextRequest) {
     // Si detectamos tipo+numbero, buscar directamente por número
     if (tipoDetectado && numeroDetectado) {
       const tipoCod = TIPO_A_CODIGO_INFOLEG[tipoDetectado] || "";
-      const parsed = await fetchInfoLeg("", tipoCod, numeroDetectado, "", 1);
-      return NextResponse.json({ ...parsed, page: 1 });
+      const result = await fetchInfoLeg("", tipoCod, numeroDetectado, "", 1);
+      // Buscar consolidated URL para el primer resultado
+      if (result.resultados.length > 0) {
+        const consolidatedUrl = await fetchConsolidatedUrl(result.resultados[0].id);
+        if (consolidatedUrl) {
+          result.resultados[0].consolidatedUrl = consolidatedUrl;
+          result.resultados[0].label = "Texto completo de la norma";
+        }
+      }
+      return NextResponse.json({ ...result, page: 1 });
+    }
+
+    // Detectar códigos conocidos (ej: "codigo civil y comercial")
+    const queryNormalizado = textoBusqueda.toLowerCase().trim();
+    const codigoConocido = CODIGOS_CONOCIDOS[queryNormalizado];
+
+    if (codigoConocido) {
+      // Fetch en paralelo: el código conocido + búsqueda normal
+      const [consolidatedUrl, allParsed, leyesParsed] = await Promise.all([
+        fetchConsolidatedUrl(codigoConocido.idInfoleg),
+        fetchInfoLeg(textoBusqueda, "", numeroDetectado, anio, 1),
+        fetchInfoLeg(textoBusqueda, "1", numeroDetectado, anio, 1),
+      ]);
+
+      // Crear resultado "destacado" con el texto consolidado
+      const destacado: LeyResultado = {
+        id: codigoConocido.idInfoleg,
+        tipo: "Ley",
+        numero: codigoConocido.numero,
+        anio: "",
+        dependencia: "HONORABLE CONGRESO DE LA NACION ARGENTINA",
+        fecha: "",
+        descripcion: codigoConocido.label,
+        resumen: consolidatedUrl ? "Texto completo consolidado de la norma" : "",
+        url: `${INFOLEG_BASE}/verNorma.do?id=${codigoConocido.idInfoleg}`,
+        consolidatedUrl,
+        label: "Texto completo de la norma",
+        score: 1000,
+      };
+
+      // Merge + dedup (el destacado primero, luego el resto sin repetir)
+      const merged: LeyResultado[] = [destacado];
+      const seenIds = new Set<string>([codigoConocido.idInfoleg]);
+
+      for (const r of leyesParsed.resultados) {
+        if (!seenIds.has(r.id)) {
+          seenIds.add(r.id);
+          merged.push(r);
+        }
+      }
+      for (const r of allParsed.resultados) {
+        if (!seenIds.has(r.id)) {
+          seenIds.add(r.id);
+          merged.push(r);
+        }
+      }
+
+      return NextResponse.json({
+        resultados: merged,
+        total: allParsed.total + 1,
+        paginas: allParsed.paginas,
+        page: 1,
+      });
     }
 
     if (tipoCodigo || page > 1) {
@@ -246,8 +351,6 @@ export async function GET(request: NextRequest) {
     }
 
     // Page 1 sin filtro: requests en paralelo
-    // 1) Todos los tipos
-    // 2) Solo Leyes
     const [allParsed, leyesParsed] = await Promise.all([
       fetchInfoLeg(textoBusqueda, "", numeroDetectado, anio, 1),
       fetchInfoLeg(textoBusqueda, "1", numeroDetectado, anio, 1),
