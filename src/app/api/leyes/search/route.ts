@@ -7,6 +7,26 @@ const RATE_WINDOW_MS = 60 * 1000;
 
 const INFOLEG_BASE = "https://servicios.infoleg.gob.ar/infolegInternet";
 
+const ORDEN_TIPOS: Record<string, number> = {
+  Ley: 0,
+  Decreto: 1,
+  "Decisión Administrativa": 2,
+  Resolución: 3,
+  Disposición: 4,
+  Acordada: 5,
+  Ordenanza: 6,
+};
+
+const TIPO_A_CODIGO_INFOLEG: Record<string, string> = {
+  Ley: "1",
+  Decreto: "2",
+  "Decisión Administrativa": "8",
+  Resolución: "3",
+  Disposición: "4",
+  Acordada: "12",
+  Ordenanza: "28",
+};
+
 interface LeyResultado {
   id: string;
   tipo: string;
@@ -33,40 +53,61 @@ function parseResultados(html: string): { resultados: LeyResultado[]; total: num
   const paginasMatch = html.match(/en\s*(\d+)\s*p&aacute;ginas/);
   const paginas = paginasMatch ? parseInt(paginasMatch[1], 10) : 1;
 
-  const rowRegex = /<tr>\s*<td valign="top" class="vr_azul11">\s*(?:<br\/?>)?\s*<a[^>]*href="[^"]*verNorma\.do[^"]*\?id=(\d+)"[^>]*>\s*([\s\S]*?)\s*<\/a>\s*<br\/?>\s*([\s\S]*?)\s*<br\/?>/g;
+  // Split by <tr> tags to get individual rows
+  const rows = html.split(/<tr>/);
 
-  let match;
-  while ((match = rowRegex.exec(html)) !== null) {
-    const id = match[1];
-    const tipoRaw = match[2].replace(/\s+/g, " ").trim();
-    const dependenciaRaw = match[3].replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+  for (const row of rows) {
+    // Must contain vr_azul11 (result row) and verNorma link
+    if (!row.includes('class="vr_azul11"') || !row.includes("verNorma.do")) continue;
 
-    const tipoMatch = tipoRaw.match(/^([\w\s/]+?)(?:\s+(\d+(?:\s*(?:GENERAL|DNU|Reglamentario))?)\s*\/\s*(\d{4}))?$/i);
+    // Extract ID
+    const idMatch = row.match(/verNorma\.do[^"]*\?id=(\d+)/);
+    if (!idMatch) continue;
+    const id = idMatch[1];
+
+    // Extract the <a> tag content (type + number + year)
+    // The <a> tag contains the full text like "Resolución\n\t662\n\t/ 2026"
+    const aTagMatch = row.match(/class="vr_azul11">\s*(?:<br\/?>)?\s*<a[^>]*>([\s\S]*?)<\/a>/);
+    if (!aTagMatch) continue;
+
+    // Clean the <a> tag content: collapse all whitespace
+    const tipoCompleto = aTagMatch[1].replace(/[\s\t\n\r]+/g, " ").trim();
+    // Parse formats:
+    //   "Ley 27801" (sin año)
+    //   "Resolución 662 / 2026" (con año)
+    //   "Decreto DNU 585 / 2026" (subtipo + año)
+    const tipoParsed = tipoCompleto.match(/^(.*?)\s+(\d+(?:\s*(?:GENERAL|DNU|Reglamentario))?)\s*\/\s*(\d{4})$/i)
+      || tipoCompleto.match(/^(.*?)\s+(\d+)$/i);
     let tipo = "";
     let numero = "";
     let anio = "";
-
-    if (tipoMatch) {
-      tipo = tipoMatch[1].trim();
-      numero = tipoMatch[2] || "";
-      anio = tipoMatch[3] || "";
+    if (tipoParsed) {
+      tipo = tipoParsed[1].trim();
+      numero = tipoParsed[2];
+      anio = tipoParsed[3] || "";
     } else {
-      const parts = tipoRaw.split(/\s+/);
-      tipo = parts[0] || "";
-      numero = parts.slice(1).join(" ");
+      tipo = tipoCompleto;
     }
 
-    const afterRow = html.substring(match.index + match[0].length, match.index + match[0].length + 1500);
+    // Extract dependencia (text right after </a><br/>)
+    const depMatch = row.match(/<\/a><br\/?>\s*([\s\S]*?)<br\/?>/);
+    const dependencia = depMatch ? depMatch[1].replace(/<[^>]*>/g, "").replace(/[\s\t\n\r]+/g, " ").trim() : "";
 
-    const fechaMatch = afterRow.match(/<a[^>]*>(\d{2}-\w{3}-\d{4})<\/a>/);
+    // Extract date from the second <td>
+    const fechaMatch = row.match(/<td[^>]*align="center">\s*(?:<[^>]*>)*\s*(\d{2}-\w{3}-\d{4})/);
     const fecha = fechaMatch ? fechaMatch[1] : "";
 
-    const descMatch = afterRow.match(/<td valign="top">\s*<b>[^<]*<\/b>\s*([^<]*(?:<br\/?>)?[^<]*)\s*(?:<span[^>]*><i>([^<]*)<\/i><\/span>)?/);
+    // Extract description and summary from the third <td>
+    const descTdMatch = row.match(/<td valign="top">\s*<b>([\s\S]*?)<\/b>\s*([\s\S]*?)(?:<span class="vr_marron10"><i>([\s\S]*?)<\/i><\/span>)?\s*<\/td>/);
     let descripcion = "";
     let resumen = "";
-    if (descMatch) {
-      descripcion = descMatch[1].replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
-      resumen = descMatch[2] ? descMatch[2].replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim() : "";
+    if (descTdMatch) {
+      descripcion = descTdMatch[1].replace(/<[^>]*>/g, "").replace(/[\s\t\n\r]+/g, " ").trim();
+      if (descTdMatch[2]) {
+        const extra = descTdMatch[2].replace(/<[^>]*>/g, "").replace(/[\s\t\n\r]+/g, " ").trim();
+        if (extra) descripcion = extra;
+      }
+      resumen = descTdMatch[3] ? descTdMatch[3].replace(/<[^>]*>/g, "").replace(/[\s\t\n\r]+/g, " ").trim() : "";
     }
 
     resultados.push({
@@ -74,7 +115,7 @@ function parseResultados(html: string): { resultados: LeyResultado[]; total: num
       tipo,
       numero,
       anio,
-      dependencia: dependenciaRaw,
+      dependencia,
       fecha,
       descripcion,
       resumen,
@@ -82,7 +123,49 @@ function parseResultados(html: string): { resultados: LeyResultado[]; total: num
     });
   }
 
+  // Sort: Ley first, then Decreto, then others by original order
+  resultados.sort((a, b) => {
+    const orderA = ORDEN_TIPOS[a.tipo] ?? 99;
+    const orderB = ORDEN_TIPOS[b.tipo] ?? 99;
+    return orderA - orderB;
+  });
+
   return { resultados, total, paginas };
+}
+
+async function fetchInfoLeg(q: string, tipoCodigo: string, numero: string, anio: string, page: number): Promise<{ resultados: LeyResultado[]; total: number; paginas: number }> {
+  const formData = new URLSearchParams();
+  formData.append("texto", q);
+  formData.append("tipoNorma", tipoCodigo);
+  formData.append("numero", numero);
+  formData.append("anioSancion", anio);
+  formData.append("anioPubDesde", "");
+  formData.append("anioPubHasta", "");
+  formData.append("dependencia", "");
+  formData.append("diaPubDesde", "");
+  formData.append("diaPubHasta", "");
+  formData.append("mesPubDesde", "0");
+  formData.append("mesPubHasta", "0");
+
+  const searchUrl = page > 1
+    ? `${INFOLEG_BASE}/buscarNormas.do?desplazamiento=${(page - 1) * 20}`
+    : `${INFOLEG_BASE}/buscarNormas.do`;
+
+  const res = await fetch(searchUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "User-Agent": "DerechoUBA-LawSearch/1.0",
+    },
+    body: formData.toString(),
+    signal: AbortSignal.timeout(15000),
+  });
+
+  if (!res.ok) throw new Error("InfoLeg fetch failed");
+
+  const buf = Buffer.from(await res.arrayBuffer());
+  const html = decodeBuffer(buf);
+  return parseResultados(html);
 }
 
 export async function GET(request: NextRequest) {
@@ -102,44 +185,44 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const formData = new URLSearchParams();
-    formData.append("texto", q);
-    formData.append("tipoNorma", tipo);
-    formData.append("numero", numero);
-    formData.append("anioSancion", anio);
-    formData.append("anioPubDesde", "");
-    formData.append("anioPubHasta", "");
-    formData.append("dependencia", "");
-    formData.append("diaPubDesde", "");
-    formData.append("diaPubHasta", "");
-    formData.append("mesPubDesde", "0");
-    formData.append("mesPubHasta", "0");
+    const tipoCodigo = TIPO_A_CODIGO_INFOLEG[tipo] || "";
 
-    const searchUrl = page > 1
-      ? `${INFOLEG_BASE}/buscarNormas.do?desplazamiento=${(page - 1) * 20}`
-      : `${INFOLEG_BASE}/buscarNormas.do`;
-
-    const res = await fetch(searchUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "DerechoUBA-LawSearch/1.0",
-      },
-      body: formData.toString(),
-      signal: AbortSignal.timeout(15000),
-    });
-
-    if (!res.ok) {
-      return NextResponse.json({ error: "Error fetching from InfoLeg" }, { status: 502 });
+    if (tipoCodigo || page > 1) {
+      // Filtro explícito o paginación: un solo request
+      const parsed = await fetchInfoLeg(q, tipoCodigo, numero, anio, page);
+      return NextResponse.json({ ...parsed, page });
     }
 
-    const buf = Buffer.from(await res.arrayBuffer());
-    const html = decodeBuffer(buf);
-    const parsed = parseResultados(html);
+    // Sin filtro de tipo, page 1: 2 requests en paralelo
+    // 1) Todos los tipos (para total + paginas + otros tipos)
+    // 2) Solo Leyes (para asegurar que aparezcan primero)
+    const [allParsed, leyesParsed] = await Promise.all([
+      fetchInfoLeg(q, "", numero, anio, 1),
+      fetchInfoLeg(q, "1", numero, anio, 1),
+    ]);
+
+    // Merge: Leyes primero, luego el resto (deduplicados por ID)
+    const seenIds = new Set<string>();
+    const merged: LeyResultado[] = [];
+
+    for (const r of leyesParsed.resultados) {
+      if (!seenIds.has(r.id)) {
+        seenIds.add(r.id);
+        merged.push(r);
+      }
+    }
+    for (const r of allParsed.resultados) {
+      if (!seenIds.has(r.id)) {
+        seenIds.add(r.id);
+        merged.push(r);
+      }
+    }
 
     return NextResponse.json({
-      ...parsed,
-      page,
+      resultados: merged,
+      total: allParsed.total,
+      paginas: allParsed.paginas,
+      page: 1,
     });
   } catch (err) {
     console.error("Error searching InfoLeg:", err);
