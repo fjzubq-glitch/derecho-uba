@@ -250,8 +250,8 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
             className="flex items-center gap-2"
             style={{
               background: "none",
-              border: "1px solid var(--color-line)",
-              color: "var(--color-text-muted)",
+              border: "1px solid rgba(76, 175, 125, 0.35)",
+              color: "rgba(76, 175, 125, 0.85)",
               padding: "9px 16px",
               cursor: "pointer",
               fontFamily: "var(--font-ibm-plex-mono)",
@@ -260,20 +260,42 @@ export default function PortalHeader({ ctaHref = "/dashboard", nav, hideCta = fa
               textTransform: "uppercase",
               textDecoration: "none",
               lineHeight: 1,
-              transition: "border-color 0.2s ease, color 0.2s ease",
+              transition: "border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease",
               whiteSpace: "nowrap",
+              boxShadow: "0 0 12px rgba(76, 175, 125, 0.12)",
+              position: "relative",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "var(--color-gold)";
-              e.currentTarget.style.color = "var(--color-gold)";
+              e.currentTarget.style.borderColor = "#4CAF7D";
+              e.currentTarget.style.color = "#4CAF7D";
+              e.currentTarget.style.boxShadow = "0 0 18px rgba(76, 175, 125, 0.25)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "var(--color-line)";
-              e.currentTarget.style.color = "var(--color-text-muted)";
+              e.currentTarget.style.borderColor = "rgba(76, 175, 125, 0.35)";
+              e.currentTarget.style.color = "rgba(76, 175, 125, 0.85)";
+              e.currentTarget.style.boxShadow = "0 0 12px rgba(76, 175, 125, 0.12)";
             }}
           >
             <Scale style={{ width: "13px", height: "13px" }} />
-            <span className="hidden sm:inline">Normas</span>
+            <span className="hidden sm:inline">Buscador de Leyes</span>
+            <span
+              style={{
+                position: "absolute",
+                top: "-6px",
+                right: "-6px",
+                background: "#4CAF7D",
+                color: "#0C0B09",
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "8px",
+                fontWeight: 700,
+                letterSpacing: "0.06em",
+                padding: "2px 5px",
+                lineHeight: 1,
+                textTransform: "uppercase",
+              }}
+            >
+              NEW
+            </span>
           </Link>
 
           <a

@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import InkStamp from "@/components/InkStamp";
-import { Shield, ArrowRight, Headphones, FileText, Play, Volume2 } from "@/components/icons";
+import { Shield, ArrowRight, Headphones, FileText, Play, Volume2, Scale } from "@/components/icons";
 
 interface Materia {
   id: string;
@@ -272,6 +272,106 @@ export default function HomeClient({
           </div>
         </section>
       )}
+
+      {/* ═══════════ BUSCADOR DE LEYES ═══════════ */}
+      <section>
+        <div className="pad-lateral" style={{ padding: "48px 48px 0" }}>
+          <a
+            href="/leyes"
+            className="group flex items-center gap-5"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "20px",
+              background: "var(--color-card)",
+              border: "1px solid rgba(76, 175, 125, 0.3)",
+              padding: "24px 28px",
+              textDecoration: "none",
+              transition: "border-color 0.25s ease, box-shadow 0.25s ease",
+              boxShadow: "0 0 20px rgba(76, 175, 125, 0.08)",
+              position: "relative",
+              overflow: "hidden",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(76, 175, 125, 0.55)";
+              e.currentTarget.style.boxShadow = "0 0 30px rgba(76, 175, 125, 0.15)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(76, 175, 125, 0.3)";
+              e.currentTarget.style.boxShadow = "0 0 20px rgba(76, 175, 125, 0.08)";
+            }}
+          >
+            {/* Icono */}
+            <div
+              className="flex items-center justify-center flex-shrink-0"
+              style={{
+                width: "48px",
+                height: "48px",
+                borderRadius: "50%",
+                border: "1px solid rgba(76, 175, 125, 0.4)",
+                background: "rgba(76, 175, 125, 0.06)",
+              }}
+            >
+              <Scale style={{ width: "20px", height: "20px", color: "#4CAF7D" }} />
+            </div>
+
+            {/* Texto */}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-3">
+                <span
+                  style={{
+                    fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                    fontWeight: 500,
+                    fontSize: "17px",
+                    color: "var(--color-text)",
+                  }}
+                >
+                  Buscador de Leyes
+                </span>
+                <span
+                  style={{
+                    background: "#4CAF7D",
+                    color: "#0C0B09",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "9px",
+                    fontWeight: 700,
+                    letterSpacing: "0.06em",
+                    padding: "3px 7px",
+                    lineHeight: 1,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  NEW
+                </span>
+              </div>
+              <span
+                className="block"
+                style={{
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "11px",
+                  color: "var(--color-text-faint)",
+                  marginTop: "4px",
+                  letterSpacing: "0.02em",
+                }}
+              >
+                Legislación argentina · Nación y Provincia de Buenos Aires
+              </span>
+            </div>
+
+            {/* Flecha */}
+            <ArrowRight
+              style={{
+                width: "16px",
+                height: "16px",
+                color: "rgba(76, 175, 125, 0.5)",
+                flexShrink: 0,
+                transition: "transform 0.2s ease, color 0.2s ease",
+              }}
+              className="group-hover:translate-x-[3px]"
+            />
+          </a>
+        </div>
+      </section>
 
       {/* ═══════════ MATERIAS ═══════════ */}
       <section className="flex-1">

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { Search, ExternalLink, ChevronDown, Loader2 } from "@/components/icons";
+import { Search, ExternalLink, ChevronDown, Loader2, ArrowLeft } from "@/components/icons";
 
 interface LeyResultado {
   id: string;
@@ -139,6 +139,29 @@ export default function LeyesClient() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--color-ink)" }}>
       <div style={{ maxWidth: "860px", margin: "0 auto", padding: "40px 22px 80px" }}>
+        {/* Botón volver */}
+        <a
+          href="/"
+          className="flex items-center gap-2"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+            fontFamily: "var(--font-ibm-plex-mono)",
+            fontSize: "11px",
+            letterSpacing: "0.06em",
+            color: "var(--color-text-muted)",
+            textDecoration: "none",
+            marginBottom: "28px",
+            transition: "color 0.2s ease",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+        >
+          <ArrowLeft style={{ width: "14px", height: "14px" }} />
+          Volver al inicio
+        </a>
+
         {/* Header */}
         <div style={{ marginBottom: "36px" }}>
           <h1
