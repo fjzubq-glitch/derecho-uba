@@ -349,7 +349,6 @@ export default function MateriaClient({
                   </button>
                 </div>
               </div>
-              <div style={{ borderTop: "1px solid var(--color-line)", marginTop: "32px" }} />
             </div>
           )}
 

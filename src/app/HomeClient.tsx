@@ -423,11 +423,9 @@ export default function HomeClient({
             </div>
           ) : (
             <div
-              className="grid grid-cols-1 md:grid-cols-3 overflow-hidden"
+              className="grid grid-cols-1 md:grid-cols-3"
               style={{
-                background: "var(--color-line-soft)",
-                gap: "1px",
-                borderRadius: "14px",
+                gap: "16px",
               }}
             >
               {materias.map((m, i) => {
@@ -549,7 +547,7 @@ export default function HomeClient({
                     {/* CTA */}
                     <div
                       className="flex items-center gap-2 mt-auto pt-4 border-t card-link"
-                      style={{ borderColor: "var(--color-line-soft)", fontSize: "13px", fontWeight: 500 }}
+                      style={{ borderColor: "var(--color-line-soft)", fontSize: "13px", fontWeight: 500, fontFamily: "var(--font-inter)" }}
                     >
                       Ver contenido
                       <ArrowRight
