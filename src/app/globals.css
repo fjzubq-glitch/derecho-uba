@@ -58,9 +58,9 @@ h1, h2, h3, .section-title, .word {
   font-family: var(--font-fraunces), 'Fraunces', Georgia, 'Times New Roman', serif !important;
 }
 
-/* ── Cards sin border-radius ── */
+/* ── Cards: border-radius consistente ── */
 article {
-  border-radius: 0 !important;
+  border-radius: 14px;
 }
 
 /* ── Sello: se estampa al cargar (hero) ── */
