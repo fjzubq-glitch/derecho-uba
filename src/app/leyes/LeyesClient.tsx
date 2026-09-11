@@ -145,7 +145,7 @@ export default function LeyesClient() {
       {/* Botón volver — posición fija a la izquierda */}
       <Link
         href="/"
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 leyes-volver"
         style={{
           position: "fixed",
           top: "24px",
@@ -176,7 +176,7 @@ export default function LeyesClient() {
         }}
       >
         <ArrowLeft style={{ width: "14px", height: "14px" }} />
-        Inicio
+        <span className="leyes-inicio-text">Inicio</span>
       </Link>
 
       <div style={{ maxWidth: "900px", margin: "0 auto", padding: "16px 24px 96px" }}>
@@ -1115,7 +1115,7 @@ export default function LeyesClient() {
         </div>
       )}
 
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes spin-glow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .leyes-filtros { grid-template-columns: 2fr 1fr 1fr auto; } @media (max-width: 640px) { .leyes-filtros { grid-template-columns: 1fr !important; gap: 10px !important; } .leyes-buscar-btn { width: 100% !important; height: 40px !important; } }`}</style>
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes spin-glow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .leyes-filtros { grid-template-columns: 2fr 1fr 1fr auto; } @media (max-width: 640px) { .leyes-filtros { grid-template-columns: 1fr !important; gap: 10px !important; } .leyes-buscar-btn { width: 100% !important; height: 40px !important; } .leyes-inicio-text { display: none !important; } .leyes-volver { top: 12px !important; left: 12px !important; padding: 6px 10px !important; } }`}</style>
     </div>
   );
 }
