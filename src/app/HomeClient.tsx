@@ -326,18 +326,33 @@ export default function HomeClient({
                 </span>
                 <span
                   style={{
-                    background: "#4CAF7D",
-                    color: "#0C0B09",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
                     fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "8px",
-                    fontWeight: 700,
-                    letterSpacing: "0.06em",
-                    padding: "2px 6px",
+                    fontSize: "9px",
+                    letterSpacing: "0.1em",
+                    color: "#7FD9A8",
+                    background: "rgba(93,202,165,0.08)",
+                    border: "1px solid rgba(93,202,165,0.3)",
+                    borderRadius: "20px",
+                    padding: "2px 9px 2px 7px",
                     lineHeight: 1,
                     textTransform: "uppercase",
                   }}
                 >
-                  NEW
+                  <span
+                    style={{
+                      width: "5px",
+                      height: "5px",
+                      borderRadius: "50%",
+                      background: "#5DCAA5",
+                      boxShadow: "0 0 0 rgba(93,202,165,0.4)",
+                      animation: "pulse-dot 2s ease-in-out infinite",
+                      flexShrink: 0,
+                    }}
+                  />
+                  NUEVO
                 </span>
               </div>
               <span
@@ -562,6 +577,7 @@ export default function HomeClient({
           )}
         </div>
       </section>
+      <style>{`@keyframes pulse-dot { 0%, 100% { box-shadow: 0 0 0 rgba(93,202,165,0.4); } 50% { box-shadow: 0 0 0 4px rgba(93,202,165,0); } }`}</style>
     </div>
   );
 }
