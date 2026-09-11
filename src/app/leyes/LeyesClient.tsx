@@ -216,6 +216,47 @@ export default function LeyesClient() {
           </p>
         </div>
 
+        {/* Accesos rápidos — chips compactos arriba del card */}
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "20px" }}>
+          {[
+            { label: "Código Civil", query: "Código Civil y Comercial" },
+            { label: "Código Penal", query: "Código Penal" },
+            { label: "LCT", query: "Ley de Contrato de Trabajo" },
+            { label: "LGS", query: "Ley 19.550" },
+          ].map((item) => (
+            <button
+              key={item.query}
+              onClick={() => {
+                setQuery(item.query);
+                buscar(1, item.query, undefined, undefined, undefined);
+              }}
+              style={{
+                borderRadius: "20px",
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.07)",
+                padding: "6px 14px",
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "10px",
+                letterSpacing: "0.04em",
+                color: "#8A8E9C",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "rgba(185,154,98,0.3)";
+                e.currentTarget.style.color = "#D9B77E";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
+                e.currentTarget.style.color = "#8A8E9C";
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
         {/* Buscador */}
         <div
           style={{
@@ -420,44 +461,6 @@ export default function LeyesClient() {
               {loading ? "Buscando..." : "Buscar"}
             </button>
           </div>
-        </div>
-
-        {/* Divisor gradiente bronce → transparente */}
-        <div style={{ height: "1px", background: "linear-gradient(90deg, rgba(185,154,98,0.25), transparent)", margin: "36px 0 20px" }} />
-
-        {/* Accesos rápidos — grid 2×2 */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px", marginBottom: "36px" }}>
-          {[
-            { label: "Código Civil y Comercial", query: "Código Civil y Comercial" },
-            { label: "Código Penal", query: "Código Penal" },
-            { label: "Ley de Contrato de Trabajo", query: "Ley de Contrato de Trabajo" },
-            { label: "Ley 19.550 (LGS)", query: "Ley 19.550" },
-          ].map((item) => (
-            <button
-              key={item.query}
-              onClick={() => {
-                setQuery(item.query);
-                buscar(1, item.query, undefined, undefined, undefined);
-              }}
-              style={{
-                borderRadius: "10px",
-                background: "rgba(255,255,255,0.02)",
-                border: "1px solid rgba(255,255,255,0.05)",
-                padding: "16px",
-                fontFamily: "var(--font-inter)",
-                fontSize: "13px",
-                fontWeight: 300,
-                color: "#D8D6CE",
-                cursor: "pointer",
-                textAlign: "left",
-                transition: "border-color 0.25s ease",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(185,154,98,0.3)")}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)")}
-            >
-              {item.label}
-            </button>
-          ))}
         </div>
 
         {/* Resultados */}
