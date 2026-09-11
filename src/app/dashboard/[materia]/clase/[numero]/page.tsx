@@ -612,6 +612,59 @@ if (isTranscription(tipo)) {
           )}
         </div>
 
+        {/* Offline button — always visible for audio types, even when not playing */}
+        {isAudioTipo(tipo) && playingArchivoId !== archivo.id && (
+          <div className="mt-3">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (offlineStatus[archivo.id] === "saved") {
+                  eliminarOffline(archivo);
+                } else if (offlineStatus[archivo.id] !== "downloading") {
+                  guardarOffline(archivo);
+                }
+              }}
+              title={
+                offlineStatus[archivo.id] === "saved"
+                  ? "Audio guardado. Clic para eliminar la copia offline"
+                  : "Guardar audio para escucharlo sin conexión (sin gastar datos)"
+              }
+              className="flex items-center gap-1.5"
+              style={{
+                fontSize: "11px",
+                fontWeight: 500,
+                background: "none",
+                border: "none",
+                cursor: offlineStatus[archivo.id] === "downloading" ? "wait" : "pointer",
+                padding: 0,
+                fontFamily: "var(--font-inter)",
+                color:
+                  offlineStatus[archivo.id] === "saved"
+                    ? "var(--color-gold)"
+                    : "var(--color-text-muted)",
+                transition: "color 0.2s ease",
+              }}
+            >
+              {offlineStatus[archivo.id] === "saved" ? (
+                <>
+                  <Check style={{ width: "13px", height: "13px" }} />
+                  Offline
+                </>
+              ) : offlineStatus[archivo.id] === "downloading" ? (
+                <>
+                  <Loader2 style={{ width: "13px", height: "13px", animation: "spin 1s linear infinite" }} />
+                  Guardando {offlineProgress[archivo.id] ? Math.round(offlineProgress[archivo.id] * 100) : 0}%
+                </>
+              ) : (
+                <>
+                  <Download style={{ width: "13px", height: "13px" }} />
+                  Guardar offline
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
         {/* Thumbnail YouTube */}
         {youtubeThumb && (
           <div className="mt-4">

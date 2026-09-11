@@ -32,8 +32,21 @@ function putBlob(archivoId: string, blob: Blob): Promise<void> {
 }
 
 export async function saveAudioOffline(archivoId: string, url: string, onProgress?: (p: number) => void): Promise<void> {
-  const res = await fetch(url);
+  let res = await fetch(url);
   if (!res.ok) throw new Error("Error al descargar el audio");
+
+  // Si el endpoint devuelve JSON con una URL de redirección (ej: stream → Cloudinary),
+  // seguir la redirección para descargar el audio real.
+  const ct = res.headers.get("content-type") || "";
+  if (ct.includes("application/json")) {
+    const body = await res.json();
+    if (body?.url) {
+      res = await fetch(body.url);
+      if (!res.ok) throw new Error("Error al descargar el audio");
+    } else {
+      throw new Error("Respuesta inesperada del servidor");
+    }
+  }
 
   const contentType = res.headers.get("content-type") || "audio/mpeg";
   const contentLength = Number(res.headers.get("content-length") || 0);
