@@ -1104,6 +1104,44 @@ export default function LeyesClient() {
         </div>
       )}
 
+      {/* Boton volver flotante — visible cuando hay resultados */}
+      {total > 0 && (
+        <Link
+          href="/"
+          style={{
+            position: "fixed",
+            bottom: "48px",
+            right: "24px",
+            zIndex: 80,
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            padding: "10px 16px",
+            borderRadius: "10px",
+            background: "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02))",
+            border: "1px solid rgba(255,255,255,0.08)",
+            backdropFilter: "blur(6px)",
+            fontFamily: "var(--font-ibm-plex-mono)",
+            fontSize: "10px",
+            letterSpacing: "0.06em",
+            color: "#8A8E9C",
+            textDecoration: "none",
+            transition: "border-color 0.2s ease, color 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "rgba(185,154,98,0.3)";
+            e.currentTarget.style.color = "#D9B77E";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+            e.currentTarget.style.color = "#8A8E9C";
+          }}
+        >
+          <ArrowLeft style={{ width: "12px", height: "12px" }} />
+          Inicio
+        </Link>
+      )}
+
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes spin-glow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>
   );
