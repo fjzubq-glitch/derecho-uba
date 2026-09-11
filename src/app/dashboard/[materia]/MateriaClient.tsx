@@ -235,7 +235,7 @@ export default function MateriaClient({
                   className="cursor-pointer"
                   style={{
                     background: "var(--color-card)",
-                    border: "1px solid var(--color-line-soft)",
+                    border: "1px solid var(--color-gold-dim)",
                     borderTop: "2px solid var(--color-gold-dim)",
                     borderRadius: "14px",
                     padding: "24px 26px 20px",
