@@ -285,7 +285,8 @@ export default function HomeClient({
               gap: "14px",
               background: "var(--color-card)",
               border: "1px solid rgba(76, 175, 125, 0.25)",
-              padding: "14px 20px",
+              borderRadius: "14px",
+              padding: "16px 22px",
               textDecoration: "none",
               transition: "border-color 0.25s ease, box-shadow 0.25s ease",
               boxShadow: "0 0 14px rgba(76, 175, 125, 0.06)",
@@ -302,14 +303,14 @@ export default function HomeClient({
             <div
               className="flex items-center justify-center flex-shrink-0"
               style={{
-                width: "34px",
-                height: "34px",
-                borderRadius: "50%",
+                width: "38px",
+                height: "38px",
+                borderRadius: "10px",
                 border: "1px solid rgba(76, 175, 125, 0.35)",
                 background: "rgba(76, 175, 125, 0.05)",
               }}
             >
-              <Scale style={{ width: "15px", height: "15px", color: "#4CAF7D" }} />
+              <Scale style={{ width: "16px", height: "16px", color: "#4CAF7D" }} />
             </div>
 
             <div className="min-w-0 flex-1">
@@ -365,14 +366,14 @@ export default function HomeClient({
                   letterSpacing: "0.02em",
                 }}
               >
-                Buscador de leyes
+                Buscador de leyes, decretos y normativa argentina
               </span>
             </div>
 
             <ArrowRight
               style={{
-                width: "14px",
-                height: "14px",
+                width: "16px",
+                height: "16px",
                 color: "rgba(76, 175, 125, 0.45)",
                 flexShrink: 0,
                 transition: "transform 0.2s ease, color 0.2s ease",
