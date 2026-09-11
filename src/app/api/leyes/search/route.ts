@@ -90,10 +90,10 @@ function parseQuery(q: string): { tipoDetectado: string; numeroDetectado: string
 
 /** Búsquedas directas por nombre conocido → ID de InfoLeg */
 const NOMBRE_A_ID: Record<string, string> = {
-  "constitucion nacional": "1",
-  "constitución nacional": "1",
-  "constitucion": "1",
-  "constitución": "1",
+  "constitucion nacional": "804",
+  "constitución nacional": "804",
+  "constitucion": "804",
+  "constitución": "804",
 };
 
 function mapSupabaseRow(r: SupabaseRow): LeyResultado {
