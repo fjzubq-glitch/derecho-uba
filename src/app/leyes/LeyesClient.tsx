@@ -315,7 +315,7 @@ export default function LeyesClient() {
               value={query}
               onChange={(e) => handleTextChange(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Buscar por nombre, tema o número de norma..."
+              placeholder="Buscar ley, norma..."
               style={{
                 flex: 1,
                 minWidth: 0,
