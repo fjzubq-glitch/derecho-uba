@@ -69,7 +69,24 @@ export async function GET(
   }
 
   if (archivo.cloudinary_url) {
-    return Response.json({ url: archivo.cloudinary_url });
+    try {
+      const range = request.headers.get("range") || undefined;
+      const cloudRes = await fetch(archivo.cloudinary_url, {
+        headers: range ? { Range: range } : {},
+      });
+      if (!cloudRes.ok && cloudRes.status !== 206) {
+        return new Response("Error fetching from Cloudinary", { status: 502 });
+      }
+      const headers: Record<string, string> = {};
+      for (const key of ["content-type", "content-length", "content-range", "accept-ranges"]) {
+        const val = cloudRes.headers.get(key);
+        if (val) headers[key] = val;
+      }
+      if (!headers["content-type"]) headers["content-type"] = "audio/mpeg";
+      return new Response(cloudRes.body, { status: cloudRes.status, headers });
+    } catch {
+      return new Response("Error proxying Cloudinary audio", { status: 502 });
+    }
   }
 
   if (!archivo.storage_key) {

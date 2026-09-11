@@ -201,7 +201,6 @@ export default function ClaseNumeroPage() {
   }, [clase]);
 
   function audioSourceUrl(archivo: Archivo) {
-    if (archivo.cloudinary_url) return archivo.cloudinary_url;
     let url = `/api/stream/${archivo.id}`;
     // Los tipos privados exigen nombre (grant) o clave+nombre en el stream.
     // Sin esto, un premiado vería la card pero el audio daría 404.
