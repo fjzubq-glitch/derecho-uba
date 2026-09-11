@@ -88,6 +88,14 @@ function parseQuery(q: string): { tipoDetectado: string; numeroDetectado: string
   return { tipoDetectado: "", numeroDetectado: "", textoLimpio: q };
 }
 
+/** Búsquedas directas por nombre conocido → ID de InfoLeg */
+const NOMBRE_A_ID: Record<string, string> = {
+  "constitucion nacional": "1",
+  "constitución nacional": "1",
+  "constitucion": "1",
+  "constitución": "1",
+};
+
 function mapSupabaseRow(r: SupabaseRow): LeyResultado {
   const anio = r.fecha_sancion ? String(r.fecha_sancion).slice(0, 4) : "";
   const texto = r.texto_actualizado || r.texto_original || "";
@@ -443,6 +451,28 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // 0) Búsqueda directa por nombre conocido (ej: "Constitución Nacional" → ID 1)
+    const qNorm = q.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    const directId = NOMBRE_A_ID[qNorm];
+    if (directId) {
+      try {
+        const supabase = getSupabaseAdmin();
+        const { data } = await supabase.from("leyes_infoleg").select("*").eq("id_norma", directId).single();
+        if (data) {
+          const row = data as SupabaseRow;
+          const resultado = mapSupabaseRow(row);
+          let texto = resultado.textoUrl || null;
+          if (!texto) texto = await fetchConsolidatedUrl(directId);
+          if (texto) {
+            resultado.consolidatedUrl = texto;
+            resultado.textoUrl = texto;
+            resultado.label = "Texto actualizado de la norma";
+          }
+          return NextResponse.json({ resultados: [resultado], total: 1, paginas: 1, page: 1 });
+        }
+      } catch {}
+    }
+
     const parsed = parseQuery(q);
     const tipoDetectado = parsed.tipoDetectado || tipo;
     const numeroDetectado = parsed.numeroDetectado || numero;
