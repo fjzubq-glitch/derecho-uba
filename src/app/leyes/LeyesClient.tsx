@@ -269,12 +269,12 @@ export default function LeyesClient() {
             background: "linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01))",
             border: "1px solid rgba(255,255,255,0.06)",
             borderRadius: "14px",
-            padding: "24px",
-            marginBottom: "28px",
+            padding: "18px",
+            marginBottom: "24px",
           }}
         >
           {/* Input principal — sin caja, solo border-bottom */}
-          <div style={{ position: "relative", marginBottom: "18px", paddingBottom: "14px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+          <div style={{ position: "relative", marginBottom: "14px", paddingBottom: "12px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
             <div
               style={{
                 position: "absolute",
@@ -331,8 +331,8 @@ export default function LeyesClient() {
             />
           </div>
 
-          {/* Filtros — CSS Grid 2fr 1fr 1fr auto */}
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr auto", gap: "14px", alignItems: "end" }}>
+          {/* Filtros — CSS Grid responsive */}
+          <div className="leyes-filtros" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr auto", gap: "12px", alignItems: "end" }}>
             <div>
               <label style={{ display: "block", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#6A6E7C", marginBottom: "8px" }}>
                 Tipo
@@ -438,6 +438,7 @@ export default function LeyesClient() {
             <button
               onClick={() => buscar(1)}
               disabled={loading || (!query && !tipo && !numero)}
+              className="leyes-buscar-btn"
               style={{
                 height: "44px",
                 padding: "0 24px",
@@ -848,25 +849,25 @@ export default function LeyesClient() {
 
         {/* Empty state */}
         {!loading && resultados.length === 0 && !error && total === 0 && (
-          <div style={{ textAlign: "center", padding: "72px 20px" }}>
+          <div style={{ textAlign: "center", padding: "48px 20px" }}>
             <div
               className="flex items-center justify-center"
               style={{
-                width: "52px",
-                height: "52px",
-                margin: "0 auto 20px",
+                width: "48px",
+                height: "48px",
+                margin: "0 auto 16px",
                 borderRadius: "50%",
                 border: "1px solid var(--color-line)",
               }}
             >
-              <Search style={{ width: "20px", height: "20px", color: "var(--color-text-faint)" }} />
+              <Search style={{ width: "18px", height: "18px", color: "var(--color-text-faint)" }} />
             </div>
             <div
               style={{
                 fontFamily: "var(--font-inter)",
-                fontSize: "15px",
+                fontSize: "14px",
                 color: "var(--color-text)",
-                marginBottom: "8px",
+                marginBottom: "6px",
               }}
             >
               Buscá leyes, decretos y códigos
@@ -874,7 +875,7 @@ export default function LeyesClient() {
             <div
               style={{
                 fontFamily: "var(--font-ibm-plex-mono)",
-                fontSize: "11px",
+                fontSize: "10px",
                 color: "var(--color-text-faint)",
                 letterSpacing: "0.04em",
               }}
@@ -1114,7 +1115,7 @@ export default function LeyesClient() {
         </div>
       )}
 
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes spin-glow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes spin-glow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .leyes-filtros { grid-template-columns: 2fr 1fr 1fr auto; } @media (max-width: 640px) { .leyes-filtros { grid-template-columns: 1fr !important; gap: 10px !important; } .leyes-buscar-btn { width: 100% !important; height: 40px !important; } }`}</style>
     </div>
   );
 }
