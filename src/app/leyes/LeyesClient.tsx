@@ -274,14 +274,12 @@ export default function LeyesClient() {
             marginBottom: "24px",
           }}
         >
-          {/* Input principal — sin caja, solo border-bottom */}
-          <div className="leyes-input-row" style={{ position: "relative", marginBottom: "14px", paddingBottom: "12px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+          {/* Input principal — barra de búsqueda con botón inline */}
+          <div className="leyes-input-row" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px", paddingBottom: "12px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
             <div
               style={{
-                position: "absolute",
-                left: "-4px",
-                top: "50%",
-                transform: "translateY(-50%)",
+                position: "relative",
+                flexShrink: 0,
                 width: "23px",
                 height: "23px",
                 borderRadius: "50%",
@@ -319,8 +317,9 @@ export default function LeyesClient() {
               onKeyDown={handleKeyDown}
               placeholder="Buscar por nombre, tema o número de norma..."
               style={{
-                width: "100%",
-                padding: "0 0 0 24px",
+                flex: 1,
+                minWidth: 0,
+                padding: "0",
                 background: "transparent",
                 border: "none",
                 color: "var(--color-text)",
@@ -330,10 +329,43 @@ export default function LeyesClient() {
                 outline: "none",
               }}
             />
+            <button
+              onClick={() => buscar(1)}
+              className="leyes-buscar-btn"
+              style={{
+                flexShrink: 0,
+                height: "36px",
+                padding: "0 18px",
+                background: loading ? "rgba(93,202,165,0.08)" : "transparent",
+                border: `1px solid ${loading ? "#5DCAA5" : "#B99A62"}`,
+                borderRadius: "8px",
+                color: loading ? "#5DCAA5" : "#D9B77E",
+                fontFamily: "var(--font-inter)",
+                fontSize: "13px",
+                fontWeight: 400,
+                cursor: "pointer",
+                transition: "border-color 0.3s ease, color 0.3s ease, background 0.3s ease",
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.borderColor = "#D9B77E";
+                  e.currentTarget.style.color = "#E8C99A";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.borderColor = "#B99A62";
+                  e.currentTarget.style.color = "#D9B77E";
+                }
+              }}
+            >
+              {loading ? "Buscando..." : "Buscar"}
+            </button>
           </div>
 
           {/* Filtros — CSS Grid responsive */}
-          <div className="leyes-filtros" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr auto", gap: "12px", alignItems: "end" }}>
+          <div className="leyes-filtros" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", alignItems: "end" }}>
             <div>
               <label style={{ display: "block", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#6A6E7C", marginBottom: "8px" }}>
                 Tipo
@@ -436,38 +468,6 @@ export default function LeyesClient() {
                 onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)")}
               />
             </div>
-            <button
-              onClick={() => buscar(1)}
-              className="leyes-buscar-btn"
-              style={{
-                height: "44px",
-                padding: "0 24px",
-                background: loading ? "rgba(93,202,165,0.08)" : "transparent",
-                border: `1px solid ${loading ? "#5DCAA5" : "#B99A62"}`,
-                borderRadius: "8px",
-                color: loading ? "#5DCAA5" : "#D9B77E",
-                fontFamily: "var(--font-inter)",
-                fontSize: "13px",
-                fontWeight: 400,
-                cursor: "pointer",
-                transition: "border-color 0.3s ease, color 0.3s ease, background 0.3s ease",
-                whiteSpace: "nowrap",
-              }}
-              onMouseEnter={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.borderColor = "#D9B77E";
-                  e.currentTarget.style.color = "#E8C99A";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.borderColor = "#B99A62";
-                  e.currentTarget.style.color = "#D9B77E";
-                }
-              }}
-            >
-              {loading ? "Buscando..." : "Buscar"}
-            </button>
           </div>
         </div>
 
@@ -1116,7 +1116,7 @@ export default function LeyesClient() {
         </div>
       )}
 
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes spin-glow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .leyes-filtros { grid-template-columns: 2fr 1fr 1fr auto; } @media (max-width: 640px) { .leyes-filtros { grid-template-columns: 1.4fr 0.8fr 0.8fr auto !important; gap: 8px !important; align-items: end !important; } .leyes-filtros label { font-size: 8px !important; margin-bottom: 4px !important; } .leyes-filtros input, .leyes-filtros select { height: 36px !important; font-size: 12px !important; padding: 0 10px !important; } .leyes-buscar-btn { width: auto !important; height: 36px !important; padding: 0 14px !important; font-size: 12px !important; } .leyes-inicio-text { display: none !important; } .leyes-volver { top: 12px !important; left: 12px !important; padding: 6px 10px !important; } .leyes-card { padding: 14px !important; } .leyes-input-row { margin-bottom: 10px !important; padding-bottom: 10px !important; } }`}</style>
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes spin-glow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .leyes-filtros { grid-template-columns: 1fr 1fr 1fr; } @media (max-width: 640px) { .leyes-filtros { grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; align-items: end !important; } .leyes-filtros label { font-size: 8px !important; margin-bottom: 4px !important; } .leyes-filtros input, .leyes-filtros select { height: 36px !important; font-size: 12px !important; padding: 0 10px !important; } .leyes-inicio-text { display: none !important; } .leyes-volver { top: 12px !important; left: 12px !important; padding: 6px 10px !important; } .leyes-card { padding: 14px !important; } .leyes-input-row { margin-bottom: 10px !important; padding-bottom: 10px !important; } .leyes-input-row input { font-size: 14px !important; } .leyes-buscar-btn { height: 32px !important; padding: 0 12px !important; font-size: 11px !important; } }`}</style>
     </div>
   );
 }
