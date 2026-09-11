@@ -834,6 +834,7 @@ if (isTranscription(tipo)) {
               padding: "16px",
               background: "rgba(0,0,0,0.2)",
               border: "1px solid var(--color-line-soft)",
+              borderRadius: "14px",
               fontSize: "14px",
               color: "var(--color-text-muted)",
               lineHeight: 1.8,
@@ -1010,6 +1011,7 @@ if (isTranscription(tipo)) {
                 textAlign: "center",
                 background: "var(--color-card)",
                 border: "1px solid var(--color-line-soft)",
+                borderRadius: "14px",
               }}
             >
               <p style={{ color: "var(--color-text-muted)", fontSize: "15px" }}>
@@ -1113,6 +1115,7 @@ if (isTranscription(tipo)) {
                   background: "var(--color-card)",
                   padding: "24px",
                   border: "1px solid var(--color-line-soft)",
+                  borderRadius: "14px",
                   transition: "background 0.25s ease, border-color 0.25s ease",
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
@@ -1140,6 +1143,7 @@ if (isTranscription(tipo)) {
                   background: "var(--color-card)",
                   padding: "24px",
                   border: "1px solid var(--color-line-soft)",
+                  borderRadius: "14px",
                   transition: "background 0.25s ease, border-color 0.25s ease",
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}

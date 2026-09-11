@@ -177,7 +177,7 @@ export default function AdminMaterias() {
             padding: "14px 18px",
             background: message.startsWith("Error") ? "rgba(224, 85, 85, 0.08)" : "rgba(185, 154, 98, 0.08)",
             border: `1px solid ${message.startsWith("Error") ? "rgba(224, 85, 85, 0.3)" : "var(--color-gold-dim)"}`,
-            borderRadius: 0,
+            borderRadius: "10px",
           }}
         >
           <p
@@ -290,7 +290,7 @@ export default function AdminMaterias() {
               maxWidth: "460px",
               background: "var(--color-card)",
               border: "1px solid var(--color-line-soft)",
-              borderRadius: 0,
+              borderRadius: "14px",
               padding: "28px",
             }}
           >
@@ -320,7 +320,7 @@ export default function AdminMaterias() {
                   marginBottom: "16px",
                   background: message.startsWith("Error") ? "rgba(224, 85, 85, 0.08)" : "rgba(185, 154, 98, 0.08)",
                   border: `1px solid ${message.startsWith("Error") ? "rgba(224, 85, 85, 0.3)" : "var(--color-gold-dim)"}`,
-                  borderRadius: 0,
+                  borderRadius: "10px",
                 }}
               >
                 <p
@@ -379,7 +379,7 @@ export default function AdminMaterias() {
                           padding: "8px 12px",
                           background: "var(--color-ink)",
                           border: "1px solid var(--color-line-soft)",
-                          borderRadius: 0,
+                          borderRadius: "10px",
                         }}
                       >
                         <div className="min-w-0">

@@ -973,6 +973,7 @@ export default function AdminPage() {
                   style={{
                     background: "var(--color-card)",
                     border: "1px solid var(--color-line-soft)",
+                    borderRadius: "14px",
                     padding: "48px 32px",
                     textAlign: "center",
                   }}
@@ -1856,7 +1857,7 @@ export default function AdminPage() {
                         background: "var(--color-card)",
                         border: "1px solid var(--color-line-soft)",
                         padding: "28px 30px",
-                        borderRadius: 0,
+                        borderRadius: "14px",
                       }}
                     >
                       <button

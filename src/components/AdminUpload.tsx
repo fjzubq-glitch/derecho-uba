@@ -420,7 +420,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
           textAlign: "center",
           cursor: file ? "default" : "pointer",
           border: `1px dashed ${hover ? "var(--color-gold-dim)" : "var(--color-line-soft)"}`,
-          borderRadius: 0,
+          borderRadius: "14px",
           transition: "border-color 0.2s ease",
         }}
       >
@@ -448,7 +448,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
       style={{
         background: "var(--color-card)",
         border: "1px solid var(--color-line-soft)",
-        borderRadius: 0,
+        borderRadius: "14px",
       }}
     >
       <h2
@@ -637,7 +637,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
             marginBottom: "24px",
             background: "var(--color-ink)",
             border: "1px solid var(--color-line-soft)",
-            borderRadius: 0,
+            borderRadius: "14px",
           }}
         >
           <div className="flex flex-wrap items-center gap-4">
@@ -714,7 +714,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
 
         <div className="space-y-4">
         {/* Video / Audio de Clase */}
-        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
+        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: "14px" }}>
           <h3 style={sectionHeaderStyle}>
             <Headphones style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
             Video / Audio de Clase
@@ -781,7 +781,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
         </div>
 
         {/* Clase Virtual */}
-        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
+        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: "14px" }}>
           <h3 style={sectionHeaderStyle}>
             <Play style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
 Clase Virtual
@@ -792,7 +792,7 @@ Clase Virtual
               Podés agregar uno o más videos de YouTube de la misma clase. Cada uno aparecerá como card separada.
             </p>
             {claseYoutubeItems.map((item, idx) => (
-              <div key={idx} className="space-y-3" style={{ padding: "16px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
+              <div key={idx} className="space-y-3" style={{ padding: "16px", border: "1px solid var(--color-line-soft)", borderRadius: "14px" }}>
                 <div className="flex items-start justify-between gap-2">
                   <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
                     Video {idx + 1}
@@ -847,7 +847,7 @@ Clase Virtual
         </div>
 
         {/* Transcripción */}
-        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
+        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: "14px" }}>
           <h3 style={sectionHeaderStyle}>
             <FileText style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
             Transcripción
@@ -880,7 +880,7 @@ Clase Virtual
         </div>
 
         {/* Archivo adjunto */}
-        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
+        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: "14px" }}>
           <h3 style={sectionHeaderStyle}>
             <FileText style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
             Archivo adjunto
@@ -933,7 +933,7 @@ Clase Virtual
         </div>
 
         {/* Cuestionario interactivo (solo admin) */}
-        <div style={{ padding: "24px", border: "1px dashed var(--color-gold-dim)", borderRadius: 0 }}>
+        <div style={{ padding: "24px", border: "1px dashed var(--color-gold-dim)", borderRadius: "14px" }}>
           <h3 style={sectionHeaderStyle}>
             <Check style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
             Cuestionario interactivo
@@ -1073,7 +1073,7 @@ Clase Virtual
         </div>
 
         {/* Enlace útil */}
-        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: 0 }}>
+        <div style={{ padding: "24px", border: "1px solid var(--color-line-soft)", borderRadius: "14px" }}>
           <h3 style={sectionHeaderStyle}>
             <Link2 style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
             Enlace útil
@@ -1099,7 +1099,7 @@ Clase Virtual
         </div>
 
         {/* Material privado (solo admin) */}
-        <div style={{ padding: "24px", border: "1px dashed var(--color-gold-dim)", borderRadius: 0 }}>
+        <div style={{ padding: "24px", border: "1px dashed var(--color-gold-dim)", borderRadius: "14px" }}>
           <h3 style={sectionHeaderStyle}>
             <Lock style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
             Material privado
@@ -1156,7 +1156,7 @@ Clase Virtual
         </div>
 
         {/* Ficha (enlace a Notion, solo admin) */}
-        <div style={{ padding: "24px", border: "1px dashed var(--color-gold-dim)", borderRadius: 0 }}>
+        <div style={{ padding: "24px", border: "1px dashed var(--color-gold-dim)", borderRadius: "14px" }}>
           <h3 style={sectionHeaderStyle}>
             <Lock style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
             Ficha (enlace de Notion)
@@ -1186,7 +1186,7 @@ Clase Virtual
         </div>
 
         {/* LexPodcast (audio privado, solo admin + premios) */}
-        <div style={{ padding: "24px", border: "1px dashed var(--color-gold-dim)", borderRadius: 0 }}>
+        <div style={{ padding: "24px", border: "1px dashed var(--color-gold-dim)", borderRadius: "14px" }}>
           <h3 style={sectionHeaderStyle}>
             <Headphones style={{ width: "16px", height: "16px", color: "var(--color-gold)" }} />
             LexPodcast
@@ -1257,7 +1257,7 @@ Clase Virtual
           marginBottom: "24px",
           background: "var(--color-ink)",
           border: "1px solid var(--color-line-soft)",
-          borderRadius: 0,
+          borderRadius: "14px",
         }}
       >
           <div className="flex flex-wrap items-center gap-4">
@@ -1320,7 +1320,7 @@ Clase Virtual
             marginBottom: "16px",
             background: resultMsg.isError ? "rgba(224, 85, 85, 0.08)" : "rgba(185, 154, 98, 0.08)",
             border: `1px solid ${resultMsg.isError ? "rgba(224, 85, 85, 0.3)" : "var(--color-gold-dim)"}`,
-            borderRadius: 0,
+            borderRadius: "10px",
           }}
         >
           <p

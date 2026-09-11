@@ -638,7 +638,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
               minWidth: "150px",
               background: "var(--color-card)",
               border: "1px solid var(--color-line)",
-              borderRadius: 0,
+              borderRadius: "10px",
               boxShadow: "0 8px 24px rgba(0, 0, 0, 0.35)",
               zIndex: 20,
               padding: "4px",
@@ -694,7 +694,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     maxWidth: "440px",
     background: "var(--color-card)",
     border: "1px solid var(--color-line-soft)",
-    borderRadius: 0,
+    borderRadius: "14px",
     padding: "28px",
   };
 
@@ -706,7 +706,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
             padding: "14px 18px",
             background: message.startsWith("Error") ? "rgba(224, 85, 85, 0.08)" : "rgba(185, 154, 98, 0.08)",
             border: `1px solid ${message.startsWith("Error") ? "rgba(224, 85, 85, 0.3)" : "var(--color-gold-dim)"}`,
-            borderRadius: 0,
+            borderRadius: "10px",
           }}
         >
           <p
@@ -726,7 +726,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
           style={{
             background: "var(--color-card)",
             border: "1px solid var(--color-line-soft)",
-            borderRadius: 0,
+            borderRadius: "14px",
             padding: "20px 22px",
           }}
         >
@@ -808,7 +808,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                         padding: "12px 14px",
                         background: "var(--color-ink)",
                         border: "1px solid var(--color-line-soft)",
-                        borderRadius: 0,
+                        borderRadius: "10px",
                       }}
                     >
                       <div className="flex items-center justify-between">
@@ -896,7 +896,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                   padding: "10px 14px",
                   background: "var(--color-ink)",
                   border: "1px solid var(--color-line-soft)",
-                  borderRadius: 0,
+                  borderRadius: "10px",
                 }}
               >
                 <div className="min-w-0">
@@ -970,7 +970,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
             textAlign: "center",
             background: "var(--color-card)",
             border: "1px solid var(--color-line-soft)",
-            borderRadius: 0,
+            borderRadius: "14px",
           }}
         >
           <p style={{ fontSize: "14px", color: "var(--color-text-faint)" }}>No hay clases cargadas</p>
@@ -983,7 +983,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
             style={{
               background: "var(--color-card)",
               border: "1px solid var(--color-line-soft)",
-              borderRadius: 0,
+              borderRadius: "14px",
               padding: "18px 22px",
             }}
           >
@@ -1041,7 +1041,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 textAlign: "center",
                 background: "var(--color-card)",
                 border: "1px solid var(--color-line-soft)",
-                borderRadius: 0,
+                borderRadius: "14px",
               }}
             >
               <p style={{ fontSize: "14px", color: "var(--color-text-muted)", lineHeight: 1.7 }}>
@@ -1055,7 +1055,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 textAlign: "center",
                 background: "var(--color-card)",
                 border: "1px solid var(--color-line-soft)",
-                borderRadius: 0,
+                borderRadius: "14px",
               }}
             >
               <p style={{ fontSize: "14px", color: "var(--color-text-muted)", lineHeight: 1.7 }}>
@@ -1075,7 +1075,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
               style={{
                 background: "var(--color-card)",
                 border: "1px solid var(--color-line-soft)",
-                borderRadius: 0,
+                borderRadius: "14px",
                 padding: "28px",
               }}
             >

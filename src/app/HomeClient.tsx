@@ -427,7 +427,7 @@ export default function HomeClient({
               style={{
                 background: "var(--color-line-soft)",
                 gap: "1px",
-                borderRadius: 0,
+                borderRadius: "14px",
               }}
             >
               {materias.map((m, i) => {
@@ -449,7 +449,7 @@ export default function HomeClient({
                     style={{
                       background: "var(--color-card)",
                       padding: "28px 26px",
-                      borderRadius: 0,
+                      borderRadius: "14px",
                       animationDelay: `${i * 60}ms`,
                       transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease",
                     }}
