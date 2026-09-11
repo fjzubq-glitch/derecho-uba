@@ -140,28 +140,6 @@ export default function LeyesClient() {
     return parts.join(" ");
   };
 
-  const labelStyle: React.CSSProperties = {
-    display: "block",
-    fontFamily: "var(--font-ibm-plex-mono)",
-    fontSize: "9px",
-    letterSpacing: "0.12em",
-    textTransform: "uppercase",
-    color: "var(--color-text-faint)",
-    marginBottom: "6px",
-  };
-
-  const fieldStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "11px 12px",
-    background: "var(--color-ink)",
-    border: "1px solid var(--color-line)",
-    color: "var(--color-text)",
-    fontFamily: "var(--font-inter)",
-    fontSize: "13px",
-    outline: "none",
-    transition: "border-color 0.2s ease",
-  };
-
   return (
     <div style={{ minHeight: "100vh", background: "var(--color-ink)" }}>
       <div style={{ maxWidth: "900px", margin: "0 auto", padding: "44px 24px 96px" }}>
@@ -208,12 +186,14 @@ export default function LeyesClient() {
             style={{
               fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
               fontSize: "clamp(26px, 4vw, 34px)",
-              fontWeight: 500,
+              fontWeight: 400,
+              letterSpacing: "-0.01em",
               color: "var(--color-text)",
               marginBottom: "8px",
             }}
           >
-            Normas y <span style={{ color: "var(--color-gold)" }}>Leyes</span>
+            Normas y{" "}
+            <span style={{ color: "#B99A62", fontStyle: "italic" }}>Leyes</span>
           </h1>
           <p
             style={{
@@ -230,23 +210,24 @@ export default function LeyesClient() {
         {/* Buscador */}
         <div
           style={{
-            background: "var(--color-card)",
-            border: "1px solid var(--color-line-soft)",
-            padding: "22px 22px 20px",
+            background: "linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01))",
+            border: "1px solid rgba(255,255,255,0.06)",
+            borderRadius: "14px",
+            padding: "24px",
             marginBottom: "28px",
           }}
         >
-          {/* Input principal */}
-          <div style={{ position: "relative", marginBottom: "16px" }}>
+          {/* Input principal — sin caja, solo border-bottom */}
+          <div style={{ position: "relative", marginBottom: "18px", paddingBottom: "14px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
             <Search
               style={{
                 position: "absolute",
-                left: "16px",
+                left: "0px",
                 top: "50%",
                 transform: "translateY(-50%)",
-                width: "16px",
-                height: "16px",
-                color: "var(--color-text-faint)",
+                width: "15px",
+                height: "15px",
+                color: "#8A8E9C",
               }}
             />
             <input
@@ -257,46 +238,49 @@ export default function LeyesClient() {
               placeholder="Buscar por nombre, tema o número de norma..."
               style={{
                 width: "100%",
-                padding: "15px 16px 15px 46px",
-                background: "var(--color-ink)",
-                border: "1px solid var(--color-line)",
+                padding: "0 0 0 24px",
+                background: "transparent",
+                border: "none",
                 color: "var(--color-text)",
                 fontFamily: "var(--font-inter)",
                 fontSize: "15px",
+                fontWeight: 300,
                 outline: "none",
-                transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-gold-dim)";
-                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(var(--color-gold-rgb), 0.06)";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-line)";
-                e.currentTarget.style.boxShadow = "none";
               }}
             />
           </div>
 
-          {/* Filtros */}
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "flex-end" }}>
-            <div style={{ flex: "1 1 150px", minWidth: 0 }}>
-              <label style={labelStyle}>Tipo</label>
+          {/* Filtros — CSS Grid 2fr 1fr 1fr auto */}
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr auto", gap: "14px", alignItems: "end" }}>
+            <div>
+              <label style={{ display: "block", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#6A6E7C", marginBottom: "8px" }}>
+                Tipo
+              </label>
               <div style={{ position: "relative" }}>
                 <select
                   value={tipo}
                   onChange={(e) => setTipo(e.target.value)}
                   style={{
-                    ...fieldStyle,
-                    paddingRight: "32px",
+                    width: "100%",
+                    height: "44px",
+                    padding: "0 32px 0 14px",
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.07)",
+                    borderRadius: "8px",
                     color: tipo ? "var(--color-text)" : "var(--color-text-muted)",
+                    fontFamily: "var(--font-inter)",
+                    fontSize: "13px",
+                    fontWeight: 300,
+                    outline: "none",
                     appearance: "none",
                     cursor: "pointer",
+                    transition: "border-color 0.2s ease",
                   }}
+                  onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(185,154,98,0.3)")}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)")}
                 >
                   {TIPOS_NORMA.map((t) => (
-                    <option key={t.value} value={t.value}>
-                      {t.label}
-                    </option>
+                    <option key={t.value} value={t.value}>{t.label}</option>
                   ))}
                 </select>
                 <ChevronDown
@@ -313,8 +297,10 @@ export default function LeyesClient() {
                 />
               </div>
             </div>
-            <div style={{ flex: "0 1 90px" }}>
-              <label style={labelStyle}>N°</label>
+            <div>
+              <label style={{ display: "block", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#6A6E7C", marginBottom: "8px" }}>
+                N°
+              </label>
               <input
                 type="number"
                 value={numero}
@@ -322,11 +308,27 @@ export default function LeyesClient() {
                 onKeyDown={handleKeyDown}
                 placeholder="—"
                 min="1"
-                style={fieldStyle}
+                style={{
+                  width: "100%",
+                  height: "44px",
+                  padding: "0 14px",
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  borderRadius: "8px",
+                  color: "var(--color-text)",
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "13px",
+                  outline: "none",
+                  transition: "border-color 0.2s ease",
+                }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(185,154,98,0.3)")}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)")}
               />
             </div>
-            <div style={{ flex: "0 1 80px" }}>
-              <label style={labelStyle}>Año</label>
+            <div>
+              <label style={{ display: "block", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#6A6E7C", marginBottom: "8px" }}>
+                Año
+              </label>
               <input
                 type="number"
                 value={anio}
@@ -335,35 +337,93 @@ export default function LeyesClient() {
                 placeholder="—"
                 min="1853"
                 max="2030"
-                style={fieldStyle}
+                style={{
+                  width: "100%",
+                  height: "44px",
+                  padding: "0 14px",
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  borderRadius: "8px",
+                  color: "var(--color-text)",
+                  fontFamily: "var(--font-ibm-plex-mono)",
+                  fontSize: "13px",
+                  outline: "none",
+                  transition: "border-color 0.2s ease",
+                }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(185,154,98,0.3)")}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)")}
               />
             </div>
             <button
               onClick={() => buscar(1)}
               disabled={loading || (!query && !tipo && !numero)}
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px",
-                background: "var(--color-gold)",
-                color: "var(--color-ink)",
-                border: "none",
-                padding: "11px 26px",
+                height: "44px",
+                padding: "0 24px",
+                background: "transparent",
+                border: "1px solid #B99A62",
+                borderRadius: "8px",
+                color: "#D9B77E",
                 fontFamily: "var(--font-inter)",
                 fontSize: "13px",
-                fontWeight: 600,
+                fontWeight: 400,
                 cursor: loading || (!query && !tipo && !numero) ? "not-allowed" : "pointer",
                 opacity: loading || (!query && !tipo && !numero) ? 0.5 : 1,
-                transition: "opacity 0.2s ease, background 0.2s ease",
-                flex: "0 0 auto",
+                transition: "border-color 0.2s ease, color 0.2s ease",
+                whiteSpace: "nowrap",
               }}
-              onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "var(--color-gold-dim)"; }}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-gold)")}
+              onMouseEnter={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.borderColor = "#D9B77E";
+                  e.currentTarget.style.color = "#E8C99A";
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "#B99A62";
+                e.currentTarget.style.color = "#D9B77E";
+              }}
             >
               {loading ? "Buscando..." : "Buscar"}
             </button>
           </div>
+        </div>
+
+        {/* Divisor gradiente bronce → transparente */}
+        <div style={{ height: "1px", background: "linear-gradient(90deg, rgba(185,154,98,0.25), transparent)", margin: "36px 0 20px" }} />
+
+        {/* Accesos rápidos — grid 2×2 */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px", marginBottom: "36px" }}>
+          {[
+            { label: "Código Civil y Comercial", query: "Código Civil y Comercial" },
+            { label: "Código Penal", query: "Código Penal" },
+            { label: "Ley de Contrato de Trabajo", query: "Ley de Contrato de Trabajo" },
+            { label: "Ley 19.550 (LGS)", query: "Ley 19.550" },
+          ].map((item) => (
+            <button
+              key={item.query}
+              onClick={() => {
+                setQuery(item.query);
+                buscar(1, item.query, undefined, undefined, undefined);
+              }}
+              style={{
+                borderRadius: "10px",
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(255,255,255,0.05)",
+                padding: "16px",
+                fontFamily: "var(--font-inter)",
+                fontSize: "13px",
+                fontWeight: 300,
+                color: "#D8D6CE",
+                cursor: "pointer",
+                textAlign: "left",
+                transition: "border-color 0.25s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(185,154,98,0.3)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)")}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
 
         {/* Resultados */}
@@ -774,37 +834,6 @@ export default function LeyesClient() {
               }}
             >
               Datos provistos por InfoLeg · Ministerio de Justicia
-            </div>
-            <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap", marginTop: "24px" }}>
-              {["Código Civil y Comercial", "Código Penal", "Ley de Contrato de Trabajo"].map((s) => (
-                <button
-                  key={s}
-                  onClick={() => {
-                    setQuery(s);
-                    buscar(1, s, undefined, undefined, undefined);
-                  }}
-                  style={{
-                    background: "none",
-                    border: "1px solid var(--color-line)",
-                    color: "var(--color-text-muted)",
-                    padding: "7px 13px",
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "10.5px",
-                    cursor: "pointer",
-                    transition: "border-color 0.2s ease, color 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "var(--color-gold-dim)";
-                    e.currentTarget.style.color = "var(--color-gold)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "var(--color-line)";
-                    e.currentTarget.style.color = "var(--color-text-muted)";
-                  }}
-                >
-                  {s}
-                </button>
-              ))}
             </div>
           </div>
         )}
