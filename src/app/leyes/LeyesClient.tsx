@@ -438,21 +438,19 @@ export default function LeyesClient() {
             </div>
             <button
               onClick={() => buscar(1)}
-              disabled={loading || (!query && !tipo && !numero)}
               className="leyes-buscar-btn"
               style={{
                 height: "44px",
                 padding: "0 24px",
-                background: "transparent",
-                border: "1px solid #B99A62",
+                background: loading ? "rgba(93,202,165,0.08)" : "transparent",
+                border: `1px solid ${loading ? "#5DCAA5" : "#B99A62"}`,
                 borderRadius: "8px",
-                color: "#D9B77E",
+                color: loading ? "#5DCAA5" : "#D9B77E",
                 fontFamily: "var(--font-inter)",
                 fontSize: "13px",
                 fontWeight: 400,
-                cursor: loading || (!query && !tipo && !numero) ? "not-allowed" : "pointer",
-                opacity: loading || (!query && !tipo && !numero) ? 0.5 : 1,
-                transition: "border-color 0.2s ease, color 0.2s ease",
+                cursor: "pointer",
+                transition: "border-color 0.3s ease, color 0.3s ease, background 0.3s ease",
                 whiteSpace: "nowrap",
               }}
               onMouseEnter={(e) => {
@@ -462,8 +460,10 @@ export default function LeyesClient() {
                 }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#B99A62";
-                e.currentTarget.style.color = "#D9B77E";
+                if (!loading) {
+                  e.currentTarget.style.borderColor = "#B99A62";
+                  e.currentTarget.style.color = "#D9B77E";
+                }
               }}
             >
               {loading ? "Buscando..." : "Buscar"}
