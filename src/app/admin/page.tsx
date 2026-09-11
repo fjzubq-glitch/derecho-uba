@@ -1464,6 +1464,7 @@ export default function AdminPage() {
                       }}
                     >
                       <h3
+
                       style={{
                         fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                         fontWeight: 400,

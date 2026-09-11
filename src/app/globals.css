@@ -266,7 +266,7 @@ article {
 .skeleton {
   background: var(--color-card-hover);
   border: 1px solid var(--color-line-soft);
-  border-radius: 0;
+  border-radius: 14px;
   animation: skPulse 1.8s ease-in-out infinite;
 }
 
