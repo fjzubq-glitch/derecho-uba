@@ -239,6 +239,7 @@ export default function MateriaClient({
                     borderTop: "2px solid var(--color-gold-dim)",
                     borderRadius: "14px",
                     padding: "24px 26px 20px",
+                    marginBottom: "32px",
                     transition: "border-color 0.25s ease, background 0.25s ease",
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}

@@ -547,7 +547,7 @@ export default function HomeClient({
                     {/* CTA */}
                     <div
                       className="flex items-center gap-2 mt-auto pt-4 border-t card-link"
-                      style={{ borderColor: "var(--color-line-soft)", fontSize: "13px", fontWeight: 500, fontFamily: "var(--font-inter)" }}
+                      style={{ borderColor: "var(--color-line-soft)", fontSize: "12px", fontWeight: 300, fontFamily: "var(--font-inter)", letterSpacing: "0.02em" }}
                     >
                       Ver contenido
                       <ArrowRight
