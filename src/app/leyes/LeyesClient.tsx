@@ -265,6 +265,7 @@ export default function LeyesClient() {
 
         {/* Buscador */}
         <div
+          className="leyes-card"
           style={{
             background: "linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01))",
             border: "1px solid rgba(255,255,255,0.06)",
@@ -274,7 +275,7 @@ export default function LeyesClient() {
           }}
         >
           {/* Input principal — sin caja, solo border-bottom */}
-          <div style={{ position: "relative", marginBottom: "14px", paddingBottom: "12px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+          <div className="leyes-input-row" style={{ position: "relative", marginBottom: "14px", paddingBottom: "12px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
             <div
               style={{
                 position: "absolute",
@@ -1115,7 +1116,7 @@ export default function LeyesClient() {
         </div>
       )}
 
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes spin-glow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .leyes-filtros { grid-template-columns: 2fr 1fr 1fr auto; } @media (max-width: 640px) { .leyes-filtros { grid-template-columns: 1fr !important; gap: 10px !important; } .leyes-buscar-btn { width: 100% !important; height: 40px !important; } .leyes-inicio-text { display: none !important; } .leyes-volver { top: 12px !important; left: 12px !important; padding: 6px 10px !important; } }`}</style>
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes spin-glow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .leyes-filtros { grid-template-columns: 2fr 1fr 1fr auto; } @media (max-width: 640px) { .leyes-filtros { grid-template-columns: 1.4fr 0.8fr 0.8fr auto !important; gap: 8px !important; align-items: end !important; } .leyes-filtros label { font-size: 8px !important; margin-bottom: 4px !important; } .leyes-filtros input, .leyes-filtros select { height: 36px !important; font-size: 12px !important; padding: 0 10px !important; } .leyes-buscar-btn { width: auto !important; height: 36px !important; padding: 0 14px !important; font-size: 12px !important; } .leyes-inicio-text { display: none !important; } .leyes-volver { top: 12px !important; left: 12px !important; padding: 6px 10px !important; } .leyes-card { padding: 14px !important; } .leyes-input-row { margin-bottom: 10px !important; padding-bottom: 10px !important; } }`}</style>
     </div>
   );
 }
