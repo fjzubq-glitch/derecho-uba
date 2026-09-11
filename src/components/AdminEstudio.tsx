@@ -189,7 +189,7 @@ export default function AdminEstudio() {
       </div>
 
       {/* Binaural — solo vos */}
-      <div style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", padding: "12px 14px", display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+      <div style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", borderRadius: "14px", padding: "12px 14px", display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
         <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>♪ Binaural</span>
         {binauralInfo ? (
           <span style={{ fontSize: "12px", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{binauralInfo.file_name}</span>
@@ -224,13 +224,13 @@ export default function AdminEstudio() {
 
       {/* Hoy te tocan */}
       {!loading && !error && hoyItems.length > 0 && (
-        <div style={{ background: "var(--color-card)", border: "1px solid var(--color-gold-dim)", padding: "16px 18px" }}>
+        <div style={{ background: "var(--color-card)", border: "1px solid var(--color-gold-dim)", borderRadius: "14px", padding: "16px 18px" }}>
           <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gold)", marginBottom: "10px" }}>
             Hoy te tocan — {fmtFecha(hoyStr)}
           </p>
           <div className="space-y-2">
             {hoyItems.map((r) => (
-              <div key={r.id} className="flex items-center justify-between gap-3" style={{ padding: "10px 12px", background: "var(--color-ink)", border: "1px solid var(--color-line-soft)" }}>
+              <div key={r.id} className="flex items-center justify-between gap-3" style={{ padding: "10px 12px", background: "var(--color-ink)", border: "1px solid var(--color-line-soft)", borderRadius: "10px" }}>
                 <div className="min-w-0">
                   <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {r.materia_nombre} · Clase {r.clase_numero}
@@ -257,7 +257,7 @@ export default function AdminEstudio() {
         </div>
       )}
       {!loading && !error && hoyItems.length === 0 && revisiones.filter((r) => !r.hecha && r.clase_numero).length > 0 && (
-        <div style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", padding: "16px 18px", textAlign: "center" }}>
+        <div style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", borderRadius: "14px", padding: "16px 18px", textAlign: "center" }}>
           <p style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>Ya completaste las 2 de hoy. ¡Bien ahí! Mañana te tocan las siguientes.</p>
         </div>
       )}
@@ -267,7 +267,7 @@ export default function AdminEstudio() {
           <Loader2 style={{ width: "16px", height: "16px", animation: "spin 1s linear infinite" }} /> Cargando tu plan…
         </div>
       ) : error ? (
-        <div style={{ padding: "16px 20px", background: "rgba(224,85,85,0.08)", border: "1px solid rgba(224,85,85,0.3)" }}>
+        <div style={{ padding: "16px 20px", background: "rgba(224,85,85,0.08)", border: "1px solid rgba(224,85,85,0.3)", borderRadius: "14px" }}>
           <p style={{ fontSize: "13px", color: "#E05555" }}>{error}</p>
         </div>
       ) : revisiones.length === 0 ? (
@@ -321,7 +321,7 @@ export default function AdminEstudio() {
               return (
                 <section
                   key={mat.nombre}
-                  style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", overflow: "hidden" }}
+                  style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", borderRadius: "14px", overflow: "hidden" }}
                 >
                   <button
                     onClick={() => setAbiertas((prev) => { const n = new Set(prev); if (n.has(mat.nombre)) n.delete(mat.nombre); else n.add(mat.nombre); return n; })}

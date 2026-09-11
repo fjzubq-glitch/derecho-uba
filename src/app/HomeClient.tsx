@@ -184,7 +184,7 @@ export default function HomeClient({
               style={{
                 background: "var(--color-card)",
                 border: "1px solid var(--color-line-soft)",
-                borderRadius: 0,
+                borderRadius: "14px",
                 padding: "22px 26px",
               }}
             >
@@ -410,7 +410,7 @@ export default function HomeClient({
                 textAlign: "center",
                 background: "var(--color-card)",
                 border: "1px solid var(--color-line-soft)",
-                borderRadius: 0,
+                borderRadius: "14px",
               }}
             >
               <p style={{ color: "var(--color-text-muted)", fontSize: "15px", lineHeight: 1.7 }}>

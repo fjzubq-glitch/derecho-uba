@@ -160,6 +160,7 @@ export default function CalendarioPage() {
                 textAlign: "center",
                 background: "var(--color-card)",
                 border: "1px solid var(--color-line-soft)",
+                borderRadius: "14px",
               }}
             >
               <p style={{ color: "var(--color-text-muted)", fontSize: "15px", lineHeight: 1.7 }}>

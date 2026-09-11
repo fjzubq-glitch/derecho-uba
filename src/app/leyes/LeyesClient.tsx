@@ -471,6 +471,7 @@ export default function LeyesClient() {
               padding: "14px 18px",
               background: "rgba(198, 90, 79, 0.1)",
               border: "1px solid rgba(198, 90, 79, 0.3)",
+              borderRadius: "14px",
               color: "var(--color-danger)",
               fontSize: "13px",
               marginBottom: "20px",
@@ -512,6 +513,7 @@ export default function LeyesClient() {
                       position: "relative",
                       background: "linear-gradient(180deg, rgba(76, 175, 125, 0.055), rgba(76, 175, 125, 0.015))",
                       border: "1px solid rgba(76, 175, 125, 0.42)",
+                      borderRadius: "14px",
                       boxShadow: "0 0 26px rgba(76, 175, 125, 0.10)",
                       padding: "20px 22px 20px 25px",
                       overflow: "hidden",
@@ -653,6 +655,7 @@ export default function LeyesClient() {
                   style={{
                     background: "var(--color-card)",
                     border: "1px solid var(--color-line-soft)",
+                    borderRadius: "14px",
                     padding: "15px 18px 15px 20px",
                     cursor: "pointer",
                     transition: "border-color 0.15s ease, background 0.15s ease",
@@ -921,6 +924,7 @@ export default function LeyesClient() {
             style={{
               background: "var(--color-card)",
               border: "1px solid var(--color-line)",
+              borderRadius: "14px",
               maxWidth: "640px",
               width: "100%",
               maxHeight: "80vh",
@@ -1026,6 +1030,7 @@ export default function LeyesClient() {
                   padding: "10px 14px",
                   background: "var(--color-ink)",
                   border: "1px solid var(--color-line-soft)",
+                  borderRadius: "10px",
                 }}
               >
                 {selectedNorma.modificaciones}

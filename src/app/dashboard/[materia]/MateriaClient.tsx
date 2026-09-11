@@ -237,7 +237,7 @@ export default function MateriaClient({
                     background: "var(--color-card)",
                     border: "1px solid var(--color-line-soft)",
                     borderTop: "2px solid var(--color-gold-dim)",
-                    borderRadius: 0,
+                    borderRadius: "14px",
                     padding: "24px 26px 20px",
                     transition: "border-color 0.25s ease, background 0.25s ease",
                   }}
@@ -361,6 +361,7 @@ export default function MateriaClient({
                 textAlign: "center",
                 background: "var(--color-card)",
                 border: "1px solid var(--color-line-soft)",
+                borderRadius: "14px",
               }}
             >
               <p style={{ color: "var(--color-text-muted)", fontSize: "15px", lineHeight: 1.7 }}>
@@ -396,6 +397,7 @@ export default function MateriaClient({
                     animationDelay: `${i * 50}ms`,
                     transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease",
                     border: "1px solid var(--color-line-soft)",
+                    borderRadius: "14px",
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
@@ -512,7 +514,7 @@ export default function MateriaClient({
                     tabIndex={0}
                     onKeyDown={(ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); router.push(claseHref(e.clase.numero)); } }}
                     className="card-reveal card-hover flex items-center gap-4 cursor-pointer focus-visible"
-                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease", border: "1px solid var(--color-line-soft)" }}
+                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease", border: "1px solid var(--color-line-soft)", borderRadius: "14px" }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
                   >

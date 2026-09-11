@@ -561,7 +561,7 @@ export default function AdminPage() {
               padding: "clamp(28px, 6vw, 48px) clamp(24px, 5vw, 40px)",
               background: "var(--color-card)",
               border: "1px solid var(--color-line-soft)",
-              borderRadius: 0,
+              borderRadius: "14px",
             }}
           >
             <div className="text-center mb-8">
@@ -606,7 +606,7 @@ export default function AdminPage() {
                   width: "100%",
                   background: "var(--color-card)",
                   border: `1px solid ${passwordError ? "rgba(196, 117, 107, 0.5)" : "var(--color-line-soft)"}`,
-                  borderRadius: 0,
+                  borderRadius: "8px",
                   padding: "12px 14px",
                   color: "var(--color-text)",
                   textAlign: "center",
@@ -632,7 +632,7 @@ export default function AdminPage() {
                     marginBottom: "16px",
                     background: "rgba(196, 117, 107, 0.08)",
                     border: "1px solid rgba(196, 117, 107, 0.3)",
-                    borderRadius: 0,
+                    borderRadius: "10px",
                   }}
                 >
                   <p style={{ fontSize: "13px", color: "#C4756B", fontFamily: "var(--font-inter)" }}>
@@ -650,7 +650,7 @@ export default function AdminPage() {
                   background: passwordLoading || !password ? "var(--color-gold-dim)" : "var(--color-gold)",
                   color: "var(--color-ink)",
                   border: "none",
-                  borderRadius: 0,
+                  borderRadius: "8px",
                   fontSize: "14px",
                   fontWeight: 600,
                   cursor: passwordLoading || !password ? "not-allowed" : "pointer",
@@ -759,7 +759,7 @@ export default function AdminPage() {
             className="flex flex-col sm:flex-row w-full sm:w-auto"
             style={{
               border: "1px solid var(--color-line-soft)",
-              borderRadius: 0,
+              borderRadius: "10px",
             }}
           >
             {(["upload", "manage", "analytics", "estudio"] as const).map((tab) => (
@@ -805,7 +805,7 @@ export default function AdminPage() {
             style={{
               background: "var(--color-line-soft)",
               gap: "1px",
-              borderRadius: 0,
+              borderRadius: "14px",
             }}
           >
             {[
@@ -893,7 +893,7 @@ export default function AdminPage() {
                     background: "transparent",
                     color: "var(--color-text-muted)",
                     border: "1px solid var(--color-line)",
-                    borderRadius: 0,
+                    borderRadius: "8px",
                     cursor: regenerating ? "not-allowed" : "pointer",
                     opacity: regenerating ? 0.5 : 1,
                   }}
@@ -912,7 +912,7 @@ export default function AdminPage() {
                     background: "var(--color-gold)",
                     color: "var(--color-ink)",
                     border: "none",
-                    borderRadius: 0,
+                    borderRadius: "8px",
                     cursor: migrating ? "not-allowed" : "pointer",
                     opacity: migrating ? 0.5 : 1,
                   }}
@@ -921,12 +921,12 @@ export default function AdminPage() {
                 </button>
               </div>
               {regenResult && (
-                <div style={{ padding: "10px 14px", marginBottom: "16px", background: regenResult.startsWith("Error") ? "rgba(224,85,85,0.08)" : "rgba(185,154,98,0.08)", border: `1px solid ${regenResult.startsWith("Error") ? "rgba(224,85,85,0.3)" : "var(--color-gold-dim)"}`, borderRadius: 0 }}>
+                <div style={{ padding: "10px 14px", marginBottom: "16px", background: regenResult.startsWith("Error") ? "rgba(224,85,85,0.08)" : "rgba(185,154,98,0.08)", border: `1px solid ${regenResult.startsWith("Error") ? "rgba(224,85,85,0.3)" : "var(--color-gold-dim)"}`, borderRadius: "10px" }}>
                   <p style={{ fontSize: "12px", color: regenResult.startsWith("Error") ? "#E05555" : "var(--color-gold)" }}>{regenResult}</p>
                 </div>
               )}
               {migrateResult && (
-                <div style={{ padding: "10px 14px", marginBottom: "16px", background: migrateResult.startsWith("Error") ? "rgba(224,85,85,0.08)" : "rgba(95,184,138,0.08)", border: `1px solid ${migrateResult.startsWith("Error") ? "rgba(224,85,85,0.3)" : "rgba(95,184,138,0.3)"}`, borderRadius: 0, whiteSpace: "pre-wrap" }}>
+                <div style={{ padding: "10px 14px", marginBottom: "16px", background: migrateResult.startsWith("Error") ? "rgba(224,85,85,0.08)" : "rgba(95,184,138,0.08)", border: `1px solid ${migrateResult.startsWith("Error") ? "rgba(224,85,85,0.3)" : "rgba(95,184,138,0.3)"}`, borderRadius: "10px", whiteSpace: "pre-wrap" }}>
                   <p style={{ fontSize: "12px", color: migrateResult.startsWith("Error") ? "#E05555" : "#5fb88a" }}>{migrateResult}</p>
                 </div>
               )}
@@ -1107,7 +1107,7 @@ export default function AdminPage() {
                     style={{
                       background: "var(--color-line-soft)",
                       gap: "1px",
-                      borderRadius: 0,
+                      borderRadius: "14px",
                     }}
                   >
                     <div style={{ background: "var(--color-card)", padding: "24px 26px" }}>
@@ -1315,14 +1315,15 @@ export default function AdminPage() {
                   </div>
 
                   {/* En línea ahora */}
-                  <article
-                    style={{
-                      background: "var(--color-card)",
-                      border: "1px solid var(--color-line-soft)",
-                      padding: "24px 30px",
-                      borderRadius: 0,
-                    }}
-                  >
+                    <article
+                      style={{
+                        background: "var(--color-card)",
+                        border: "1px solid var(--color-line-soft)",
+                        padding: "28px 30px",
+                        borderRadius: "14px",
+                      }}
+                    >
+
                     <div className="flex items-center justify-between flex-wrap gap-3" style={{ marginBottom: "12px" }}>
                       <div className="flex items-center gap-3">
                         <span
@@ -1454,14 +1455,14 @@ export default function AdminPage() {
 
                   {/* Contenido consumido por tipo */}
                   <article
-                    style={{
-                      background: "var(--color-card)",
-                      border: "1px solid var(--color-line-soft)",
-                      padding: "28px 30px",
-                      borderRadius: 0,
-                    }}
-                  >
-                    <h3
+                      style={{
+                        background: "var(--color-card)",
+                        border: "1px solid var(--color-line-soft)",
+                        padding: "28px 30px",
+                        borderRadius: "14px",
+                      }}
+                    >
+                      <h3
                       style={{
                         fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                         fontWeight: 400,
@@ -1934,7 +1935,7 @@ export default function AdminPage() {
                           fontSize: "13px",
                           outline: "none",
                           marginBottom: "16px",
-                          borderRadius: 0,
+                          borderRadius: "8px",
                         }}
                       />
                       <div
@@ -2069,7 +2070,7 @@ export default function AdminPage() {
                                       border: "1px solid var(--color-gold-dim)",
                                       padding: "20px 24px",
                                       marginBottom: "12px",
-                                      borderRadius: 0,
+                                      borderRadius: "10px",
                                     }}
                                   >
                                     {detalleCargando ? (

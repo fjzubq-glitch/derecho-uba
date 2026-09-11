@@ -116,6 +116,7 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
           maxWidth: "440px",
           background: "var(--color-ink-2)",
           border: "1px solid var(--color-gold-dim)",
+          borderRadius: "14px",
           padding: "40px 36px",
         }}
       >
