@@ -283,6 +283,7 @@ export default function HomeClient({
               display: "flex",
               alignItems: "center",
               gap: "14px",
+              maxWidth: "460px",
               background: "var(--color-card)",
               border: "1px solid rgba(76, 175, 125, 0.25)",
               borderRadius: "14px",
