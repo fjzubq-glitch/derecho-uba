@@ -219,17 +219,42 @@ export default function LeyesClient() {
         >
           {/* Input principal — sin caja, solo border-bottom */}
           <div style={{ position: "relative", marginBottom: "18px", paddingBottom: "14px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-            <Search
+            <div
               style={{
                 position: "absolute",
-                left: "0px",
+                left: "-4px",
                 top: "50%",
                 transform: "translateY(-50%)",
-                width: "15px",
-                height: "15px",
-                color: "#8A8E9C",
+                width: "23px",
+                height: "23px",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-            />
+            >
+              {loading && (
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: "-3px",
+                    borderRadius: "50%",
+                    border: "2px solid transparent",
+                    borderTopColor: "#5DCAA5",
+                    borderRightColor: "rgba(93,202,165,0.3)",
+                    animation: "spin-glow 1s linear infinite",
+                  }}
+                />
+              )}
+              <Search
+                style={{
+                  width: "15px",
+                  height: "15px",
+                  color: loading ? "#5DCAA5" : "#8A8E9C",
+                  transition: "color 0.2s ease",
+                }}
+              />
+            </div>
             <input
               type="text"
               value={query}
@@ -1066,7 +1091,7 @@ export default function LeyesClient() {
         </div>
       )}
 
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes spin-glow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
