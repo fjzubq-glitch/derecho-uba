@@ -19,6 +19,18 @@ export default function BinauralPlayer() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    fetch("/api/admin/binaural")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.ok && d?.binaural) {
+          setHasAudio(true);
+          setFileName(d.binaural.file_name);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   // Sincronización entre pestañas (mismo flotante, led y control)
   useEffect(() => {
     try {
