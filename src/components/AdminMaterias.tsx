@@ -206,7 +206,7 @@ export default function AdminMaterias() {
           />
         </div>
       ) : (
-        <div className="overflow-hidden" style={{ background: "var(--color-line-soft)", gap: "1px", borderRadius: 0 }}>
+        <div className="overflow-hidden" style={{ background: "var(--color-line-soft)", gap: "1px", borderRadius: "14px" }}>
           {materias.map((m) => (
             <div
               key={m.id}

@@ -1604,7 +1604,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                     onClick={() => fileInputRef.current?.click()}
                     style={{
                       border: "1px dashed var(--color-line)",
-                      borderRadius: 0,
+                      borderRadius: "14px",
                       padding: "24px",
                       textAlign: "center",
                       cursor: "pointer",
@@ -1646,7 +1646,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                     onClick={() => fileInputRef.current?.click()}
                     style={{
                       border: "1px dashed var(--color-line)",
-                      borderRadius: 0,
+                      borderRadius: "14px",
                       padding: "24px",
                       textAlign: "center",
                       cursor: "pointer",

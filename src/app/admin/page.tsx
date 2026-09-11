@@ -1584,7 +1584,7 @@ export default function AdminPage() {
                         background: "var(--color-card)",
                         border: "1px solid var(--color-line-soft)",
                         padding: "28px 30px",
-                        borderRadius: 0,
+                        borderRadius: "14px",
                       }}
                     >
                       <h3
@@ -2249,7 +2249,7 @@ export default function AdminPage() {
                         background: "var(--color-card)",
                         border: "1px solid var(--color-line-soft)",
                         padding: "28px 30px",
-                        borderRadius: 0,
+                        borderRadius: "14px",
                       }}
                     >
                       <h3
