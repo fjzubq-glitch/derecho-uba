@@ -157,10 +157,19 @@ export default function LeyesClient() {
             color: "var(--color-text-muted)",
             textDecoration: "none",
             marginBottom: "32px",
-            transition: "color 0.2s ease",
+            padding: "8px 14px",
+            borderRadius: "8px",
+            border: "1px solid rgba(255,255,255,0.07)",
+            transition: "color 0.2s ease, border-color 0.2s ease",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "var(--color-gold)";
+            e.currentTarget.style.borderColor = "rgba(185,154,98,0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "var(--color-text-muted)";
+            e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
+          }}
         >
           <ArrowLeft style={{ width: "14px", height: "14px" }} />
           Volver al inicio
