@@ -142,41 +142,46 @@ export default function LeyesClient() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--color-ink)" }}>
-      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "44px 24px 96px" }}>
-        {/* Botón volver */}
-        <Link
-          href="/"
-          className="flex items-center gap-2"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            fontFamily: "var(--font-ibm-plex-mono)",
-            fontSize: "11px",
-            letterSpacing: "0.06em",
-            color: "var(--color-text-muted)",
-            textDecoration: "none",
-            marginBottom: "32px",
-            padding: "8px 14px",
-            borderRadius: "8px",
-            border: "1px solid rgba(255,255,255,0.07)",
-            transition: "color 0.2s ease, border-color 0.2s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = "var(--color-gold)";
-            e.currentTarget.style.borderColor = "rgba(185,154,98,0.3)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = "var(--color-text-muted)";
-            e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
-          }}
-        >
-          <ArrowLeft style={{ width: "14px", height: "14px" }} />
-          Volver al inicio
-        </Link>
+      {/* Botón volver — posición fija a la izquierda */}
+      <Link
+        href="/"
+        className="flex items-center gap-2"
+        style={{
+          position: "fixed",
+          top: "24px",
+          left: "24px",
+          zIndex: 80,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "8px",
+          fontFamily: "var(--font-ibm-plex-mono)",
+          fontSize: "11px",
+          letterSpacing: "0.06em",
+          color: "var(--color-text-muted)",
+          textDecoration: "none",
+          padding: "8px 14px",
+          borderRadius: "8px",
+          border: "1px solid rgba(255,255,255,0.07)",
+          background: "rgba(5,7,12,0.8)",
+          backdropFilter: "blur(6px)",
+          transition: "color 0.2s ease, border-color 0.2s ease",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = "var(--color-gold)";
+          e.currentTarget.style.borderColor = "rgba(185,154,98,0.3)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = "var(--color-text-muted)";
+          e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
+        }}
+      >
+        <ArrowLeft style={{ width: "14px", height: "14px" }} />
+        Inicio
+      </Link>
 
+      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "16px 24px 96px" }}>
         {/* Header */}
-        <div style={{ marginBottom: "32px" }}>
+        <div style={{ marginBottom: "20px" }}>
           <div
             className="flex items-center gap-3"
             style={{
