@@ -219,6 +219,7 @@ export default function LeyesClient() {
         {/* Accesos rápidos — chips compactos arriba del card */}
         <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "20px" }}>
           {[
+            { label: "Constitución Nacional", query: "Constitución Nacional" },
             { label: "Código Civil", query: "Código Civil y Comercial" },
             { label: "Código Penal", query: "Código Penal" },
             { label: "LCT", query: "Ley de Contrato de Trabajo" },
