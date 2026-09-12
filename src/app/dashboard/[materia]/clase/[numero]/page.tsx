@@ -158,6 +158,9 @@ export default function ClaseNumeroPage() {
   const [offlineError, setOfflineError] = useState<string | null>(null);
   const [offlineMode, setOfflineMode] = useState(false);
 
+  // Card expandida (para mostrar botón offline solo al clickear)
+  const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
+
   // Transcription expand
   const [openTranscripcion, setOpenTranscripcion] = useState(false);
 
@@ -493,7 +496,7 @@ if (isTranscription(tipo)) {
         }}
         onMouseEnter={(e) => { e.currentTarget.style.background = esPremioSolo ? "var(--color-card-hover)" : esPrivado ? "linear-gradient(135deg, rgba(0,255,85,0.1) 0%, rgba(0,255,85,0.04) 100%)" : "var(--color-card-hover)"; e.currentTarget.style.borderColor = accentBorder; }}
         onMouseLeave={(e) => { e.currentTarget.style.background = esPremioSolo ? "var(--color-card)" : esPrivado ? "linear-gradient(135deg, rgba(0,255,85,0.06) 0%, rgba(0,255,85,0.02) 100%)" : "var(--color-card)"; e.currentTarget.style.borderColor = esPremio ? "var(--color-gold-dim)" : esPrivado ? "rgba(0,255,85,0.35)" : "var(--color-line-soft)"; }}
-        onClick={() => handleCardClick(archivo)}
+        onClick={() => { setExpandedCardId((prev) => prev === archivo.id ? null : archivo.id); handleCardClick(archivo); }}
       >
         <div className="flex items-start justify-between gap-3" style={{ position: "relative", zIndex: 1 }}>
           <div
@@ -612,8 +615,8 @@ if (isTranscription(tipo)) {
           )}
         </div>
 
-        {/* Offline button — always visible for audio types, even when not playing */}
-        {isAudioTipo(tipo) && playingArchivoId !== archivo.id && (
+        {/* Offline button — visible only when card is expanded and audio not playing */}
+        {isAudioTipo(tipo) && playingArchivoId !== archivo.id && expandedCardId === archivo.id && (
           <div className="mt-3">
             <button
               onClick={(e) => {
