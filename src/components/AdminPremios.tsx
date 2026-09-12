@@ -365,14 +365,14 @@ export default function AdminPremios() {
       </div>
 
       {msg && (
-        <div style={{ padding: "10px 14px", background: "rgba(185,154,98,0.08)", border: "1px solid var(--color-gold-dim)", borderRadius: "14px" }}>
+        <div style={{ padding: "10px 14px", background: "rgba(185,154,98,0.08)", border: "1px solid var(--color-gold-dim)", borderRadius: "var(--radius-card)" }}>
           <p style={{ fontSize: "12px", color: "var(--color-gold)" }}>{msg}</p>
         </div>
       )}
 
       {/* Barra de selección múltiple */}
       {(archivosSel.size > 0 || personasSel.length > 0) && !confirmando && (
-        <div className="flex items-center gap-3 flex-wrap" style={{ padding: "10px 14px", background: "rgba(0,255,85,0.05)", border: "1px solid rgba(0,255,85,0.25)", borderRadius: "14px" }}>
+        <div className="flex items-center gap-3 flex-wrap" style={{ padding: "10px 14px", background: "rgba(0,255,85,0.05)", border: "1px solid rgba(0,255,85,0.25)", borderRadius: "var(--radius-card)" }}>
           <span style={{ fontSize: "13px", color: "var(--color-text)" }}>
             <strong style={{ color: "#00FF55" }}>{archivosSel.size}</strong> archivo{archivosSel.size !== 1 ? "s" : ""} ·{" "}
             <strong style={{ color: "#00FF55" }}>{personasSel.length}</strong> persona{personasSel.length !== 1 ? "s" : ""}
@@ -401,7 +401,7 @@ export default function AdminPremios() {
 
       {/* Panel de confirmación */}
       {confirmando && (
-        <div style={{ padding: "16px 18px", background: "var(--color-card)", border: "1px solid var(--color-gold-dim)", borderRadius: "14px" }}>
+        <div style={{ padding: "16px 18px", background: "var(--color-card)", border: "1px solid var(--color-gold-dim)", borderRadius: "var(--radius-card)" }}>
           <p style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontSize: "16px", color: "var(--color-text)", marginBottom: "4px" }}>
             Confirmar otorgamientos
           </p>
@@ -475,7 +475,7 @@ export default function AdminPremios() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Archivos privados */}
-          <section style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", borderRadius: "14px" }}>
+          <section style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", borderRadius: "var(--radius-card)" }}>
             <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--color-line-soft)", background: "var(--color-ink-2)" }}>
               <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>
                 Archivos privados · {privados.length}
@@ -544,7 +544,7 @@ export default function AdminPremios() {
           </section>
 
           {/* Detalle: grants + ranking */}
-          <section style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", borderRadius: "14px" }}>
+          <section style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", borderRadius: "var(--radius-card)" }}>
             <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--color-line-soft)", background: "var(--color-ink-2)" }}>
               <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>
                 {sel ? `Clase ${sel.clase_numero} — ${sel.archivo_nombre}` : "Elegí un archivo"}
@@ -656,7 +656,7 @@ export default function AdminPremios() {
         )}
 
       {/* Control de accesos: informe global premiados × archivos */}
-      <section style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", borderRadius: "14px" }}>
+      <section style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", borderRadius: "var(--radius-card)" }}>
         <button
           onClick={() => { if (!repAbierto && repArchivos.length === 0 && !repLoading) cargarReporte(); setRepAbierto(!repAbierto); }}
           className="flex items-center justify-between w-full"
@@ -680,7 +680,7 @@ export default function AdminPremios() {
                   <p style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>Todavía no hay accesos otorgados.</p>
                 ) : (
                   <>
-                    <div style={{ padding: "10px 14px", marginBottom: "12px", background: repTodosIguales ? "rgba(0,255,85,0.05)" : "rgba(255,180,0,0.07)", border: repTodosIguales ? "1px solid rgba(0,255,85,0.25)" : "1px solid rgba(255,180,0,0.35)", borderRadius: "14px" }}>
+                    <div style={{ padding: "10px 14px", marginBottom: "12px", background: repTodosIguales ? "rgba(0,255,85,0.05)" : "rgba(255,180,0,0.07)", border: repTodosIguales ? "1px solid rgba(0,255,85,0.25)" : "1px solid rgba(255,180,0,0.35)", borderRadius: "var(--radius-card)" }}>
                       <p style={{ fontSize: "13px", color: repTodosIguales ? "#00FF55" : "#FFB400" }}>
                         {repTodosIguales
                           ? `✓ Todos tienen exactamente el mismo acceso (${repPermitidos.length} archivos compartidos cada uno).`

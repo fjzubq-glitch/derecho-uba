@@ -462,7 +462,7 @@ if (isTranscription(tipo)) {
     // como contenido común: sin verde, sin candado, sin "privado".
     const esPremio = grants.includes(archivo.id);
     const esPremioSolo = esPremio && !esAdmin && !tieneAcceso;
-    const NEON = "#00FF55";
+    const NEON = "var(--color-admin)";
     const accentColor = esPremioSolo ? "var(--color-gold)" : esPrivado ? NEON : "var(--color-gold)";
     const accentBorder = esPremio ? "var(--color-gold-dim)" : esPrivado ? "rgba(0,255,85,0.35)" : "var(--color-gold-dim)";
     const labelShown = esPremioSolo ? "MATERIAL" : tipo === "lexpodcast" ? `LexPodcast - Episodio ${numero}` : config.label;
@@ -488,7 +488,7 @@ if (isTranscription(tipo)) {
           position: "relative",
           opacity: 1,
           cursor: "pointer",
-          borderRadius: "14px",
+          borderRadius: "var(--radius-card)",
           animationDelay: `${cardIndex * 55}ms`,
           transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
           boxShadow: isActive ? "inset 0 0 0 1px var(--color-gold)" : esPremio ? "0 0 18px rgba(185,154,98,0.16)" : esPrivado ? "0 0 15px rgba(0,255,85,0.1), inset 0 0 15px rgba(0,255,85,0.03)" : "none",
@@ -838,7 +838,7 @@ if (isTranscription(tipo)) {
               padding: "16px",
               background: "rgba(0,0,0,0.2)",
               border: "1px solid var(--color-line-soft)",
-              borderRadius: "14px",
+              borderRadius: "var(--radius-card)",
               fontSize: "14px",
               color: "var(--color-text-muted)",
               lineHeight: 1.8,
@@ -937,7 +937,7 @@ if (isTranscription(tipo)) {
                   cursor: "pointer",
                 }}
               >
-                <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#00FF55", boxShadow: "0 0 6px rgba(0,255,85,0.9)", display: "block" }} />
+                <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--color-admin)", boxShadow: "0 0 6px rgba(76,175,125,0.9)", display: "block" }} />
               </button>
             )}
           </div>
@@ -986,7 +986,7 @@ if (isTranscription(tipo)) {
               style={{
                 fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                 fontWeight: 400,
-                fontSize: "clamp(28px, 4vw, 40px)",
+                fontSize: "var(--text-section)",
                 lineHeight: 1.1,
                 color: "var(--color-text)",
               }}
@@ -1013,9 +1013,9 @@ if (isTranscription(tipo)) {
             <div
               className="glass-card card-reveal"
               style={{
-                padding: "80px 48px",
+                padding: "80px 24px",
                 textAlign: "center",
-                borderRadius: "14px",
+                borderRadius: "var(--radius-card)",
               }}
             >
               <p style={{ color: "var(--color-text-muted)", fontSize: "15px" }}>
@@ -1053,14 +1053,14 @@ if (isTranscription(tipo)) {
                         marginBottom: "20px",
                         background: "linear-gradient(135deg, rgba(0,255,85,0.12) 0%, rgba(0,255,85,0.04) 100%)",
                         border: "1px solid rgba(0,255,85,0.35)",
-                        borderRadius: "14px",
+                        borderRadius: "var(--radius-card)",
                         boxShadow: "0 0 20px rgba(0,255,85,0.15), inset 0 0 20px rgba(0,255,85,0.05)",
                         display: "flex",
                         alignItems: "center",
                         gap: "12px",
                       }}
                     >
-                      <Lock style={{ width: "18px", height: "18px", color: "#00FF55", flexShrink: 0 }} />
+                      <Lock style={{ width: "18px", height: "18px", color: "var(--color-admin)", flexShrink: 0 }} />
                       <div>
                         <span
                           style={{
@@ -1068,7 +1068,7 @@ if (isTranscription(tipo)) {
                             fontSize: "11px",
                             letterSpacing: "0.14em",
                             textTransform: "uppercase",
-                            color: "#00FF55",
+                            color: "var(--color-admin)",
                             fontWeight: 600,
                           }}
                         >
@@ -1122,7 +1122,7 @@ if (isTranscription(tipo)) {
                   WebkitBackdropFilter: "blur(12px)",
                   padding: "24px",
                   border: "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: "14px",
+                  borderRadius: "var(--radius-card)",
                   transition: "background 0.25s ease, border-color 0.25s ease",
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}
@@ -1152,7 +1152,7 @@ if (isTranscription(tipo)) {
                   WebkitBackdropFilter: "blur(12px)",
                   padding: "24px",
                   border: "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: "14px",
+                  borderRadius: "var(--radius-card)",
                   transition: "background 0.25s ease, border-color 0.25s ease",
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}

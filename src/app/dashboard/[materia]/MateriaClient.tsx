@@ -141,7 +141,7 @@ export default function MateriaClient({
                 style={{
                   fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                   fontWeight: 400,
-                  fontSize: "clamp(34px, 4.5vw, 52px)",
+                  fontSize: "var(--text-page)",
                   lineHeight: 1.08,
                   letterSpacing: "-0.02em",
                   maxWidth: "760px",
@@ -239,7 +239,7 @@ export default function MateriaClient({
                     WebkitBackdropFilter: "blur(12px)",
                     border: "1px solid rgba(255,255,255,0.07)",
                     borderLeft: "2px solid var(--color-gold-dim)",
-                    borderRadius: "14px",
+                    borderRadius: "var(--radius-card)",
                     padding: "24px 26px 20px",
                     marginBottom: "32px",
                     transition: "border-color 0.25s ease, background 0.25s ease",
@@ -336,6 +336,7 @@ export default function MateriaClient({
                       marginTop: "16px",
                       padding: "10px 14px",
                       border: "1px solid var(--color-gold-dim)",
+                      borderRadius: "var(--radius-btn)",
                       background: "none",
                       cursor: "pointer",
                       fontFamily: "var(--font-ibm-plex-mono)",
@@ -360,9 +361,9 @@ export default function MateriaClient({
             <div
               className="glass-card card-reveal"
               style={{
-                padding: "80px 48px",
+                padding: "80px 24px",
                 textAlign: "center",
-                borderRadius: "14px",
+                borderRadius: "var(--radius-card)",
               }}
             >
               <p style={{ color: "var(--color-text-muted)", fontSize: "15px", lineHeight: 1.7 }}>
@@ -398,7 +399,7 @@ export default function MateriaClient({
                     animationDelay: `${i * 50}ms`,
                     transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease",
                     border: "1px solid var(--color-line-soft)",
-                    borderRadius: "14px",
+                    borderRadius: "var(--radius-card)",
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
@@ -515,7 +516,7 @@ export default function MateriaClient({
                     tabIndex={0}
                     onKeyDown={(ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); router.push(claseHref(e.clase.numero)); } }}
                     className="card-reveal card-hover flex items-center gap-4 cursor-pointer focus-visible"
-                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease", border: "1px solid var(--color-line-soft)", borderRadius: "14px" }}
+                    style={{ background: "var(--color-card)", padding: "20px 22px", animationDelay: `${i * 45}ms`, transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease", border: "1px solid var(--color-line-soft)", borderRadius: "var(--radius-card)" }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
                   >

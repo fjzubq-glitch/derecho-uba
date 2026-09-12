@@ -206,7 +206,7 @@ export default function AdminMaterias() {
           />
         </div>
       ) : (
-        <div className="overflow-hidden" style={{ background: "var(--color-line-soft)", gap: "1px", borderRadius: "14px" }}>
+        <div className="overflow-hidden" style={{ background: "var(--color-line-soft)", gap: "1px", borderRadius: "var(--radius-card)" }}>
           {materias.map((m) => (
             <div
               key={m.id}
@@ -289,7 +289,7 @@ export default function AdminMaterias() {
             style={{
               width: "100%",
               maxWidth: "460px",
-              borderRadius: "14px",
+              borderRadius: "var(--radius-card)",
               padding: "28px",
             }}
           >

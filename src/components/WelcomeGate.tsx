@@ -114,7 +114,7 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
         className="w-full card-reveal glass-modal"
         style={{
           maxWidth: "440px",
-          borderRadius: "14px",
+          borderRadius: "var(--radius-card)",
           padding: "40px 36px",
         }}
       >
@@ -250,7 +250,7 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
                 marginTop: "8px",
                 fontSize: "12px",
                 fontFamily: "var(--font-ibm-plex-mono)",
-                color: "#ff6b6b",
+                color: "var(--color-danger)",
               }}
             >
               {error}

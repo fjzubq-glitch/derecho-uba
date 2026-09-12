@@ -157,9 +157,9 @@ export default function CalendarioPage() {
             <div
               className="glass-card card-reveal"
               style={{
-                padding: "80px 48px",
+                padding: "80px 24px",
                 textAlign: "center",
-                borderRadius: "14px",
+                borderRadius: "var(--radius-card)",
               }}
             >
               <p style={{ color: "var(--color-text-muted)", fontSize: "15px", lineHeight: 1.7 }}>

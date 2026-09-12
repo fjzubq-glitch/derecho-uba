@@ -244,14 +244,14 @@ export default function LeyesClient() {
                 fontFamily: "var(--font-ibm-plex-mono)",
                 fontSize: "10px",
                 letterSpacing: "0.04em",
-                color: "#8A8E9C",
+                color: "var(--color-text-muted)",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
                 whiteSpace: "nowrap",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "rgba(185,154,98,0.3)";
-                e.currentTarget.style.color = "#D9B77E";
+                e.currentTarget.style.color = "var(--color-gold)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
@@ -269,7 +269,7 @@ export default function LeyesClient() {
           style={{
             background: "linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01))",
             border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: "14px",
+            borderRadius: "var(--radius-card)",
             padding: "18px",
             marginBottom: "24px",
           }}
@@ -478,7 +478,7 @@ export default function LeyesClient() {
               padding: "14px 18px",
               background: "rgba(198, 90, 79, 0.1)",
               border: "1px solid rgba(198, 90, 79, 0.3)",
-              borderRadius: "14px",
+              borderRadius: "var(--radius-card)",
               color: "var(--color-danger)",
               fontSize: "13px",
               marginBottom: "20px",
@@ -521,7 +521,7 @@ export default function LeyesClient() {
                       position: "relative",
                       background: "linear-gradient(180deg, rgba(76, 175, 125, 0.055), rgba(76, 175, 125, 0.015))",
                       border: "1px solid rgba(76, 175, 125, 0.42)",
-                      borderRadius: "14px",
+                      borderRadius: "var(--radius-card)",
                       boxShadow: "0 0 26px rgba(76, 175, 125, 0.10)",
                       padding: "20px 22px 20px 25px",
                       overflow: "hidden",
@@ -613,6 +613,7 @@ export default function LeyesClient() {
                             background: "#4CAF7D",
                             color: "#0C0B09",
                             padding: "10px 20px",
+                            borderRadius: "var(--radius-btn)",
                             fontFamily: "var(--font-inter)",
                             fontSize: "13px",
                             fontWeight: 600,
@@ -664,7 +665,7 @@ export default function LeyesClient() {
                   style={{
                     background: "var(--color-card)",
                     border: "1px solid var(--color-line-soft)",
-                    borderRadius: "14px",
+                    borderRadius: "var(--radius-card)",
                     padding: "15px 18px 15px 20px",
                     cursor: "pointer",
                     transition: "border-color 0.15s ease, background 0.15s ease",
@@ -932,7 +933,7 @@ export default function LeyesClient() {
           <div
             className="glass-modal card-reveal"
             style={{
-              borderRadius: "14px",
+              borderRadius: "var(--radius-card)",
               maxWidth: "640px",
               width: "100%",
               maxHeight: "80vh",

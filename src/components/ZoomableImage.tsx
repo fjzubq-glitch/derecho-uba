@@ -68,7 +68,7 @@ export default function ZoomableImage({ src, alt }: { src: string; alt: string }
 
   const btn: React.CSSProperties = {
     background: "rgba(0,0,0,0.45)",
-    color: "#fff",
+    color: "var(--color-text)",
     border: "1px solid rgba(255,255,255,0.2)",
     borderRadius: "5px",
     width: "28px",

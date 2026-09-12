@@ -560,7 +560,7 @@ export default function AdminPage() {
             className="glass-card card-reveal"
             style={{
               padding: "clamp(28px, 6vw, 48px) clamp(24px, 5vw, 40px)",
-              borderRadius: "14px",
+              borderRadius: "var(--radius-card)",
             }}
           >
             <div className="text-center mb-8">
@@ -804,7 +804,7 @@ export default function AdminPage() {
             style={{
               background: "var(--color-line-soft)",
               gap: "1px",
-              borderRadius: "14px",
+              borderRadius: "var(--radius-card)",
             }}
           >
             {[
@@ -972,7 +972,7 @@ export default function AdminPage() {
                   style={{
                     background: "var(--color-card)",
                     border: "1px solid var(--color-line-soft)",
-                    borderRadius: "14px",
+                    borderRadius: "var(--radius-card)",
                     padding: "48px 32px",
                     textAlign: "center",
                   }}
@@ -1107,7 +1107,7 @@ export default function AdminPage() {
                     style={{
                       background: "var(--color-line-soft)",
                       gap: "1px",
-                      borderRadius: "14px",
+                      borderRadius: "var(--radius-card)",
                     }}
                   >
                     <div style={{ background: "var(--color-card)", padding: "24px 26px" }}>
@@ -1320,7 +1320,7 @@ export default function AdminPage() {
                         background: "var(--color-card)",
                         border: "1px solid var(--color-line-soft)",
                         padding: "28px 30px",
-                        borderRadius: "14px",
+                        borderRadius: "var(--radius-card)",
                       }}
                     >
 
@@ -1459,7 +1459,7 @@ export default function AdminPage() {
                         background: "var(--color-card)",
                         border: "1px solid var(--color-line-soft)",
                         padding: "28px 30px",
-                        borderRadius: "14px",
+                        borderRadius: "var(--radius-card)",
                       }}
                     >
                       <h3
@@ -1583,7 +1583,7 @@ export default function AdminPage() {
                         background: "var(--color-card)",
                         border: "1px solid var(--color-line-soft)",
                         padding: "28px 30px",
-                        borderRadius: "14px",
+                        borderRadius: "var(--radius-card)",
                       }}
                     >
                       <h3
@@ -1857,7 +1857,7 @@ export default function AdminPage() {
                         background: "var(--color-card)",
                         border: "1px solid var(--color-line-soft)",
                         padding: "28px 30px",
-                        borderRadius: "14px",
+                        borderRadius: "var(--radius-card)",
                       }}
                     >
                       <button
@@ -2248,7 +2248,7 @@ export default function AdminPage() {
                         background: "var(--color-card)",
                         border: "1px solid var(--color-line-soft)",
                         padding: "28px 30px",
-                        borderRadius: "14px",
+                        borderRadius: "var(--radius-card)",
                       }}
                     >
                       <h3

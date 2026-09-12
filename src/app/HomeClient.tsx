@@ -183,7 +183,7 @@ export default function HomeClient({
             <div
               className="glass-card card-reveal"
               style={{
-                borderRadius: "14px",
+                borderRadius: "var(--radius-card)",
                 padding: "22px 26px",
               }}
             >
@@ -285,7 +285,7 @@ export default function HomeClient({
               maxWidth: "460px",
               background: "var(--color-card)",
               border: "1px solid rgba(76, 175, 125, 0.25)",
-              borderRadius: "14px",
+              borderRadius: "var(--radius-card)",
               padding: "16px 22px",
               textDecoration: "none",
               transition: "border-color 0.25s ease, box-shadow 0.25s ease",
@@ -408,7 +408,7 @@ export default function HomeClient({
               style={{
                 padding: "80px 24px",
                 textAlign: "center",
-                borderRadius: "14px",
+                borderRadius: "var(--radius-card)",
               }}
             >
               <p style={{ color: "var(--color-text-muted)", fontSize: "15px", lineHeight: 1.7 }}>
@@ -445,7 +445,7 @@ export default function HomeClient({
                     style={{
                       background: "var(--color-card)",
                       padding: "28px 26px",
-                      borderRadius: "14px",
+                      borderRadius: "var(--radius-card)",
                       animationDelay: `${i * 60}ms`,
                       transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease",
                     }}
@@ -575,7 +575,6 @@ export default function HomeClient({
           )}
         </div>
       </section>
-      <style>{`@keyframes pulse-dot { 0%, 100% { box-shadow: 0 0 0 rgba(93,202,165,0.4); } 50% { box-shadow: 0 0 0 4px rgba(93,202,165,0); } }`}</style>
     </div>
   );
 }

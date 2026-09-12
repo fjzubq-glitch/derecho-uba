@@ -20,11 +20,15 @@
   --color-stamp-soft: rgba(166, 58, 43, 0.1);
   --color-danger: #C65A4F;
   --text-display: clamp(40px, 5vw, 62px);
+  --text-page: clamp(34px, 4.5vw, 52px);
+  --text-section: clamp(28px, 4vw, 40px);
   --text-title: clamp(24px, 3.2vw, 28px);
   --text-chapter: 20px;
   --text-body: 15px;
   --text-caption: 11px;
   --text-micro: 10px;
+  --radius-card: 14px;
+  --radius-btn: 8px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -294,6 +298,12 @@ article {
   .hero-stamp { animation-duration: 0.4s; animation-delay: 0.1s; }
 }
 
+/* ── Pulse dot animation ── */
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 rgba(93,202,165,0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(93,202,165,0); }
+}
+
 /* ── Hide scrollbar (filter chips on mobile) ── */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
@@ -322,6 +332,27 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 50%;
   background: var(--color-gold);
   cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-gold);
+  cursor: pointer;
+  border: none;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-line);
+}
+
+input[type="range"]::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-gold-dim);
 }
 
 /* ── Scrollbar ── */

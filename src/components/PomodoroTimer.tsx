@@ -290,7 +290,7 @@ export default function PomodoroTimer() {
     textAlign: "center",
     fontFamily: "var(--font-ibm-plex-mono)",
     fontSize: "13px",
-    color: "#F2F0E9",
+    color: "var(--color-text)",
     outline: "none",
   };
 
@@ -395,7 +395,7 @@ export default function PomodoroTimer() {
             </p>
             <p style={{
               fontFamily: "var(--font-inter)", fontWeight: 300, fontSize: "11px",
-              color: "#6A6E7C", marginTop: "4px",
+              color: "var(--color-text-faint)", marginTop: "4px",
             }}>
               {subtitle}
             </p>
