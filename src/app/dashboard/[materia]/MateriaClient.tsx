@@ -232,18 +232,20 @@ export default function MateriaClient({
                       router.push(calendarioHref());
                     }
                   }}
-                  className="cursor-pointer"
+                  className="cursor-pointer card-reveal"
                   style={{
-                    background: "var(--color-card)",
-                    border: "1px solid var(--color-gold-dim)",
-                    borderTop: "2px solid var(--color-gold-dim)",
+                    background: "rgba(255,255,255,0.03)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    border: "1px solid rgba(255,255,255,0.07)",
+                    borderLeft: "2px solid var(--color-gold-dim)",
                     borderRadius: "14px",
                     padding: "24px 26px 20px",
                     marginBottom: "32px",
                     transition: "border-color 0.25s ease, background 0.25s ease",
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-gold-dim)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-line-soft)"; e.currentTarget.style.background = "var(--color-card)"; }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}
                 >
                   {/* Header de la card */}
                   <div className="flex items-center justify-between gap-4 mb-4">
@@ -333,18 +335,18 @@ export default function MateriaClient({
                     style={{
                       marginTop: "16px",
                       padding: "10px 14px",
-                      border: "1px solid var(--color-stamp)",
+                      border: "1px solid var(--color-gold-dim)",
                       background: "none",
                       cursor: "pointer",
                       fontFamily: "var(--font-ibm-plex-mono)",
                       fontSize: "10px",
                       letterSpacing: "0.14em",
                       textTransform: "uppercase",
-                      color: "var(--color-stamp)",
+                      color: "var(--color-gold)",
                       transition: "background 0.2s ease, color 0.2s ease",
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-stamp)"; e.currentTarget.style.color = "var(--color-ink)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "var(--color-stamp)"; }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-gold)"; e.currentTarget.style.color = "var(--color-ink)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "var(--color-gold)"; }}
                   >
                     Ver calendario ({materia.fechas.length})
                   </button>
