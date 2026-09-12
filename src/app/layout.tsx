@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, IBM_Plex_Mono, Special_Elite } from "next/font/google";
-import dynamic from "next/dynamic";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import HeartbeatProvider from "@/components/HeartbeatProvider";
 import { AudioProvider } from "@/components/AudioProvider";
 import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
 import PortalFooter from "@/components/PortalFooter";
+import LazyWidgets from "@/components/LazyWidgets";
 import "./globals.css";
-
-const AdminShortcut = dynamic(() => import("@/components/AdminShortcut"), { ssr: false });
-const PomodoroTimer = dynamic(() => import("@/components/PomodoroTimer"), { ssr: false });
-const BinauralPlayer = dynamic(() => import("@/components/BinauralPlayer"), { ssr: false });
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -77,14 +73,12 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
         <AudioProvider>
-          <AdminShortcut />
+          <LazyWidgets />
           <ServiceWorkerRegister />
           <HeartbeatProvider />
           {children}
           <PortalFooter />
           <GlobalAudioPlayer />
-          <PomodoroTimer />
-          <BinauralPlayer />
         </AudioProvider>
       </body>
     </html>
