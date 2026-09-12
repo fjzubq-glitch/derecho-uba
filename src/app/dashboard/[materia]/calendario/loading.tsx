@@ -1,4 +1,4 @@
-export default function MateriaLoading() {
+export default function CalendarioLoading() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--color-ink)" }}>
       <div style={{ maxWidth: "900px", margin: "0 auto", padding: "24px" }}>
@@ -7,30 +7,22 @@ export default function MateriaLoading() {
           <div
             className="skeleton"
             style={{
-              height: "48px",
-              width: "60%",
+              height: "36px",
+              width: "50%",
               borderRadius: "var(--radius-card)",
-              marginBottom: "12px",
-            }}
-          />
-          <div
-            className="skeleton"
-            style={{
-              height: "16px",
-              width: "40%",
-              borderRadius: "var(--radius-card)",
+              marginBottom: "8px",
             }}
           />
         </div>
 
-        {/* Cards skeleton */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          {[1, 2, 3, 4].map((i) => (
+        {/* Dates skeleton */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
               className="skeleton"
               style={{
-                height: "80px",
+                height: "60px",
                 borderRadius: "var(--radius-card)",
               }}
             />

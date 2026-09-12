@@ -40,11 +40,19 @@ export default async function VisorPage({
   // Check si el visitante tiene acceso especial a la materia del archivo
   let tieneAccesoEspecial = false;
   if (!esAdmin && nombreVisitante && claveVisitante && archivo?.clase_id) {
-    const { data: clase } = await getSupabaseAdmin()
-      .from("clases")
-      .select("materia_id")
-      .eq("id", archivo.clase_id)
-      .single();
+    const [{ data: clase }, { data: grants }] = await Promise.all([
+      getSupabaseAdmin()
+        .from("clases")
+        .select("materia_id")
+        .eq("id", archivo.clase_id)
+        .single(),
+      !esAdmin && nombreVisitante
+        ? getSupabaseAdmin()
+            .from("accesos_archivo")
+            .select("nombre")
+            .eq("archivo_id", archivoId)
+        : Promise.resolve({ data: [] }),
+    ]);
     if (clase) {
       const { data: acceso } = await getSupabaseAdmin()
         .from("accesos_especiales")
@@ -55,19 +63,11 @@ export default async function VisorPage({
         .maybeSingle();
       tieneAccesoEspecial = !!acceso;
     }
+    // Grant por archivo (premio)
+    if (!tieneAccesoEspecial && nombreVisitante) {
+      tieneAccesoEspecial = tieneGrant(grants || [], nombreVisitante);
+    }
   }
-
-  // Grant por archivo (premio): el alumno ve ESE archivo privado solo con su nombre
-  // (comparación normalizada: ignora mayúsculas, tildes y espacios de más)
-  let tieneGrantArchivo = false;
-  if (!esAdmin && !tieneAccesoEspecial && nombreVisitante && archivo) {
-    const { data: grants } = await getSupabaseAdmin()
-      .from("accesos_archivo")
-      .select("nombre")
-      .eq("archivo_id", archivoId);
-    tieneGrantArchivo = tieneGrant(grants || [], nombreVisitante);
-  }
-  if (tieneGrantArchivo) tieneAccesoEspecial = true;
 
   type Modo = "srcdoc" | "iframe" | "imagen" | "externo" | "error";
   let modo: Modo = "error";

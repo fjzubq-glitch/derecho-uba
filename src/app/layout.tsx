@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, IBM_Plex_Mono, Special_Elite } from "next/font/google";
-import AdminShortcut from "@/components/AdminShortcut";
+import dynamic from "next/dynamic";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import HeartbeatProvider from "@/components/HeartbeatProvider";
 import { AudioProvider } from "@/components/AudioProvider";
 import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
 import PortalFooter from "@/components/PortalFooter";
-import PomodoroTimer from "@/components/PomodoroTimer";
-import BinauralPlayer from "@/components/BinauralPlayer";
 import "./globals.css";
+
+const AdminShortcut = dynamic(() => import("@/components/AdminShortcut"), { ssr: false });
+const PomodoroTimer = dynamic(() => import("@/components/PomodoroTimer"), { ssr: false });
+const BinauralPlayer = dynamic(() => import("@/components/BinauralPlayer"), { ssr: false });
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",

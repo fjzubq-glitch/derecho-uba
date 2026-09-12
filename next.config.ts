@@ -34,6 +34,15 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  experimental: {
+    optimizePackageImports: [
+      "@tiptap/react",
+      "@tiptap/starter-kit",
+      "@tiptap/extension-table",
+      "@tiptap/pm",
+      "@tiptap/suggestion",
+    ],
+  },
   images: {
     remotePatterns: [
       {

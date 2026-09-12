@@ -37,23 +37,26 @@ export async function GET(
         ok = verifyVisorToken(t, archivoId);
       }
       if (!ok && nombre) {
-        const { data: grants } = await getSupabaseAdmin()
-          .from("accesos_archivo")
-          .select("nombre")
-          .eq("archivo_id", archivoId);
-        ok = tieneGrant(grants || [], nombre);
-      }
-      if (!ok && nombre && clave && archivo.clase_id) {
-        const { data: clase } = await getSupabaseAdmin()
-          .from("clases")
-          .select("materia_id")
-          .eq("id", archivo.clase_id)
-          .single();
-        if (clase) {
+        // Parallelizar grant check y acceso especial check
+        const [grantsRes, claseRes] = await Promise.all([
+          getSupabaseAdmin()
+            .from("accesos_archivo")
+            .select("nombre")
+            .eq("archivo_id", archivoId),
+          archivo.clase_id
+            ? getSupabaseAdmin()
+                .from("clases")
+                .select("materia_id")
+                .eq("id", archivo.clase_id)
+                .single()
+            : Promise.resolve({ data: null }),
+        ]);
+        ok = tieneGrant(grantsRes.data || [], nombre);
+        if (!ok && clave && claseRes.data) {
           const { data: acceso } = await getSupabaseAdmin()
             .from("accesos_especiales")
             .select("id")
-            .eq("materia_id", clase.materia_id)
+            .eq("materia_id", claseRes.data.materia_id)
             .eq("clave", clave)
             .ilike("nombre", nombre)
             .maybeSingle();
