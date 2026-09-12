@@ -181,9 +181,8 @@ export default function HomeClient({
         <section>
           <div className="pad-lateral" style={{ padding: "36px 48px 0" }}>
             <div
+              className="glass-card card-reveal"
               style={{
-                background: "var(--color-card)",
-                border: "1px solid var(--color-line-soft)",
                 borderRadius: "14px",
                 padding: "22px 26px",
               }}
@@ -278,7 +277,7 @@ export default function HomeClient({
         <div className="pad-lateral" style={{ padding: "32px 48px 0" }}>
           <a
             href="/leyes"
-            className="group flex items-center gap-3"
+            className="group flex items-center gap-3 card-reveal"
             style={{
               display: "flex",
               alignItems: "center",
@@ -405,11 +404,10 @@ export default function HomeClient({
 
           {materias.length === 0 ? (
             <div
+              className="glass-card card-reveal"
               style={{
                 padding: "80px 24px",
                 textAlign: "center",
-                background: "var(--color-card)",
-                border: "1px solid var(--color-line-soft)",
                 borderRadius: "14px",
               }}
             >

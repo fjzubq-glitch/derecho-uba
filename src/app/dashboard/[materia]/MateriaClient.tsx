@@ -358,11 +358,10 @@ export default function MateriaClient({
           {/* Clases */}
           {clases.length === 0 ? (
             <div
+              className="glass-card card-reveal"
               style={{
                 padding: "80px 48px",
                 textAlign: "center",
-                background: "var(--color-card)",
-                border: "1px solid var(--color-line-soft)",
                 borderRadius: "14px",
               }}
             >

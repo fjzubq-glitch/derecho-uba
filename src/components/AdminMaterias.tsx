@@ -285,11 +285,10 @@ export default function AdminMaterias() {
         <div style={modalBackdrop} onClick={(e) => { if (e.target === e.currentTarget) { setEditing(null); setMessage(""); } }}>
           <div
             onClick={(e) => e.stopPropagation()}
+            className="glass-modal card-reveal"
             style={{
               width: "100%",
               maxWidth: "460px",
-              background: "var(--color-card)",
-              border: "1px solid var(--color-line-soft)",
               borderRadius: "14px",
               padding: "28px",
             }}

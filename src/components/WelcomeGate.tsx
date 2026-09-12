@@ -111,11 +111,9 @@ export default function WelcomeGate({ materiaSlug }: WelcomeGateProps) {
       aria-labelledby="welcome-title"
     >
       <div
-        className="w-full card-reveal"
+        className="w-full card-reveal glass-modal"
         style={{
           maxWidth: "440px",
-          background: "var(--color-ink-2)",
-          border: "1px solid var(--color-gold-dim)",
           borderRadius: "14px",
           padding: "40px 36px",
         }}

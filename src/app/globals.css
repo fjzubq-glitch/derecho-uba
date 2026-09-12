@@ -270,6 +270,22 @@ article {
   animation: skPulse 1.8s ease-in-out infinite;
 }
 
+/* ── Glassmorphism para cards ── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ── Glassmorphism para modals ── */
+.glass-modal {
+  background: rgba(23, 21, 18, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* ── Móvil: menos movimiento para que cargue y scrollee más liviano ── */
 @media (max-width: 767px) {
   html { scroll-behavior: auto; }

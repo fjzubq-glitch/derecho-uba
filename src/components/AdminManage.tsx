@@ -692,8 +692,10 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const modalCard: React.CSSProperties = {
     width: "100%",
     maxWidth: "440px",
-    background: "var(--color-card)",
-    border: "1px solid var(--color-line-soft)",
+    background: "rgba(23, 21, 18, 0.92)",
+    backdropFilter: "blur(16px)",
+    WebkitBackdropFilter: "blur(16px)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
     borderRadius: "14px",
     padding: "28px",
   };

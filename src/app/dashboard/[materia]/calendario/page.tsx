@@ -155,11 +155,10 @@ export default function CalendarioPage() {
             <div className="skeleton" style={{ height: "320px" }} />
           ) : fechas.length === 0 ? (
             <div
+              className="glass-card card-reveal"
               style={{
                 padding: "80px 48px",
                 textAlign: "center",
-                background: "var(--color-card)",
-                border: "1px solid var(--color-line-soft)",
                 borderRadius: "14px",
               }}
             >

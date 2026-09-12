@@ -557,10 +557,9 @@ export default function AdminPage() {
       >
         <div style={{ width: "100%", maxWidth: "420px" }}>
           <div
+            className="glass-card card-reveal"
             style={{
               padding: "clamp(28px, 6vw, 48px) clamp(24px, 5vw, 40px)",
-              background: "var(--color-card)",
-              border: "1px solid var(--color-line-soft)",
               borderRadius: "14px",
             }}
           >

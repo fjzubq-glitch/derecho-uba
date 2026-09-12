@@ -1011,11 +1011,10 @@ if (isTranscription(tipo)) {
           {/* Cards de contenido — públicos arriba, privados (verde) abajo */}
           {clase.archivos.length === 0 ? (
             <div
+              className="glass-card card-reveal"
               style={{
                 padding: "80px 48px",
                 textAlign: "center",
-                background: "var(--color-card)",
-                border: "1px solid var(--color-line-soft)",
                 borderRadius: "14px",
               }}
             >
@@ -1118,14 +1117,16 @@ if (isTranscription(tipo)) {
                 onClick={() => router.push(`/dashboard/${materiaSlug}/clase/${prevClase.numero}`)}
                 className="card-reveal card-hover flex items-center gap-4 text-left cursor-pointer"
                 style={{
-                  background: "var(--color-card)",
+                  background: "rgba(255,255,255,0.03)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
                   padding: "24px",
-                  border: "1px solid var(--color-line-soft)",
+                  border: "1px solid rgba(255,255,255,0.07)",
                   borderRadius: "14px",
                   transition: "background 0.25s ease, border-color 0.25s ease",
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
               >
                 <ArrowLeft style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} />
                 <div className="min-w-0">
@@ -1146,14 +1147,16 @@ if (isTranscription(tipo)) {
                 onClick={() => router.push(`/dashboard/${materiaSlug}/clase/${nextClase.numero}`)}
                 className="card-reveal card-hover flex items-center justify-end gap-4 text-right cursor-pointer"
                 style={{
-                  background: "var(--color-card)",
+                  background: "rgba(255,255,255,0.03)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
                   padding: "24px",
-                  border: "1px solid var(--color-line-soft)",
+                  border: "1px solid rgba(255,255,255,0.07)",
                   borderRadius: "14px",
                   transition: "background 0.25s ease, border-color 0.25s ease",
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
               >
                 <div className="min-w-0">
                   <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-gold)", marginBottom: "4px" }}>

@@ -516,6 +516,7 @@ export default function LeyesClient() {
                 return (
                   <div
                     key={r.id}
+                    className="card-reveal"
                     style={{
                       position: "relative",
                       background: "linear-gradient(180deg, rgba(76, 175, 125, 0.055), rgba(76, 175, 125, 0.015))",
@@ -659,6 +660,7 @@ export default function LeyesClient() {
                 <div
                   key={r.id}
                   onClick={() => handleSelectNorma(r.id)}
+                  className="card-reveal card-hover"
                   style={{
                     background: "var(--color-card)",
                     border: "1px solid var(--color-line-soft)",
@@ -928,9 +930,8 @@ export default function LeyesClient() {
           onClick={() => setSelectedNorma(null)}
         >
           <div
+            className="glass-modal card-reveal"
             style={{
-              background: "var(--color-card)",
-              border: "1px solid var(--color-line)",
               borderRadius: "14px",
               maxWidth: "640px",
               width: "100%",
