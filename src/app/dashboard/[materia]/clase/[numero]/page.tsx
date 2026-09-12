@@ -61,14 +61,28 @@ export default async function ClaseNumeroPage({
   const sp = await searchParams;
   const clave = typeof sp.clave === "string" ? sp.clave.trim() : null;
   const nombre = typeof sp.nombre === "string" ? sp.nombre.trim() : null;
-  const esAdmin = isAdminRequest((await cookies()).toString());
+  let esAdmin = false;
+  try {
+    esAdmin = isAdminRequest((await cookies()).toString());
+  } catch {
+    // cookies() can fail in some edge cases
+  }
   const num = parseInt(numero);
 
-  const data = await unstable_cache(
-    () => getClaseData(slug, num),
-    ["clase-detalle", slug, String(num)],
-    { revalidate: 300, tags: ["clase-detalle", `clase-${slug}-${num}`] },
-  )();
+  let data;
+  try {
+    data = await unstable_cache(
+      () => getClaseData(slug, num),
+      ["clase-detalle", slug, String(num)],
+      { revalidate: 300, tags: ["clase-detalle", `clase-${slug}-${num}`] },
+    )();
+  } catch {
+    return (
+      <div className="flex items-center justify-center min-h-screen" style={{ background: "var(--color-ink)" }}>
+        <p style={{ color: "var(--color-text-faint)", fontSize: "14px" }}>Error de conexión. Intentá de nuevo.</p>
+      </div>
+    );
+  }
 
   if (!data.materia || !data.clase) {
     return (
@@ -80,31 +94,39 @@ export default async function ClaseNumeroPage({
 
   let tieneAcceso = false;
   if (!esAdmin && clave && nombre && data.materia.id) {
-    const { data: acceso } = await getSupabaseAdmin()
-      .from("accesos_especiales")
-      .select("id")
-      .eq("materia_id", data.materia.id)
-      .eq("clave", clave.toUpperCase())
-      .ilike("nombre", nombre)
-      .maybeSingle();
-    tieneAcceso = !!acceso;
+    try {
+      const { data: acceso } = await getSupabaseAdmin()
+        .from("accesos_especiales")
+        .select("id")
+        .eq("materia_id", data.materia.id)
+        .eq("clave", clave.toUpperCase())
+        .ilike("nombre", nombre)
+        .maybeSingle();
+      tieneAcceso = !!acceso;
+    } catch {
+      // Grant check failed; proceed without special access
+    }
   }
 
   let grantedIds: string[] = [];
   if (!esAdmin && !tieneAcceso && nombre) {
-    const privados = (data.clase.archivos || []).filter((a) => TIPOS_PRIVADOS.includes(a.tipo));
-    if (privados.length > 0) {
-      const { data: grants } = await getSupabaseAdmin()
-        .from("accesos_archivo")
-        .select("archivo_id, nombre")
-        .in("archivo_id", privados.map((a) => a.id));
-      const porArchivo = new Map<string, Array<{ nombre?: string | null }>>();
-      for (const g of grants || []) {
-        const list = porArchivo.get(g.archivo_id) || [];
-        list.push({ nombre: g.nombre });
-        porArchivo.set(g.archivo_id, list);
+    try {
+      const privados = (data.clase.archivos || []).filter((a) => TIPOS_PRIVADOS.includes(a.tipo));
+      if (privados.length > 0) {
+        const { data: grants } = await getSupabaseAdmin()
+          .from("accesos_archivo")
+          .select("archivo_id, nombre")
+          .in("archivo_id", privados.map((a) => a.id));
+        const porArchivo = new Map<string, Array<{ nombre?: string | null }>>();
+        for (const g of grants || []) {
+          const list = porArchivo.get(g.archivo_id) || [];
+          list.push({ nombre: g.nombre });
+          porArchivo.set(g.archivo_id, list);
+        }
+        grantedIds = privados.filter((a) => tieneGrant(porArchivo.get(a.id) || [], nombre)).map((a) => a.id);
       }
-      grantedIds = privados.filter((a) => tieneGrant(porArchivo.get(a.id) || [], nombre)).map((a) => a.id);
+    } catch {
+      // Grants check failed; proceed without grants
     }
   }
   const grantSet = new Set(grantedIds);

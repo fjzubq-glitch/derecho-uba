@@ -58,9 +58,23 @@ export default async function MateriaPage({
   const sp = await searchParams;
   const clave = typeof sp.clave === "string" ? sp.clave.trim() : null;
   const nombre = typeof sp.nombre === "string" ? sp.nombre.trim() : null;
-  const esAdmin = isAdminRequest((await cookies()).toString());
 
-  const { data: materia } = await getMateriaConFechas(slug);
+  let esAdmin = false;
+  try {
+    esAdmin = isAdminRequest((await cookies()).toString());
+  } catch {
+    // cookies() can fail in some edge cases; treat as non-admin
+  }
+
+type MateriaRow = { id: string; nombre: string; estado: string; materia_fechas?: { id: string; titulo: string; fecha: string }[] };
+
+  let materia: MateriaRow | null = null;
+  try {
+    const result = await getMateriaConFechas(slug);
+    materia = (result as { data: MateriaRow | null }).data;
+  } catch {
+    return <MateriaClient slug={slug} materia={null} clases={[]} />;
+  }
 
   if (!materia) {
     return <MateriaClient slug={slug} materia={null} clases={[]} />;
@@ -68,35 +82,47 @@ export default async function MateriaPage({
 
   let tieneAcceso = false;
   if (!esAdmin && clave && nombre && materia.id) {
-    const { data: acceso } = await getSupabaseAdmin()
-      .from("accesos_especiales")
-      .select("id")
-      .eq("materia_id", materia.id)
-      .eq("clave", clave.toUpperCase())
-      .ilike("nombre", nombre)
-      .maybeSingle();
-    tieneAcceso = !!acceso;
+    try {
+      const { data: acceso } = await getSupabaseAdmin()
+        .from("accesos_especiales")
+        .select("id")
+        .eq("materia_id", materia.id)
+        .eq("clave", clave.toUpperCase())
+        .ilike("nombre", nombre)
+        .maybeSingle();
+      tieneAcceso = !!acceso;
+    } catch {
+      // Grant check failed; proceed without special access
+    }
   }
 
-  const { data: clases } = await getClasesConArchivos(slug, materia.id);
+  let clasesWithFiles: Array<{
+    id: string; numero: number; titulo: string; tema: string | null; fecha: string; created_at: string;
+    archivos: ArchivoRow[];
+  }> = [];
+  try {
+    const { data: clases } = await getClasesConArchivos(slug, materia.id);
 
-  const clasesWithFiles = ((clases || []) as Array<{
-    id: string; numero: number; titulo: string; tema: string | null; fecha: string | null; created_at: string;
-    archivos: ArchivoRow[] | null;
-  }>).map((c) => {
-    const archivosDeClase = [...(c.archivos || [])]
-      .filter((a) => esAdmin || tieneAcceso || !TIPOS_PRIVADOS.includes(a.tipo))
-      .sort((a, b) => (a.orden ?? 9999) - (b.orden ?? 9999) || (a.created_at < b.created_at ? -1 : 1));
-    return {
-      id: c.id,
-      numero: c.numero,
-      titulo: c.titulo,
-      tema: c.tema,
-      fecha: c.fecha || "",
-      created_at: c.created_at,
-      archivos: archivosDeClase,
-    };
-  });
+    clasesWithFiles = ((clases || []) as Array<{
+      id: string; numero: number; titulo: string; tema: string | null; fecha: string | null; created_at: string;
+      archivos: ArchivoRow[] | null;
+    }>).map((c) => {
+      const archivosDeClase = [...(c.archivos || [])]
+        .filter((a) => esAdmin || tieneAcceso || !TIPOS_PRIVADOS.includes(a.tipo))
+        .sort((a, b) => (a.orden ?? 9999) - (b.orden ?? 9999) || (a.created_at < b.created_at ? -1 : 1));
+      return {
+        id: c.id,
+        numero: c.numero,
+        titulo: c.titulo,
+        tema: c.tema,
+        fecha: c.fecha || "",
+        created_at: c.created_at,
+        archivos: archivosDeClase,
+      };
+    });
+  } catch {
+    // Classes query failed; render with empty list
+  }
 
   const fechas = (materia as unknown as { materia_fechas?: { id: string; titulo: string; fecha: string }[] }).materia_fechas || [];
 

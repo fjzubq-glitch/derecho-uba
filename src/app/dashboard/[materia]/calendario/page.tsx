@@ -18,6 +18,10 @@ const getMateriaConFechas = (slug: string) =>
     { revalidate: REVALIDATE, tags: ["materias", `materia-${slug}`] }
   )();
 
+type MateriaData = { id: string; nombre: string; estado?: string; materia_fechas?: Array<{ id: string; titulo: string; fecha: string }> };
+
+const empty: MateriaData | null = null;
+
 export default async function CalendarioPage({
   params,
 }: {
@@ -25,9 +29,15 @@ export default async function CalendarioPage({
 }) {
   const { materia: slug } = await params;
 
-  const { data: materia } = await getMateriaConFechas(slug);
+  let materia: MateriaData | null = empty;
+  try {
+    const result = await getMateriaConFechas(slug);
+    materia = (result as { data: MateriaData | null }).data;
+  } catch {
+    // Supabase query failed; render with null materia
+  }
 
-  const fechas = (materia as unknown as { materia_fechas?: Array<{ id: string; titulo: string; fecha: string }> }).materia_fechas || [];
+  const fechas = materia?.materia_fechas || [];
 
   const materiaData = materia
     ? {
