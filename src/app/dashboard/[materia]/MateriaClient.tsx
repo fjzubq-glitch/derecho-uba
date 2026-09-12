@@ -232,20 +232,16 @@ export default function MateriaClient({
                       router.push(calendarioHref());
                     }
                   }}
-                  className="cursor-pointer card-reveal"
+                  className="cursor-pointer card-reveal glass-card"
                   style={{
-                    background: "rgba(255,255,255,0.03)",
-                    backdropFilter: "blur(12px)",
-                    WebkitBackdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255,255,255,0.07)",
                     borderLeft: "2px solid var(--color-gold-dim)",
                     borderRadius: "var(--radius-card)",
                     padding: "24px 26px 20px",
                     marginBottom: "32px",
                     transition: "border-color 0.25s ease, background 0.25s ease",
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; e.currentTarget.style.background = "var(--color-card)"; }}
                 >
                   {/* Header de la card */}
                   <div className="flex items-center justify-between gap-4 mb-4">
@@ -422,10 +418,10 @@ export default function MateriaClient({
                       <span
                         style={{
                           padding: "2px 6px",
-                          background: "rgba(0,255,85,0.1)",
-                          border: "1px solid rgba(0,255,85,0.35)",
-                          color: "#00FF55",
-                          boxShadow: "0 0 8px rgba(0,255,85,0.18)",
+                          background: "rgba(76,175,125,0.1)",
+                          border: "1px solid rgba(76,175,125,0.35)",
+                          color: "var(--color-admin)",
+                          boxShadow: "0 0 8px rgba(76,175,125,0.18)",
                           fontSize: "8px",
                           letterSpacing: "0.1em",
                           fontWeight: 700,

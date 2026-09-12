@@ -160,7 +160,7 @@ export default function LeyesClient() {
           color: "var(--color-text-muted)",
           textDecoration: "none",
           padding: "8px 14px",
-          borderRadius: "8px",
+          borderRadius: "var(--radius-btn)",
           border: "1px solid rgba(255,255,255,0.07)",
           background: "rgba(5,7,12,0.8)",
           backdropFilter: "blur(6px)",
@@ -207,7 +207,7 @@ export default function LeyesClient() {
             }}
           >
             Normas y{" "}
-            <span style={{ color: "#B99A62", fontStyle: "italic" }}>Leyes</span>
+            <span style={{ color: "var(--color-gold)", fontStyle: "italic" }}>Leyes</span>
           </h1>
           <p
             style={{
@@ -255,7 +255,7 @@ export default function LeyesClient() {
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
-                e.currentTarget.style.color = "#8A8E9C";
+                e.currentTarget.style.color = "var(--color-text-muted)";
               }}
             >
               {item.label}
@@ -295,8 +295,8 @@ export default function LeyesClient() {
                     inset: "-3px",
                     borderRadius: "50%",
                     border: "2px solid transparent",
-                    borderTopColor: "#5DCAA5",
-                    borderRightColor: "rgba(93,202,165,0.3)",
+                    borderTopColor: "var(--color-admin)",
+                    borderRightColor: "rgba(76,175,125,0.3)",
                     animation: "spin-glow 1s linear infinite",
                   }}
                 />
@@ -305,7 +305,7 @@ export default function LeyesClient() {
                 style={{
                   width: "15px",
                   height: "15px",
-                  color: loading ? "#5DCAA5" : "#8A8E9C",
+                  color: loading ? "var(--color-admin)" : "var(--color-text-muted)",
                   transition: "color 0.2s ease",
                 }}
               />
@@ -336,10 +336,10 @@ export default function LeyesClient() {
                 flexShrink: 0,
                 height: "36px",
                 padding: "0 18px",
-                background: loading ? "rgba(93,202,165,0.08)" : "transparent",
-                border: `1px solid ${loading ? "#5DCAA5" : "#B99A62"}`,
-                borderRadius: "8px",
-                color: loading ? "#5DCAA5" : "#D9B77E",
+                background: loading ? "rgba(76,175,125,0.08)" : "transparent",
+                border: `1px solid ${loading ? "var(--color-admin)" : "var(--color-gold)"}`,
+                borderRadius: "var(--radius-btn)",
+                color: loading ? "var(--color-admin)" : "var(--color-gold)",
                 fontFamily: "var(--font-inter)",
                 fontSize: "13px",
                 fontWeight: 400,
@@ -349,14 +349,14 @@ export default function LeyesClient() {
               }}
               onMouseEnter={(e) => {
                 if (!loading) {
-                  e.currentTarget.style.borderColor = "#D9B77E";
-                  e.currentTarget.style.color = "#E8C99A";
+                  e.currentTarget.style.borderColor = "var(--color-gold)";
+                  e.currentTarget.style.color = "var(--color-text)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!loading) {
-                  e.currentTarget.style.borderColor = "#B99A62";
-                  e.currentTarget.style.color = "#D9B77E";
+                  e.currentTarget.style.borderColor = "var(--color-gold)";
+                  e.currentTarget.style.color = "var(--color-gold)";
                 }
               }}
             >
@@ -367,7 +367,7 @@ export default function LeyesClient() {
           {/* Filtros — CSS Grid responsive */}
           <div className="leyes-filtros" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", alignItems: "end" }}>
             <div>
-              <label style={{ display: "block", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#6A6E7C", marginBottom: "8px" }}>
+              <label style={{ display: "block", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-text-faint)", marginBottom: "8px" }}>
                 Tipo
               </label>
               <div style={{ position: "relative" }}>
@@ -380,7 +380,7 @@ export default function LeyesClient() {
                     padding: "0 32px 0 14px",
                     background: "rgba(255,255,255,0.03)",
                     border: "1px solid rgba(255,255,255,0.07)",
-                    borderRadius: "8px",
+                    borderRadius: "var(--radius-btn)",
                     color: tipo ? "var(--color-text)" : "var(--color-text-muted)",
                     fontFamily: "var(--font-inter)",
                     fontSize: "13px",
@@ -412,7 +412,7 @@ export default function LeyesClient() {
               </div>
             </div>
             <div>
-              <label style={{ display: "block", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#6A6E7C", marginBottom: "8px" }}>
+              <label style={{ display: "block", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-text-faint)", marginBottom: "8px" }}>
                 N°
               </label>
               <input
@@ -428,7 +428,7 @@ export default function LeyesClient() {
                   padding: "0 14px",
                   background: "rgba(255,255,255,0.03)",
                   border: "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: "8px",
+                  borderRadius: "var(--radius-btn)",
                   color: "var(--color-text)",
                   fontFamily: "var(--font-ibm-plex-mono)",
                   fontSize: "13px",
@@ -440,7 +440,7 @@ export default function LeyesClient() {
               />
             </div>
             <div>
-              <label style={{ display: "block", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#6A6E7C", marginBottom: "8px" }}>
+              <label style={{ display: "block", fontFamily: "var(--font-ibm-plex-mono)", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-text-faint)", marginBottom: "8px" }}>
                 Año
               </label>
               <input
@@ -457,7 +457,7 @@ export default function LeyesClient() {
                   padding: "0 14px",
                   background: "rgba(255,255,255,0.03)",
                   border: "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: "8px",
+                  borderRadius: "var(--radius-btn)",
                   color: "var(--color-text)",
                   fontFamily: "var(--font-ibm-plex-mono)",
                   fontSize: "13px",
@@ -555,7 +555,7 @@ export default function LeyesClient() {
                           fontSize: "9px",
                           letterSpacing: "0.08em",
                           textTransform: "uppercase",
-                          color: "#7FD9A8",
+                          color: "var(--color-admin)",
                           background: "rgba(76, 175, 125, 0.12)",
                           border: "1px solid rgba(76, 175, 125, 0.35)",
                           padding: "3px 8px",
@@ -610,8 +610,8 @@ export default function LeyesClient() {
                             display: "inline-flex",
                             alignItems: "center",
                             gap: "7px",
-                            background: "#4CAF7D",
-                            color: "#0C0B09",
+                            background: "var(--color-admin)",
+                            color: "var(--color-ink)",
                             padding: "10px 20px",
                             borderRadius: "var(--radius-btn)",
                             fontFamily: "var(--font-inter)",
@@ -621,8 +621,8 @@ export default function LeyesClient() {
                             transition: "background 0.2s ease",
                             boxShadow: "0 0 16px rgba(76, 175, 125, 0.20)",
                           }}
-                          onMouseEnter={(e) => (e.currentTarget.style.background = "#5FBF8E")}
-                          onMouseLeave={(e) => (e.currentTarget.style.background = "#4CAF7D")}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-admin-dim)")}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-admin)")}
                         >
                           Ver texto completo
                           <ExternalLink style={{ width: "12px", height: "12px" }} />
@@ -1039,7 +1039,7 @@ export default function LeyesClient() {
                   padding: "10px 14px",
                   background: "var(--color-ink)",
                   border: "1px solid var(--color-line-soft)",
-                  borderRadius: "10px",
+                  borderRadius: "var(--radius-btn)",
                 }}
               >
                 {selectedNorma.modificaciones}
@@ -1117,8 +1117,6 @@ export default function LeyesClient() {
           </div>
         </div>
       )}
-
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes spin-glow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .leyes-filtros { grid-template-columns: 1fr 1fr 1fr; } @media (max-width: 640px) { .leyes-filtros { grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; align-items: end !important; } .leyes-filtros label { font-size: 8px !important; margin-bottom: 4px !important; } .leyes-filtros input, .leyes-filtros select { height: 36px !important; font-size: 12px !important; padding: 0 10px !important; } .leyes-inicio-text { display: none !important; } .leyes-volver { top: 12px !important; left: 12px !important; padding: 6px 10px !important; } .leyes-card { padding: 14px !important; } .leyes-input-row { margin-bottom: 10px !important; padding-bottom: 10px !important; } .leyes-input-row input { font-size: 14px !important; } .leyes-buscar-btn { height: 32px !important; padding: 0 12px !important; font-size: 11px !important; } }`}</style>
     </div>
   );
 }

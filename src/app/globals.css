@@ -1023,9 +1023,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: var(--color-text);
 }
 
-/* ── Leyes: spinner y select ── */
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
+/* ── Leyes: select ── */
 .leyes-select {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239C9689' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
@@ -1039,4 +1037,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .leyes-select:focus {
   border-color: var(--color-gold-dim) !important;
   outline: none;
+}
+
+/* ── Leyes responsive ── */
+.leyes-filtros { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 640px) {
+  .leyes-filtros { grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; align-items: end !important; }
+  .leyes-filtros label { font-size: 8px !important; margin-bottom: 4px !important; }
+  .leyes-filtros input, .leyes-filtros select { height: 36px !important; font-size: 12px !important; padding: 0 10px !important; }
+  .leyes-inicio-text { display: none !important; }
+  .leyes-volver { top: 12px !important; left: 12px !important; padding: 6px 10px !important; }
+  .leyes-card { padding: 14px !important; }
+  .leyes-input-row { margin-bottom: 10px !important; padding-bottom: 10px !important; }
+  .leyes-input-row input { font-size: 14px !important; }
+  .leyes-buscar-btn { height: 32px !important; padding: 0 12px !important; font-size: 11px !important; }
 }

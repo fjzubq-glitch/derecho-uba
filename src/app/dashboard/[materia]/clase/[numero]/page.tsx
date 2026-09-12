@@ -464,7 +464,7 @@ if (isTranscription(tipo)) {
     const esPremioSolo = esPremio && !esAdmin && !tieneAcceso;
     const NEON = "var(--color-admin)";
     const accentColor = esPremioSolo ? "var(--color-gold)" : esPrivado ? NEON : "var(--color-gold)";
-    const accentBorder = esPremio ? "var(--color-gold-dim)" : esPrivado ? "rgba(0,255,85,0.35)" : "var(--color-gold-dim)";
+    const accentBorder = esPremio ? "var(--color-gold-dim)" : esPrivado ? "rgba(76,175,125,0.35)" : "var(--color-gold-dim)";
     const labelShown = esPremioSolo ? "MATERIAL" : tipo === "lexpodcast" ? `LexPodcast - Episodio ${numero}` : config.label;
     const iconShown = esPremioSolo
       ? <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
@@ -483,7 +483,7 @@ if (isTranscription(tipo)) {
         }}
         className="card-reveal card-hover"
         style={{
-          background: esPremioSolo ? "var(--color-card)" : esPrivado ? "linear-gradient(135deg, rgba(0,255,85,0.06) 0%, rgba(0,255,85,0.02) 100%)" : "var(--color-card)",
+          background: esPremioSolo ? "var(--color-card)" : esPrivado ? "linear-gradient(135deg, rgba(76,175,125,0.06) 0%, rgba(76,175,125,0.02) 100%)" : "var(--color-card)",
           padding: "28px 24px",
           position: "relative",
           opacity: 1,
@@ -491,11 +491,11 @@ if (isTranscription(tipo)) {
           borderRadius: "var(--radius-card)",
           animationDelay: `${cardIndex * 55}ms`,
           transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
-          boxShadow: isActive ? "inset 0 0 0 1px var(--color-gold)" : esPremio ? "0 0 18px rgba(185,154,98,0.16)" : esPrivado ? "0 0 15px rgba(0,255,85,0.1), inset 0 0 15px rgba(0,255,85,0.03)" : "none",
-          border: esPremio ? "1px solid var(--color-gold-dim)" : esPrivado ? "1px solid rgba(0,255,85,0.35)" : "1px solid var(--color-line-soft)",
+          boxShadow: isActive ? "inset 0 0 0 1px var(--color-gold)" : esPremio ? "0 0 18px rgba(185,154,98,0.16)" : esPrivado ? "0 0 15px rgba(76,175,125,0.1), inset 0 0 15px rgba(76,175,125,0.03)" : "none",
+          border: esPremio ? "1px solid var(--color-gold-dim)" : esPrivado ? "1px solid rgba(76,175,125,0.35)" : "1px solid var(--color-line-soft)",
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.background = esPremioSolo ? "var(--color-card-hover)" : esPrivado ? "linear-gradient(135deg, rgba(0,255,85,0.1) 0%, rgba(0,255,85,0.04) 100%)" : "var(--color-card-hover)"; e.currentTarget.style.borderColor = accentBorder; }}
-        onMouseLeave={(e) => { e.currentTarget.style.background = esPremioSolo ? "var(--color-card)" : esPrivado ? "linear-gradient(135deg, rgba(0,255,85,0.06) 0%, rgba(0,255,85,0.02) 100%)" : "var(--color-card)"; e.currentTarget.style.borderColor = esPremio ? "var(--color-gold-dim)" : esPrivado ? "rgba(0,255,85,0.35)" : "var(--color-line-soft)"; }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = esPremioSolo ? "var(--color-card-hover)" : esPrivado ? "linear-gradient(135deg, rgba(76,175,125,0.1) 0%, rgba(76,175,125,0.04) 100%)" : "var(--color-card-hover)"; e.currentTarget.style.borderColor = accentBorder; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = esPremioSolo ? "var(--color-card)" : esPrivado ? "linear-gradient(135deg, rgba(76,175,125,0.06) 0%, rgba(76,175,125,0.02) 100%)" : "var(--color-card)"; e.currentTarget.style.borderColor = esPremio ? "var(--color-gold-dim)" : esPrivado ? "rgba(76,175,125,0.35)" : "var(--color-line-soft)"; }}
         onClick={() => { setExpandedCardId((prev) => prev === archivo.id ? null : archivo.id); handleCardClick(archivo); }}
       >
         <div className="flex items-start justify-between gap-3" style={{ position: "relative", zIndex: 1 }}>
@@ -506,7 +506,7 @@ if (isTranscription(tipo)) {
                 height: "40px",
                 borderRadius: "50%",
                 border: `1px solid ${accentBorder}`,
-                boxShadow: !esPremioSolo && esPrivado ? "0 0 10px rgba(0,255,85,0.15)" : "none",
+                boxShadow: !esPremioSolo && esPrivado ? "0 0 10px rgba(76,175,125,0.15)" : "none",
               }}
             >
               {iconShown}
@@ -821,7 +821,7 @@ if (isTranscription(tipo)) {
                   marginTop: "8px",
                   fontSize: "11px",
                   fontFamily: "var(--font-ibm-plex-mono)",
-                  color: "#ff6b6b",
+                  color: "var(--color-danger)",
                 }}
               >
                 {offlineError}
@@ -932,8 +932,8 @@ if (isTranscription(tipo)) {
                   width: "28px",
                   height: "28px",
                   borderRadius: "50%",
-                  background: "rgba(0,255,85,0.08)",
-                  border: "1px solid rgba(0,255,85,0.35)",
+                  background: "rgba(76,175,125,0.08)",
+                  border: "1px solid rgba(76,175,125,0.35)",
                   cursor: "pointer",
                 }}
               >
@@ -1051,10 +1051,10 @@ if (isTranscription(tipo)) {
                         padding: "16px 20px",
                         marginTop: clase.archivos.some((a) => !TIPOS_PRIVADOS.includes(a.tipo)) ? "32px" : "0",
                         marginBottom: "20px",
-                        background: "linear-gradient(135deg, rgba(0,255,85,0.12) 0%, rgba(0,255,85,0.04) 100%)",
-                        border: "1px solid rgba(0,255,85,0.35)",
+                        background: "linear-gradient(135deg, rgba(76,175,125,0.12) 0%, rgba(76,175,125,0.04) 100%)",
+                        border: "1px solid rgba(76,175,125,0.35)",
                         borderRadius: "var(--radius-card)",
-                        boxShadow: "0 0 20px rgba(0,255,85,0.15), inset 0 0 20px rgba(0,255,85,0.05)",
+                        boxShadow: "0 0 20px rgba(76,175,125,0.15), inset 0 0 20px rgba(76,175,125,0.05)",
                         display: "flex",
                         alignItems: "center",
                         gap: "12px",
