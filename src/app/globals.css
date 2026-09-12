@@ -214,9 +214,9 @@ article {
 .card-hover::before {
   content: "";
   position: absolute;
-  top: 0;
+  top: 10px;
   left: 0;
-  bottom: 0;
+  bottom: 10px;
   width: 2px;
   background: var(--color-gold);
   transform: scaleY(0);

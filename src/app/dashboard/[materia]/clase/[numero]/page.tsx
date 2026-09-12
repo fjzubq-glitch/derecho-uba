@@ -462,7 +462,7 @@ if (isTranscription(tipo)) {
     const NEON = "#00FF55";
     const accentColor = esPremioSolo ? "var(--color-gold)" : esPrivado ? NEON : "var(--color-gold)";
     const accentBorder = esPremio ? "var(--color-gold-dim)" : esPrivado ? "rgba(0,255,85,0.35)" : "var(--color-gold-dim)";
-    const labelShown = esPremioSolo ? "MATERIAL" : config.label;
+    const labelShown = esPremioSolo ? "MATERIAL" : tipo === "lexpodcast" ? `LexPodcast - Episodio ${numero}` : config.label;
     const iconShown = esPremioSolo
       ? <FileText style={{ width: "18px", height: "18px", color: "var(--color-gold)" }} />
       : config.icon;
