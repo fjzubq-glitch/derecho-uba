@@ -485,7 +485,7 @@ export default function AdminPremios() {
             {privados.length === 0 ? (
               <p style={{ padding: "16px", fontSize: "13px", color: "var(--color-text-muted)" }}>No hay archivos privados en esta materia.</p>
             ) : (
-              (["cuestionario", "material_privado", "ficha", "lexpodcast"] as const)
+              (["cuestionario", "material_privado", "ficha", "lexpodcast", "tutor"] as const)
                 .map((tipo) => ({ tipo, items: privados.filter((p) => p.archivo_tipo === tipo) }))
                 .filter((g) => g.items.length > 0)
                 .map((g) => {
