@@ -1,7 +1,7 @@
 // Tipos de contenido privado + normalización de nombres para grants.
 // Centralizado para no triplicar constantes ni criterios de match.
 
-export const TIPOS_PRIVADOS = ["cuestionario", "material_privado", "ficha", "lexpodcast"];
+export const TIPOS_PRIVADOS = ["cuestionario", "material_privado", "ficha", "lexpodcast", "tutor"];
 
 // Normaliza para comparar: trim + colapsa espacios + minúsculas + sin tildes.
 // "  María  Pérez " y "maria perez" matchean igual.

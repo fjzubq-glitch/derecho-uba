@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     let privados: Array<{ archivo_id: string; archivo_nombre: string; archivo_tipo: string; clase_numero: number | null; clase_titulo: string; conGrant: number }> = [];
     const materiaSlug = new URL(request.url).searchParams.get("materia_slug")?.trim();
     if (materiaSlug) {
-      const { data: mat } = await supabase.from("materias").select("id").eq("slug", materiaSlug).single();
+      const { data: mat } = await supabase.from("materias").select("id, tutor_url").eq("slug", materiaSlug).single();
       if (mat) {
         const { data: clases } = await supabase.from("clases").select("id, numero, titulo").eq("materia_id", mat.id).order("numero");
         const claseIds = (clases || []).map((c) => c.id);
@@ -76,6 +76,18 @@ export async function GET(request: NextRequest) {
               };
             })
             .sort((x, y) => (x.clase_numero ?? 9999) - (y.clase_numero ?? 9999) || x.archivo_nombre.localeCompare(y.archivo_nombre));
+        }
+        // Agregar entrada virtual del tutor si tiene URL
+        if (mat.tutor_url) {
+          const tutorGrantCount = (grants || []).filter((g) => g.archivo_id === `tutor-${mat.id}`).length;
+          privados.unshift({
+            archivo_id: `tutor-${mat.id}`,
+            archivo_nombre: "Tutor Virtual",
+            archivo_tipo: "tutor",
+            clase_numero: null,
+            clase_titulo: "",
+            conGrant: tutorGrantCount,
+          });
         }
       }
     }
@@ -116,6 +128,33 @@ export async function POST(request: NextRequest) {
     if (!archivo_id || !nom) {
       return NextResponse.json({ ok: false, error: "Faltan datos" }, { status: 400 });
     }
+
+    // Manejar entrada virtual del tutor (archivo_id = "tutor-{materiaId}")
+    if (archivo_id.startsWith("tutor-")) {
+      const { data: existentes } = await getSupabaseAdmin()
+        .from("accesos_archivo")
+        .select("nombre")
+        .eq("archivo_id", archivo_id);
+      const yaExiste = (existentes || []).some(
+        (g) => normalizarNombreGrant(g.nombre) === normalizarNombreGrant(nom),
+      );
+      if (yaExiste) {
+        return NextResponse.json({ ok: false, error: "Ya tiene acceso al tutor" }, { status: 409 });
+      }
+      const { data, error } = await getSupabaseAdmin()
+        .from("accesos_archivo")
+        .insert({ archivo_id, nombre: nom })
+        .select("id")
+        .single();
+      if (error) {
+        if (String(error.code) === "23505" || /duplicate/i.test(error.message)) {
+          return NextResponse.json({ ok: false, error: "Ya tiene acceso al tutor" }, { status: 409 });
+        }
+        return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+      }
+      return NextResponse.json({ ok: true, id: data.id });
+    }
+
     // Evitar duplicados que solo difieren en tildes/espacios (el índice único solo cubre case)
     const { data: existentes } = await getSupabaseAdmin()
       .from("accesos_archivo")
