@@ -54,6 +54,7 @@ const TIPO_LABEL: Record<string, string> = {
   material_privado: "Material privado",
   ficha: "Ficha",
   lexpodcast: "Lexpodcast",
+  tutor: "Tutor Virtual",
 };
 
 export default function AdminPremios() {

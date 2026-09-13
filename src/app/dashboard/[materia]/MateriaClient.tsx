@@ -351,7 +351,8 @@ export default function MateriaClient({
             {/* Tutor Virtual */}
             {materia?.tutor_url && (isAdminSession() || acceso?.clave) && (
               <article
-                className="card-reveal card-hover h-full"
+                onClick={() => window.open(materia.tutor_url!, "_blank", "noopener,noreferrer")}
+                className="card-reveal card-hover h-full cursor-pointer"
                 style={{
                   background: "var(--color-card)",
                   padding: "28px 24px",
@@ -406,10 +407,7 @@ export default function MateriaClient({
                   <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
                     NotebookLM
                   </span>
-                  <a
-                    href={materia.tutor_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <span
                     className="flex items-center gap-2"
                     style={{
                       fontFamily: "var(--font-ibm-plex-mono)",
@@ -417,15 +415,11 @@ export default function MateriaClient({
                       letterSpacing: "0.14em",
                       textTransform: "uppercase",
                       color: "var(--color-admin)",
-                      textDecoration: "none",
-                      transition: "opacity 0.2s ease",
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.7"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
                   >
                     Consultar
                     <ExternalLink style={{ width: "12px", height: "12px" }} />
-                  </a>
+                  </span>
                 </div>
               </article>
             )}
