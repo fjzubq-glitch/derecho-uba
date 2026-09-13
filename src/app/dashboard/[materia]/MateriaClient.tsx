@@ -219,221 +219,329 @@ export default function MateriaClient({
       {/* ═══════════ MAIN ═══════════ */}
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
-          {/* Fechas + Tutor Virtual lado a lado */}
-          <div className="flex flex-col md:flex-row gap-4 mb-8">
+          {/* ═══════════ CONTENT GRID ═══════════ */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Fechas importantes */}
             {materia?.fechas && materia.fechas.length > 0 && (
-              <div className="flex-1">
-                <div
-                  role="link"
-                  tabIndex={0}
-                  onClick={() => router.push(calendarioHref())}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      router.push(calendarioHref());
-                    }
-                  }}
-                  className="cursor-pointer card-reveal glass-card h-full"
-                  style={{
-                    borderLeft: "2px solid var(--color-gold-dim)",
-                    borderRadius: "var(--radius-card)",
-                    padding: "24px 26px 20px",
-                    transition: "border-color 0.25s ease, background 0.25s ease",
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; e.currentTarget.style.background = "var(--color-card)"; }}
-                >
-                  {/* Header de la card */}
-                  <div className="flex items-center justify-between gap-4 mb-4">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <Calendar style={{ width: "14px", height: "14px", color: "var(--color-gold)", flexShrink: 0 }} />
-                      <p
-                        style={{
-                          fontFamily: "var(--font-ibm-plex-mono)",
-                          fontSize: "10px",
-                          letterSpacing: "0.16em",
-                          textTransform: "uppercase",
-                          color: "var(--color-gold)",
-                        }}
-                      >
-                        Fechas importantes
-                      </p>
-                    </div>
-                    <span
+              <div
+                role="link"
+                tabIndex={0}
+                onClick={() => router.push(calendarioHref())}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    router.push(calendarioHref());
+                  }
+                }}
+                className="cursor-pointer card-reveal glass-card h-full"
+                style={{
+                  borderLeft: "2px solid var(--color-gold-dim)",
+                  borderRadius: "var(--radius-card)",
+                  padding: "24px 26px 20px",
+                  transition: "border-color 0.25s ease, background 0.25s ease",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; e.currentTarget.style.background = "var(--color-card)"; }}
+              >
+                <div className="flex items-center justify-between gap-4 mb-4">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <Calendar style={{ width: "14px", height: "14px", color: "var(--color-gold)", flexShrink: 0 }} />
+                    <p
                       style={{
                         fontFamily: "var(--font-ibm-plex-mono)",
                         fontSize: "10px",
-                        letterSpacing: "0.1em",
-                        color: "var(--color-text-faint)",
+                        letterSpacing: "0.16em",
+                        textTransform: "uppercase",
+                        color: "var(--color-gold)",
                       }}
                     >
-                      <span className="clase-num">{String(materia.fechas.length).padStart(2, "0")}</span>{" "}
-                      FECHAS
-                    </span>
+                      Fechas importantes
+                    </p>
                   </div>
-
-                  {/* Próxima fecha destacada */}
-                  {(() => {
-                    const pf = materia.fechas!.find((f) => diasHasta(f.fecha) >= 0);
-                    if (!pf) return null;
-                    const dias = diasHasta(pf.fecha);
-                    return (
-                      <div className="pt-4" style={{ borderTop: "1px solid var(--color-line-soft)" }}>
-                        <p
-                          style={{
-                            fontFamily: "var(--font-ibm-plex-mono)",
-                            fontSize: "9px",
-                            letterSpacing: "0.16em",
-                            textTransform: "uppercase",
-                            color: "var(--color-stamp)",
-                          }}
-                        >
-                          Próxima fecha
-                        </p>
-                        <p
-                          style={{
-                            fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                            fontWeight: 500,
-                            fontSize: "19px",
-                            lineHeight: 1.25,
-                            color: "var(--color-text)",
-                            marginTop: "6px",
-                          }}
-                        >
-                          {pf.titulo}
-                        </p>
-                        <div className="flex items-center gap-3 mt-2.5 flex-wrap">
-                          <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px", color: "var(--color-text-muted)" }}>
-                            {formatearFechaCorta(pf.fecha, true)}
-                          </span>
-                          <span
-                            style={{
-                              padding: "3px 10px",
-                              border: `1px solid ${dias <= 7 ? "var(--color-stamp)" : "var(--color-gold-dim)"}`,
-                              fontFamily: "var(--font-ibm-plex-mono)",
-                              fontSize: "10px",
-                              letterSpacing: "0.1em",
-                              textTransform: "uppercase",
-                              color: dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
-                            }}
-                          >
-                            {countdownLabel(dias)}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })()}
-
-                  {/* Botón al calendario */}
-                  <button
-                    type="button"
-                    className="flex items-center justify-center gap-2 w-full"
+                  <span
                     style={{
-                      marginTop: "16px",
-                      padding: "10px 14px",
-                      border: "1px solid var(--color-gold-dim)",
-                      borderRadius: "var(--radius-btn)",
-                      background: "none",
-                      cursor: "pointer",
                       fontFamily: "var(--font-ibm-plex-mono)",
                       fontSize: "10px",
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      color: "var(--color-gold)",
-                      transition: "background 0.2s ease, color 0.2s ease",
+                      letterSpacing: "0.1em",
+                      color: "var(--color-text-faint)",
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-gold)"; e.currentTarget.style.color = "var(--color-ink)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "var(--color-gold)"; }}
                   >
-                    Ver calendario ({materia.fechas.length})
-                  </button>
+                    <span className="clase-num">{String(materia.fechas.length).padStart(2, "0")}</span>{" "}
+                    FECHAS
+                  </span>
                 </div>
+
+                {(() => {
+                  const pf = materia.fechas!.find((f) => diasHasta(f.fecha) >= 0);
+                  if (!pf) return null;
+                  const dias = diasHasta(pf.fecha);
+                  return (
+                    <div className="pt-4" style={{ borderTop: "1px solid var(--color-line-soft)" }}>
+                      <p
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "9px",
+                          letterSpacing: "0.16em",
+                          textTransform: "uppercase",
+                          color: "var(--color-stamp)",
+                        }}
+                      >
+                        Próxima fecha
+                      </p>
+                      <p
+                        style={{
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontWeight: 500,
+                          fontSize: "19px",
+                          lineHeight: 1.25,
+                          color: "var(--color-text)",
+                          marginTop: "6px",
+                        }}
+                      >
+                        {pf.titulo}
+                      </p>
+                      <div className="flex items-center gap-3 mt-2.5 flex-wrap">
+                        <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "12px", color: "var(--color-text-muted)" }}>
+                          {formatearFechaCorta(pf.fecha, true)}
+                        </span>
+                        <span
+                          style={{
+                            padding: "3px 10px",
+                            border: `1px solid ${dias <= 7 ? "var(--color-stamp)" : "var(--color-gold-dim)"}`,
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "10px",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                            color: dias <= 7 ? "var(--color-stamp)" : "var(--color-gold)",
+                          }}
+                        >
+                          {countdownLabel(dias)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                <button
+                  type="button"
+                  className="flex items-center justify-center gap-2 w-full"
+                  style={{
+                    marginTop: "16px",
+                    padding: "10px 14px",
+                    border: "1px solid var(--color-gold-dim)",
+                    borderRadius: "var(--radius-btn)",
+                    background: "none",
+                    cursor: "pointer",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "10px",
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "var(--color-gold)",
+                    transition: "background 0.2s ease, color 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-gold)"; e.currentTarget.style.color = "var(--color-ink)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "var(--color-gold)"; }}
+                >
+                  Ver calendario ({materia.fechas.length})
+                </button>
               </div>
             )}
 
             {/* Tutor Virtual — admin siempre, alumnos con acceso */}
             {materia?.tutor_url && (isAdminSession() || acceso?.clave) && (
-              <div className="flex-1">
-                <div
-                  className="card-reveal glass-card h-full"
-                  style={{
-                    borderLeft: "2px solid var(--color-admin-dim)",
-                    borderRadius: "var(--radius-card)",
-                    padding: "24px 26px 20px",
-                    transition: "border-color 0.25s ease, background 0.25s ease",
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-admin)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-admin-dim)"; e.currentTarget.style.background = "var(--color-card)"; }}
-                >
-                  <div className="flex items-center justify-between gap-4 mb-4">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <BookOpen style={{ width: "14px", height: "14px", color: "var(--color-admin)", flexShrink: 0 }} />
-                      <p
-                        style={{
-                          fontFamily: "var(--font-ibm-plex-mono)",
-                          fontSize: "10px",
-                          letterSpacing: "0.16em",
-                          textTransform: "uppercase",
-                          color: "var(--color-admin)",
-                        }}
-                      >
-                        Tutor Virtual
-                      </p>
-                    </div>
+              <div
+                className="card-reveal glass-card h-full"
+                style={{
+                  borderLeft: "2px solid var(--color-admin-dim)",
+                  borderRadius: "var(--radius-card)",
+                  padding: "24px 26px 20px",
+                  transition: "border-color 0.25s ease, background 0.25s ease",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-admin)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-admin-dim)"; e.currentTarget.style.background = "var(--color-card)"; }}
+              >
+                <div className="flex items-center justify-between gap-4 mb-4">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <BookOpen style={{ width: "14px", height: "14px", color: "var(--color-admin)", flexShrink: 0 }} />
+                    <p
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "10px",
+                        letterSpacing: "0.16em",
+                        textTransform: "uppercase",
+                        color: "var(--color-admin)",
+                      }}
+                    >
+                      Tutor Virtual
+                    </p>
                   </div>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-inter)",
-                      fontSize: "13px",
-                      color: "var(--color-text-muted)",
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    Asistente de estudio basado en las fuentes oficiales de la cátedra.
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-ibm-plex-mono)",
-                      fontSize: "10px",
-                      color: "var(--color-text-faint)",
-                      marginTop: "6px",
-                    }}
-                  >
-                    Complemento de estudio, no sustituye la asistencia a clases.
-                  </p>
-                  <a
-                    href={materia.tutor_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full"
-                    style={{
-                      marginTop: "16px",
-                      padding: "10px 14px",
-                      background: "var(--color-admin)",
-                      color: "var(--color-ink)",
-                      fontFamily: "var(--font-ibm-plex-mono)",
-                      fontSize: "10px",
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      fontWeight: 600,
-                      textDecoration: "none",
-                      borderRadius: "var(--radius-btn)",
-                      transition: "opacity 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
-                  >
-                    Consultar
-                    <ExternalLink style={{ width: "12px", height: "12px" }} />
-                  </a>
                 </div>
+                <p
+                  style={{
+                    fontFamily: "var(--font-inter)",
+                    fontSize: "13px",
+                    color: "var(--color-text-muted)",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  Asistente de estudio basado en las fuentes oficiales de la cátedra.
+                </p>
+                <p
+                  style={{
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "10px",
+                    color: "var(--color-text-faint)",
+                    marginTop: "6px",
+                  }}
+                >
+                  Complemento de estudio, no sustituye la asistencia a clases.
+                </p>
+                <a
+                  href={materia.tutor_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full"
+                  style={{
+                    marginTop: "16px",
+                    padding: "10px 14px",
+                    background: "var(--color-admin)",
+                    color: "var(--color-ink)",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "10px",
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    borderRadius: "var(--radius-btn)",
+                    transition: "opacity 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+                >
+                  Consultar
+                  <ExternalLink style={{ width: "12px", height: "12px" }} />
+                </a>
               </div>
             )}
+
+            {/* Clase cards */}
+            {clases.map((clase, i) => (
+              <article
+                key={clase.id}
+                onClick={() => {
+                  trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
+                  router.push(claseHref(clase.numero));
+                }}
+                className="group card-reveal card-hover flex flex-col cursor-pointer h-full"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
+                    router.push(claseHref(clase.numero));
+                  }
+                }}
+                style={{
+                  background: "var(--color-card)",
+                  padding: "28px 24px",
+                  transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease",
+                  border: "1px solid var(--color-line-soft)",
+                  borderRadius: "var(--radius-card)",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+              >
+                <div
+                  style={{
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "10px",
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "var(--color-gold)",
+                    marginBottom: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <span>Clase {clase.numero.toString().padStart(2, "0")}</span>
+                  {esNuevaClase(clase.created_at) && (
+                    <span
+                      style={{
+                        padding: "2px 6px",
+                        background: "rgba(76,175,125,0.1)",
+                        border: "1px solid rgba(76,175,125,0.35)",
+                        color: "var(--color-admin)",
+                        boxShadow: "0 0 8px rgba(76,175,125,0.18)",
+                        fontSize: "8px",
+                        letterSpacing: "0.1em",
+                        fontWeight: 700,
+                      }}
+                    >
+                      NEW
+                    </span>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3
+                    style={{
+                      fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                      fontWeight: 500,
+                      fontSize: "20px",
+                      lineHeight: 1.2,
+                      color: "var(--color-text)",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    {clase.tema || clase.titulo}
+                  </h3>
+                  {clase.tema && clase.titulo && (
+                    <p
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "10px",
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        color: "var(--color-text-faint)",
+                        marginTop: "-6px",
+                        marginBottom: "12px",
+                      }}
+                    >
+                      {clase.titulo}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {clase.fecha ? (
+                      <div
+                        className="flex items-center gap-2"
+                        style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}
+                      >
+                        <Calendar style={{ width: "14px", height: "14px" }} />
+                        {formatFechaLocal(clase.fecha)}
+                      </div>
+                    ) : (
+                      <div />
+                    )}
+                    {clase.archivos.length > 0 && (
+                      <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
+                        {tieneRecurso(clase, "audio_clase") && <Headphones style={{ width: "12px", height: "12px" }} />}
+                        {tieneRecurso(clase, "clase_youtube") && <Play style={{ width: "12px", height: "12px" }} />}
+                        {tieneRecurso(clase, "transcripcion") && <FileText style={{ width: "12px", height: "12px" }} />}
+                        {(tieneRecurso(clase, "archivo") || tieneRecurso(clase, "enlace")) && (
+                          <Link2 style={{ width: "12px", height: "12px" }} />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} />
+                </div>
+              </article>
+            ))}
           </div>
 
-          {/* Clases */}
-          {clases.length === 0 ? (
+          {/* Empty state */}
+          {clases.length === 0 && !(materia?.fechas && materia.fechas.length > 0) && !(materia?.tutor_url && (isAdminSession() || acceso?.clave)) && (
             <div
               className="glass-card card-reveal"
               style={{
@@ -449,125 +557,6 @@ export default function MateriaClient({
                   Volvé más tarde, el material de cursada se publica acá.
                 </span>
               </p>
-            </div>
-          ) : (
-            <div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-            >
-              {clases.map((clase, i) => (
-                <article
-                  key={clase.id}
-                  onClick={() => {
-                    trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
-                    router.push(claseHref(clase.numero));
-                  }}
-                  className="group card-reveal card-hover flex flex-col cursor-pointer h-full"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
-                      router.push(claseHref(clase.numero));
-                    }
-                  }}
-                  style={{
-                    background: "var(--color-card)",
-                    padding: "28px 24px",
-                    animationDelay: `${i * 50}ms`,
-                    transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease",
-                    border: "1px solid var(--color-line-soft)",
-                    borderRadius: "var(--radius-card)",
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "var(--font-ibm-plex-mono)",
-                      fontSize: "10px",
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      color: "var(--color-gold)",
-                      marginBottom: "8px",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <span>Clase {clase.numero.toString().padStart(2, "0")}</span>
-                    {esNuevaClase(clase.created_at) && (
-                      <span
-                        style={{
-                          padding: "2px 6px",
-                          background: "rgba(76,175,125,0.1)",
-                          border: "1px solid rgba(76,175,125,0.35)",
-                          color: "var(--color-admin)",
-                          boxShadow: "0 0 8px rgba(76,175,125,0.18)",
-                          fontSize: "8px",
-                          letterSpacing: "0.1em",
-                          fontWeight: 700,
-                        }}
-                      >
-                        NEW
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <h3
-                      style={{
-                        fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                        fontWeight: 500,
-                        fontSize: "20px",
-                        lineHeight: 1.2,
-                        color: "var(--color-text)",
-                        marginBottom: "12px",
-                      }}
-                    >
-                      {clase.tema || clase.titulo}
-                    </h3>
-                    {clase.tema && clase.titulo && (
-                      <p
-                        style={{
-                          fontFamily: "var(--font-ibm-plex-mono)",
-                          fontSize: "10px",
-                          letterSpacing: "0.06em",
-                          textTransform: "uppercase",
-                          color: "var(--color-text-faint)",
-                          marginTop: "-6px",
-                          marginBottom: "12px",
-                        }}
-                      >
-                        {clase.titulo}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      {clase.fecha ? (
-                        <div
-                          className="flex items-center gap-2"
-                          style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}
-                        >
-                          <Calendar style={{ width: "14px", height: "14px" }} />
-                          {formatFechaLocal(clase.fecha)}
-                        </div>
-                      ) : (
-                        <div />
-                      )}
-                      {clase.archivos.length > 0 && (
-                        <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
-                          {tieneRecurso(clase, "audio_clase") && <Headphones style={{ width: "12px", height: "12px" }} />}
-                          {tieneRecurso(clase, "clase_youtube") && <Play style={{ width: "12px", height: "12px" }} />}
-                          {tieneRecurso(clase, "transcripcion") && <FileText style={{ width: "12px", height: "12px" }} />}
-                          {(tieneRecurso(clase, "archivo") || tieneRecurso(clase, "enlace")) && (
-                            <Link2 style={{ width: "12px", height: "12px" }} />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} />
-                  </div>
-                </article>
-              ))}
             </div>
           )}
 
