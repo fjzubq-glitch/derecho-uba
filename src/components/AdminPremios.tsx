@@ -487,7 +487,7 @@ export default function AdminPremios() {
             ) : (
               (["cuestionario", "material_privado", "ficha", "lexpodcast", "tutor"] as const)
                 .map((tipo) => ({ tipo, items: privados.filter((p) => p.archivo_tipo === tipo) }))
-                .filter((g) => g.items.length > 0)
+                .filter((g) => g.items.length > 0 || g.tipo === "tutor")
                 .map((g) => {
                   const abierto = tiposAbiertos.has(g.tipo);
                   return (
