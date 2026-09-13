@@ -220,7 +220,7 @@ export default function MateriaClient({
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
           {/* ═══════════ FECHAS + TUTOR (3 columnas) ═══════════ */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Fechas importantes */}
             {materia?.fechas && materia.fechas.length > 0 && (
               <article
