@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     let privados: Array<{ archivo_id: string; archivo_nombre: string; archivo_tipo: string; clase_numero: number | null; clase_titulo: string; conGrant: number }> = [];
     const materiaSlug = new URL(request.url).searchParams.get("materia_slug")?.trim();
     if (materiaSlug) {
-      const { data: mat } = await supabase.from("materias").select("id, tutor_url").eq("slug", materiaSlug).single();
+      const { data: mat } = await supabase.from("materias").select("id, nombre, slug, tutor_url").eq("slug", materiaSlug).single();
       if (mat) {
         const { data: clases } = await supabase.from("clases").select("id, numero, titulo").eq("materia_id", mat.id).order("numero");
         const claseIds = (clases || []).map((c) => c.id);
@@ -80,9 +80,12 @@ export async function GET(request: NextRequest) {
         // Agregar entrada virtual del tutor si tiene URL
         if (mat.tutor_url) {
           const tutorGrantCount = (grants || []).filter((g) => g.archivo_id === `tutor-${mat.id}`).length;
+          // Extraer nombre corto de la materia (ej: "Derecho Comercial" -> "Comercial")
+          const matNombre = mat.nombre || mat.slug;
+          const nombreCorto = matNombre.replace(/^elementos\s+de\s+/i, "").replace(/^derecho\s+/i, "");
           privados.unshift({
             archivo_id: `tutor-${mat.id}`,
-            archivo_nombre: "Tutor Virtual",
+            archivo_nombre: `Tutor ${nombreCorto}`,
             archivo_tipo: "tutor",
             clase_numero: null,
             clase_titulo: "",
