@@ -428,7 +428,7 @@ export default function MateriaClient({
           </div>
 
           {/* Divisor sutil entre filas */}
-          <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, var(--color-line-soft) 20%, var(--color-line-soft) 80%, transparent)", margin: "4px 0" }} />
+          <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, var(--color-line-soft) 20%, var(--color-line-soft) 80%, transparent)", margin: "16px 0" }} />
 
           {/* ═══════════ CLASES (3 columnas) ═══════════ */}
           {clases.length === 0 ? (
