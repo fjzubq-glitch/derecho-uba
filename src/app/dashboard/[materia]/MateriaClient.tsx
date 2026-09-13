@@ -8,7 +8,7 @@ import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
 import { formatFechaLocal, isAdminSession } from "@/lib/utils";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
-import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Play, ExternalLink } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Play, ExternalLink, BookOpen } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -219,10 +219,11 @@ export default function MateriaClient({
       {/* ═══════════ MAIN ═══════════ */}
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
-          {/* Fechas importantes */}
-          {materia?.fechas && materia.fechas.length > 0 && (
-            <div className="mb-4">
-              <div className="md:w-[calc((100%-16px)/2)] lg:w-[calc((100%-32px)/3)]">
+          {/* Fechas + Tutor Virtual lado a lado */}
+          <div className="flex flex-col md:flex-row gap-4 mb-4">
+            {/* Fechas importantes */}
+            {materia?.fechas && materia.fechas.length > 0 && (
+              <div className="flex-1">
                 <div
                   role="link"
                   tabIndex={0}
@@ -233,12 +234,11 @@ export default function MateriaClient({
                       router.push(calendarioHref());
                     }
                   }}
-                  className="cursor-pointer card-reveal glass-card"
+                  className="cursor-pointer card-reveal glass-card h-full"
                   style={{
                     borderLeft: "2px solid var(--color-gold-dim)",
                     borderRadius: "var(--radius-card)",
                     padding: "24px 26px 20px",
-                    marginBottom: "32px",
                     transition: "border-color 0.25s ease, background 0.25s ease",
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
@@ -350,37 +350,38 @@ export default function MateriaClient({
                   </button>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Tutor Virtual — admin siempre, alumnos con acceso */}
-          {materia?.tutor_url && (isAdminSession() || acceso?.clave) && (
-            <div
-              className="glass-card card-reveal"
-              style={{
-                borderLeft: "2px solid var(--color-admin-dim)",
-                borderRadius: "var(--radius-card)",
-                padding: "20px 24px",
-                marginBottom: "24px",
-                transition: "border-color 0.25s ease, background 0.25s ease",
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-admin)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-admin-dim)"; e.currentTarget.style.background = "var(--color-card)"; }}
-            >
-              <div className="flex items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <p
-                    style={{
-                      fontFamily: "var(--font-ibm-plex-mono)",
-                      fontSize: "10px",
-                      letterSpacing: "0.16em",
-                      textTransform: "uppercase",
-                      color: "var(--color-admin)",
-                      marginBottom: "6px",
-                    }}
-                  >
-                    Tutor Virtual
-                  </p>
+            {/* Tutor Virtual — admin siempre, alumnos con acceso */}
+            {materia?.tutor_url && (isAdminSession() || acceso?.clave) && (
+              <div className="flex-1">
+                <div
+                  className="card-reveal glass-card h-full"
+                  style={{
+                    borderLeft: "2px solid var(--color-admin-dim)",
+                    borderRadius: "var(--radius-card)",
+                    padding: "24px 26px 20px",
+                    transition: "border-color 0.25s ease, background 0.25s ease",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-admin)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-admin-dim)"; e.currentTarget.style.background = "var(--color-card)"; }}
+                >
+                  <div className="flex items-center justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <BookOpen style={{ width: "14px", height: "14px", color: "var(--color-admin)", flexShrink: 0 }} />
+                      <p
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "10px",
+                          letterSpacing: "0.16em",
+                          textTransform: "uppercase",
+                          color: "var(--color-admin)",
+                        }}
+                      >
+                        Tutor Virtual
+                      </p>
+                    </div>
+                  </div>
                   <p
                     style={{
                       fontFamily: "var(--font-inter)",
@@ -401,35 +402,35 @@ export default function MateriaClient({
                   >
                     Complemento de estudio, no sustituye la asistencia a clases.
                   </p>
+                  <a
+                    href={materia.tutor_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full"
+                    style={{
+                      marginTop: "16px",
+                      padding: "10px 14px",
+                      background: "var(--color-admin)",
+                      color: "var(--color-ink)",
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "10px",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      fontWeight: 600,
+                      textDecoration: "none",
+                      borderRadius: "var(--radius-btn)",
+                      transition: "opacity 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+                  >
+                    Consultar
+                    <ExternalLink style={{ width: "12px", height: "12px" }} />
+                  </a>
                 </div>
-                <a
-                  href={materia.tutor_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    padding: "8px 16px",
-                    background: "var(--color-admin)",
-                    color: "var(--color-ink)",
-                    fontFamily: "var(--font-inter)",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    textDecoration: "none",
-                    borderRadius: "var(--radius-btn)",
-                    flexShrink: 0,
-                    transition: "opacity 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
-                >
-                  Consultar
-                  <ExternalLink style={{ width: "12px", height: "12px" }} />
-                </a>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Clases */}
           {clases.length === 0 ? (
