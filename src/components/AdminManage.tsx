@@ -27,6 +27,7 @@ interface Materia {
   nombre: string;
   slug: string;
   estado: string;
+  tutor_url?: string | null;
 }
 
 interface Clase {
@@ -92,6 +93,8 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const [accesoNombre, setAccesoNombre] = useState("");
   const [accesoLoading, setAccesoLoading] = useState(false);
   const [copiadoId, setCopiadoId] = useState<string | null>(null);
+  const [tutorUrlInputs, setTutorUrlInputs] = useState<Record<string, string>>({});
+  const [tutorSaving, setTutorSaving] = useState<string | null>(null);
 
   const cerrarReplace = () => {
     setReplacing(null);
@@ -134,6 +137,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
         nombre: m.nombre,
         slug: m.slug,
         estado: m.estado || "en_curso",
+        tutor_url: m.tutor_url || null,
       })));
     }
 
@@ -267,6 +271,31 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
     } catch (err) {
       setMessage("Error: " + String(err));
     }
+  }
+
+  async function saveTutorUrl(slug: string) {
+    const url = (tutorUrlInputs[slug] || "").trim();
+    setTutorSaving(slug);
+    try {
+      const res = await fetch("/api/admin/materias", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug, data: { tutor_url: url || null } }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setMaterias((prev) =>
+          prev.map((m) => (m.slug === slug ? { ...m, tutor_url: url || null } : m))
+        );
+        setMessage(url ? "Tutor guardado" : "Tutor eliminado");
+        setTutorUrlInputs((prev) => ({ ...prev, [slug]: url }));
+      } else {
+        setMessage("Error: " + data.error);
+      }
+    } catch (err) {
+      setMessage("Error: " + String(err));
+    }
+    setTutorSaving(null);
   }
 
   async function handleEdit() {
@@ -956,6 +985,116 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 >
                   {m.estado === "finalizada" ? "Finalizada" : "En curso"}
                 </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Tutor Virtual */}
+          <div className="flex items-center gap-3 mb-4 mt-6">
+            <h3
+              style={{
+                fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                fontWeight: 500,
+                fontSize: "16px",
+                color: "var(--color-text)",
+              }}
+            >
+              Tutor Virtual
+            </h3>
+          </div>
+          <p
+            style={{
+              fontFamily: "var(--font-ibm-plex-mono)",
+              fontSize: "11px",
+              color: "var(--color-text-faint)",
+              marginBottom: "12px",
+              lineHeight: 1.6,
+            }}
+          >
+            URL externa (NotebookLM, etc.) que verán los alumnos con acceso.
+          </p>
+          <div className="space-y-2">
+            {materias.map((m) => (
+              <div
+                key={m.id}
+                style={{
+                  padding: "10px 14px",
+                  background: "var(--color-ink)",
+                  border: "1px solid var(--color-line-soft)",
+                  borderRadius: "10px",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "13px",
+                    color: "var(--color-text)",
+                    fontFamily: "var(--font-inter)",
+                    marginBottom: "8px",
+                  }}
+                >
+                  {m.nombre}
+                </p>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="url"
+                    placeholder="https://notebook.google.com/..."
+                    defaultValue={m.tutor_url || ""}
+                    onChange={(e) => setTutorUrlInputs((prev) => ({ ...prev, [m.slug]: e.target.value }))}
+                    style={{
+                      flex: 1,
+                      background: "var(--color-ink)",
+                      border: "1px solid var(--color-line-soft)",
+                      borderRadius: 0,
+                      padding: "8px 12px",
+                      fontSize: "12px",
+                      color: "var(--color-text)",
+                      outline: "none",
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                    }}
+                  />
+                  <button
+                    onClick={() => saveTutorUrl(m.slug)}
+                    disabled={tutorSaving === m.slug}
+                    style={{
+                      padding: "8px 16px",
+                      fontSize: "11px",
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                      background: "var(--color-gold)",
+                      color: "var(--color-ink)",
+                      border: "none",
+                      borderRadius: 0,
+                      cursor: tutorSaving === m.slug ? "wait" : "pointer",
+                      opacity: tutorSaving === m.slug ? 0.6 : 1,
+                      transition: "opacity 0.2s ease",
+                    }}
+                  >
+                    {tutorSaving === m.slug ? "Guardando..." : "Guardar"}
+                  </button>
+                  {m.tutor_url && (
+                    <a
+                      href={m.tutor_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        padding: "8px 12px",
+                        fontSize: "11px",
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        background: "transparent",
+                        color: "var(--color-admin)",
+                        border: "1px solid var(--color-admin-dim)",
+                        borderRadius: 0,
+                        textDecoration: "none",
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      Ver
+                    </a>
+                  )}
+                </div>
               </div>
             ))}
           </div>

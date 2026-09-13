@@ -4,7 +4,7 @@ import { isAdminRequest } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
 
-const ALLOWED = ["nombre", "comision", "catedra", "anio", "turno", "descripcion"];
+const ALLOWED = ["nombre", "comision", "catedra", "anio", "turno", "descripcion", "tutor_url"];
 
 function unauthorized() {
   return NextResponse.json({ error: "No autorizado" }, { status: 401 });

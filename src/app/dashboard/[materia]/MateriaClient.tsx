@@ -8,7 +8,7 @@ import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
 import { formatFechaLocal } from "@/lib/utils";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
-import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Play } from "@/components/icons";
+import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Play, ExternalLink } from "@/components/icons";
 
 interface Archivo {
   id: string;
@@ -39,6 +39,7 @@ interface MateriaData {
   id: string;
   nombre: string;
   estado?: string;
+  tutor_url?: string | null;
   fechas?: Array<{ id: string; titulo: string; fecha: string }>;
 }
 
@@ -348,6 +349,84 @@ export default function MateriaClient({
                     Ver calendario ({materia.fechas.length})
                   </button>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tutor Virtual — solo alumnos con acceso */}
+          {materia?.tutor_url && acceso?.clave && (
+            <div
+              className="glass-card card-reveal"
+              style={{
+                borderLeft: "2px solid var(--color-admin-dim)",
+                borderRadius: "var(--radius-card)",
+                padding: "20px 24px",
+                marginBottom: "24px",
+                transition: "border-color 0.25s ease, background 0.25s ease",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-admin)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-admin-dim)"; e.currentTarget.style.background = "var(--color-card)"; }}
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <p
+                    style={{
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "10px",
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      color: "var(--color-admin)",
+                      marginBottom: "6px",
+                    }}
+                  >
+                    Tutor Virtual
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-inter)",
+                      fontSize: "13px",
+                      color: "var(--color-text-muted)",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    Asistente de estudio basado en las fuentes oficiales de la cátedra.
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "10px",
+                      color: "var(--color-text-faint)",
+                      marginTop: "6px",
+                    }}
+                  >
+                    Complemento de estudio, no sustituye la asistencia a clases.
+                  </p>
+                </div>
+                <a
+                  href={materia.tutor_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "8px 16px",
+                    background: "var(--color-admin)",
+                    color: "var(--color-ink)",
+                    fontFamily: "var(--font-inter)",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    borderRadius: "var(--radius-btn)",
+                    flexShrink: 0,
+                    transition: "opacity 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+                >
+                  Consultar
+                  <ExternalLink style={{ width: "12px", height: "12px" }} />
+                </a>
               </div>
             </div>
           )}

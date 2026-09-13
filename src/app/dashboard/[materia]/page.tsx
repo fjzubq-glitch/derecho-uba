@@ -66,7 +66,7 @@ export default async function MateriaPage({
     // cookies() can fail in some edge cases; treat as non-admin
   }
 
-type MateriaRow = { id: string; nombre: string; estado: string; materia_fechas?: { id: string; titulo: string; fecha: string }[] };
+type MateriaRow = { id: string; nombre: string; estado: string; tutor_url?: string | null; materia_fechas?: { id: string; titulo: string; fecha: string }[] };
 
   let materia: MateriaRow | null = null;
   try {
@@ -133,6 +133,7 @@ type MateriaRow = { id: string; nombre: string; estado: string; materia_fechas?:
         id: materia.id,
         nombre: materia.nombre,
         estado: materia.estado,
+        tutor_url: materia.tutor_url || null,
         fechas,
       }}
       clases={clasesWithFiles}
