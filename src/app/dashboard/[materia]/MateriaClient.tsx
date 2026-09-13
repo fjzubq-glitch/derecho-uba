@@ -362,67 +362,71 @@ export default function MateriaClient({
                 onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-admin-dim)"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
               >
-                <div className="flex items-center justify-between gap-4 mb-4">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <BookOpen style={{ width: "14px", height: "14px", color: "var(--color-admin)", flexShrink: 0 }} />
-                    <p
-                      style={{
-                        fontFamily: "var(--font-ibm-plex-mono)",
-                        fontSize: "10px",
-                        letterSpacing: "0.16em",
-                        textTransform: "uppercase",
-                        color: "var(--color-admin)",
-                      }}
-                    >
-                      Tutor Virtual
-                    </p>
-                  </div>
-                </div>
-                <p
+                <div
                   style={{
-                    fontFamily: "var(--font-inter)",
-                    fontSize: "13px",
-                    color: "var(--color-text-muted)",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  Asistente de estudio basado en las fuentes oficiales de la cátedra.
-                </p>
-                <p
-                  style={{
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "10px",
-                    color: "var(--color-text-faint)",
-                    marginTop: "6px",
-                  }}
-                >
-                  Complemento de estudio, no sustituye la asistencia a clases.
-                </p>
-                <a
-                  href={materia.tutor_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full"
-                  style={{
-                    marginTop: "16px",
-                    padding: "10px 14px",
-                    background: "var(--color-admin)",
-                    color: "var(--color-ink)",
                     fontFamily: "var(--font-ibm-plex-mono)",
                     fontSize: "10px",
                     letterSpacing: "0.14em",
                     textTransform: "uppercase",
-                    fontWeight: 600,
-                    textDecoration: "none",
-                    borderRadius: "var(--radius-btn)",
-                    transition: "opacity 0.2s ease",
+                    color: "var(--color-admin)",
+                    marginBottom: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
                 >
-                  Consultar
-                  <ExternalLink style={{ width: "12px", height: "12px" }} />
-                </a>
+                  <BookOpen style={{ width: "14px", height: "14px" }} />
+                  <span>Tutor Virtual</span>
+                </div>
+                <div className="flex-1">
+                  <h3
+                    style={{
+                      fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                      fontWeight: 500,
+                      fontSize: "20px",
+                      lineHeight: 1.2,
+                      color: "var(--color-text)",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    Asistente de estudio
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-inter)",
+                      fontSize: "13px",
+                      color: "var(--color-text-muted)",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    Basado en las fuentes oficiales de la cátedra.
+                  </p>
+                </div>
+                <div className="flex items-center justify-between" style={{ marginTop: "16px", paddingTop: "12px", borderTop: "1px solid var(--color-line-soft)" }}>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
+                    NotebookLM
+                  </span>
+                  <a
+                    href={materia.tutor_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2"
+                    style={{
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "10px",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: "var(--color-admin)",
+                      textDecoration: "none",
+                      transition: "opacity 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.7"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+                  >
+                    Consultar
+                    <ExternalLink style={{ width: "12px", height: "12px" }} />
+                  </a>
+                </div>
               </article>
             )}
           </div>
