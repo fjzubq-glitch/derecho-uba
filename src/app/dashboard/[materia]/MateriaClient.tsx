@@ -219,8 +219,8 @@ export default function MateriaClient({
       {/* ═══════════ MAIN ═══════════ */}
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
-          {/* ═══════════ CONTENT GRID ═══════════ */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* ═══════════ FECHAS + TUTOR ═══════════ */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             {/* Fechas importantes */}
             {materia?.fechas && materia.fechas.length > 0 && (
               <div
@@ -349,214 +349,155 @@ export default function MateriaClient({
 
             {/* Tutor Virtual — admin siempre, alumnos con acceso */}
             {materia?.tutor_url && (isAdminSession() || acceso?.clave) && (
-              <div
-                className="card-reveal glass-card h-full"
-                style={{
-                  borderLeft: "2px solid var(--color-admin-dim)",
-                  borderRadius: "var(--radius-card)",
-                  padding: "24px 26px 20px",
-                  transition: "border-color 0.25s ease, background 0.25s ease",
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--color-admin)"; e.currentTarget.style.background = "var(--color-card-hover)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-admin-dim)"; e.currentTarget.style.background = "var(--color-card)"; }}
-              >
-                <div className="flex items-center justify-between gap-4 mb-4">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <BookOpen style={{ width: "14px", height: "14px", color: "var(--color-admin)", flexShrink: 0 }} />
-                    <p
-                      style={{
-                        fontFamily: "var(--font-ibm-plex-mono)",
-                        fontSize: "10px",
-                        letterSpacing: "0.16em",
-                        textTransform: "uppercase",
-                        color: "var(--color-admin)",
-                      }}
-                    >
-                      Tutor Virtual
-                    </p>
-                  </div>
+              <article className="card-reveal card-hover h-full" style={{ background: "var(--color-card)", padding: "28px 24px", border: "1px solid var(--color-line-soft)", borderRadius: "var(--radius-card)" }}>
+                <div style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-admin)", marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <BookOpen style={{ width: "14px", height: "14px" }} />
+                  <span>Tutor Virtual</span>
                 </div>
-                <p
-                  style={{
-                    fontFamily: "var(--font-inter)",
-                    fontSize: "13px",
-                    color: "var(--color-text-muted)",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  Asistente de estudio basado en las fuentes oficiales de la cátedra.
+                <h3 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 500, fontSize: "20px", lineHeight: 1.2, color: "var(--color-text)", marginBottom: "12px" }}>
+                  Asistente de estudio
+                </h3>
+                <p style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
+                  Basado en las fuentes oficiales de la cátedra.
                 </p>
-                <p
-                  style={{
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "10px",
-                    color: "var(--color-text-faint)",
-                    marginTop: "6px",
-                  }}
-                >
+                <p style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", color: "var(--color-text-faint)", marginTop: "6px" }}>
                   Complemento de estudio, no sustituye la asistencia a clases.
                 </p>
-                <a
-                  href={materia.tutor_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full"
-                  style={{
-                    marginTop: "16px",
-                    padding: "10px 14px",
-                    background: "var(--color-admin)",
-                    color: "var(--color-ink)",
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "10px",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    fontWeight: 600,
-                    textDecoration: "none",
-                    borderRadius: "var(--radius-btn)",
-                    transition: "opacity 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
-                >
-                  Consultar
-                  <ExternalLink style={{ width: "12px", height: "12px" }} />
-                </a>
-              </div>
+                <div className="flex items-center justify-between" style={{ marginTop: "16px", paddingTop: "12px", borderTop: "1px solid var(--color-line-soft)" }}>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
+                    NotebookLM
+                  </span>
+                  <a href={materia.tutor_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2" style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-admin)", textDecoration: "none", transition: "opacity 0.2s ease" }}>
+                    Consultar
+                    <ExternalLink style={{ width: "12px", height: "12px" }} />
+                  </a>
+                </div>
+              </article>
             )}
+          </div>
 
-            {/* Clase cards */}
-            {clases.map((clase, i) => (
-              <article
-                key={clase.id}
-                onClick={() => {
-                  trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
-                  router.push(claseHref(clase.numero));
-                }}
-                className="group card-reveal card-hover flex flex-col cursor-pointer h-full"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
+          {/* ═══════════ CLASES ═══════════ */}
+          {clases.length === 0 ? (
+            <div className="glass-card card-reveal" style={{ padding: "80px 24px", textAlign: "center", borderRadius: "var(--radius-card)" }}>
+              <p style={{ color: "var(--color-text-muted)", fontSize: "15px", lineHeight: 1.7 }}>
+                Todavía no hay clases publicadas en esta materia.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {clases.map((clase, i) => (
+                <article
+                  key={clase.id}
+                  onClick={() => {
                     trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
                     router.push(claseHref(clase.numero));
-                  }
-                }}
-                style={{
-                  background: "var(--color-card)",
-                  padding: "28px 24px",
-                  transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease",
-                  border: "1px solid var(--color-line-soft)",
-                  borderRadius: "var(--radius-card)",
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
-              >
-                <div
-                  style={{
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "10px",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "var(--color-gold)",
-                    marginBottom: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
                   }}
+                  className="group card-reveal card-hover flex flex-col cursor-pointer h-full"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
+                      router.push(claseHref(clase.numero));
+                    }
+                  }}
+                  style={{
+                    background: "var(--color-card)",
+                    padding: "28px 24px",
+                    transition: "background 0.25s ease, transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease",
+                    border: "1px solid var(--color-line-soft)",
+                    borderRadius: "var(--radius-card)",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-gold-dim)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
                 >
-                  <span>Clase {clase.numero.toString().padStart(2, "0")}</span>
-                  {esNuevaClase(clase.created_at) && (
-                    <span
-                      style={{
-                        padding: "2px 6px",
-                        background: "rgba(76,175,125,0.1)",
-                        border: "1px solid rgba(76,175,125,0.35)",
-                        color: "var(--color-admin)",
-                        boxShadow: "0 0 8px rgba(76,175,125,0.18)",
-                        fontSize: "8px",
-                        letterSpacing: "0.1em",
-                        fontWeight: 700,
-                      }}
-                    >
-                      NEW
-                    </span>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <h3
+                  <div
                     style={{
-                      fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                      fontWeight: 500,
-                      fontSize: "20px",
-                      lineHeight: 1.2,
-                      color: "var(--color-text)",
-                      marginBottom: "12px",
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "10px",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: "var(--color-gold)",
+                      marginBottom: "8px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
                     }}
                   >
-                    {clase.tema || clase.titulo}
-                  </h3>
-                  {clase.tema && clase.titulo && (
-                    <p
+                    <span>Clase {clase.numero.toString().padStart(2, "0")}</span>
+                    {esNuevaClase(clase.created_at) && (
+                      <span
+                        style={{
+                          padding: "2px 6px",
+                          background: "rgba(76,175,125,0.1)",
+                          border: "1px solid rgba(76,175,125,0.35)",
+                          color: "var(--color-admin)",
+                          boxShadow: "0 0 8px rgba(76,175,125,0.18)",
+                          fontSize: "8px",
+                          letterSpacing: "0.1em",
+                          fontWeight: 700,
+                        }}
+                      >
+                        NEW
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h3
                       style={{
-                        fontFamily: "var(--font-ibm-plex-mono)",
-                        fontSize: "10px",
-                        letterSpacing: "0.06em",
-                        textTransform: "uppercase",
-                        color: "var(--color-text-faint)",
-                        marginTop: "-6px",
+                        fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                        fontWeight: 500,
+                        fontSize: "20px",
+                        lineHeight: 1.2,
+                        color: "var(--color-text)",
                         marginBottom: "12px",
                       }}
                     >
-                      {clase.titulo}
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {clase.fecha ? (
-                      <div
-                        className="flex items-center gap-2"
-                        style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}
+                      {clase.tema || clase.titulo}
+                    </h3>
+                    {clase.tema && clase.titulo && (
+                      <p
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "10px",
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
+                          color: "var(--color-text-faint)",
+                          marginTop: "-6px",
+                          marginBottom: "12px",
+                        }}
                       >
-                        <Calendar style={{ width: "14px", height: "14px" }} />
-                        {formatFechaLocal(clase.fecha)}
-                      </div>
-                    ) : (
-                      <div />
-                    )}
-                    {clase.archivos.length > 0 && (
-                      <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
-                        {tieneRecurso(clase, "audio_clase") && <Headphones style={{ width: "12px", height: "12px" }} />}
-                        {tieneRecurso(clase, "clase_youtube") && <Play style={{ width: "12px", height: "12px" }} />}
-                        {tieneRecurso(clase, "transcripcion") && <FileText style={{ width: "12px", height: "12px" }} />}
-                        {(tieneRecurso(clase, "archivo") || tieneRecurso(clase, "enlace")) && (
-                          <Link2 style={{ width: "12px", height: "12px" }} />
-                        )}
-                      </div>
+                        {clase.titulo}
+                      </p>
                     )}
                   </div>
-                  <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} />
-                </div>
-              </article>
-            ))}
-          </div>
-
-          {/* Empty state */}
-          {clases.length === 0 && !(materia?.fechas && materia.fechas.length > 0) && !(materia?.tutor_url && (isAdminSession() || acceso?.clave)) && (
-            <div
-              className="glass-card card-reveal"
-              style={{
-                padding: "80px 24px",
-                textAlign: "center",
-                borderRadius: "var(--radius-card)",
-              }}
-            >
-              <p style={{ color: "var(--color-text-muted)", fontSize: "15px", lineHeight: 1.7 }}>
-                Todavía no hay clases publicadas en esta materia.
-                <br />
-                <span style={{ color: "var(--color-text-faint)", fontSize: "13px" }}>
-                  Volvé más tarde, el material de cursada se publica acá.
-                </span>
-              </p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {clase.fecha ? (
+                        <div
+                          className="flex items-center gap-2"
+                          style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-faint)" }}
+                        >
+                          <Calendar style={{ width: "14px", height: "14px" }} />
+                          {formatFechaLocal(clase.fecha)}
+                        </div>
+                      ) : (
+                        <div />
+                      )}
+                      {clase.archivos.length > 0 && (
+                        <div className="flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
+                          {tieneRecurso(clase, "audio_clase") && <Headphones style={{ width: "12px", height: "12px" }} />}
+                          {tieneRecurso(clase, "clase_youtube") && <Play style={{ width: "12px", height: "12px" }} />}
+                          {tieneRecurso(clase, "transcripcion") && <FileText style={{ width: "12px", height: "12px" }} />}
+                          {(tieneRecurso(clase, "archivo") || tieneRecurso(clase, "enlace")) && (
+                            <Link2 style={{ width: "12px", height: "12px" }} />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <ArrowRight style={{ width: "16px", height: "16px", color: "var(--color-gold)", flexShrink: 0 }} />
+                  </div>
+                </article>
+              ))}
             </div>
           )}
 
