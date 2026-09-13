@@ -26,7 +26,7 @@ const getMateriaConFechas = (slug: string) =>
     async () =>
       getSupabaseAdmin()
         .from("materias")
-        .select("id, nombre, estado, materia_fechas(id, titulo, fecha)")
+        .select("id, nombre, estado, tutor_url, materia_fechas(id, titulo, fecha)")
         .eq("slug", slug)
         .single(),
     ["materia-con-fechas", slug],
