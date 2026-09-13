@@ -220,7 +220,7 @@ export default function MateriaClient({
       <main className="flex-1">
         <div className="pad-lateral" style={{ padding: "40px 48px 80px" }}>
           {/* Fechas + Tutor Virtual lado a lado */}
-          <div className="flex flex-col md:flex-row gap-4 mb-4">
+          <div className="flex flex-col md:flex-row gap-4 mb-8">
             {/* Fechas importantes */}
             {materia?.fechas && materia.fechas.length > 0 && (
               <div className="flex-1">
