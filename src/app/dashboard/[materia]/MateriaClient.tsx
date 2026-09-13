@@ -6,7 +6,7 @@ import PortalHeader from "@/components/PortalHeader";
 import WelcomeGate from "@/components/WelcomeGate";
 import InkStamp from "@/components/InkStamp";
 import { trackActivity } from "@/lib/tracking";
-import { formatFechaLocal } from "@/lib/utils";
+import { formatFechaLocal, isAdminSession } from "@/lib/utils";
 import { diasHasta, countdownLabel, formatearFechaCorta } from "@/lib/fechas";
 import { ArrowLeft, ArrowRight, Calendar, Headphones, FileText, Link2, Play, ExternalLink } from "@/components/icons";
 
@@ -353,8 +353,8 @@ export default function MateriaClient({
             </div>
           )}
 
-          {/* Tutor Virtual — solo alumnos con acceso */}
-          {materia?.tutor_url && acceso?.clave && (
+          {/* Tutor Virtual — admin siempre, alumnos con acceso */}
+          {materia?.tutor_url && (isAdminSession() || acceso?.clave) && (
             <div
               className="glass-card card-reveal"
               style={{
