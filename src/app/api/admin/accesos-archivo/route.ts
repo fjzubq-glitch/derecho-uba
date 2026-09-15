@@ -150,8 +150,12 @@ export async function POST(request: NextRequest) {
         .select("id")
         .single();
       if (error) {
+        console.error("tutor grant error:", JSON.stringify({ code: error.code, message: error.message, archivo_id, nombre: nom }));
         if (String(error.code) === "23505" || /duplicate/i.test(error.message)) {
           return NextResponse.json({ ok: false, error: "Ya tiene acceso al tutor" }, { status: 409 });
+        }
+        if (String(error.code) === "23503") {
+          return NextResponse.json({ ok: false, error: "Error de integridad: " + error.message }, { status: 500 });
         }
         return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
       }
