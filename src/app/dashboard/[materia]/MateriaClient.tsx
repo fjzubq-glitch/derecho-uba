@@ -667,9 +667,9 @@ export default function MateriaClient({
               background: "var(--color-card)",
               border: "1px solid var(--color-line-soft)",
               borderRadius: "var(--radius-card)",
-              maxWidth: "480px",
+              maxWidth: "580px",
               width: "100%",
-              padding: "28px 24px 24px",
+              padding: "28px 28px 24px",
             }}
           >
             <p style={{ fontSize: "20px", marginBottom: "12px" }}>👋</p>
@@ -691,39 +691,42 @@ export default function MateriaClient({
                 fontSize: "10px",
                 color: "var(--color-text-muted)",
                 letterSpacing: "0.04em",
-                marginBottom: "16px",
+                marginBottom: "18px",
               }}
             >
               Derecho Comercial — Cátedra Favier Dubois · Luchinsky | Com. 8722, UBA
             </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "16px" }}>
-              <div style={{ gridColumn: "1 / -1" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "18px" }}>
+              <div>
+                <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-text)", marginBottom: "2px" }}>🤖 ¿Qué es?</p>
                 <p style={{ fontSize: "12px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                  🤖 <strong style={{ color: "var(--color-text)" }}>Tutor de IA</strong> entrenado con el material de la cátedra. No inventa respuestas.
+                  Tu tutor de IA entrenado exclusivamente con el material de la cátedra. ¡No inventa respuestas!
                 </p>
               </div>
               <div>
-                <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                  📚 <strong style={{ color: "var(--color-text)" }}>Fuentes:</strong> Manual de Favier Dubois, informes, cronograma y leyes.
+                <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-text)", marginBottom: "2px" }}>📚 Fuentes</p>
+                <p style={{ fontSize: "12px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
+                  Manual de Favier Dubois, Informes de clase, Cronograma y Leyes del programa.
                 </p>
               </div>
               <div>
-                <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                  💡 <strong style={{ color: "var(--color-text)" }}>Sirve para:</strong> repasar, aclarar dudas y contrastar doctrina.
+                <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-text)", marginBottom: "2px" }}>💡 ¿Para qué sirve?</p>
+                <p style={{ fontSize: "12px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
+                  Repasar temas, aclarar dudas y contrastar doctrina. Te dará pistas para que aprendas, pero no te redactará la solución final de los casos.
                 </p>
               </div>
               <div
                 style={{
-                  gridColumn: "1 / -1",
                   background: "rgba(185,154,98,0.06)",
                   border: "1px solid rgba(185,154,98,0.15)",
                   borderRadius: "8px",
                   padding: "10px 12px",
                 }}
               >
+                <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-gold)", marginBottom: "2px" }}>📌 Aviso Académico</p>
                 <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                  📌 <strong style={{ color: "var(--color-gold)" }}>Aviso:</strong> Complemento de estudio. No reemplaza clases, lectura del Manual ni asesoramiento profesional. La IA puede cometer errores.
+                  Esta herramienta es un complemento para tu estudio; su objetivo es ayudarte a organizar y repasar los temas, pero no reemplaza la asistencia a clases, la lectura integral del Manual ni el asesoramiento legal profesional. Recordá que la IA puede cometer errores o desactualizarse: contrastá siempre esta información con los materiales y fuentes oficiales de la cátedra.
                 </p>
               </div>
             </div>
