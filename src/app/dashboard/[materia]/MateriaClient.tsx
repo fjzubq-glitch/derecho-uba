@@ -701,7 +701,7 @@ export default function MateriaClient({
               <div>
                 <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-text)", marginBottom: "2px" }}>🤖 ¿Qué es?</p>
                 <p style={{ fontSize: "12px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                  Tu tutor de IA entrenado exclusivamente con el material de la cátedra. ¡No inventa respuestas!
+                  Tu asistente de IA entrenado exclusivamente con el material de la cátedra. ¡No inventa respuestas!
                 </p>
               </div>
               <div>
