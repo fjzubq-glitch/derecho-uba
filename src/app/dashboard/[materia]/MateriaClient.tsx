@@ -740,15 +740,15 @@ export default function MateriaClient({
               </div>
               <div
                 style={{
-                  background: "rgba(185,154,98,0.06)",
-                  border: "1px solid rgba(185,154,98,0.15)",
+                  background: "rgba(210,150,50,0.10)",
+                  border: "1px solid rgba(210,150,50,0.45)",
                   borderRadius: "8px",
                   padding: "10px 12px",
                 }}
               >
-                <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-gold)", marginBottom: "2px" }}>📌 Aviso Académico</p>
+                <p style={{ fontSize: "11px", fontWeight: 700, color: "#E0A840", marginBottom: "2px" }}>📌 Aviso Académico</p>
                 <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-                  Esta herramienta es un complemento para tu estudio; su objetivo es ayudarte a organizar y repasar los temas, pero no reemplaza la asistencia a clases, la lectura integral del Manual ni el asesoramiento legal profesional. Recordá que la IA puede cometer errores o desactualizarse: contrastá siempre esta información con los materiales y fuentes oficiales de la cátedra.
+                  Esta herramienta es un complemento para tu estudio; su objetivo es ayudarte a organizar y repasar los temas, pero no reemplaza la asistencia a clases, la lectura integral del Manual, ni el estudio de tus apuntes, ni tampoco es un asesoramiento legal profesional. Recordá que la IA puede cometer errores o desactualizarse: contrastá siempre esta información con los materiales y fuentes oficiales de la cátedra.
                 </p>
               </div>
             </div>
