@@ -152,6 +152,7 @@ export default function AdminPage() {
   const [contenidoPorTipo, setContenidoPorTipo] = useState<ContenidoPorTipo[]>([]);
   const [materiasStats, setMateriasStats] = useState<MateriaStats[]>([]);
   const [contenidoPopular, setContenidoPopular] = useState<ContenidoPopular[]>([]);
+  const [asistenteUsos, setAsistenteUsos] = useState<Array<{ nombre: string; materia_slug: string; fecha: string }>>([]);
   const [totalRegistradosAllTime, setTotalRegistradosAllTime] = useState(0);
   const [periodo, setPeriodo] = useState<Periodo>("7");
   const [busquedaEstudiante, setBusquedaEstudiante] = useState("");
@@ -248,6 +249,7 @@ export default function AdminPage() {
       if (data.estudiantes) setEstudiantes(data.estudiantes);
       if (data.materiasStats) setMateriasStats(data.materiasStats);
       if (data.contenidoPopular) setContenidoPopular((data.contenidoPopular as ContenidoPopular[]).filter((p) => p.nombre_display || p.clase_titulo));
+      if (data.asistenteUsos) setAsistenteUsos(data.asistenteUsos);
       setTotalRegistradosAllTime(data.totalRegistradosAllTime || 0);
     } catch (e) {
       console.error("Error loading admin data:", e);
@@ -2240,6 +2242,123 @@ export default function AdminPage() {
                     </article>
                     );
                   })()}
+
+                  {/* Uso del Asistente de Estudio */}
+                  {asistenteUsos.length > 0 && (
+                    <article
+                      style={{
+                        background: "var(--color-card)",
+                        border: "1px solid var(--color-line-soft)",
+                        padding: "28px 30px",
+                        borderRadius: "var(--radius-card)",
+                      }}
+                    >
+                      <h3
+                        style={{
+                          fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                          fontWeight: 400,
+                          fontSize: "20px",
+                          color: "var(--color-text)",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        Uso del Asistente de Estudio
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ibm-plex-mono)",
+                            fontSize: "10px",
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                            color: "var(--color-text-faint)",
+                            marginLeft: "12px",
+                          }}
+                        >
+                          {asistenteUsos.length} usos en período
+                        </span>
+                      </h3>
+                      <p
+                        style={{
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "11px",
+                          color: "var(--color-text-muted)",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        Alumnos que abrieron el Asistente de Estudio (clic en "Aceptar y continuar")
+                      </p>
+
+                      {/* Header */}
+                      <div
+                        className="flex items-center gap-2 sm:gap-4"
+                        style={{
+                          padding: "8px 0",
+                          borderBottom: "1px solid var(--color-line)",
+                          fontFamily: "var(--font-ibm-plex-mono)",
+                          fontSize: "9px",
+                          letterSpacing: "0.12em",
+                          textTransform: "uppercase",
+                          color: "var(--color-text-faint)",
+                        }}
+                      >
+                        <span style={{ width: "28px", flexShrink: 0 }}>#</span>
+                        <span className="flex-1 min-w-0">Alumno</span>
+                        <span className="flex-1 min-w-0 hidden sm:block">Materia</span>
+                        <span style={{ width: "140px", flexShrink: 0, textAlign: "right" }} className="hidden sm:block">Fecha</span>
+                      </div>
+
+                      {/* Rows */}
+                      <div style={{ maxHeight: "360px", overflowY: "auto" }}>
+                        {asistenteUsos.map((uso, i) => {
+                          const fecha = new Date(uso.fecha);
+                          const fechaStr = `${fecha.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "2-digit" })} ${fecha.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}`;
+                          return (
+                            <div
+                              key={`${uso.nombre}-${uso.fecha}`}
+                              className="flex items-center gap-2 sm:gap-4"
+                              style={{
+                                padding: "8px 0",
+                                borderBottom: i < asistenteUsos.length - 1 ? "1px solid var(--color-line-soft)" : "none",
+                                fontFamily: "var(--font-inter)",
+                                fontSize: "13px",
+                                color: "var(--color-text-muted)",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "11px",
+                                  color: "var(--color-text-faint)",
+                                  width: "28px",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                {String(i + 1).padStart(2, "0")}
+                              </span>
+                              <span className="flex-1 min-w-0 truncate" style={{ color: "var(--color-text)" }}>
+                                {uso.nombre || "—"}
+                              </span>
+                              <span className="flex-1 min-w-0 truncate hidden sm:block">
+                                {uso.materia_slug || "—"}
+                              </span>
+                              <span
+                                style={{
+                                  fontFamily: "var(--font-ibm-plex-mono)",
+                                  fontSize: "11px",
+                                  color: "var(--color-text-faint)",
+                                  width: "140px",
+                                  flexShrink: 0,
+                                  textAlign: "right",
+                                }}
+                                className="hidden sm:block"
+                              >
+                                {fechaStr}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </article>
+                  )}
 
                   {/* Contenido más popular */}
                   {contenidoPopular.length > 0 && (

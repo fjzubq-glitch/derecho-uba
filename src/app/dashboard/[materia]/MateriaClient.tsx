@@ -378,7 +378,7 @@ export default function MateriaClient({
                   }}
                 >
                   <BookOpen style={{ width: "14px", height: "14px" }} />
-                  <span>Tutor Virtual</span>
+                  <span>Asistente de Estudio</span>
                   <span
                     style={{
                       display: "inline-flex",
@@ -645,7 +645,7 @@ export default function MateriaClient({
         </div>
       </main>
 
-      {/* Modal Tutor Virtual */}
+      {/* Modal Asistente de Estudio */}
       {showTutorModal && materia?.tutor_url && (
         <div
           onClick={() => setShowTutorModal(false)}
@@ -683,7 +683,7 @@ export default function MateriaClient({
                 marginBottom: "4px",
               }}
             >
-              ¡Bienvenido/a a tu Asistente Virtual de Estudio!
+              ¡Bienvenido/a a tu Asistente de Estudio!
             </h2>
             <p
               style={{
@@ -734,6 +734,7 @@ export default function MateriaClient({
             <button
               onClick={() => {
                 setShowTutorModal(false);
+                trackActivity({ tipo: "asistente_open", pagina: "materia", materia_slug: slug });
                 window.open(materia!.tutor_url!, "_blank", "noopener,noreferrer");
               }}
               style={{

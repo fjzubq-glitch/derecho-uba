@@ -989,7 +989,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
             ))}
           </div>
 
-          {/* Tutor Virtual */}
+          {/* Asistente de Estudio */}
           <div className="flex items-center gap-3 mb-4 mt-6">
             <h3
               style={{
@@ -999,7 +999,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 color: "var(--color-text)",
               }}
             >
-              Tutor Virtual
+              Asistente de Estudio
             </h3>
           </div>
           <p

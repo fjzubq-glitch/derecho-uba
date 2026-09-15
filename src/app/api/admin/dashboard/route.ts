@@ -109,6 +109,16 @@ async function getDashboardPayload(dias: number | null) {
     .not("nombre", "is", null)
     .limit(200000);
 
+  // ── Uso del Asistente de Estudio ──
+  let asistenteQuery = supabase
+    .from("actividad")
+    .select("nombre, materia_slug, created_at")
+    .eq("tipo", "asistente_open")
+    .order("created_at", { ascending: false })
+    .limit(5000);
+  if (desdeISO) asistenteQuery = asistenteQuery.gte("created_at", desdeISO);
+  const { data: asistenteData } = await asistenteQuery;
+
   const allTimeNombres = new Set<string>();
   const allTimePorMateria: Record<string, Set<string>> = {};
   for (const ev of allTimeData || []) {
@@ -154,6 +164,11 @@ async function getDashboardPayload(dias: number | null) {
     contenidoPopular,
     totalRegistradosAllTime,
     registradosPorMateria,
+    asistenteUsos: (asistenteData || []).map((e) => ({
+      nombre: e.nombre || "",
+      materia_slug: e.materia_slug || "",
+      fecha: e.created_at,
+    })),
   };
 }
 
