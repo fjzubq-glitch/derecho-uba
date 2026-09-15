@@ -378,6 +378,36 @@ export default function MateriaClient({
                 >
                   <BookOpen style={{ width: "14px", height: "14px" }} />
                   <span>Tutor Virtual</span>
+                  <span
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      fontFamily: "var(--font-ibm-plex-mono)",
+                      fontSize: "9px",
+                      letterSpacing: "0.1em",
+                      color: "#7FD9A8",
+                      background: "rgba(93,202,165,0.08)",
+                      border: "1px solid rgba(93,202,165,0.3)",
+                      borderRadius: "20px",
+                      padding: "2px 9px 2px 7px",
+                      lineHeight: 1,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: "5px",
+                        height: "5px",
+                        borderRadius: "50%",
+                        background: "#5DCAA5",
+                        boxShadow: "0 0 0 rgba(93,202,165,0.4)",
+                        animation: "pulse-dot 2s ease-in-out infinite",
+                        flexShrink: 0,
+                      }}
+                    />
+                    IA
+                  </span>
                 </div>
                 <div className="flex-1">
                   <h3
