@@ -406,7 +406,7 @@ export default function MateriaClient({
                         flexShrink: 0,
                       }}
                     />
-                    IA
+                    NUEVO
                   </span>
                 </div>
                 <div className="flex-1">
