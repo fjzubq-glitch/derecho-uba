@@ -12,6 +12,7 @@ const ANIM_INTERVAL = 120;
 
 export default function BinauralPlayer() {
   const [hasAudio, setHasAudio] = useState(false);
+  const [binauralUrl, setBinauralUrl] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const [open, setOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
@@ -38,7 +39,10 @@ export default function BinauralPlayer() {
     fetch("/api/admin/binaural")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
-        if (d?.ok && d?.binaural) setHasAudio(true);
+        if (d?.ok && d?.binaural) {
+          setHasAudio(true);
+          setBinauralUrl(d.binaural.direct_url || null);
+        }
       })
       .catch(() => {});
   }, []);
@@ -170,7 +174,7 @@ export default function BinauralPlayer() {
     <>
       <audio
         ref={audioRef}
-        src="/api/admin/binaural?stream=1"
+        src={binauralUrl || "/api/admin/binaural?stream=1"}
         loop
         preload="none"
         onPlay={() => {

@@ -209,6 +209,12 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
   }, [clase]);
 
   function audioSourceUrl(archivo: Archivo) {
+    const PRIVADOS = ["cuestionario", "material_privado", "ficha", "lexpodcast", "tutor"];
+    if (!PRIVADOS.includes(archivo.tipo)) {
+      if (archivo.cloudinary_url) return archivo.cloudinary_url;
+      const R2 = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "";
+      if (R2 && archivo.storage_key) return `${R2}/${archivo.storage_key}`;
+    }
     let url = `/api/stream/${archivo.id}`;
     if (TIPOS_PRIVADOS.includes(archivo.tipo)) {
       const qp = new URLSearchParams();

@@ -34,7 +34,8 @@ export async function GET(request: NextRequest) {
   }
 
   if (!data) return NextResponse.json({ ok: true, binaural: null });
-  return NextResponse.json({ ok: true, binaural: { file_name: data.file_name, storage_key: data.storage_key, created_at: data.created_at } });
+  const directUrl = data.storage_key ? `${process.env.R2_PUBLIC_URL || ""}/${data.storage_key}` : null;
+  return NextResponse.json({ ok: true, binaural: { file_name: data.file_name, storage_key: data.storage_key, direct_url: directUrl, created_at: data.created_at } });
 }
 
 // POST form-data file field "file"
