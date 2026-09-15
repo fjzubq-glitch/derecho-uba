@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import PortalHeader from "@/components/PortalHeader";
 import WelcomeGate from "@/components/WelcomeGate";
@@ -55,6 +55,7 @@ export default function MateriaClient({
   acceso?: { clave: string | null; nombre: string | null };
 }) {
   const router = useRouter();
+  const [showTutorModal, setShowTutorModal] = useState(false);
 
   useEffect(() => {
     trackActivity({ tipo: "page_view", pagina: "materia", materia_slug: slug });
@@ -351,7 +352,7 @@ export default function MateriaClient({
             {/* Tutor Virtual */}
             {materia?.tutor_url && (
               <article
-                onClick={() => window.open(materia.tutor_url!, "_blank", "noopener,noreferrer")}
+                onClick={() => setShowTutorModal(true)}
                 className="card-reveal card-hover h-full cursor-pointer"
                 style={{
                   background: "var(--color-card)",
@@ -643,6 +644,121 @@ export default function MateriaClient({
           )}
         </div>
       </main>
+
+      {/* Modal Tutor Virtual */}
+      {showTutorModal && materia?.tutor_url && (
+        <div
+          onClick={() => setShowTutorModal(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 100,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(0,0,0,0.7)",
+            backdropFilter: "blur(4px)",
+            padding: "24px",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "var(--color-card)",
+              border: "1px solid var(--color-line-soft)",
+              borderRadius: "var(--radius-card)",
+              maxWidth: "520px",
+              width: "100%",
+              maxHeight: "85vh",
+              overflow: "auto",
+              padding: "32px 28px",
+            }}
+          >
+            <p style={{ fontSize: "22px", marginBottom: "16px" }}>👋</p>
+            <h2
+              style={{
+                fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                fontWeight: 500,
+                fontSize: "18px",
+                color: "var(--color-text)",
+                lineHeight: 1.3,
+                marginBottom: "6px",
+              }}
+            >
+              ¡Bienvenido/a a tu Asistente Virtual de Estudio!
+            </h2>
+            <p
+              style={{
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "11px",
+                color: "var(--color-text-muted)",
+                letterSpacing: "0.04em",
+                marginBottom: "20px",
+              }}
+            >
+              Derecho Comercial — Cátedra Favier Dubois · Luchinsky | Com. 8722, UBA
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "24px" }}>
+              <div>
+                <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text)", marginBottom: "4px" }}>🤖 ¿Qué es?</p>
+                <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.6 }}>
+                  Tu tutor de IA entrenado exclusivamente con el material de la cátedra. No inventa respuestas.
+                </p>
+              </div>
+              <div>
+                <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text)", marginBottom: "4px" }}>📚 Fuentes</p>
+                <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.6 }}>
+                  Manual de Favier Dubois, informes de clase, cronograma y leyes del programa.
+                </p>
+              </div>
+              <div>
+                <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text)", marginBottom: "4px" }}>💡 ¿Para qué sirve?</p>
+                <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.6 }}>
+                  Repasar temas, aclarar dudas y contrastar doctrina. Te dará pistas para que aprendas, pero no te redactará la solución final de los casos.
+                </p>
+              </div>
+              <div
+                style={{
+                  background: "rgba(185,154,98,0.06)",
+                  border: "1px solid rgba(185,154,98,0.15)",
+                  borderRadius: "8px",
+                  padding: "12px 14px",
+                }}
+              >
+                <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-gold)", marginBottom: "4px" }}>📌 Aviso Académico</p>
+                <p style={{ fontSize: "12px", color: "var(--color-text-muted)", lineHeight: 1.6 }}>
+                  Esta herramienta es un complemento de estudio. No reemplaza la asistencia a clases, la lectura del Manual ni el asesoramiento legal profesional. La IA puede cometer errores: contrastá siempre con los materiales oficiales de la cátedra.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                setShowTutorModal(false);
+                window.open(materia!.tutor_url!, "_blank", "noopener,noreferrer");
+              }}
+              style={{
+                width: "100%",
+                height: "42px",
+                borderRadius: "8px",
+                background: "var(--color-gold)",
+                border: "none",
+                color: "var(--color-ink)",
+                fontFamily: "var(--font-inter)",
+                fontWeight: 600,
+                fontSize: "13px",
+                cursor: "pointer",
+                transition: "background 0.2s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-gold-dim)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-gold)")}
+            >
+              Aceptar y continuar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
