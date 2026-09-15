@@ -670,8 +670,30 @@ export default function MateriaClient({
               maxWidth: "580px",
               width: "100%",
               padding: "28px 28px 24px",
+              position: "relative",
             }}
           >
+            <button
+              onClick={() => setShowTutorModal(false)}
+              aria-label="Cerrar"
+              style={{
+                position: "absolute",
+                top: "12px",
+                right: "12px",
+                background: "none",
+                border: "none",
+                color: "var(--color-text-faint)",
+                cursor: "pointer",
+                padding: "4px",
+                lineHeight: 1,
+                fontSize: "18px",
+                transition: "color 0.2s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-faint)")}
+            >
+              ×
+            </button>
             <p style={{ fontSize: "20px", marginBottom: "12px" }}>👋</p>
             <h2
               style={{
