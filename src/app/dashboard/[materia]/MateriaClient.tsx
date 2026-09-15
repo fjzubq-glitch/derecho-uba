@@ -354,22 +354,35 @@ export default function MateriaClient({
                 onClick={() => window.open(materia.tutor_url!, "_blank", "noopener,noreferrer")}
                 className="card-reveal card-hover h-full cursor-pointer"
                 style={{
-                  background: "var(--color-card)",
+                  position: "relative",
+                  background: "linear-gradient(180deg, rgba(76, 175, 125, 0.055), rgba(76, 175, 125, 0.015))",
+                  border: "1px solid rgba(76, 175, 125, 0.42)",
+                  boxShadow: "0 0 26px rgba(76, 175, 125, 0.10)",
                   padding: "28px 24px",
-                  border: "1px solid var(--color-line-soft)",
                   borderRadius: "var(--radius-card)",
-                  transition: "background 0.25s ease, border-color 0.25s ease",
+                  overflow: "hidden",
+                  transition: "background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease",
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-admin-dim)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
+                onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 0 36px rgba(76, 175, 125, 0.18)"; e.currentTarget.style.borderColor = "rgba(76, 175, 125, 0.6)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 0 26px rgba(76, 175, 125, 0.10)"; e.currentTarget.style.borderColor = "rgba(76, 175, 125, 0.42)"; }}
               >
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: "3px",
+                    background: "linear-gradient(180deg, #4CAF7D, rgba(76, 175, 125, 0.12))",
+                  }}
+                />
                 <div
                   style={{
                     fontFamily: "var(--font-ibm-plex-mono)",
                     fontSize: "10px",
                     letterSpacing: "0.14em",
                     textTransform: "uppercase",
-                    color: "var(--color-admin)",
+                    color: "#4CAF7D",
                     marginBottom: "8px",
                     display: "flex",
                     alignItems: "center",
@@ -403,7 +416,7 @@ export default function MateriaClient({
                     Basado en las fuentes oficiales de la cátedra.
                   </p>
                 </div>
-                <div className="flex items-center justify-between" style={{ marginTop: "16px", paddingTop: "12px", borderTop: "1px solid var(--color-line-soft)" }}>
+                <div className="flex items-center justify-between" style={{ marginTop: "16px", paddingTop: "12px", borderTop: "1px solid rgba(76, 175, 125, 0.2)" }}>
                   <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
                     NotebookLM
                   </span>
@@ -414,7 +427,7 @@ export default function MateriaClient({
                       fontSize: "10px",
                       letterSpacing: "0.14em",
                       textTransform: "uppercase",
-                      color: "var(--color-admin)",
+                      color: "#4CAF7D",
                     }}
                   >
                     Consultar
