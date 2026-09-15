@@ -667,22 +667,20 @@ export default function MateriaClient({
               background: "var(--color-card)",
               border: "1px solid var(--color-line-soft)",
               borderRadius: "var(--radius-card)",
-              maxWidth: "520px",
+              maxWidth: "480px",
               width: "100%",
-              maxHeight: "85vh",
-              overflow: "auto",
-              padding: "32px 28px",
+              padding: "28px 24px 24px",
             }}
           >
-            <p style={{ fontSize: "22px", marginBottom: "16px" }}>👋</p>
+            <p style={{ fontSize: "20px", marginBottom: "12px" }}>👋</p>
             <h2
               style={{
                 fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
                 fontWeight: 500,
-                fontSize: "18px",
+                fontSize: "17px",
                 color: "var(--color-text)",
                 lineHeight: 1.3,
-                marginBottom: "6px",
+                marginBottom: "4px",
               }}
             >
               ¡Bienvenido/a a tu Asistente Virtual de Estudio!
@@ -690,45 +688,42 @@ export default function MateriaClient({
             <p
               style={{
                 fontFamily: "var(--font-ibm-plex-mono)",
-                fontSize: "11px",
+                fontSize: "10px",
                 color: "var(--color-text-muted)",
                 letterSpacing: "0.04em",
-                marginBottom: "20px",
+                marginBottom: "16px",
               }}
             >
               Derecho Comercial — Cátedra Favier Dubois · Luchinsky | Com. 8722, UBA
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "24px" }}>
-              <div>
-                <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text)", marginBottom: "4px" }}>🤖 ¿Qué es?</p>
-                <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.6 }}>
-                  Tu tutor de IA entrenado exclusivamente con el material de la cátedra. No inventa respuestas.
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "16px" }}>
+              <div style={{ gridColumn: "1 / -1" }}>
+                <p style={{ fontSize: "12px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
+                  🤖 <strong style={{ color: "var(--color-text)" }}>Tutor de IA</strong> entrenado con el material de la cátedra. No inventa respuestas.
                 </p>
               </div>
               <div>
-                <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text)", marginBottom: "4px" }}>📚 Fuentes</p>
-                <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.6 }}>
-                  Manual de Favier Dubois, informes de clase, cronograma y leyes del programa.
+                <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
+                  📚 <strong style={{ color: "var(--color-text)" }}>Fuentes:</strong> Manual de Favier Dubois, informes, cronograma y leyes.
                 </p>
               </div>
               <div>
-                <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text)", marginBottom: "4px" }}>💡 ¿Para qué sirve?</p>
-                <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.6 }}>
-                  Repasar temas, aclarar dudas y contrastar doctrina. Te dará pistas para que aprendas, pero no te redactará la solución final de los casos.
+                <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
+                  💡 <strong style={{ color: "var(--color-text)" }}>Sirve para:</strong> repasar, aclarar dudas y contrastar doctrina.
                 </p>
               </div>
               <div
                 style={{
+                  gridColumn: "1 / -1",
                   background: "rgba(185,154,98,0.06)",
                   border: "1px solid rgba(185,154,98,0.15)",
                   borderRadius: "8px",
-                  padding: "12px 14px",
+                  padding: "10px 12px",
                 }}
               >
-                <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-gold)", marginBottom: "4px" }}>📌 Aviso Académico</p>
-                <p style={{ fontSize: "12px", color: "var(--color-text-muted)", lineHeight: 1.6 }}>
-                  Esta herramienta es un complemento de estudio. No reemplaza la asistencia a clases, la lectura del Manual ni el asesoramiento legal profesional. La IA puede cometer errores: contrastá siempre con los materiales oficiales de la cátedra.
+                <p style={{ fontSize: "11px", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
+                  📌 <strong style={{ color: "var(--color-gold)" }}>Aviso:</strong> Complemento de estudio. No reemplaza clases, lectura del Manual ni asesoramiento profesional. La IA puede cometer errores.
                 </p>
               </div>
             </div>
@@ -740,7 +735,7 @@ export default function MateriaClient({
               }}
               style={{
                 width: "100%",
-                height: "42px",
+                height: "40px",
                 borderRadius: "8px",
                 background: "var(--color-gold)",
                 border: "none",
