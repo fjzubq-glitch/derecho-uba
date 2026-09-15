@@ -354,90 +354,71 @@ export default function MateriaClient({
                 onClick={() => window.open(materia.tutor_url!, "_blank", "noopener,noreferrer")}
                 className="card-reveal card-hover h-full cursor-pointer"
                 style={{
-                  position: "relative",
-                  background: "linear-gradient(180deg, rgba(76, 175, 125, 0.055), rgba(76, 175, 125, 0.015))",
-                  border: "1px solid rgba(76, 175, 125, 0.42)",
-                  boxShadow: "0 0 26px rgba(76, 175, 125, 0.10)",
+                  background: "var(--color-card)",
                   padding: "28px 24px",
+                  border: "1px solid var(--color-line-soft)",
                   borderRadius: "var(--radius-card)",
-                  overflow: "hidden",
-                  transition: "background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease",
+                  transition: "background 0.25s ease, border-color 0.25s ease",
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 0 36px rgba(76, 175, 125, 0.18)"; e.currentTarget.style.borderColor = "rgba(76, 175, 125, 0.6)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 0 26px rgba(76, 175, 125, 0.10)"; e.currentTarget.style.borderColor = "rgba(76, 175, 125, 0.42)"; }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-card-hover)"; e.currentTarget.style.borderColor = "var(--color-admin-dim)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-card)"; e.currentTarget.style.borderColor = "var(--color-line-soft)"; }}
               >
                 <div
                   style={{
-                    position: "absolute",
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                    width: "3px",
-                    background: "linear-gradient(180deg, #4CAF7D, rgba(76, 175, 125, 0.12))",
+                    fontFamily: "var(--font-ibm-plex-mono)",
+                    fontSize: "10px",
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "var(--color-admin)",
+                    marginBottom: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
                   }}
-                />
-                <div className="flex items-start gap-3">
-                  <div
-                    className="flex items-center justify-center flex-shrink-0"
+                >
+                  <BookOpen style={{ width: "14px", height: "14px" }} />
+                  <span>Tutor Virtual</span>
+                </div>
+                <div className="flex-1">
+                  <h3
                     style={{
-                      width: "38px",
-                      height: "38px",
-                      borderRadius: "10px",
-                      border: "1px solid rgba(76, 175, 125, 0.35)",
-                      background: "rgba(76, 175, 125, 0.05)",
+                      fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                      fontWeight: 500,
+                      fontSize: "20px",
+                      lineHeight: 1.2,
+                      color: "var(--color-text)",
+                      marginBottom: "12px",
                     }}
                   >
-                    <BookOpen style={{ width: "16px", height: "16px", color: "#4CAF7D" }} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div
-                      style={{
-                        fontFamily: "var(--font-ibm-plex-mono)",
-                        fontSize: "10px",
-                        letterSpacing: "0.14em",
-                        textTransform: "uppercase",
-                        color: "#4CAF7D",
-                        marginBottom: "4px",
-                      }}
-                    >
-                      Tutor Virtual
-                    </div>
-                    <h3
-                      style={{
-                        fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                        fontWeight: 500,
-                        fontSize: "18px",
-                        lineHeight: 1.2,
-                        color: "var(--color-text)",
-                        marginBottom: "6px",
-                      }}
-                    >
-                      Asistente de estudio
-                    </h3>
-                    <p
-                      style={{
-                        fontFamily: "var(--font-inter)",
-                        fontSize: "12px",
-                        color: "var(--color-text-muted)",
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      Basado en las fuentes oficiales de la cátedra.
-                    </p>
-                  </div>
+                    Asistente de estudio
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-inter)",
+                      fontSize: "13px",
+                      color: "var(--color-text-muted)",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    Basado en las fuentes oficiales de la cátedra.
+                  </p>
+                </div>
+                <div className="flex items-center justify-between" style={{ marginTop: "16px", paddingTop: "12px", borderTop: "1px solid var(--color-line-soft)" }}>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
+                    NotebookLM
+                  </span>
                   <span
-                    className="flex items-center gap-1.5 flex-shrink-0"
+                    className="flex items-center gap-2"
                     style={{
                       fontFamily: "var(--font-ibm-plex-mono)",
                       fontSize: "10px",
-                      letterSpacing: "0.10em",
+                      letterSpacing: "0.14em",
                       textTransform: "uppercase",
-                      color: "#4CAF7D",
-                      marginTop: "2px",
+                      color: "var(--color-admin)",
                     }}
                   >
-                    Abrir
-                    <ExternalLink style={{ width: "11px", height: "11px" }} />
+                    Consultar
+                    <ExternalLink style={{ width: "12px", height: "12px" }} />
                   </span>
                 </div>
               </article>
