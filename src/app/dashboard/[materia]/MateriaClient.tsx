@@ -376,62 +376,68 @@ export default function MateriaClient({
                     background: "linear-gradient(180deg, #4CAF7D, rgba(76, 175, 125, 0.12))",
                   }}
                 />
-                <div
-                  style={{
-                    fontFamily: "var(--font-ibm-plex-mono)",
-                    fontSize: "10px",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "#4CAF7D",
-                    marginBottom: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                >
-                  <BookOpen style={{ width: "14px", height: "14px" }} />
-                  <span>Tutor Virtual</span>
-                </div>
-                <div className="flex-1">
-                  <h3
+                <div className="flex items-start gap-3">
+                  <div
+                    className="flex items-center justify-center flex-shrink-0"
                     style={{
-                      fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
-                      fontWeight: 500,
-                      fontSize: "20px",
-                      lineHeight: 1.2,
-                      color: "var(--color-text)",
-                      marginBottom: "12px",
+                      width: "38px",
+                      height: "38px",
+                      borderRadius: "10px",
+                      border: "1px solid rgba(76, 175, 125, 0.35)",
+                      background: "rgba(76, 175, 125, 0.05)",
                     }}
                   >
-                    Asistente de estudio
-                  </h3>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-inter)",
-                      fontSize: "13px",
-                      color: "var(--color-text-muted)",
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    Basado en las fuentes oficiales de la cátedra.
-                  </p>
-                </div>
-                <div className="flex items-center justify-between" style={{ marginTop: "16px", paddingTop: "12px", borderTop: "1px solid rgba(76, 175, 125, 0.2)" }}>
-                  <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
-                    NotebookLM
-                  </span>
+                    <BookOpen style={{ width: "16px", height: "16px", color: "#4CAF7D" }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "10px",
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        color: "#4CAF7D",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      Tutor Virtual
+                    </div>
+                    <h3
+                      style={{
+                        fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif",
+                        fontWeight: 500,
+                        fontSize: "18px",
+                        lineHeight: 1.2,
+                        color: "var(--color-text)",
+                        marginBottom: "6px",
+                      }}
+                    >
+                      Asistente de estudio
+                    </h3>
+                    <p
+                      style={{
+                        fontFamily: "var(--font-inter)",
+                        fontSize: "12px",
+                        color: "var(--color-text-muted)",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      Basado en las fuentes oficiales de la cátedra.
+                    </p>
+                  </div>
                   <span
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-1.5 flex-shrink-0"
                     style={{
                       fontFamily: "var(--font-ibm-plex-mono)",
                       fontSize: "10px",
-                      letterSpacing: "0.14em",
+                      letterSpacing: "0.10em",
                       textTransform: "uppercase",
                       color: "#4CAF7D",
+                      marginTop: "2px",
                     }}
                   >
-                    Consultar
-                    <ExternalLink style={{ width: "12px", height: "12px" }} />
+                    Abrir
+                    <ExternalLink style={{ width: "11px", height: "11px" }} />
                   </span>
                 </div>
               </article>
