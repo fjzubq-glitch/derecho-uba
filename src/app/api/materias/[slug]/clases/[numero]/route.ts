@@ -31,7 +31,7 @@ async function getClaseData(slug: string, num: number) {
   const [archivosRes, vecinosRes] = await Promise.all([
     supabase
       .from("archivos")
-      .select("id, tipo, nombre_display, storage_key, youtube_url, cloudinary_url, contenido_texto, nota, duration_seconds, play_count, orden")
+      .select("id, tipo, nombre_display, storage_key, youtube_url, cloudinary_url, nota, duration_seconds, play_count, orden")
       .eq("clase_id", clase.id)
       .order("orden")
       .order("created_at"),

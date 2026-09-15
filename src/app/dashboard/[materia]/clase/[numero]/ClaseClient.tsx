@@ -18,7 +18,6 @@ interface Archivo {
   storage_key: string | null;
   youtube_url: string | null;
   cloudinary_url: string | null;
-  contenido_texto: string | null;
   nota: string | null;
   duration_seconds: number | null;
   play_count: number;
@@ -45,9 +44,9 @@ function isHtmlArchivo(a: Archivo | null): boolean {
   return /\.html?$/i.test(a.storage_key);
 }
 
-function descargarTexto(archivo: Archivo) {
-  const contenido = archivo.contenido_texto || "";
-  const blob = new Blob([contenido], { type: "text/plain;charset=utf-8" });
+function descargarTexto(archivo: Archivo, contenido?: string) {
+  const contenido_final = contenido || "";
+  const blob = new Blob([contenido_final], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   const base = (archivo.nombre_display || "transcripcion").replace(/[^\wÁÉÍÓÚáéíóúñÑ -]/g, "").trim() || "transcripcion";
@@ -169,6 +168,8 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
 
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
   const [openTranscripcion, setOpenTranscripcion] = useState(false);
+  const [transcriptionContent, setTranscriptionContent] = useState<Record<string, string>>({});
+  const [loadingTranscription, setLoadingTranscription] = useState(false);
 
   const [portalNombre, setPortalNombre] = useState<string | null>(null);
   const nombreFetchRef = useRef<string | null | undefined>(undefined);
@@ -348,18 +349,27 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
     restartAudio();
   }
 
-  function handleTranscriptionClick(archivo: Archivo) {
+  async function handleTranscriptionClick(archivo: Archivo) {
     if (!archivo) return;
     if (archivo.youtube_url) {
       window.open(archivo.youtube_url, "_blank");
       trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
       return;
     }
-    if (archivo.contenido_texto) {
-      setOpenTranscripcion((prev) => !prev);
-      if (!openTranscripcion) {
-        trackActivity({ tipo: "transcription_view", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
-      }
+    if (!openTranscripcion && !transcriptionContent[archivo.id]) {
+      setLoadingTranscription(true);
+      try {
+        const res = await fetch(`/api/stream/${archivo.id}`);
+        if (res.ok) {
+          const text = await res.text();
+          setTranscriptionContent((prev) => ({ ...prev, [archivo.id]: text }));
+        }
+      } catch {}
+      setLoadingTranscription(false);
+    }
+    setOpenTranscripcion((prev) => !prev);
+    if (!openTranscripcion) {
+      trackActivity({ tipo: "transcription_view", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
     }
   }
 
@@ -569,7 +579,7 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
               </p>
             )}
           </div>
-          {(tipo === "archivo" && archivo.storage_key) || (isTranscription(tipo) && (archivo.storage_key || archivo.contenido_texto)) ? (
+          {(tipo === "archivo" && archivo.storage_key) || isTranscription(tipo) ? (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -578,8 +588,8 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
                   const dlQs = dlNombre ? `?download=1&nombre=${encodeURIComponent(dlNombre)}` : "?download=1";
                   window.open(`/api/stream/${archivo.id}${dlQs}`, "_blank");
                   trackActivity({ tipo: "file_download", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
-                } else if (archivo.contenido_texto) {
-                  descargarTexto(archivo);
+                } else if (transcriptionContent[archivo.id]) {
+                  descargarTexto(archivo, transcriptionContent[archivo.id]);
                   trackActivity({ tipo: "transcription_download", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
                 }
               }}
@@ -820,7 +830,7 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
           </div>
         )}
 
-        {isTranscription(tipo) && openTranscripcion && archivo.contenido_texto && (
+        {isTranscription(tipo) && openTranscripcion && (transcriptionContent[archivo.id] || loadingTranscription) && (
           <div
             style={{
               marginTop: "16px",
@@ -837,7 +847,7 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {archivo.contenido_texto}
+            {loadingTranscription ? "Cargando transcripción..." : transcriptionContent[archivo.id]}
           </div>
         )}
       </article>
