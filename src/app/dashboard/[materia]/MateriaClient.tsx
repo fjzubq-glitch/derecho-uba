@@ -349,7 +349,7 @@ export default function MateriaClient({
             )}
 
             {/* Tutor Virtual */}
-            {materia?.tutor_url && (isAdminSession() || acceso?.clave) && (
+            {materia?.tutor_url && (
               <article
                 onClick={() => window.open(materia.tutor_url!, "_blank", "noopener,noreferrer")}
                 className="card-reveal card-hover h-full cursor-pointer"
