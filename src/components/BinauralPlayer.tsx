@@ -21,7 +21,11 @@ export default function BinauralPlayer() {
   const barsRef = useRef<HTMLDivElement[]>([]);
   const capsuleRef = useRef<HTMLDivElement | null>(null);
   const fabRef = useRef<HTMLButtonElement | null>(null);
+  const userPausedRef = useRef(false);
+  const playingRef = useRef(false);
   const BINAURAL_KEY = "binaural_shared";
+
+  useEffect(() => { playingRef.current = playing; }, [playing]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -47,25 +51,18 @@ export default function BinauralPlayer() {
         if (typeof d.playing === "boolean") setPlaying(d.playing);
       }
     } catch {}
-    // BroadcastChannel: solo recibe "play" para sincronizar UI entre pestañas.
-    // NO pausa el audio si otra pestaña cambia de estado — cada pestaña controla su propio audio.
     try {
       bcRef.current = new BroadcastChannel("binaural");
       bcRef.current.onmessage = (e: MessageEvent) => {
         const d = e.data as { type: string };
         if (d?.type === "play") setPlaying(true);
-        // Ignorar "pause" — que cada pestaña sea independiente
       };
     } catch {}
-    // Storage listener: solo actualiza el estado visual, NO pausa el audio
     const onStorage = (e: StorageEvent) => {
       if (e.key !== BINAURAL_KEY || !e.newValue) return;
       try {
         const d = JSON.parse(e.newValue);
-        if (typeof d.playing === "boolean") {
-          setPlaying(d.playing);
-          // NO pausar el audio aquí — cada pestaña es independiente
-        }
+        if (typeof d.playing === "boolean") setPlaying(d.playing);
       } catch {}
     };
     window.addEventListener("storage", onStorage);
@@ -75,19 +72,32 @@ export default function BinauralPlayer() {
     };
   }, []);
 
-  // Reanudar audio si el navegador lo pausó al pasar a background
+  // Reanudar audio si el navegador lo pausó (visibilitychange o navegación)
   useEffect(() => {
     const onVisibility = () => {
       if (document.hidden) return;
       const audio = audioRef.current;
-      // Si el audio debería estar sonando pero está pausado, reanudarlo
-      if (audio && audio.paused && playing) {
+      if (audio && audio.paused && playingRef.current && !userPausedRef.current) {
         audio.play().catch(() => {});
       }
     };
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
-  }, [playing]);
+  }, []);
+
+  // Reanudar después de soft navigation (Next.js)
+  useEffect(() => {
+    const onPopState = () => {
+      setTimeout(() => {
+        const audio = audioRef.current;
+        if (audio && audio.paused && playingRef.current && !userPausedRef.current) {
+          audio.play().catch(() => {});
+        }
+      }, 100);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   // Cerrar cápsula al clickear afuera
   useEffect(() => {
@@ -140,11 +150,13 @@ export default function BinauralPlayer() {
     e.stopPropagation();
     if (!audioRef.current) return;
     if (playing) {
+      userPausedRef.current = true;
       audioRef.current.pause();
       setPlaying(false);
       try { localStorage.setItem(BINAURAL_KEY, JSON.stringify({ playing: false, t: Date.now() })); } catch {}
       try { bcRef.current?.postMessage({ type: "pause" }); } catch {}
     } else {
+      userPausedRef.current = false;
       audioRef.current.play().catch(() => {});
       setPlaying(true);
       try { localStorage.setItem(BINAURAL_KEY, JSON.stringify({ playing: true, t: Date.now() })); } catch {}
@@ -161,14 +173,14 @@ export default function BinauralPlayer() {
         src="/api/admin/binaural?stream=1"
         loop
         preload="none"
-        onPlay={() => setPlaying(true)}
+        onPlay={() => {
+          userPausedRef.current = false;
+          setPlaying(true);
+        }}
         onPause={() => {
-          // Solo actualizar estado si el audio se pausó por interacción del usuario,
-          // NO si el navegador pausó el audio en background (visibilitychange lo reanuda)
-          if (audioRef.current && !audioRef.current.ended) {
-            // Si el audio fue pausado y la pestaña sigue visible, fue interacción del usuario
-            if (!document.hidden) setPlaying(false);
-          }
+          if (!audioRef.current || audioRef.current.ended) return;
+          if (!userPausedRef.current) return;
+          setPlaying(false);
         }}
         onEnded={() => setPlaying(false)}
       />
