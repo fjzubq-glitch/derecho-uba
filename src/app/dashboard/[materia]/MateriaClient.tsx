@@ -202,7 +202,7 @@ export default function MateriaClient({
                       x="50"
                       y="82"
                       textAnchor="middle"
-                      fontFamily="var(--font-special-elite), 'Courier New', monospace"
+                      fontFamily="var(--font-ibm-plex-mono), 'Courier New', monospace"
                       fontSize="9"
                       fill="var(--color-stamp)"
                       stroke="none"
