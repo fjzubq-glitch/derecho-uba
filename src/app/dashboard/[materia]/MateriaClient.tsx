@@ -476,14 +476,12 @@ export default function MateriaClient({
                 <article
                   key={clase.id}
                   onClick={() => {
-                    trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
                     router.push(claseHref(clase.numero));
                   }}
                   className="group card-reveal card-hover flex flex-col cursor-pointer h-full"
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
-                      trackActivity({ tipo: "class_view", pagina: "materia", materia_slug: slug, clase_id: clase.id });
                       router.push(claseHref(clase.numero));
                     }
                   }}

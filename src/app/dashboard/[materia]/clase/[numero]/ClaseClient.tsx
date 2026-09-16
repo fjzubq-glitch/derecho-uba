@@ -318,7 +318,6 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
 
     if (archivo.youtube_url) {
       window.open(archivo.youtube_url, "_blank");
-      trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
       return;
     }
 
@@ -359,7 +358,6 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
     if (!archivo) return;
     if (archivo.youtube_url) {
       window.open(archivo.youtube_url, "_blank");
-      trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
       return;
     }
     if (!openTranscripcion && !transcriptionContent[archivo.id]) {
@@ -374,9 +372,6 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
       setLoadingTranscription(false);
     }
     setOpenTranscripcion((prev) => !prev);
-    if (!openTranscripcion) {
-      trackActivity({ tipo: "transcription_view", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
-    }
   }
 
   async function handleCardClick(archivo: Archivo | null) {
@@ -400,12 +395,10 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
     } else if (tipo === "clase_youtube") {
       if (archivo.youtube_url) {
         window.open(archivo.youtube_url, "_blank");
-        trackActivity({ tipo: "youtube_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
       }
     } else if (isEnlace(tipo)) {
       if (archivo.youtube_url) {
         window.open(archivo.youtube_url, "_blank");
-        trackActivity({ tipo: "enlace_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
       }
     } else if (tipo === "archivo") {
       if (archivo.youtube_url) {
@@ -415,7 +408,7 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
         if (isHtmlArchivo(archivo)) {
           const back = `/dashboard/${materiaSlug}/clase/${numero}`;
           window.open(visorHref(archivo.id, back), "_blank");
-          trackActivity({ tipo: "html_view", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+          trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
         } else {
           window.open(`/api/stream/${archivo.id}`, "_blank");
           trackActivity({ tipo: "file_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
@@ -424,20 +417,16 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
     } else if (tipo === "cuestionario") {
       const back = `/dashboard/${materiaSlug}/clase/${numero}`;
       window.open(visorHref(archivo.id, back), "_blank");
-      trackActivity({ tipo: "admin_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
     } else if (tipo === "material_privado") {
       if (archivo.youtube_url) {
         window.open(archivo.youtube_url, "_blank");
-        trackActivity({ tipo: "admin_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
       } else {
         const back = `/dashboard/${materiaSlug}/clase/${numero}`;
         window.open(visorHref(archivo.id, back), "_blank");
-        trackActivity({ tipo: "admin_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
       }
     } else if (tipo === "ficha") {
       if (archivo.youtube_url) {
         window.open(archivo.youtube_url, "_blank");
-        trackActivity({ tipo: "admin_open", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
       }
     } else if (isAudioTipo(tipo)) {
       handleAudioAction(archivo);

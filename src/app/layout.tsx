@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, IBM_Plex_Mono, Special_Elite } from "next/font/google";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
-import HeartbeatProvider from "@/components/HeartbeatProvider";
 import { AudioProvider } from "@/components/AudioProvider";
 import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
 import PortalFooter from "@/components/PortalFooter";
@@ -75,7 +74,6 @@ export default function RootLayout({
         <AudioProvider>
           <LazyWidgets />
           <ServiceWorkerRegister />
-          <HeartbeatProvider />
           {children}
           <PortalFooter />
           <GlobalAudioPlayer />
