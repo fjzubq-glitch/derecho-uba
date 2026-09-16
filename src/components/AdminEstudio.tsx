@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { BookOpen, Calendar, Check, ChevronDown, Clock, Loader2 } from "@/components/icons";
+import { BookOpen, Check, ChevronDown, Loader2 } from "@/components/icons";
 
 interface Revision {
   id: string;
