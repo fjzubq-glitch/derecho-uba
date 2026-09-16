@@ -21,7 +21,7 @@ export default function HeartbeatProvider() {
       trackActivity({ tipo: "heartbeat", pagina, materia_slug });
     };
     const inicial = setTimeout(latido, 3000);
-    const interval = setInterval(latido, 60000);
+    const interval = setInterval(latido, 300000);
     const onVisible = () => {
       if (!document.hidden) latido();
     };

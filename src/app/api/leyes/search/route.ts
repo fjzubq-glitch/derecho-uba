@@ -506,7 +506,10 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ ...resultado, page });
+    return NextResponse.json(
+      { ...resultado, page },
+      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
+    );
   } catch (err) {
     console.error("Error searching leyes:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

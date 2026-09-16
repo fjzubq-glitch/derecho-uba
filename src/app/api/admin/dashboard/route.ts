@@ -28,18 +28,17 @@ async function getDashboardPayload(dias: number | null) {
     .select("tipo, archivo_id, clase_id, nombre, materia_slug, created_at, ip_hash")
     .neq("tipo", "heartbeat")
     .order("created_at", { ascending: false })
-    .limit(100000);
+    .limit(20000);
   if (desdeISO) eventsQuery = eventsQuery.gte("created_at", desdeISO);
   const { data: eventosData } = await eventsQuery;
   const eventos = (eventosData || []) as EventoAnalitico[];
 
-  // Registros nuevos: consulta aparte (solo este tipo), sin que el límite
-  // de 100k del query general trunque los eventos más viejos
+  // Registros nuevos: consulta aparte (solo este tipo)
   let nuevosQuery = supabase
     .from("actividad")
     .select("nombre")
     .eq("tipo", "usuario_registrado")
-    .limit(100000);
+    .limit(20000);
   if (desdeISO) nuevosQuery = nuevosQuery.gte("created_at", desdeISO);
   const { data: registrosNuevos } = await nuevosQuery;
   const alumnosNuevos = new Set(
@@ -107,7 +106,7 @@ async function getDashboardPayload(dias: number | null) {
     .select("nombre, materia_slug")
     .eq("tipo", "usuario_registrado")
     .not("nombre", "is", null)
-    .limit(200000);
+    .limit(20000);
 
   // ── Uso del Asistente de Estudio ──
   let asistenteQuery = supabase

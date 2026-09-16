@@ -226,7 +226,7 @@ export default function AdminPage() {
       if (ok) setEnLineaCargando(false);
     };
     cargarPresencia();
-    const id = setInterval(cargarPresencia, 12000);
+    const id = setInterval(cargarPresencia, 30000);
     return () => {
       ok = false;
       clearInterval(id);
@@ -1371,7 +1371,7 @@ export default function AdminPage() {
                           color: "var(--color-text-faint)",
                         }}
                       >
-                        Actualiza cada 12 segundos
+                        Actualiza cada 30 segundos
                       </span>
                     </div>
 

@@ -58,14 +58,17 @@ export async function GET() {
       fechas: (m.materia_fechas || []).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha))),
     }));
 
-    return NextResponse.json({
-      materias: materiasConStats,
-      stats: {
-        clases: materiasConStats.reduce((s, m) => s + m.total_clases, 0),
-        audios: materiasConStats.reduce((s, m) => s + m.total_audios, 0),
-        reproducciones: materiasConStats.reduce((s, m) => s + m.total_reproducciones, 0),
+    return NextResponse.json(
+      {
+        materias: materiasConStats,
+        stats: {
+          clases: materiasConStats.reduce((s, m) => s + m.total_clases, 0),
+          audios: materiasConStats.reduce((s, m) => s + m.total_audios, 0),
+          reproducciones: materiasConStats.reduce((s, m) => s + m.total_reproducciones, 0),
+        },
       },
-    });
+      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
+    );
   } catch {
     return NextResponse.json({ materias: [], stats: { clases: 0, audios: 0, reproducciones: 0 } });
   }

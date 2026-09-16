@@ -35,7 +35,10 @@ export async function GET(request: NextRequest) {
 
   if (!data) return NextResponse.json({ ok: true, binaural: null });
   const directUrl = data.storage_key ? `${process.env.R2_PUBLIC_URL || ""}/${data.storage_key}` : null;
-  return NextResponse.json({ ok: true, binaural: { file_name: data.file_name, storage_key: data.storage_key, direct_url: directUrl, created_at: data.created_at } });
+  return NextResponse.json(
+    { ok: true, binaural: { file_name: data.file_name, storage_key: data.storage_key, direct_url: directUrl, created_at: data.created_at } },
+    { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
+  );
 }
 
 // POST form-data file field "file"
