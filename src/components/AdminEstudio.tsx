@@ -46,8 +46,6 @@ export default function AdminEstudio() {
   const [marcando, setMarcando] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [abiertas, setAbiertas] = useState<Set<string>>(new Set());
-  const [binauralInfo, setBinauralInfo] = useState<{ file_name: string } | null>(null);
-  const [binauralSubiendo, setBinauralSubiendo] = useState(false);
 
   const cargar = async () => {
     setLoading(true);
@@ -102,63 +100,6 @@ export default function AdminEstudio() {
     }
   };
 
-  useEffect(() => {
-    fetch("/api/admin/binaural")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => {
-        if (d?.ok && d?.binaural) setBinauralInfo(d.binaural);
-      })
-      .catch(() => {});
-  }, []);
-
-  const subirBinaural = async (file: File) => {
-    setBinauralSubiendo(true);
-    try {
-      // Archivos grandes (>4MB) por partes para evitar límite de Vercel (4.5MB)
-      if (file.size > 4 * 1024 * 1024) {
-        const CHUNK = 1024 * 1024;
-        const sessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-        const total = Math.ceil(file.size / CHUNK);
-        for (let i = 0; i < total; i++) {
-          const slice = file.slice(i * CHUNK, Math.min((i + 1) * CHUNK, file.size));
-          const base64 = await new Promise<string>((res) => {
-            const r = new FileReader();
-            r.onload = () => res((r.result as string).split(",")[1]);
-            r.readAsDataURL(slice);
-          });
-          const pr = await fetch("/api/upload-chunk", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ sessionId, partNumber: i + 1, data: base64 }),
-          });
-          if (!pr.ok) throw new Error("chunk " + (i + 1));
-        }
-        const ext = (file.name.split(".").pop() || "mp3").toLowerCase();
-        const finalKey = `personal/binaural-${Date.now()}.${ext}`;
-        const ar = await fetch("/api/upload-assemble", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId, totalParts: total, finalKey, contentType: file.type || "audio/mpeg", fileType: "audio_clase" }),
-        });
-        if (!ar.ok) throw new Error("assemble");
-        const rr = await fetch("/api/admin/binaural/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ storageKey: finalKey, fileName: file.name, fileSize: file.size }),
-        });
-        const d = await rr.json();
-        if (d.ok) setBinauralInfo({ file_name: file.name });
-      } else {
-        const fd = new FormData();
-        fd.append("file", file);
-        const res = await fetch("/api/admin/binaural", { method: "POST", body: fd });
-        const data = await res.json();
-        if (data.ok) setBinauralInfo({ file_name: file.name });
-      }
-    } catch {}
-    setBinauralSubiendo(false);
-  };
-
   const hoyStr = new Date().toISOString().slice(0, 10);
   const hoyItems = revisiones.filter((r) => !r.hecha && r.fecha_programada <= hoyStr && r.clase_numero).slice(0, 2);
 
@@ -186,40 +127,6 @@ export default function AdminEstudio() {
             Repaso espaciado · 2 por día · 08:00 Telegram
           </p>
         </div>
-      </div>
-
-      {/* Binaural — solo vos */}
-      <div style={{ background: "var(--color-card)", border: "1px solid var(--color-line-soft)", borderRadius: "var(--radius-card)", padding: "12px 14px", display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-        <span style={{ fontFamily: "var(--font-ibm-plex-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-text-faint)" }}>♪ Binaural</span>
-        {binauralInfo ? (
-          <span style={{ fontSize: "12px", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{binauralInfo.file_name}</span>
-        ) : (
-          <span style={{ fontSize: "12px", color: "var(--color-text-muted)", flex: 1 }}>Subí tu audio para el player flotante (solo vos)</span>
-        )}
-        <label
-          style={{
-            padding: "6px 10px",
-            background: binauralSubiendo ? "var(--color-line)" : "transparent",
-            border: "1px solid var(--color-line)",
-            cursor: binauralSubiendo ? "wait" : "pointer",
-            fontFamily: "var(--font-ibm-plex-mono)",
-            fontSize: "10px",
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
-            color: "var(--color-text-muted)",
-          }}
-        >
-          {binauralSubiendo ? "Subiendo…" : binauralInfo ? "Cambiar" : "Subir"}
-          <input
-            type="file"
-            accept="audio/*"
-            style={{ display: "none" }}
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) subirBinaural(f);
-            }}
-          />
-        </label>
       </div>
 
       {/* Hoy te tocan */}
