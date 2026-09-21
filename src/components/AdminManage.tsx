@@ -87,6 +87,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [filtroMateria, setFiltroMateria] = useState("");
   const [editandoCuestionario, setEditandoCuestionario] = useState<{ archivoId: string; nombre: string; html: string } | null>(null);
+  const [nombreCuestionarioEdit, setNombreCuestionarioEdit] = useState("");
   const [cuestionarioSaving, setCuestionarioSaving] = useState(false);
   const [accesosMateriaId, setAccesosMateriaId] = useState<string | null>(null);
   const [accesosLista, setAccesosLista] = useState<{ id: string; nombre: string; materia_id: string; clave: string; created_at: string }[]>([]);
@@ -514,7 +515,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
       const res = await fetch(`/api/admin/cuestionario/${editandoCuestionario.archivoId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ html }),
+        body: JSON.stringify({ html, nombre_display: nombreCuestionarioEdit }),
       });
       const data = await res.json();
       if (data.ok) {
@@ -539,6 +540,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
       if (res.ok) {
         const html = await res.text();
         setEditandoCuestionario({ archivoId: archivo.id, nombre: archivo.nombre_display, html });
+        setNombreCuestionarioEdit(archivo.nombre_display);
         return;
       }
       const err = await res.json().catch(() => ({}));
@@ -1463,11 +1465,19 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 <h3 style={{ fontFamily: "var(--font-fraunces), 'Fraunces', Georgia, serif", fontWeight: 500, fontSize: "18px", color: "var(--color-text)" }}>
                   Editar cuestionario
                 </h3>
-                <p style={{ fontSize: "12px", color: "var(--color-text-muted)", marginTop: "2px" }}>{editandoCuestionario.nombre}</p>
               </div>
               <button onClick={() => setEditandoCuestionario(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-faint)" }}>
                 <X style={{ width: "18px", height: "18px" }} />
               </button>
+            </div>
+            <div style={{ marginBottom: "12px" }}>
+              <label style={{ fontSize: "12px", fontWeight: 500, color: "var(--color-text-muted)", marginBottom: "4px", display: "block" }}>Nombre</label>
+              <input
+                type="text"
+                value={nombreCuestionarioEdit}
+                onChange={(e) => setNombreCuestionarioEdit(e.target.value)}
+                style={{ width: "100%", padding: "8px 12px", background: "var(--color-bg-elevated)", border: "1px solid var(--color-border)", borderRadius: "6px", color: "var(--color-text)", fontSize: "14px", fontFamily: "var(--font-inter)" }}
+              />
             </div>
             <div style={{ flex: 1, minHeight: 0 }}>
               <HtmlEditor

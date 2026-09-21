@@ -38,9 +38,13 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         return m.length < 3000 ? "" : m;
       });
       await uploadToR2(archivo.storage_key, Buffer.from(limpio, "utf-8"), "text/html; charset=utf-8");
+      const updateData: Record<string, unknown> = { contenido_texto: limpio, contenido: null };
+      if (typeof body.nombre_display === "string" && body.nombre_display.trim() !== "") {
+        updateData.nombre_display = body.nombre_display.trim();
+      }
       const { error: updErr } = await getSupabaseAdmin()
         .from("archivos")
-        .update({ contenido_texto: limpio, contenido: null })
+        .update(updateData)
         .eq("id", id);
       if (updErr) {
         return NextResponse.json({ error: "Error al guardar: " + updErr.message }, { status: 500 });
