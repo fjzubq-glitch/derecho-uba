@@ -161,6 +161,15 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     }
   }, [claseInicial]);
 
+  useEffect(() => {
+    setCuestionarioNombre((prev) => {
+      if (!prev || /^Cuestionario Clase \d+$/.test(prev)) {
+        return `Cuestionario Clase ${claseNumero}`;
+      }
+      return prev;
+    });
+  }, [claseNumero]);
+
   async function cargarClasesExistentes(materiaIdSel: string, preseleccionarId?: string) {
     setCargandoClases(true);
     setClaseSeleccionada(preseleccionarId || "");
