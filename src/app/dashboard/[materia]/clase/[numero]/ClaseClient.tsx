@@ -577,7 +577,34 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
               </p>
             )}
           </div>
-          {(tipo === "archivo" && archivo.storage_key) || isTranscription(tipo) ? (
+          {isTranscription(tipo) && archivo.youtube_url ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (archivo.youtube_url) window.open(archivo.youtube_url, "_blank");
+                trackActivity({ tipo: "transcription_view", pagina: "clase_detalle", materia_slug: materiaSlug, archivo_id: archivo.id });
+              }}
+              className="flex items-center gap-1.5"
+              title="Ver transcripción"
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+                fontFamily: "var(--font-ibm-plex-mono)",
+                fontSize: "10px",
+                color: "var(--color-text-muted)",
+                flexShrink: 0,
+                marginTop: "14px",
+                transition: "color 0.2s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+            >
+              <ArrowRight style={{ width: "12px", height: "12px" }} />
+              Ver
+            </button>
+          ) : (tipo === "archivo" && archivo.storage_key) || isTranscription(tipo) ? (
             <button
               onClick={(e) => {
                 e.stopPropagation();
