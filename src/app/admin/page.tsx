@@ -323,6 +323,7 @@ export default function AdminPage() {
     claseNumero: number,
     claseTitulo: string,
     claseFecha: string,
+    claseParcial: number,
     items: Array<{
       tipo: "audio_clase" | "clase_youtube" | "transcripcion" | "archivo" | "enlace" | "cuestionario" | "material_privado" | "ficha" | "lexpodcast";
       nombre: string;
@@ -424,6 +425,7 @@ export default function AdminPage() {
           claseNumero,
           claseTitulo,
           claseFecha,
+          claseParcial,
           claseId: claseId || null,
           items: processedItems,
         }),

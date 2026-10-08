@@ -26,7 +26,7 @@ interface ClaseExistente {
 
 interface AdminUploadProps {
   materias: { id: string; nombre: string; slug: string }[];
-  onSubmit: (materiaId: string, claseNumero: number, claseTitulo: string, claseFecha: string, items: UploadItem[], claseId?: string) => Promise<{ ok: boolean; error?: string }>;
+  onSubmit: (materiaId: string, claseNumero: number, claseTitulo: string, claseFecha: string, claseParcial: number, items: UploadItem[], claseId?: string) => Promise<{ ok: boolean; error?: string }>;
   claseInicial?: { claseId: string; materiaId: string } | null;
 }
 
@@ -70,6 +70,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const [claseNumero, setClaseNumero] = useState(1);
   const [claseTitulo, setClaseTitulo] = useState("");
   const [claseFecha, setClaseFecha] = useState("");
+  const [claseParcial, setClaseParcial] = useState<1 | 2>(1);
   const [clasesExistentes, setClasesExistentes] = useState<ClaseExistente[]>([]);
   const [claseSeleccionada, setClaseSeleccionada] = useState("");
   const [cargandoClases, setCargandoClases] = useState(false);
@@ -328,7 +329,15 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
     }
 
     try {
-      const result = await onSubmit(materiaId, claseNumero, claseTitulo, claseFecha, items, modo === "existente" ? claseSeleccionada : undefined);
+      const result = await onSubmit(
+        materiaId,
+        claseNumero,
+        claseTitulo,
+        claseFecha,
+        modo === "nueva" ? claseParcial : 1,
+        items,
+        modo === "existente" ? claseSeleccionada : undefined
+      );
       if (result.ok) {
         setResultMsg({ text: modo === "existente" ? "Contenido agregado correctamente" : "Clase subida correctamente", isError: false });
         resetForm();
@@ -345,6 +354,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
   const resetForm = () => {
     setClaseTitulo("");
     setClaseFecha("");
+    setClaseParcial(1);
     setClaseSeleccionada("");
     setAudioFile(null);
     setTranscripcionDriveLink("");
@@ -551,7 +561,7 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
         ) : (
           <>
         {/* Fila superior: Materia / Número / Fecha */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div>
           <label htmlFor="admin-materia-nueva" style={labelStyle}>Materia</label>
           <select
@@ -584,6 +594,22 @@ export default function AdminUpload({ materias, onSubmit, claseInicial }: AdminU
             onChange={(e) => setClaseNumero(Number(e.target.value))}
             style={inputStyle}
           />
+        </div>
+        <div>
+          <label htmlFor="admin-clase-parcial" style={labelStyle}>Parcial</label>
+          <select
+            id="admin-clase-parcial"
+            value={claseParcial}
+            onChange={(e) => setClaseParcial(Number(e.target.value) as 1 | 2)}
+            style={inputStyle}
+          >
+            <option value={1} style={{ background: "var(--color-card)", color: "var(--color-text)" }}>
+              1er parcial
+            </option>
+            <option value={2} style={{ background: "var(--color-card)", color: "var(--color-text)" }}>
+              2do parcial
+            </option>
+          </select>
         </div>
         <div>
           <label htmlFor="admin-clase-fecha" style={labelStyle}>Fecha</label>

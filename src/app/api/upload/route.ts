@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { materiaId, claseNumero, claseTitulo, claseFecha, items, claseId } = body;
+    const claseParcial: number = Number(body.claseParcial) === 2 ? 2 : 1;
 
     if ((!materiaId || !claseTitulo || !items) && !claseId) {
       return NextResponse.json({ ok: false, error: "Missing required fields" }, { status: 400 });
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
         targetClaseId = existingClase.id;
         const { error: updErr } = await getSupabaseAdmin()
           .from("clases")
-          .update({ titulo: claseTitulo, fecha: claseFecha || null })
+          .update({ titulo: claseTitulo, fecha: claseFecha || null, parcial: claseParcial })
           .eq("id", targetClaseId);
         if (updErr) {
           return NextResponse.json({ ok: false, error: "Failed to update class: " + updErr.message }, { status: 500 });
@@ -66,6 +67,7 @@ export async function POST(request: NextRequest) {
             numero: claseNumero,
             titulo: claseTitulo,
             fecha: claseFecha || null,
+            parcial: claseParcial,
           })
           .select("id")
           .single();
