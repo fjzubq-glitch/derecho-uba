@@ -20,12 +20,13 @@ export async function PUT(request: NextRequest) {
     }
 
     if (tipo === "clase") {
-      const updateData: Record<string, string | number> = {
+      const updateData: Record<string, string | number | null> = {
         titulo: data.titulo,
         fecha: data.fecha || null,
         numero: data.numero,
       };
       if (data.tema !== undefined) updateData.tema = data.tema;
+      if (data.parcial !== undefined) updateData.parcial = Number(data.parcial) === 2 ? 2 : 1;
 
       const { error } = await getSupabaseAdmin()
         .from("clases")

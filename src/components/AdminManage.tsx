@@ -36,6 +36,7 @@ interface Clase {
   titulo: string;
   tema: string | null;
   fecha: string | null;
+  parcial: number;
   materia_id: string;
   materia_nombre: string;
   materia_slug: string;
@@ -86,6 +87,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
   const [message, setMessage] = useState("");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [filtroMateria, setFiltroMateria] = useState("");
+  const [filtroParcial, setFiltroParcial] = useState<"1" | "2" | "">("");
   const [editandoCuestionario, setEditandoCuestionario] = useState<{ archivoId: string; nombre: string; html: string } | null>(null);
   const [nombreCuestionarioEdit, setNombreCuestionarioEdit] = useState("");
   const [cuestionarioSaving, setCuestionarioSaving] = useState(false);
@@ -150,6 +152,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
         titulo,
         tema,
         fecha,
+        parcial,
         materias!inner(id, nombre, slug)
       `)
       .order("numero");
@@ -161,6 +164,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
         titulo: string;
         tema: string | null;
         fecha: string | null;
+        parcial: number | null;
         materias?: { id: string; nombre: string; slug: string } | null;
       }>;
 
@@ -190,6 +194,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
         titulo: c.titulo,
         tema: c.tema,
         fecha: c.fecha,
+        parcial: c.parcial === 2 ? 2 : 1,
         materia_id: c.materias?.id || "",
         materia_nombre: c.materias?.nombre || "",
         materia_slug: c.materias?.slug || "",
@@ -1175,6 +1180,29 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 </option>
               ))}
             </select>
+            {filtroMateria && (
+              <select
+                value={filtroParcial}
+                onChange={(e) => setFiltroParcial(e.target.value as "1" | "2" | "")}
+                aria-label="Filtrar por parcial"
+                style={{
+                  background: "var(--color-ink)",
+                  border: "1px solid var(--color-line)",
+                  color: "var(--color-text)",
+                  padding: "10px 40px 10px 14px",
+                  fontSize: "13px",
+                  fontFamily: "var(--font-inter)",
+                  outline: "none",
+                  borderRadius: 0,
+                  cursor: "pointer",
+                  width: "min(170px, 100%)",
+                }}
+              >
+                <option value="">Todos los parciales</option>
+                <option value="1">1er parcial</option>
+                <option value="2">2do parcial</option>
+              </select>
+            )}
           </div>
 
           {!filtroMateria ? (
@@ -1191,7 +1219,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                 Seleccioná una materia arriba para ver y editar su contenido.
               </p>
             </div>
-          ) : clases.filter((c) => c.materia_slug === filtroMateria).length === 0 ? (
+          ) : clases.filter((c) => c.materia_slug === filtroMateria && (!filtroParcial || String(c.parcial) === filtroParcial)).length === 0 ? (
             <div
               style={{
                 padding: "40px 24px",
@@ -1202,7 +1230,9 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
               }}
             >
               <p style={{ fontSize: "14px", color: "var(--color-text-muted)", lineHeight: 1.7 }}>
-                Esta materia todavía no tiene clases.
+                {filtroParcial
+                  ? `Esta materia no tiene clases de ${filtroParcial === "1" ? "primer" : "segundo"} parcial cargadas.`
+                  : "Esta materia todavía no tiene clases."}
                 <br />
                 <span style={{ color: "var(--color-text-faint)", fontSize: "12px" }}>
                   Subilas desde la pestaña &ldquo;Subir contenido&rdquo;.
@@ -1211,7 +1241,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
             </div>
           ) : (
             clases
-            .filter((c) => c.materia_slug === filtroMateria)
+            .filter((c) => c.materia_slug === filtroMateria && (!filtroParcial || String(c.parcial) === filtroParcial))
             .map((clase) => (
             <div
               key={clase.id}
@@ -1247,6 +1277,20 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                     >
                       CLASE {clase.numero.toString().padStart(2, "0")}
                     </span>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-ibm-plex-mono)",
+                        fontSize: "9px",
+                        letterSpacing: "0.1em",
+                        padding: "2px 6px",
+                        border: "1px solid",
+                        borderColor: clase.parcial === 2 ? "var(--color-gold)" : "var(--color-line)",
+                        color: clase.parcial === 2 ? "var(--color-gold)" : "var(--color-text-faint)",
+                        background: clase.parcial === 2 ? "rgba(212,175,55,0.1)" : "transparent",
+                      }}
+                    >
+                      {clase.parcial === 2 ? "2DO PARCIAL" : "1ER PARCIAL"}
+                    </span>
                   </div>
                   <h3
                     style={{
@@ -1280,7 +1324,7 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                       onClick: () => setEditing({
                         tipo: "clase",
                         id: clase.id,
-                        data: { titulo: clase.titulo, tema: clase.tema || "", fecha: clase.fecha || "", numero: clase.numero }
+                        data: { titulo: clase.titulo, tema: clase.tema || "", fecha: clase.fecha || "", numero: clase.numero, parcial: clase.parcial }
                       }),
                     },
                     {
@@ -1526,6 +1570,18 @@ export default function AdminManage({ onEditarClase }: { onEditarClase?: (claseI
                       onChange={(e) => setEditing({ ...editing, data: { ...editing.data, numero: Number(e.target.value) } })}
                       style={inputStyle}
                     />
+                  </div>
+                  <div>
+                    <label htmlFor="manage-parcial" style={labelStyle}>Parcial</label>
+                    <select
+                      id="manage-parcial"
+                      value={(editing.data.parcial as number) === 2 ? 2 : 1}
+                      onChange={(e) => setEditing({ ...editing, data: { ...editing.data, parcial: Number(e.target.value) } })}
+                      style={inputStyle}
+                    >
+                      <option value={1}>1er parcial</option>
+                      <option value={2}>2do parcial</option>
+                    </select>
                   </div>
                   <div>
                     <label htmlFor="manage-titulo" style={labelStyle}>Título</label>

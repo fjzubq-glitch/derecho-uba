@@ -40,10 +40,10 @@ const getClasesConArchivos = (slug: string, materiaId: string) =>
     async () =>
       getSupabaseAdmin()
         .from("clases")
-        .select("id, numero, titulo, tema, fecha, created_at, archivos(id, clase_id, tipo, nombre_display, storage_key, youtube_url, duration_seconds, orden, created_at)")
+        .select("id, numero, titulo, tema, fecha, parcial, created_at, archivos(id, clase_id, tipo, nombre_display, storage_key, youtube_url, duration_seconds, orden, created_at)")
         .eq("materia_id", materiaId)
         .order("numero"),
-    ["clases-archivos", slug],
+    ["clases-archivos-v2", slug],
     { revalidate: REVALIDATE, tags: ["materias", `materia-${slug}`] }
   )();
 
@@ -97,14 +97,14 @@ type MateriaRow = { id: string; nombre: string; estado: string; tutor_url?: stri
   }
 
   let clasesWithFiles: Array<{
-    id: string; numero: number; titulo: string; tema: string | null; fecha: string; created_at: string;
+    id: string; numero: number; titulo: string; tema: string | null; fecha: string; parcial: number; created_at: string;
     archivos: ArchivoRow[];
   }> = [];
   try {
     const { data: clases } = await getClasesConArchivos(slug, materia.id);
 
     clasesWithFiles = ((clases || []) as Array<{
-      id: string; numero: number; titulo: string; tema: string | null; fecha: string | null; created_at: string;
+      id: string; numero: number; titulo: string; tema: string | null; fecha: string | null; parcial: number | null; created_at: string;
       archivos: ArchivoRow[] | null;
     }>).map((c) => {
       const archivosDeClase = [...(c.archivos || [])]
@@ -116,6 +116,7 @@ type MateriaRow = { id: string; nombre: string; estado: string; tutor_url?: stri
         titulo: c.titulo,
         tema: c.tema,
         fecha: c.fecha || "",
+        parcial: c.parcial === 2 ? 2 : 1,
         created_at: c.created_at,
         archivos: archivosDeClase,
       };

@@ -25,6 +25,7 @@ interface Clase {
   titulo: string;
   tema: string | null;
   fecha: string;
+  parcial?: number;
   created_at?: string;
   archivos: Archivo[];
 }
@@ -56,6 +57,14 @@ export default function MateriaClient({
 }) {
   const router = useRouter();
   const [showTutorModal, setShowTutorModal] = useState(false);
+
+  // Segmentación por parcial: si ninguna clase es de 2do parcial, no hay
+  // pestañas y todo queda junto como hasta ahora.
+  const clasesP1 = useMemo(() => clases.filter((c) => c.parcial !== 2), [clases]);
+  const clasesP2 = useMemo(() => clases.filter((c) => c.parcial === 2), [clases]);
+  const hayParcial2 = clasesP2.length > 0;
+  const [parcialActivo, setParcialActivo] = useState<1 | 2>(hayParcial2 ? 2 : 1);
+  const clasesVisibles = hayParcial2 ? (parcialActivo === 2 ? clasesP2 : clasesP1) : clases;
 
   useEffect(() => {
     trackActivity({ tipo: "page_view", pagina: "materia", materia_slug: slug });
@@ -459,6 +468,51 @@ export default function MateriaClient({
           {/* Divisor sutil entre filas */}
           <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, var(--color-line-soft) 20%, var(--color-line-soft) 80%, transparent)", margin: "16px 0" }} />
 
+          {/* ═══════════ PESTAÑAS POR PARCIAL ═══════════ */}
+          {hayParcial2 && (
+            <div
+              className="flex flex-col sm:flex-row w-full sm:w-auto"
+              style={{
+                border: "1px solid var(--color-line-soft)",
+                borderRadius: "10px",
+                overflow: "hidden",
+                width: "fit-content",
+                marginBottom: "20px",
+              }}
+            >
+              {([1, 2] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setParcialActivo(p)}
+                  className="border-b sm:border-b-0 sm:border-r"
+                  style={{
+                    flex: 1,
+                    padding: "10px 16px",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    fontFamily: "var(--font-inter)",
+                    cursor: "pointer",
+                    borderColor: "var(--color-line-soft)",
+                    background: parcialActivo === p ? "var(--color-gold)" : "transparent",
+                    color: parcialActivo === p ? "var(--color-ink)" : "var(--color-text-muted)",
+                    transition: "color 0.2s ease, background 0.2s ease",
+                    whiteSpace: "nowrap",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (parcialActivo !== p) e.currentTarget.style.color = "var(--color-text)";
+                  }}
+                  onMouseLeave={(e) => {
+                    if (parcialActivo !== p) e.currentTarget.style.color = "var(--color-text-muted)";
+                  }}
+                  aria-pressed={parcialActivo === p}
+                >
+                  {p === 1 ? "Primer parcial" : "Segundo parcial"}{" "}
+                  <span style={{ opacity: 0.7 }}>({p === 1 ? clasesP1.length : clasesP2.length})</span>
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* ═══════════ CLASES (3 columnas) ═══════════ */}
           {clases.length === 0 ? (
             <div className="glass-card card-reveal" style={{ padding: "80px 24px", textAlign: "center", borderRadius: "var(--radius-card)" }}>
@@ -470,9 +524,15 @@ export default function MateriaClient({
                 </span>
               </p>
             </div>
+          ) : clasesVisibles.length === 0 ? (
+            <div className="glass-card" style={{ padding: "48px 24px", textAlign: "center", borderRadius: "var(--radius-card)" }}>
+              <p style={{ color: "var(--color-text-faint)", fontSize: "14px" }}>
+                Todavía no hay clases cargadas en este parcial.
+              </p>
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {clases.map((clase, i) => (
+              {clasesVisibles.map((clase) => (
                 <article
                   key={clase.id}
                   onClick={() => {

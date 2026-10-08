@@ -1920,7 +1920,7 @@ export default function AdminPage() {
                           marginBottom: "20px",
                         }}
                       >
-                        Alumnos que abrieron el Asistente de Estudio (clic en "Aceptar y continuar")
+                        Alumnos que abrieron el Asistente de Estudio (clic en &ldquo;Aceptar y continuar&rdquo;)
                       </p>
 
                       {/* Header */}
