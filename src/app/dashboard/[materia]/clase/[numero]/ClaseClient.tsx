@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, Calendar, Play, Pause, FileText, Headphones, Dow
 import { formatDuration, formatFechaLocal, isAdminSession } from "@/lib/utils";
 import { getPortalUserName, PORTAL_USER_EVENT } from "@/lib/portalUser";
 import { TIPOS_PRIVADOS } from "@/lib/privados";
+import { vecinosDe } from "@/lib/clases";
 import { saveAudioOffline, getAudioOffline, deleteAudioOffline, isAudioOffline, saveClaseOffline, getClaseOffline } from "@/lib/offline";
 import { useAudio } from "@/components/AudioProvider";
 
@@ -131,10 +132,10 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
   const [clase, setClase] = useState<Clase | null>(initialData.clase);
   const [loading] = useState(false);
   const [prevClase, setPrevClase] = useState<{ numero: number; titulo: string } | null>(
-    initialData.adjacentes.find((c) => c.numero === parseInt(numero) - 1) || null
+    vecinosDe(initialData.adjacentes, parseInt(numero)).prev
   );
   const [nextClase, setNextClase] = useState<{ numero: number; titulo: string } | null>(
-    initialData.adjacentes.find((c) => c.numero === parseInt(numero) + 1) || null
+    vecinosDe(initialData.adjacentes, parseInt(numero)).next
   );
 
   const { currentTrack, isPlaying, currentTime, duration, playbackRate, play, togglePlay, seek, cycleSpeed, restart: restartAudio } = useAudio();
@@ -268,8 +269,9 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
         saveClaseOffline(cacheKey, data);
       }
       const adj = (data.adjacentes || []) as Clase[];
-      setPrevClase(adj.find((c) => c.numero === num - 1) || null);
-      setNextClase(adj.find((c) => c.numero === num + 1) || null);
+      const { prev, next } = vecinosDe(adj, num);
+      setPrevClase(prev);
+      setNextClase(next);
     } catch (e) {
       console.error("Error loading clase, intentando offline:", e);
       setOfflineMode(true);
@@ -279,8 +281,9 @@ export default function ClaseClient({ initialData }: ClaseClientProps) {
         if (anyData.materia) setMateria(anyData.materia);
         if (anyData.clase) setClase(anyData.clase);
         const adj = anyData.adjacentes || [];
-        setPrevClase(adj.find((c) => c.numero === num - 1) || null);
-        setNextClase(adj.find((c) => c.numero === num + 1) || null);
+        const { prev, next } = vecinosDe(adj, num);
+        setPrevClase(prev);
+        setNextClase(next);
       }
     }
   }

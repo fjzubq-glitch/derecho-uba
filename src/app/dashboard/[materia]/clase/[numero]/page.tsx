@@ -3,6 +3,7 @@ import { unstable_cache } from "next/cache";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest } from "@/lib/auth";
 import { TIPOS_PRIVADOS, tieneGrant } from "@/lib/privados";
+import { resolverAdyacentes } from "@/lib/clases";
 import ClaseClient from "./ClaseClient";
 
 export const dynamic = "force-dynamic";
@@ -40,12 +41,13 @@ async function getClaseData(slug: string, num: number) {
       .from("clases")
       .select("numero, titulo")
       .eq("materia_id", materia.id)
-      .in("numero", [num - 1, num + 1]),
+      .order("numero"),
   ]);
 
-  const adjacentes = (vecinosRes.data || [])
-    .slice()
-    .sort((a, b) => a.numero - b.numero);
+  const adjacentes = resolverAdyacentes(
+    (vecinosRes.data || []) as { numero: number; titulo: string }[],
+    num
+  );
 
   return { materia, clase: { ...clase, archivos: archivosRes.data || [] }, adjacentes };
 }
