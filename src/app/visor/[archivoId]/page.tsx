@@ -165,10 +165,24 @@ export default async function VisorPage({
 
   if (esCuestionario && iframeSrcDoc) {
     const bridgeScript = esAdmin ? BRIDGE_SCRIPT_ADMIN : BRIDGE_SCRIPT_READONLY;
+
+    // El editor del cuestionario guarda un borrador en localStorage y lo vuelve a
+    // aplicar al cargar (EditorManager.loadSavedContent). Ese borrador es local a
+    // CADA dispositivo: si editabas en la PC, la notebook seguía mostrando su copia
+    // vieja pisando el HTML del servidor (y viceversa). Limpiamos esa clave antes de
+    // que el cuestionario arranque, para que la fuente de verdad sea siempre el
+    // servidor. El progreso del alumno (otra clave de localStorage) no se toca.
+    const claveEditor = iframeSrcDoc.match(/EDITOR_STORAGE_KEY\s*=\s*["']([^"']+)["']/)?.[1];
+    const clearEditorScript = claveEditor
+      ? `<script>try{localStorage.removeItem(${JSON.stringify(claveEditor)})}catch(e){}<` +
+        `/script>`
+      : "";
+
+    const inyectado = bridgeScript + clearEditorScript;
     if (iframeSrcDoc.includes("</body>")) {
-      iframeSrcDoc = iframeSrcDoc.replace("</body>", bridgeScript + "</body>");
+      iframeSrcDoc = iframeSrcDoc.replace("</body>", inyectado + "</body>");
     } else {
-      iframeSrcDoc += bridgeScript;
+      iframeSrcDoc += inyectado;
     }
   }
 
