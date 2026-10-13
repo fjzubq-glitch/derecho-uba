@@ -68,11 +68,11 @@ const getMateriasCacheadas = unstable_cache(
   },
   ["home-materias"],
   { revalidate: 300, tags: ["materias"] },
-)();
+);
 
 async function loadMaterias() {
   try {
-    return await getMateriasCacheadas;
+    return await getMateriasCacheadas();
   } catch {
     return [];
   }
